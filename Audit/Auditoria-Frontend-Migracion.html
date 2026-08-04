@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auditoría de Migración - Toro Frontend</title>
+    <style>
+        :root {
+            --primary: #0F172A;
+            --secondary: #334155;
+            --accent: #3B82F6;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --bg-body: #F8FAFC;
+            --bg-card: #FFFFFF;
+            --text-main: #334155;
+            --text-muted: #64748B;
+            --border: #E2E8F0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+            border-bottom: 4px solid var(--accent);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: #CBD5E1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 15px;
+        }
+
+        .card-header h2 {
+            font-size: 1.75rem;
+            color: var(--primary);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 25px;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 5px solid;
+            background-color: #FEF2F2;
+            border-left-color: var(--danger);
+        }
+
+        .alert.warning {
+            background-color: #FFFBEB;
+            border-left-color: var(--warning);
+        }
+
+        .alert-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--primary);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background-color: #F1F5F9;
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .badge-danger { background-color: #FEE2E2; color: #991B1B; }
+        .badge-warning { background-color: #FEF3C7; color: #92400E; }
+        .badge-success { background-color: #D1FAE5; color: #065F46; }
+        .badge-info { background-color: #DBEAFE; color: #1E40AF; }
+
+        .code-block {
+            background-color: #1E293B;
+            color: #E2E8F0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            margin: 15px 0;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .timeline {
+            position: relative;
+            max-width: 100%;
+            margin: 30px 0;
+        }
+
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            background-color: var(--accent);
+            top: 0;
+            bottom: 0;
+            left: 20px;
+            border-radius: 4px;
+        }
+
+        .timeline-item {
+            padding: 10px 40px;
+            position: relative;
+            background-color: inherit;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            right: auto;
+            background-color: white;
+            border: 4px solid var(--accent);
+            top: 15px;
+            left: 12px;
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .timeline-content {
+            padding: 20px;
+            background-color: white;
+            position: relative;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+        }
+
+        .timeline-content h3 {
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+
+        ul.custom-list {
+            list-style-type: none;
+        }
+
+        ul.custom-list li {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 8px;
+        }
+
+        ul.custom-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <h1>Auditoría Arquitectónica y Plan de Migración</h1>
+        <p>Análisis de transición a Vue 3, Vite & Ecosistema Moderno | Toro Frontend</p>
+    </header>
+
+    <div class="container">
+
+        <!-- 1. Inventario de Obsolescencia -->
+        <section class="card">
+            <div class="card-header">
+                <h2>1. Inventario de Obsolescencia y Deuda Técnica</h2>
+            </div>
+            
+            <div class="alert">
+                <div class="alert-title">🚨 Riesgo Crítico: Fin de Ciclo de Vida (EOL)</div>
+                Vue 2.x alcanzó su End of Life (EOL) oficial el <strong>31 de diciembre de 2023</strong>. Ya no recibe actualizaciones de seguridad ni de compatibilidad, lo que representa un riesgo alto para sistemas hospitalarios / financieros.
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tecnología / Patrón</th>
+                        <th>Estado Actual</th>
+                        <th>Nivel de Riesgo</th>
+                        <th>Observación Arquitectónica</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Vue 2.6.14</strong></td>
+                        <td>Obsoleto (EOL)</td>
+                        <td><span class="badge badge-danger">Crítico</span></td>
+                        <td>Sin parches de seguridad. Patrón Options API fomenta componentes monolíticos.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Vue CLI (Webpack)</strong></td>
+                        <td>Mantenimiento</td>
+                        <td><span class="badge badge-warning">Medio</span></td>
+                        <td>Tiempos de compilación lentos (HMR). La comunidad se movió por completo a Vite.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Vuetify 2.x</strong></td>
+                        <td>Sin nuevas <i>features</i></td>
+                        <td><span class="badge badge-warning">Alto</span></td>
+                        <td>Incompatible con Vue 3. La actualización a Vuetify 3 tiene <i>breaking changes</i> masivos.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Global Mixins</strong></td>
+                        <td>Antipatrón</td>
+                        <td><span class="badge badge-danger">Crítico</span></td>
+                        <td>Lógica de HTTP inyectada vía mixins (ej. <code>loginMixin.js</code>). Causa colisión de nombres, falta de tipado y dificulta el testing.</td>
+                    </tr>
+                    <tr>
+                        <td><code>vue2-editor</code> / <code>v-mask</code></td>
+                        <td>Abandonados</td>
+                        <td><span class="badge badge-warning">Medio</span></td>
+                        <td>Librerías de nicho sin soporte oficial en Vue 3 o con wrappers no oficiales. Requerirá sustitución.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- 2. Análisis de Viabilidad y Riesgos -->
+        <section class="card">
+            <div class="card-header">
+                <h2>2. Análisis de Viabilidad y Riesgos de Migración</h2>
+            </div>
+            <div class="grid-2">
+                <div>
+                    <h3><span style="color:var(--accent);">Viabilidad Técnica</span></h3>
+                    <p>La migración es <strong>completamente viable pero altamente compleja</strong> debido al fuerte acoplamiento con Vuetify 2 y el uso extensivo de Mixins para fetching de datos.</p>
+                    <br>
+                    <ul class="custom-list">
+                        <li><strong>Vue 3 (Composition API):</strong> Mejora drástica del rendimiento, reutilización y tipado (TypeScript base).</li>
+                        <li><strong>Vite:</strong> Tiempos de arranque en frío (`npm run dev`) que pasan de decenas de segundos a <strong>~500 milisegundos</strong>.</li>
+                        <li><strong>Eliminación de Mixins:</strong> Usando <i>Composables</i> (Hooks personalizados), funciones como llamadas a la API (Axios) se independizan totalmente de los componentes de UI.</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3><span style="color:var(--danger);">Principales Cuellos de Botella (Riesgos)</span></h3>
+                    <ul class="custom-list">
+                        <li><strong>El Gran Salto de Vuetify (2 &rarr; 3):</strong> Vuetify 3 fue reescrito desde cero. Muchos utilitarios y propiedades de grids cambiaron. Tablas de datos (DataTables) y modales pueden romperse inicialmente.</li>
+                        <li><strong>Vue Router & Vuex:</strong> La sintaxis cambia (Vuex 4 / Vue Router 4). Vuex está en deprecación a favor de <strong>Pinia</strong>.</li>
+                        <li><strong>Pausa de Features:</strong> Una refactorización monolítica o estilo "Big Bang" bloquearía nuevas funcionalidades por meses.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Estrategia por Fases -->
+        <section class="card">
+            <div class="card-header">
+                <h2>3. Estrategia de Refactorización por Fases (Sin romper Producción)</h2>
+            </div>
+            <p>Se recomienda la estrategia de <strong>Strangler Fig Pattern (Migración Progresiva)</strong> en lugar de una reescritura desde cero.</p>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>Fase 1: Desacoplamiento Lógico (Inmediato - Aún en Vue 2)</h3>
+                        <p>Extraer toda la lógica de negocio (llamadas de API Axios, cálculos, formatos) fuera de los <strong>Vue Mixins</strong> hacia funciones puros de JavaScript. Actualizar a <strong>Vue 2.7</strong> (Que trae la Composition API de forma nativa a Vue 2).</p>
+<div class="code-block">
+// Antes: mixins/services/loginMixin.js (Antipatrón)
+export default { methods: { getLogin() { return axios.post(...) } } }
+
+// Después: api/authService.js (Desacoplado)
+import axios from '@/plugins/axios';
+export const authService = {
+  login: (data) => axios.post('/api/users/session', data)
+}
+</div>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>Fase 2: Migración del Bundler (Webpack a Vite)</h3>
+                        <p>Remover <code>@vue/cli-service</code> y configurar <strong>Vite</strong> manteniendo Vue 2.7. Esto otorgará mejoras de DX (Developer Experience) inmediatas sin cambiar componentes visuales y modernizará el sistema de <i>build</i>.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>Fase 3: Salto Híbrido al Ecosistema (Vue 3 + Vuetify 3)</h3>
+                        <p>Crear una rama paralela (<code>feat/vue3-migration</code>). Subir las dependencias principales a <code>vue@3</code>, <code>vue-router@4</code> y <code>vuetify@3</code>. Corregir errores de consola sistemáticamente y cambiar al script setup progresivamente en componentes maestros.</p>
+<div class="code-block">
+&lt;!-- Patrón Moderno Propuesto (Vue 3 + &lt;script setup&gt;) --&gt;
+&lt;script setup&gt;
+import { ref, onMounted } from 'vue';
+import { authService } from '@/api/authService';
+import { useToast } from 'toast-library';
+
+const patientData = ref([]);
+const isLoading = ref(false);
+const toast = useToast();
+
+onMounted(async () => {
+  isLoading.value = true;
+  try {
+    patientData.value = await authService.getPatient(id);
+  } catch (err) {
+    toast.error('Error al cargar datos');
+  } finally {
+    isLoading.value = false;
+  }
+});
+&lt;/script&gt;
+</div>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3>Fase 4: Modernización del Estado Global (Vuex a Pinia)</h3>
+                        <p>Sustituir gradualmente los módulos de configuración y estado desde <strong>Vuex 3/4</strong> hacia <strong>Pinia</strong>, la cual es más ligera, no usa mutaciones y tiene inferencia de tipos perfecta si a futuro se desea agregar TypeScript.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Alternativas Modernas -->
+        <section class="card">
+            <div class="card-header">
+                <h2>4. Soluciones Modernas y Alternativas</h2>
+            </div>
+            <p>Si la fricción para migrar Vuetify 3 es demasiado alta debido a los <i>breaking changes</i>, el momento es ideal para explorar alternativas UI modernas más mantenibles y menos pesadas:</p>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Categoría</th>
+                        <th>Mantenido Actual</th>
+                        <th>Alternativa Propuesta / Standard Moderno</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>UI Framework Visual</strong></td>
+                        <td>Vuetify 2.x</td>
+                        <td><strong>PrimeVue:</strong> Extremadamente ágil, compatible con Tailwind, componentes empresariales maduros (Datatables de alto rendimiento, modales, calendarios).<br><br><strong>Quasar Framework:</strong> Opción Enterprise, todo en uno. Excelente para apps de administración médicas y financieras.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Estilos CSS y Utilidades</strong></td>
+                        <td>SCSS / Custom CSS</td>
+                        <td><strong>Tailwind CSS (v3/v4):</strong> Utilidades atómicas. Evita el CSS desordenado y previene romper la UI al borrar clases. Permite personalización total a nivel de componente.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Gestor de Estado (Store)</strong></td>
+                        <td>Vuex</td>
+                        <td><strong>Pinia:</strong> Es el estándar oficial actual. Módulos más limpios, sin getters engorrosos ni `commit`/`dispatch` obligatorios.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Lógica transversal</strong></td>
+                        <td>Mixins Puros</td>
+                        <td><strong>VueUse (`@vueuse/core`):</strong> Librería gigantesca de <i>Composables</i> ultra probados (sensores de ventana, scroll, debounce, localstorage).</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+    </div>
+</body>
+</html>

@@ -1,10 +1,26 @@
 <template>
     <div class="width-table pa-6">
+      <v-row class="mb-2">
+        <v-col cols="12" sm="4">
+          <v-text-field
+            v-model="search"
+            append-icon="mdi-magnify"
+            label="Buscar examen..."
+            single-line
+            hide-details
+            dense
+            outlined
+            clearable
+          ></v-text-field>
+        </v-col>
+      </v-row>
+
       <v-data-table
           dense
           class="table-height"
           :headers="headers"
           :items="databaseList"
+          :search="search"
           :items-per-page="25"
           :footer-props="{
               'show-current-page': true,
@@ -58,6 +74,7 @@
       },
       data() {
           return {
+              search: '',
               headers: [
                   {text: 'Activo', align: 'center', value: 'annulled', sortable: false},
                   {text: 'Descripción', align: 'start', value: 'description'},
@@ -86,4 +103,3 @@
     overflow-y: auto;
 }
   </style>
-  

@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auditoría Arquitectónica Técnica y Detallada - Toro Frontend</title>
+    <style>
+        :root {
+            --primary: #1e272e;
+            --secondary: #2f3640;
+            --accent: #00a8ff;
+            --bg-light: #f5f6fa;
+            --text-dark: #2f3640;
+            --border: #dcdde1;
+            --code-bg: #2d2d2d;
+            --success: #4cd137;
+            --danger: #e84118;
+            --warning: #fbc531;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: var(--bg-light);
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 50px 0;
+            text-align: center;
+            border-bottom: 6px solid var(--accent);
+            margin-bottom: 40px;
+        }
+
+        h1, h2, h3, h4 {
+            margin-top: 0;
+            color: var(--primary);
+        }
+
+        h2 {
+            border-bottom: 3px solid var(--accent);
+            padding-bottom: 12px;
+            margin-top: 50px;
+            display: inline-block;
+        }
+
+        h3 {
+            margin-top: 30px;
+            color: var(--secondary);
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 8px;
+        }
+
+        .section {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            margin-bottom: 40px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background-color: var(--secondary);
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .code-block {
+            background: var(--code-bg);
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', Courier, monospace;
+            overflow-x: auto;
+            font-size: 14px;
+            line-height: 1.5;
+            margin: 20px 0;
+            border-left: 4px solid var(--accent);
+        }
+        
+        .code-inline {
+            background-color: rgba(0, 168, 255, 0.1);
+            color: var(--primary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+
+        .grid-2, .grid-3 {
+            display: grid;
+            gap: 25px;
+        }
+        
+        .grid-2 { grid-template-columns: 1fr 1fr; }
+        .grid-3 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+
+        .folder-structure ul {
+            list-style-type: none;
+            padding-left: 20px;
+        }
+        
+        .folder-structure li::before {
+            content: "📁 ";
+            margin-right: 5px;
+        }
+        
+        .folder-structure li.file::before {
+            content: "📄 ";
+        }
+        
+        .folder-structure li.vue-file::before {
+            content: "💚 ";
+        }
+        
+        div.improvement {
+            border-left: 5px solid var(--warning);
+            background: #fff8e1;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .improvement h4 { color: #f57f17; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Auditoría Arquitectónica Técnica y Detallada</h1>
+    <p>Proyecto: Toro Frontend (Vue.js) | Análisis Profundo</p>
+    <p>Fecha: 2026-08-03</p>
+</header>
+
+<div class="container">
+
+    <div class="section">
+        <h2>1. Estructura Exacta de Módulos (Desglose Exhaustivo)</h2>
+        <p>El núcleo de la aplicación está rigurosamente dividido por módulos de negocio. A continuación se detalla la dispersión de componentes y vistas por cada módulo.</p>
+
+        <div class="grid-3">
+            <div>
+                <h3>Módulo: Admission</h3>
+                <ul class="folder-structure">
+                    <li><span class="code-inline">components/modules/admission</span>
+                        <ul>
+                            <li class="vue-file">EndAdmissionDialog.vue</li>
+                            <li class="vue-file">InformationPatiente.vue</li>
+                            <li class="vue-file">NewDollarDialog.vue</li>
+                            <li class="vue-file">PrintInvoice.vue</li>
+                            <li class="vue-file">PrintReceipt.vue</li>
+                            <li class="vue-file">RegisterPatient.vue</li>
+                            <li class="vue-file">SelectExams.vue</li>
+                            <li class="vue-file">TypePayment.vue</li>
+                        </ul>
+                    </li>
+                    <li><span class="code-inline">views/modules/</span> (Relacionados)
+                        <ul>
+                            <li class="vue-file">PatientAdmission.vue</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            
+            <div>
+                <h3>Módulo: Exams</h3>
+                <ul class="folder-structure">
+                    <li><span class="code-inline">components/modules/exams</span>
+                        <ul>
+                            <li class="vue-file">ColContent.vue</li>
+                            <li class="vue-file">createExam.vue</li>
+                            <li class="vue-file">draggableComponent.vue</li>
+                            <li class="vue-file">EditExamDialog.vue</li>
+                            <li class="vue-file">EditGroupDialog.vue</li>
+                            <li class="vue-file">EditWorksheetDialog.vue</li>
+                            <li class="vue-file">ExamsTable.vue</li>
+                            <li class="vue-file">newGroup.vue</li>
+                            <li class="vue-file">PriceChangeDialog.vue</li>
+                            <li class="vue-file">RowComponent.vue</li>
+                        </ul>
+                    </li>
+                    <li><span class="code-inline">views/modules/</span> (Relacionados)
+                        <ul>
+                            <li class="vue-file">ExamsList.vue</li>
+                            <li class="vue-file">ExamsOrder.vue</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            
+            <div>
+                <h3>Módulo: History</h3>
+                <ul class="folder-structure">
+                    <li><span class="code-inline">components/modules/history</span>
+                        <ul>
+                            <li class="vue-file">AnnularPatientDialog.vue</li>
+                            <li class="vue-file">CancelPatientDialog.vue</li>
+                            <li class="vue-file">ClearResultDialog.vue</li>
+                            <li class="vue-file">ExamEdit.vue</li>
+                            <li class="vue-file">ExamGlobal.vue</li>
+                            <li class="vue-file">ExamView.vue</li>
+                            <li class="vue-file">ExamViewList.vue</li>
+                            <li class="vue-file">InvoiceDialog.vue</li>
+                            <li class="vue-file">PatientView.vue</li>
+                            <li class="vue-file">PrintSpecialTest.vue</li>
+                            <li class="vue-file">QueriesTable.vue</li>
+                            <li class="vue-file">ReportPatient.vue</li>
+                        </ul>
+                    </li>
+                    <li><span class="code-inline">views/modules/</span> (Relacionados)
+                        <ul>
+                            <li class="vue-file">PatientHistory.vue</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <div>
+                <h3>Módulo: Movements</h3>
+                <ul class="folder-structure">
+                    <li><span class="code-inline">components/modules/movements</span>
+                        <ul>
+                            <li class="vue-file">CreateInvoice.vue</li>
+                            <li class="vue-file">CustomersEdit.vue</li>
+                            <li class="vue-file">CustomersTable.vue</li>
+                            <li class="vue-file">InvoiceAccountReceivable.vue</li>
+                            <li class="vue-file">InvoiceDialog.vue</li>
+                            <li class="vue-file">InvoiceTable.vue</li>
+                            <li class="vue-file">QueriesChargeTable.vue</li>
+                            <li class="vue-file">QueriesTable.vue</li>
+                            <li class="vue-file">QueriesTableInvoices.vue</li>
+                            <li class="vue-file">TypePaymentDialog.vue</li>
+                        </ul>
+                    </li>
+                    <li><span class="code-inline">views/modules/</span> (Relacionados)
+                        <ul>
+                            <li class="vue-file">InvoiceMovements.vue</li>
+                            <li class="vue-file">MovementConsultation.vue</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            
+            <div>
+                <h3>Módulos de Configuración de Negocio (Views transversales)</h3>
+                <p>Ubicados principalmente en <span class="code-inline">views/modules/</span>:</p>
+                <ul class="folder-structure">
+                    <li class="vue-file">AccountsReceivable.vue</li>
+                    <li class="vue-file">AntibioticConfiguration.vue</li>
+                    <li class="vue-file">CancelAccountsReceivable.vue</li>
+                    <li class="vue-file">ClosesCash.vue</li>
+                    <li class="vue-file">GermsConfiguration.vue</li>
+                    <li class="vue-file">LaboratoryConfiguration.vue</li>
+                    <li class="vue-file">parasiticConfiguration.vue</li>
+                    <li class="vue-file">PatientApprove.vue</li>
+                    <li class="vue-file">PatientWorksheet.vue</li>
+                    <li class="vue-file">RegisteredCustomers.vue</li>
+                    <li class="vue-file">RegisteredUsers.vue</li>
+                    <li class="vue-file">ResultsByEmail.vue</li>
+                    <li class="vue-file">RoutinesConfiguration.vue</li>
+                    <li class="vue-file">SpecialTestResults.vue</li>
+                    <li class="vue-file">SpecialTestsConfiguration.vue</li>
+                    <li class="vue-file">TypePayment.vue</li>
+                    <li class="vue-file">WorkGroupConfiguration.vue</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>2. Desglose Detallado del Router</h2>
+        <p>El sistema enrutador divide la lógica en archivos separados según el área del sistema. El layout base envolvente para toda el área privada es <code>SuiteLayout.vue</code>. Las rutas maestras registradas en <code>router/index.js</code> son:</p>
+        
+        <table>
+            <tr><th>Ruta Padre</th><th>Layout</th><th>Fichero Route Importado</th><th>Módulo / Propósito</th></tr>
+            <tr><td><code>/setting</code></td><td>SuiteLayout &rarr; SettingLayout</td><td><code>setting.router.js</code></td><td>Configuraciones administrativas.</td></tr>
+            <tr><td><code>/movements</code></td><td>SuiteLayout &rarr; MovementsLayout</td><td><code>movements.router.js</code></td><td>Facturación, Cobros cruzados, etc.</td></tr>
+            <tr><td><code>/admission</code></td><td>SuiteLayout &rarr; PatientAdmissionLayout</td><td><code>admission.router.js</code></td><td>Registro e ingreso de pacientes (facturación incial).</td></tr>
+            <tr><td><code>/history</code></td><td>SuiteLayout &rarr; HistoryLayout</td><td><code>history.router.js</code></td><td>Historial médico y exámenes.</td></tr>
+            <tr><td><code>/approve</code></td><td>SuiteLayout &rarr; ApproveLayout</td><td><code>approve.router.js</code></td><td>Aprobaciones médicas.</td></tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>3. Arquitectura y Observaciones Técnicas Críticas (con Código)</h2>
+        
+        <div class="improvement">
+            <h4>🚨 Antimpatrón: Servicios API Acoplados en Mixins Vue</h4>
+            <p><strong>El Problema:</strong> Las llamadas Axios están encapsuladas usando Vue Mixins (ej. <code>src/mixins/services/loginMixin.js</code>). Esto genera colisión de nombres de métodos en los componentes, dificulta el testing unitario y rompe la separación de responsabilidades (SoC), ya que el componente de Vista se entrelaza lógicamente con la capa de Red/Repositorio.</p>
+            <p><strong>Código Actual:</strong></p>
+<pre class="code-block">
+// src/mixins/services/loginMixin.js
+import axios from "axios";
+import { basePath } from '@/config';
+
+const notificationsMixin = {
+    methods: {
+        getLoginToEmailPassword(filter) {
+            return axios.post(`${basePath}/api/users/session`, filter, config)
+                .then(response => response.data)
+                .catch(error => {
+                    this.$toast.error('Problemas para obtener el usuario');
+                })
+        }
+    }
+}
+export default notificationsMixin;
+</pre>
+            <p><strong>Refactorización Propuesta (Patrón Repositorio):</strong></p>
+<pre class="code-block">
+// 1. Crear instancia base: src/api/httpClient.js
+import axios from "axios";
+import { basePath } from '@/config';
+
+const httpClient = axios.create({
+    baseURL: basePath,
+    headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+});
+
+// Interceptor para inyectar token siempre actualizado
+httpClient.interceptors.request.use(config => {
+    const token = localStorage.getItem('token');
+    if (token) config.headers.authorization = `Bearer ${token}`;
+    return config;
+});
+export default httpClient;
+
+// 2. Extraer el servicio: src/api/services/authService.js
+import httpClient from '../httpClient';
+
+export const AuthService = {
+    login(credentials) {
+        return httpClient.post('/api/users/session', credentials);
+    },
+    getUser(userId) {
+        return httpClient.get(`/api/users/${userId}`);
+    }
+};
+
+// 3. Uso en el Componente Vue (Limpiamente importado):
+import { AuthService } from '@/api/services/authService';
+
+export default {
+    methods: {
+        async handleLogin() {
+            try {
+                const { data } = await AuthService.login(this.form);
+            } catch (err) {
+                this.$toast.error('Error en login');
+            }
+        }
+    }
+}
+</pre>
+        </div>
+
+        <div class="improvement">
+            <h4>⚠️ Manejo de Token y Dependencia Fuerte de LocalStorage</h4>
+            <p><strong>El Problema:</strong> La variable <code>config</code> en el mixin principal (<code>loginMixin.js</code>) se evalúa <strong>una sola vez</strong> cuando el archivo es importado (en la fase de parseo del módulo). Si el usuario hace login, el token muta en <code>localStorage</code>, pero <code>config.headers.authorization</code> retendrá el valor viejo (posiblemente nulo). Esto obliga a recargas forzadas del navegador (window.location.reload) que rompen la esencia SPA.</p>
+            <p><strong>Solución:</strong> Implementar <strong>Axios Interceptors</strong> (como se muestra en el bloque de código de arriba). El interceptor evalúa dinámicamente el localStorage <em>justo antes</em> de disparar el <code>HTTPRequest</code>.</p>
+        </div>
+        
+        <div class="improvement">
+            <h4>💡 Migración de Ecosistema Recomendada</h4>
+            <p>El stack tecnológico se basa en <span class="code-inline">Vue 2.6.14</span>, el cual finalizó su soporte LFE el 31 de Diciembre de 2023. Además, depende fuertemente de Vuetify 2.</p>
+            <ul>
+                <li><strong>Dependencias Aislables:</strong> Antes de actualizar Vue, es recomendable migrar los <code>mixins</code> (Vue 2 Options API specific) a clases puras JS como lo propuesto. De esta forma, desacoplas la lógica de negocio del framework.</li>
+                <li><strong>Migración a Vite:</strong> El proyecto usa Vue CLI Webpack. Se recomienda rotar los scripts a Vite para mejorar increíblemente la rapidez de compilación.</li>
+            </ul>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>
