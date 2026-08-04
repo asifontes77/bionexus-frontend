@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Auditoria Frontend TORO - 02-rutas-autenticacion</title>
+<style>
+body{margin:0;background:#f8fafc;color:#172033;font-family:Segoe UI,Arial,sans-serif;line-height:1.5}
+header{background:#102a43;color:#fff;border-bottom:5px solid #16a085;padding:32px 22px}
+header div,main{max-width:1350px;margin:auto}main{padding:26px 16px}
+.notice,.file{background:#fff;border:1px solid #cbd5e1;border-radius:9px;margin-bottom:22px;box-shadow:0 3px 10px rgba(15,23,42,.06)}
+.notice{padding:18px}.file-header{background:#e8f5f2;border-bottom:1px solid #cbd5e1;padding:13px 17px}
+.file-header h2{font-size:1.1rem;margin:0 0 6px;overflow-wrap:anywhere}.meta{color:#475569;font-size:.88rem}
+pre{margin:0;padding:17px;white-space:pre-wrap;overflow-wrap:anywhere;tab-size:4;font-family:Consolas,Courier New,monospace;font-size:.84rem;line-height:1.46}
+.ln{display:inline-block;color:#64748b;min-width:5.7em;user-select:none}.redacted{color:#b91c1c;font-weight:700}
+footer{text-align:center;color:#64748b;padding:20px}</style></head><body>
+<header><div>
+<h1>Auditoria Frontend TORO - 02-rutas-autenticacion</h1>
+<p>Parte: 1</p>
+<p>Raiz auditada: C:\Users\Alexis\Documents\Sistema TORO\Aplicacion\Toro Frontend</p>
+<p>Generado: 04-08-2026 09:41 a. m.</p>
+</div></header><main>
+<section class="notice"><strong>Extraccion estatica de solo lectura.</strong>
+<p>Los posibles secretos fueron reemplazados por [REDACTED]. Los numeros de linea corresponden al archivo original.</p></section>
+<section class="file">
+<div class="file-header">
+<h2>src\auth\authGuard.js</h2>
+<div class="meta">Lineas: 16 | Bytes: 370 | SHA256: 6943504127B36BB20DBF902FB3B39F4DC90832C8D70CA50652495F793B7A00A8</div>
+</div><pre>
+<span class="ln">    1 | </span>import { router } from &#39;@/router&#39;
+<span class="ln">    2 | </span>import tokenUtils from &#39;@/logic/tokenUtils&#39;
+<span class="ln">    3 | </span>
+<span class="ln">    4 | </span>export function authGuard(to, from, next) {
+<span class="ln">    5 | </span>  if (localStorage.getItem(&#39;token&#39;)) {
+<span class="ln">    6 | </span>    const verifyToken = tokenUtils.isTokenExpired(localStorage.getItem(&#39;token&#39;))
+<span class="ln">    7 | </span>    if (verifyToken) {
+<span class="ln">    8 | </span>      next(&#39;/login&#39;)
+<span class="ln">    9 | </span>    } else {
+<span class="ln">   10 | </span>      next()
+<span class="ln">   11 | </span>    }
+<span class="ln">   12 | </span>  } else {
+<span class="ln">   13 | </span>    next(&#39;/login&#39;)
+<span class="ln">   14 | </span>  }
+<span class="ln">   15 | </span>}
+<span class="ln">   16 | </span>
+
+</pre></section>
+<section class="file">
+<div class="file-header">
+<h2>src\logic\auth.js</h2>
+<div class="meta">Lineas: 51 | Bytes: 1837 | SHA256: 4C51BD2026A79FB3774F259760DCE7779B8AAFDEBA1741EDEB675AF82C118340</div>
+</div><pre>
+<span class="ln">    1 | </span>import loginMixin from &#39;@/mixins/services/loginMixin&#39;
+<span class="ln">    2 | </span>import store from &#39;@/store&#39;
+<span class="ln">    3 | </span>import router from &#39;@/router&#39;
+<span class="ln">    4 | </span>
+<span class="ln">    5 | </span>export default {
+<span class="ln">    6 | </span>  setToken(response) {
+<span class="ln">    7 | </span>    const client = {
+<span class="ln">    8 | </span>      id: response.user.id,
+<span class="ln">    9 | </span>      name: response.user.name,
+<span class="ln">   10 | </span>      roles: response.user.roles,
+<span class="ln">   11 | </span>      token: response.token,
+<span class="ln">   12 | </span>      college: response.user.college_number,
+<span class="ln">   13 | </span>      position: response.user.position,
+<span class="ln">   14 | </span>      photo: response.url_photo === &quot;undefined&quot; || response.url_photo === null ? &#39;&#39; : response.url_photo,
+<span class="ln">   15 | </span>      telephone: response.user.telephone,
+<span class="ln">   16 | </span>      email: response.user.email
+<span class="ln">   17 | </span>    }
+<span class="ln">   18 | </span>    store.commit(&#39;setClient&#39;, client)
+<span class="ln">   19 | </span>    localStorage.token = response.token
+<span class="ln">   20 | </span>    localStorage.clientId = response.user.id
+<span class="ln">   21 | </span>    localStorage.username = response.user.name
+<span class="ln">   22 | </span>    localStorage.college_number = response.user.college_number
+<span class="ln">   23 | </span>    localStorage.roles = response.user.roles
+<span class="ln">   24 | </span>    localStorage.position = response.user.position
+<span class="ln">   25 | </span>    localStorage.url_photo = response.url_photo === &quot;undefined&quot; || response.url_photo === null ? &#39;&#39; : response.url_photo
+<span class="ln">   26 | </span>    localStorage.telephone = response.user.telephone
+<span class="ln">   27 | </span>    localStorage.email = response.user.email
+<span class="ln">   28 | </span>    const today = new Date()
+<span class="ln">   29 | </span>    localStorage.dateIn = today.toISOString()
+<span class="ln">   30 | </span>    router.replace({ 
+<span class="ln">   31 | </span>      name: &quot;home&quot;, 
+<span class="ln">   32 | </span>      params:{ 
+<span class="ln">   33 | </span>        username: response.user.name,
+<span class="ln">   34 | </span>        college_number: response.user.college_number,
+<span class="ln">   35 | </span>        roles: response.user.roles,
+<span class="ln">   36 | </span>        position: response.user.position,
+<span class="ln">   37 | </span>        clientId: response.user.id,
+<span class="ln">   38 | </span>        photo: response.user.photo,
+<span class="ln">   39 | </span>        telephone: response.user.telephone,
+<span class="ln">   40 | </span>        email: response.user.email,
+<span class="ln">   41 | </span>      } 
+<span class="ln">   42 | </span>    })
+<span class="ln">   43 | </span>  },
+<span class="ln">   44 | </span>  async login({ username, password}) {
+<span class="ln">   45 | </span>    const filter = {
+<span class="ln">   46 | </span>      user_name: username,
+<span class="ln">   47 | </span>      password: password,
+<span class="ln">   48 | </span>    }
+<span class="ln">   49 | </span>    return await loginMixin.methods.getLoginToEmailPassword(filter)
+<span class="ln">   50 | </span>  },
+<span class="ln">   51 | </span>}
+
+</pre></section>
+<section class="file">
+<div class="file-header">
+<h2>src\router\admission.router.js</h2>
+<div class="meta">Lineas: 28 | Bytes: 731 | SHA256: 72B461F126ED8656D85F4B786CA96E70A6544F1F9E8E217705AA7DDE48DD31A7</div>
+</div><pre>
+<span class="ln">    1 | </span>import { authGuard } from &#39;@/auth/authGuard&#39;
+<span class="ln">    2 | </span>
+<span class="ln">    3 | </span>const PatientAdmission = () =&gt; import(&#39;@/views/modules/PatientAdmission.vue&#39;)
+<span class="ln">    4 | </span>const Worksheet = () =&gt; import(&#39;@/views/modules/PatientWorksheet.vue&#39;)
+<span class="ln">    5 | </span>
+<span class="ln">    6 | </span>const View404 = () =&gt; import(&#39;@/views/View404.vue&#39;)
+<span class="ln">    7 | </span>const meta = {layout: &#39;SuiteLayout&#39;, title: &#39;Ingreso de pacientes&#39;, insideModule: true }
+<span class="ln">    8 | </span>const routes = [
+<span class="ln">    9 | </span>    {
+<span class="ln">   10 | </span>        path: &#39;&#39;,
+<span class="ln">   11 | </span>        name: &#39;PatientAdmission&#39;,
+<span class="ln">   12 | </span>        component: PatientAdmission,
+<span class="ln">   13 | </span>        beforeEnter: authGuard,
+<span class="ln">   14 | </span>        meta: {
+<span class="ln">   15 | </span>            ...meta,
+<span class="ln">   16 | </span>        }
+<span class="ln">   17 | </span>    },
+<span class="ln">   18 | </span>    {
+<span class="ln">   19 | </span>        path: &#39;/worksheet&#39;,
+<span class="ln">   20 | </span>        name: &#39;Worksheet&#39;,
+<span class="ln">   21 | </span>        component: Worksheet,
+<span class="ln">   22 | </span>        meta: {
+<span class="ln">   23 | </span>            ...meta,
+<span class="ln">   24 | </span>        }
+<span class="ln">   25 | </span>    },
+<span class="ln">   26 | </span>]
+<span class="ln">   27 | </span>
+<span class="ln">   28 | </span>export default routes
+
+</pre></section>
+<section class="file">
+<div class="file-header">
+<h2>src\router\approve.router.js</h2>
+<div class="meta">Lineas: 17 | Bytes: 440 | SHA256: D4945C473DF41C3B6C2FE7BAB696632C74D389F25498DAA6D0D68F9D98C68244</div>
+</div><pre>
+<span class="ln">    1 | </span>import { authGuard } from &#39;@/auth/authGuard&#39;
+<span class="ln">    2 | </span>
+<span class="ln">    3 | </span>const PatientApprove = () =&gt; import(&#39;@/views/modules/PatientApprove.vue&#39;)
+<span class="ln">    4 | </span>const meta = {layout: &#39;SuiteLayout&#39;, title: &#39;Aprobar pacientes&#39;, insideModule: true }
+<span class="ln">    5 | </span>const routes = [
+<span class="ln">    6 | </span>    {
+<span class="ln">    7 | </span>        path: &#39;&#39;,
+<span class="ln">    8 | </span>        name: &#39;PatientApprove&#39;,
+<span class="ln">    9 | </span>        component: PatientApprove,
+<span class="ln">   10 | </span>        beforeEnter: authGuard,
+<span class="ln">   11 | </span>        meta: {
+<span class="ln">   12 | </span>            ...meta,
+<span class="ln">   13 | </span>        }
+<span class="ln">   14 | </span>    },
+<span class="ln">   15 | </span>]
+<span class="ln">   16 | </span>
+<span class="ln">   17 | </span>export default routes
+
+</pre></section>
+<section class="file">
+<div class="file-header">
+<h2>src\router\exams.router.js</h2>
+<div class="meta">Lineas: 17 | Bytes: 421 | SHA256: 6B50AE39C9BE10735BE1B25E1414F008A52F8FD391A05685299C7A71CD711E30</div>
+</div><pre>
+<span class="ln">    1 | </span>import { authGuard } from &#39;@/auth/authGuard&#39;
+<span class="ln">    2 | </span>
+<span class="ln">    3 | </span>const ExamsList = () =&gt; import(&#39;@/views/modules/ExamsList.vue&#39;)
+<span class="ln">    4 | </span>const meta = {layout: &#39;SuiteLayout&#39;, title: &#39;lista de ex&#225;menes&#39;, insideModule: true }
+<span class="ln">    5 | </span>const routes = [
+<span class="ln">    6 | </span>    {
+<span class="ln">    7 | </span>        path: &#39;&#39;,
+<span class="ln">    8 | </span>        name: &#39;ExamsList&#39;,
+<span class="ln">    9 | </span>        component: ExamsList,
+<span class="ln">   10 | </span>        beforeEnter: authGuard,
+<span class="ln">   11 | </span>        meta: {
+<span class="ln">   12 | </span>            ...meta,
+<span class="ln">   13 | </span>        }
+<span class="ln">   14 | </span>    },
+<span class="ln">   15 | </span>]
+<span class="ln">   16 | </span>
+<span class="ln">   17 | </span>export default routes
+
+</pre></section>
+<section class="file">
+<div class="file-header">
+<h2>src\router\history.router.js</h2>
+<div class="meta">Lineas: 38 | Bytes: 1049 | SHA256: 07207103B191196DB890E7D1F4A75CE407B687585F9EE7068C9654DE66BF3FE3</div>
+</div><pre>
+<span class="ln">    1 | </span>import { authGuard } from &#39;@/auth/authGuard&#39;
+<span class="ln">    2 | </span>
+<span class="ln">    3 | </span>const PatientHistory = () =&gt; import(&#39;@/views/modules/PatientHistory.vue&#39;)
+<span class="ln">    4 | </span>const ResultsByEmail = () =&gt; import(&#39;@/views/modules/ResultsByEmail.vue&#39;)
+<span class="ln">    5 | </span>const SpecialTestResults = () =&gt; import(&#39;@/views/modules/SpecialTestResults.vue&#39;)
+<span class="ln">    6 | </span>const View404 = () =&gt; import(&#39;@/views/View404.vue&#39;)
+<span class="ln">    7 | </span>const meta = {layout: &#39;SuiteLayout&#39;, title: &#39;Historia de pacientes&#39;, insideModule: true }
+<span class="ln">    8 | </span>const routes = [
+<span class="ln">    9 | </span>    {
+<span class="ln">   10 | </span>        path: &#39;&#39;,
+<span class="ln">   11 | </span>        name: &#39;PatientHistory&#39;,
+<span class="ln">   12 | </span>        component: PatientHistory,
+<span class="ln">   13 | </span>        beforeEnter: authGuard,
+<span class="ln">   14 | </span>        meta: {
+<span class="ln">   15 | </span>            ...meta,
+<span class="ln">   16 | </span>        }
+<span class="ln">   17 | </span>    },
+<span class="ln">   18 | </span>    {
+<span class="ln">   19 | </span>        path: &#39;/email&#39;,
+<span class="ln">   20 | </span>        name: &#39;ResultsByEmail&#39;,
+<span class="ln">   21 | </span>        component: ResultsByEmail,
+<span class="ln">   22 | </span>        beforeEnter: authGuard,
+<span class="ln">   23 | </span>        meta: {
+<span class="ln">   24 | </span>            ...meta,
+<span class="ln">   25 | </span>        }
+<span class="ln">   26 | </span>    },
+<span class="ln">   27 | </span>    {
+<span class="ln">   28 | </span>        path: &#39;/special&#39;,
+<span class="ln">   29 | </span>        name: &#39;SpecialTestResults&#39;,
+<span class="ln">   30 | </span>        component: SpecialTestResults,
+<span class="ln">   31 | </span>        beforeEnter: authGuard,
+<span class="ln">   32 | </span>        meta: {
+<span class="ln">   33 | </span>            ...meta,
+<span class="ln">   34 | </span>        }
+<span class="ln">   35 | </span>    },
+<span class="ln">   36 | </span>]
+<span class="ln">   37 | </span>
+<span class="ln">   38 | </span>export default routes
+
+</pre></section>
+<section class="file">
+<div class="file-header">
+<h2>src\router\index.js</h2>
+<div class="meta">Lineas: 94 | Bytes: 2773 | SHA256: D58422DB90505E69EF477217A6DCA357429C3F38E02CC9E4E1F3B9AEBDFEEFFC</div>
+</div><pre>
+<span class="ln">    1 | </span>import Vue from &#39;vue&#39;
+<span class="ln">    2 | </span>import VueRouter from &#39;vue-router&#39;
+<span class="ln">    3 | </span>import View404 from &#39;@/views/View404.vue&#39;
+<span class="ln">    4 | </span>import Login from &#39;@/components/Login.vue&#39;
+<span class="ln">    5 | </span>import Home from &#39;@/views/Home.vue&#39;
+<span class="ln">    6 | </span>import settingRouter from &#39;@/router/setting.router&#39;
+<span class="ln">    7 | </span>import movementsRouter from &#39;@/router/movements.router&#39;
+<span class="ln">    8 | </span>import PatientAdmission from &#39;@/router/admission.router&#39;
+<span class="ln">    9 | </span>import PatientHistory from &#39;@/router/history.router&#39;
+<span class="ln">   10 | </span>import PatientApprove from &#39;@/router/approve.router&#39;
+<span class="ln">   11 | </span>import { authGuard } from &#39;@/auth/authGuard&#39;
+<span class="ln">   12 | </span>
+<span class="ln">   13 | </span>const SettingLayout = () =&gt; import(&#39;@/layouts/modules/SettingLayout.vue&#39;)
+<span class="ln">   14 | </span>const PatientAdmissionLayout = () =&gt; import(&#39;@/layouts/modules/PatientAdmissionLayout.vue&#39;)
+<span class="ln">   15 | </span>const PatientHistoryLayout = () =&gt; import(&#39;@/layouts/modules/HistoryLayout.vue&#39;)
+<span class="ln">   16 | </span>const PatientApproveLayout = () =&gt; import(&#39;@/layouts/modules/ApproveLayout.vue&#39;)
+<span class="ln">   17 | </span>const MovementsLayout = () =&gt; import(&#39;@/layouts/modules/MovementsLayout.vue&#39;)
+<span class="ln">   18 | </span>Vue.use(VueRouter)
+<span class="ln">   19 | </span>
+<span class="ln">   20 | </span>const routes = [
+<span class="ln">   21 | </span>  {
+<span class="ln">   22 | </span>    path: &#39;/login&#39;,
+<span class="ln">   23 | </span>    name: &#39;login&#39;,
+<span class="ln">   24 | </span>    component: Login,
+<span class="ln">   25 | </span>    meta: { layout: &#39;BlankLayout&#39;, title: &#39;Login&#39;},
+<span class="ln">   26 | </span>  },
+<span class="ln">   27 | </span>  {
+<span class="ln">   28 | </span>    path: &#39;/about&#39;,
+<span class="ln">   29 | </span>    name: &#39;about&#39;,
+<span class="ln">   30 | </span>    // route level code-splitting
+<span class="ln">   31 | </span>    // this generates a separate chunk (about.[hash].js) for this route
+<span class="ln">   32 | </span>    // which is lazy-loaded when the route is visited.
+<span class="ln">   33 | </span>    component: () =&gt; import(/* webpackChunkName: &quot;about&quot; */ &#39;../views/AboutView.vue&#39;)
+<span class="ln">   34 | </span>  },
+<span class="ln">   35 | </span>  {
+<span class="ln">   36 | </span>    path: &#39;/&#39;,
+<span class="ln">   37 | </span>    name: &#39;home&#39;,
+<span class="ln">   38 | </span>    component: Home,
+<span class="ln">   39 | </span>    beforeEnter: authGuard,
+<span class="ln">   40 | </span>    meta: { layout: &#39;SuiteLayout&#39;, title: &#39;Home&#39;, requiresAuth: true}
+<span class="ln">   41 | </span>  },
+<span class="ln">   42 | </span>  {
+<span class="ln">   43 | </span>    path: &#39;/setting&#39;,
+<span class="ln">   44 | </span>    component: SettingLayout,
+<span class="ln">   45 | </span>    children: settingRouter,
+<span class="ln">   46 | </span>    beforeEnter: authGuard,
+<span class="ln">   47 | </span>    meta: { layout: &#39;SuiteLayout&#39;, requiresAuth: true}
+<span class="ln">   48 | </span>  },
+<span class="ln">   49 | </span>  {
+<span class="ln">   50 | </span>    path: &#39;/movements&#39;,
+<span class="ln">   51 | </span>    component: MovementsLayout,
+<span class="ln">   52 | </span>    children: movementsRouter,
+<span class="ln">   53 | </span>    beforeEnter: authGuard,
+<span class="ln">   54 | </span>    meta: { layout: &#39;SuiteLayout&#39;, requiresAuth: true}
+<span class="ln">   55 | </span>  },
+<span class="ln">   56 | </span>    
+<span class="ln">   57 | </span>  {
+<span class="ln">   58 | </span>    path: &#39;/admission&#39;,
+<span class="ln">   59 | </span>    component: PatientAdmissionLayout,
+<span class="ln">   60 | </span>    children: PatientAdmission,
+<span class="ln">   61 | </span>    beforeEnter: authGuard,
+<span class="ln">   62 | </span>    meta: { layout: &#39;SuiteLayout&#39;, requiresAuth: true}
+<span class="ln">   63 | </span>  },  
+<span class="ln">   64 | </span>  {
+<span class="ln">   65 | </span>    path: &#39;/history&#39;,
+<span class="ln">   66 | </span>    component: PatientHistoryLayout,
+<span class="ln">   67 | </span>    children: PatientHistory,
+<span class="ln">   68 | </span>    beforeEnter: authGuard,
+<span class="ln">   69 | </span>    meta: { layout: &#39;SuiteLayout&#39;, requiresAuth: true}
+<span class="ln">   70 | </span>  }, 
+<span class="ln">   71 | </span>  {
+<span class="ln">   72 | </span>    path: &#39;/approve&#39;,
+<span class="ln">   73 | </span>    component: PatientApproveLayout,
+<span class="ln">   74 | </span>    children: PatientApprove,
+<span class="ln">   75 | </span>    beforeEnter: authGuard,
+<span class="ln">   76 | </span>    meta: { layout: &#39;SuiteLayout&#39;, requiresAuth: true}
+<span class="ln">   77 | </span>  },
+<span class="ln">   78 | </span>  {
+<span class="ln">   79 | </span>    path: &#39;/:invalidRoute&#39;,
+<span class="ln">   80 | </span>    name: &#39;View404&#39;,
+<span class="ln">   81 | </span>    component: View404,
+<span class="ln">   82 | </span>    meta: { layout: &#39;BlankLayout&#39;, title: &#39;TORO 404&#39;},
+<span class="ln">   83 | </span>  }
+<span class="ln">   84 | </span>]
+<span class="ln">   85 | </span>
+<span class="ln">   86 | </span>const router = new VueRouter({
+<span class="ln">   87 | </span>  mode: &#39;history&#39;,
+<span class="ln">   88 | </span>  base: process.env.BASE_URL,
+<span class="ln">   89 | </span>  routes
+<span class="ln">   90 | </span>})
+<span class="ln">   91 | </span>
+<span class="ln">   92 | </span>
+<span class="ln">   93 | </span>export default router
+<span class="ln">   94 | </span>
+
+</pre></section>
+<section class="file">
+<div class="file-header">
+<h2>src\router\movements.router.js</h2>
+<div class="meta">Lineas: 69 | Bytes: 1694 | SHA256: 569B55A39AA4CEFA1F57F67CE24A4C3E6DD9CD10BD51843BF85FB18997971650</div>
+</div><pre>
+<span class="ln">    1 | </span>import { authGuard } from &#39;@/auth/authGuard&#39;
+<span class="ln">    2 | </span>
+<span class="ln">    3 | </span>const ClosesCash = () =&gt; import(&#39;@/views/modules/ClosesCash.vue&#39;)
+<span class="ln">    4 | </span>const InvoiceMovements = () =&gt; import(&#39;@/views/modules/InvoiceMovements.vue&#39;)
+<span class="ln">    5 | </span>const CancelAccountsReceivable = () =&gt; import(&#39;@/views/modules/CancelAccountsReceivable&#39;)
+<span class="ln">    6 | </span>const MovementConsultation = () =&gt; import(&#39;@/views/modules/MovementConsultation.vue&#39;)
+<span class="ln">    7 | </span>const AccountsReceivable = () =&gt; import(&#39;@/views/modules/AccountsReceivable.vue&#39;)
+<span class="ln">    8 | </span>const RegisteredCustomers = () =&gt; import(&#39;@/views/modules/RegisteredCustomers.vue&#39;)
+<span class="ln">    9 | </span>const meta = {layout: &#39;SuiteLayout&#39;, title: &#39;Configuraci&#243;n&#39;, insideModule: true }
+<span class="ln">   10 | </span>const routes = [
+<span class="ln">   11 | </span>  {
+<span class="ln">   12 | </span>    path: &#39;cash&#39;,
+<span class="ln">   13 | </span>    name: &#39;Cash&#39;,
+<span class="ln">   14 | </span>    component: ClosesCash,
+<span class="ln">   15 | </span>    beforeEnter: authGuard,
+<span class="ln">   16 | </span>    meta: {
+<span class="ln">   17 | </span>        ...meta,
+<span class="ln">   18 | </span>    }
+<span class="ln">   19 | </span>  },
+<span class="ln">   20 | </span>  {
+<span class="ln">   21 | </span>    path: &#39;invoice&#39;,
+<span class="ln">   22 | </span>    name: &#39;issuedInvoices&#39;,
+<span class="ln">   23 | </span>    component: InvoiceMovements,
+<span class="ln">   24 | </span>    beforeEnter: authGuard,
+<span class="ln">   25 | </span>    meta: {
+<span class="ln">   26 | </span>        ...meta,
+<span class="ln">   27 | </span>    }
+<span class="ln">   28 | </span>  },
+<span class="ln">   29 | </span>  {
+<span class="ln">   30 | </span>    path: &#39;cancelinvoice&#39;,
+<span class="ln">   31 | </span>    name: &#39;cancelAccountsReceivable&#39;,
+<span class="ln">   32 | </span>    component: CancelAccountsReceivable,
+<span class="ln">   33 | </span>    beforeEnter: authGuard,
+<span class="ln">   34 | </span>    meta: {
+<span class="ln">   35 | </span>        ...meta,
+<span class="ln">   36 | </span>    }
+<span class="ln">   37 | </span>  },  
+<span class="ln">   38 | </span>  {
+<span class="ln">   39 | </span>    path: &#39;consultation&#39;,
+<span class="ln">   40 | </span>    name: &#39;consultation&#39;,
+<span class="ln">   41 | </span>    component: MovementConsultation,
+<span class="ln">   42 | </span>    beforeEnter: authGuard,
+<span class="ln">   43 | </span>    meta: {
+<span class="ln">   44 | </span>        ...meta,
+<span class="ln">   45 | </span>    }
+<span class="ln">   46 | </span>  },
+<span class="ln">   47 | </span>  {
+<span class="ln">   48 | </span>    path: &#39;accounts-receivable&#39;,
+<span class="ln">   49 | </span>    name: &#39;accountsReceivable&#39;,
+<span class="ln">   50 | </span>    component: AccountsReceivable,
+<span class="ln">   51 | </span>    beforeEnter: authGuard,
+<span class="ln">   52 | </span>    meta: {
+<span class="ln">   53 | </span>        ...meta,
+<span class="ln">   54 | </span>    }
+<span class="ln">   55 | </span>  },
+<span class="ln">   56 | </span>  {
+<span class="ln">   57 | </span>    path: &#39;customers&#39;,
+<span class="ln">   58 | </span>    name: &#39;registeredCustomers&#39;,
+<span class="ln">   59 | </span>    component: RegisteredCustomers,
+<span class="ln">   60 | </span>    beforeEnter: authGuard,
+<span class="ln">   61 | </span>    meta: {
+<span class="ln">   62 | </span>        ...meta,
+<span class="ln">   63 | </span>    }
+<span class="ln">   64 | </span>  },
+<span class="ln">   65 | </span>  
+<span class="ln">   66 | </span>
+<span class="ln">   67 | </span>]
+<span class="ln">   68 | </span>
+<span class="ln">   69 | </span>export default routes
+
+</pre></section>
+<section class="file">
+<div class="file-header">
+<h2>src\router\setting.router.js</h2>
+<div class="meta">Lineas: 117 | Bytes: 3045 | SHA256: E0402C04E1C3608EF9956E95BE8C0A4030A565CCE6AB01FAA3F2EC327D7F6D96</div>
+</div><pre>
+<span class="ln">    1 | </span>import { authGuard } from &#39;@/auth/authGuard&#39;
+<span class="ln">    2 | </span>
+<span class="ln">    3 | </span>const ExamsList = () =&gt; import(&#39;@/views/modules/ExamsList.vue&#39;)
+<span class="ln">    4 | </span>const ExamsOrder = () =&gt; import(&#39;@/views/modules/ExamsOrder.vue&#39;)
+<span class="ln">    5 | </span>const Antibiotic = () =&gt; import(&#39;@/views/modules/AntibioticConfiguration.vue&#39;)
+<span class="ln">    6 | </span>const Germs = () =&gt; import(&#39;@/views/modules/GermsConfiguration.vue&#39;)
+<span class="ln">    7 | </span>const Parasitic = () =&gt; import(&#39;@/views/modules/parasiticConfiguration.vue&#39;)
+<span class="ln">    8 | </span>const Laboratory = () =&gt; import(&#39;@/views/modules/LaboratoryConfiguration.vue&#39;)
+<span class="ln">    9 | </span>const RegisteredUsers = () =&gt; import(&#39;@/views/modules/RegisteredUsers.vue&#39;)
+<span class="ln">   10 | </span>const WorkGroup = () =&gt; import(&#39;@/views/modules/WorkGroupConfiguration.vue&#39;)
+<span class="ln">   11 | </span>const SpecialTests = () =&gt; import(&#39;@/views/modules/SpecialTestsConfiguration.vue&#39;)
+<span class="ln">   12 | </span>const TypePayment = () =&gt; import(&#39;@/views/modules/TypePayment.vue&#39;)
+<span class="ln">   13 | </span>const Routines = () =&gt; import(&#39;@/views/modules/RoutinesConfiguration.vue&#39;)
+<span class="ln">   14 | </span>const meta = {layout: &#39;SuiteLayout&#39;, title: &#39;Configuraci&#243;n&#39;, insideModule: true }
+<span class="ln">   15 | </span>const routes = [
+<span class="ln">   16 | </span>    {
+<span class="ln">   17 | </span>        path: &#39;exams&#39;,
+<span class="ln">   18 | </span>        name: &#39;ExamsList&#39;,
+<span class="ln">   19 | </span>        component: ExamsList,
+<span class="ln">   20 | </span>        beforeEnter: authGuard,
+<span class="ln">   21 | </span>        meta: {
+<span class="ln">   22 | </span>            ...meta,
+<span class="ln">   23 | </span>        }
+<span class="ln">   24 | </span>    },
+<span class="ln">   25 | </span>    {
+<span class="ln">   26 | </span>        path: &#39;order&#39;,
+<span class="ln">   27 | </span>        name: &#39;ExamsOrder&#39;,
+<span class="ln">   28 | </span>        component: ExamsOrder,
+<span class="ln">   29 | </span>        beforeEnter: authGuard,
+<span class="ln">   30 | </span>        meta: {
+<span class="ln">   31 | </span>            ...meta,
+<span class="ln">   32 | </span>        }
+<span class="ln">   33 | </span>    },
+<span class="ln">   34 | </span>    {
+<span class="ln">   35 | </span>        path: &#39;germs&#39;,
+<span class="ln">   36 | </span>        name: &#39;Germs&#39;,
+<span class="ln">   37 | </span>        component: Germs,
+<span class="ln">   38 | </span>        beforeEnter: authGuard,
+<span class="ln">   39 | </span>        meta: {
+<span class="ln">   40 | </span>            ...meta,
+<span class="ln">   41 | </span>        }
+<span class="ln">   42 | </span>    },
+<span class="ln">   43 | </span>    {
+<span class="ln">   44 | </span>        path: &#39;antibiotic&#39;,
+<span class="ln">   45 | </span>        name: &#39;Antibiotic&#39;,
+<span class="ln">   46 | </span>        component: Antibiotic,
+<span class="ln">   47 | </span>        beforeEnter: authGuard,
+<span class="ln">   48 | </span>        meta: {
+<span class="ln">   49 | </span>            ...meta,
+<span class="ln">   50 | </span>        }
+<span class="ln">   51 | </span>    },
+<span class="ln">   52 | </span>    {
+<span class="ln">   53 | </span>        path: &#39;parasitic&#39;,
+<span class="ln">   54 | </span>        name: &#39;Parasitic&#39;,
+<span class="ln">   55 | </span>        component: Parasitic,
+<span class="ln">   56 | </span>        beforeEnter: authGuard,
+<span class="ln">   57 | </span>        meta: {
+<span class="ln">   58 | </span>            ...meta,
+<span class="ln">   59 | </span>        }
+<span class="ln">   60 | </span>    },
+<span class="ln">   61 | </span>    {
+<span class="ln">   62 | </span>        path: &#39;workgroup&#39;,
+<span class="ln">   63 | </span>        name: &#39;WorkGroup&#39;,
+<span class="ln">   64 | </span>        component: WorkGroup,
+<span class="ln">   65 | </span>        beforeEnter: authGuard,
+<span class="ln">   66 | </span>        meta: {
+<span class="ln">   67 | </span>            ...meta,
+<span class="ln">   68 | </span>        }
+<span class="ln">   69 | </span>    },
+<span class="ln">   70 | </span>    {
+<span class="ln">   71 | </span>        path: &#39;specialtests&#39;,
+<span class="ln">   72 | </span>        name: &#39;SpecialTests&#39;,
+<span class="ln">   73 | </span>        component: SpecialTests,
+<span class="ln">   74 | </span>        beforeEnter: authGuard,
+<span class="ln">   75 | </span>        meta: {
+<span class="ln">   76 | </span>            ...meta,
+<span class="ln">   77 | </span>        }
+<span class="ln">   78 | </span>    },
+<span class="ln">   79 | </span>    {
+<span class="ln">   80 | </span>        path: &#39;typepayment&#39;,
+<span class="ln">   81 | </span>        name: &#39;TypePayment&#39;,
+<span class="ln">   82 | </span>        component: TypePayment,
+<span class="ln">   83 | </span>        beforeEnter: authGuard,
+<span class="ln">   84 | </span>        meta: {
+<span class="ln">   85 | </span>            ...meta,
+<span class="ln">   86 | </span>        }
+<span class="ln">   87 | </span>    },        
+<span class="ln">   88 | </span>    {
+<span class="ln">   89 | </span>        path: &#39;routines&#39;,
+<span class="ln">   90 | </span>        name: &#39;Routines&#39;,
+<span class="ln">   91 | </span>        component: Routines,
+<span class="ln">   92 | </span>        beforeEnter: authGuard,
+<span class="ln">   93 | </span>        meta: {
+<span class="ln">   94 | </span>            ...meta,
+<span class="ln">   95 | </span>        }
+<span class="ln">   96 | </span>    },
+<span class="ln">   97 | </span>    {
+<span class="ln">   98 | </span>        path: &#39;users&#39;,
+<span class="ln">   99 | </span>        name: &#39;Users&#39;,
+<span class="ln">  100 | </span>        component: RegisteredUsers,
+<span class="ln">  101 | </span>        beforeEnter: authGuard,
+<span class="ln">  102 | </span>        meta: {
+<span class="ln">  103 | </span>            ...meta,
+<span class="ln">  104 | </span>        }
+<span class="ln">  105 | </span>    },    
+<span class="ln">  106 | </span>    {
+<span class="ln">  107 | </span>        path: &#39;laboratory&#39;,
+<span class="ln">  108 | </span>        name: &#39;Laboratory&#39;,
+<span class="ln">  109 | </span>        component: Laboratory,
+<span class="ln">  110 | </span>        beforeEnter: authGuard,
+<span class="ln">  111 | </span>        meta: {
+<span class="ln">  112 | </span>            ...meta,
+<span class="ln">  113 | </span>        }
+<span class="ln">  114 | </span>    },
+<span class="ln">  115 | </span>]
+<span class="ln">  116 | </span>
+<span class="ln">  117 | </span>export default routes
+
+</pre></section>
+
+</main><footer>Fin de parte</footer></body></html>

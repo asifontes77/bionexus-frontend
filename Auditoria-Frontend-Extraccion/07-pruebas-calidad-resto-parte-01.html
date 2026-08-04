@@ -1,0 +1,2248 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Auditoria Frontend TORO - 07-pruebas-calidad-resto</title>
+<style>
+body{margin:0;background:#f8fafc;color:#172033;font-family:Segoe UI,Arial,sans-serif;line-height:1.5}
+header{background:#102a43;color:#fff;border-bottom:5px solid #16a085;padding:32px 22px}
+header div,main{max-width:1350px;margin:auto}main{padding:26px 16px}
+.notice,.file{background:#fff;border:1px solid #cbd5e1;border-radius:9px;margin-bottom:22px;box-shadow:0 3px 10px rgba(15,23,42,.06)}
+.notice{padding:18px}.file-header{background:#e8f5f2;border-bottom:1px solid #cbd5e1;padding:13px 17px}
+.file-header h2{font-size:1.1rem;margin:0 0 6px;overflow-wrap:anywhere}.meta{color:#475569;font-size:.88rem}
+pre{margin:0;padding:17px;white-space:pre-wrap;overflow-wrap:anywhere;tab-size:4;font-family:Consolas,Courier New,monospace;font-size:.84rem;line-height:1.46}
+.ln{display:inline-block;color:#64748b;min-width:5.7em;user-select:none}.redacted{color:#b91c1c;font-weight:700}
+footer{text-align:center;color:#64748b;padding:20px}</style></head><body>
+<header><div>
+<h1>Auditoria Frontend TORO - 07-pruebas-calidad-resto</h1>
+<p>Parte: 1</p>
+<p>Raiz auditada: C:\Users\Alexis\Documents\Sistema TORO\Aplicacion\Toro Frontend</p>
+<p>Generado: 04-08-2026 09:41 a. m.</p>
+</div></header><main>
+<section class="notice"><strong>Extraccion estatica de solo lectura.</strong>
+<p>Los posibles secretos fueron reemplazados por [REDACTED]. Los numeros de linea corresponden al archivo original.</p></section>
+<section class="file">
+<div class="file-header">
+<h2>.gitignore</h2>
+<div class="meta">Lineas: 24 | Bytes: 254 | SHA256: 25841C84026D2DEEA1051AE64211B41BC92E20B4A4EF5897D779B82865BBD15D</div>
+</div><pre>
+<span class="ln">    1 | </span>.DS_Store
+<span class="ln">    2 | </span>node_modules
+<span class="ln">    3 | </span>/dist
+<span class="ln">    4 | </span>
+<span class="ln">    5 | </span>
+<span class="ln">    6 | </span># local env files
+<span class="ln">    7 | </span>.env.local
+<span class="ln">    8 | </span>.env.*.local
+<span class="ln">    9 | </span>
+<span class="ln">   10 | </span># Log files
+<span class="ln">   11 | </span>npm-debug.log*
+<span class="ln">   12 | </span>yarn-debug.log*
+<span class="ln">   13 | </span>yarn-error.log*
+<span class="ln">   14 | </span>pnpm-debug.log*
+<span class="ln">   15 | </span>
+<span class="ln">   16 | </span># Editor directories and files
+<span class="ln">   17 | </span>.idea
+<span class="ln">   18 | </span>.vscode
+<span class="ln">   19 | </span>*.suo
+<span class="ln">   20 | </span>*.ntvs*
+<span class="ln">   21 | </span>*.njsproj
+<span class="ln">   22 | </span>*.sln
+<span class="ln">   23 | </span>*.sw?
+<span class="ln">   24 | </span>
+
+</pre></section>
+<section class="file">
+<div class="file-header">
+<h2>Audit\Auditoria-Frontend-Migracion.html</h2>
+<div class="meta">Lineas: 422 | Bytes: 17259 | SHA256: 8D64EA809A3C9C603771E1CC6417F92730DF1F4816ED4149C32BCDB5D14E30A8</div>
+</div><pre>
+<span class="ln">    1 | </span>&lt;!DOCTYPE html&gt;
+<span class="ln">    2 | </span>&lt;html lang=&quot;es&quot;&gt;
+<span class="ln">    3 | </span>&lt;head&gt;
+<span class="ln">    4 | </span>    &lt;meta charset=&quot;UTF-8&quot;&gt;
+<span class="ln">    5 | </span>    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+<span class="ln">    6 | </span>    &lt;title&gt;Auditor&#237;a de Migraci&#243;n - Toro Frontend&lt;/title&gt;
+<span class="ln">    7 | </span>    &lt;style&gt;
+<span class="ln">    8 | </span>        :root {
+<span class="ln">    9 | </span>            --primary: #0F172A;
+<span class="ln">   10 | </span>            --secondary: #334155;
+<span class="ln">   11 | </span>            --accent: #3B82F6;
+<span class="ln">   12 | </span>            --success: #10B981;
+<span class="ln">   13 | </span>            --warning: #F59E0B;
+<span class="ln">   14 | </span>            --danger: #EF4444;
+<span class="ln">   15 | </span>            --bg-body: #F8FAFC;
+<span class="ln">   16 | </span>            --bg-card: #FFFFFF;
+<span class="ln">   17 | </span>            --text-main: #334155;
+<span class="ln">   18 | </span>            --text-muted: #64748B;
+<span class="ln">   19 | </span>            --border: #E2E8F0;
+<span class="ln">   20 | </span>        }
+<span class="ln">   21 | </span>
+<span class="ln">   22 | </span>        * {
+<span class="ln">   23 | </span>            box-sizing: border-box;
+<span class="ln">   24 | </span>            margin: 0;
+<span class="ln">   25 | </span>            padding: 0;
+<span class="ln">   26 | </span>        }
+<span class="ln">   27 | </span>
+<span class="ln">   28 | </span>        body {
+<span class="ln">   29 | </span>            font-family: -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, Helvetica, Arial, sans-serif;
+<span class="ln">   30 | </span>            background-color: var(--bg-body);
+<span class="ln">   31 | </span>            color: var(--text-main);
+<span class="ln">   32 | </span>            line-height: 1.6;
+<span class="ln">   33 | </span>        }
+<span class="ln">   34 | </span>
+<span class="ln">   35 | </span>        .header {
+<span class="ln">   36 | </span>            background: linear-gradient(135deg, var(--primary), var(--secondary));
+<span class="ln">   37 | </span>            color: white;
+<span class="ln">   38 | </span>            padding: 60px 20px;
+<span class="ln">   39 | </span>            text-align: center;
+<span class="ln">   40 | </span>            border-bottom: 4px solid var(--accent);
+<span class="ln">   41 | </span>        }
+<span class="ln">   42 | </span>
+<span class="ln">   43 | </span>        .header h1 {
+<span class="ln">   44 | </span>            font-size: 2.5rem;
+<span class="ln">   45 | </span>            margin-bottom: 10px;
+<span class="ln">   46 | </span>            font-weight: 700;
+<span class="ln">   47 | </span>        }
+<span class="ln">   48 | </span>
+<span class="ln">   49 | </span>        .header p {
+<span class="ln">   50 | </span>            font-size: 1.1rem;
+<span class="ln">   51 | </span>            color: #CBD5E1;
+<span class="ln">   52 | </span>        }
+<span class="ln">   53 | </span>
+<span class="ln">   54 | </span>        .container {
+<span class="ln">   55 | </span>            max-width: 1200px;
+<span class="ln">   56 | </span>            margin: 40px auto;
+<span class="ln">   57 | </span>            padding: 0 20px;
+<span class="ln">   58 | </span>        }
+<span class="ln">   59 | </span>
+<span class="ln">   60 | </span>        .card {
+<span class="ln">   61 | </span>            background-color: var(--bg-card);
+<span class="ln">   62 | </span>            border-radius: 12px;
+<span class="ln">   63 | </span>            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+<span class="ln">   64 | </span>            padding: 30px;
+<span class="ln">   65 | </span>            margin-bottom: 30px;
+<span class="ln">   66 | </span>        }
+<span class="ln">   67 | </span>
+<span class="ln">   68 | </span>        .card-header {
+<span class="ln">   69 | </span>            display: flex;
+<span class="ln">   70 | </span>            align-items: center;
+<span class="ln">   71 | </span>            margin-bottom: 20px;
+<span class="ln">   72 | </span>            border-bottom: 2px solid var(--border);
+<span class="ln">   73 | </span>            padding-bottom: 15px;
+<span class="ln">   74 | </span>        }
+<span class="ln">   75 | </span>
+<span class="ln">   76 | </span>        .card-header h2 {
+<span class="ln">   77 | </span>            font-size: 1.75rem;
+<span class="ln">   78 | </span>            color: var(--primary);
+<span class="ln">   79 | </span>        }
+<span class="ln">   80 | </span>
+<span class="ln">   81 | </span>        .grid-2 {
+<span class="ln">   82 | </span>            display: grid;
+<span class="ln">   83 | </span>            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+<span class="ln">   84 | </span>            gap: 25px;
+<span class="ln">   85 | </span>        }
+<span class="ln">   86 | </span>
+<span class="ln">   87 | </span>        .alert {
+<span class="ln">   88 | </span>            padding: 15px 20px;
+<span class="ln">   89 | </span>            border-radius: 8px;
+<span class="ln">   90 | </span>            margin-bottom: 20px;
+<span class="ln">   91 | </span>            border-left: 5px solid;
+<span class="ln">   92 | </span>            background-color: #FEF2F2;
+<span class="ln">   93 | </span>            border-left-color: var(--danger);
+<span class="ln">   94 | </span>        }
+<span class="ln">   95 | </span>
+<span class="ln">   96 | </span>        .alert.warning {
+<span class="ln">   97 | </span>            background-color: #FFFBEB;
+<span class="ln">   98 | </span>            border-left-color: var(--warning);
+<span class="ln">   99 | </span>        }
+<span class="ln">  100 | </span>
+<span class="ln">  101 | </span>        .alert-title {
+<span class="ln">  102 | </span>            font-weight: 600;
+<span class="ln">  103 | </span>            margin-bottom: 5px;
+<span class="ln">  104 | </span>            color: var(--primary);
+<span class="ln">  105 | </span>        }
+<span class="ln">  106 | </span>
+<span class="ln">  107 | </span>        table {
+<span class="ln">  108 | </span>            width: 100%;
+<span class="ln">  109 | </span>            border-collapse: collapse;
+<span class="ln">  110 | </span>            margin-top: 15px;
+<span class="ln">  111 | </span>        }
+<span class="ln">  112 | </span>
+<span class="ln">  113 | </span>        th, td {
+<span class="ln">  114 | </span>            padding: 12px 15px;
+<span class="ln">  115 | </span>            text-align: left;
+<span class="ln">  116 | </span>            border-bottom: 1px solid var(--border);
+<span class="ln">  117 | </span>        }
+<span class="ln">  118 | </span>
+<span class="ln">  119 | </span>        th {
+<span class="ln">  120 | </span>            background-color: #F1F5F9;
+<span class="ln">  121 | </span>            font-weight: 600;
+<span class="ln">  122 | </span>            color: var(--secondary);
+<span class="ln">  123 | </span>        }
+<span class="ln">  124 | </span>
+<span class="ln">  125 | </span>        .badge {
+<span class="ln">  126 | </span>            display: inline-block;
+<span class="ln">  127 | </span>            padding: 4px 10px;
+<span class="ln">  128 | </span>            border-radius: 999px;
+<span class="ln">  129 | </span>            font-size: 0.85rem;
+<span class="ln">  130 | </span>            font-weight: 600;
+<span class="ln">  131 | </span>        }
+<span class="ln">  132 | </span>
+<span class="ln">  133 | </span>        .badge-danger { background-color: #FEE2E2; color: #991B1B; }
+<span class="ln">  134 | </span>        .badge-warning { background-color: #FEF3C7; color: #92400E; }
+<span class="ln">  135 | </span>        .badge-success { background-color: #D1FAE5; color: #065F46; }
+<span class="ln">  136 | </span>        .badge-info { background-color: #DBEAFE; color: #1E40AF; }
+<span class="ln">  137 | </span>
+<span class="ln">  138 | </span>        .code-block {
+<span class="ln">  139 | </span>            background-color: #1E293B;
+<span class="ln">  140 | </span>            color: #E2E8F0;
+<span class="ln">  141 | </span>            padding: 20px;
+<span class="ln">  142 | </span>            border-radius: 8px;
+<span class="ln">  143 | </span>            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+<span class="ln">  144 | </span>            font-size: 0.9rem;
+<span class="ln">  145 | </span>            overflow-x: auto;
+<span class="ln">  146 | </span>            margin: 15px 0;
+<span class="ln">  147 | </span>            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+<span class="ln">  148 | </span>        }
+<span class="ln">  149 | </span>
+<span class="ln">  150 | </span>        .timeline {
+<span class="ln">  151 | </span>            position: relative;
+<span class="ln">  152 | </span>            max-width: 100%;
+<span class="ln">  153 | </span>            margin: 30px 0;
+<span class="ln">  154 | </span>        }
+<span class="ln">  155 | </span>
+<span class="ln">  156 | </span>        .timeline::after {
+<span class="ln">  157 | </span>            content: &#39;&#39;;
+<span class="ln">  158 | </span>            position: absolute;
+<span class="ln">  159 | </span>            width: 4px;
+<span class="ln">  160 | </span>            background-color: var(--accent);
+<span class="ln">  161 | </span>            top: 0;
+<span class="ln">  162 | </span>            bottom: 0;
+<span class="ln">  163 | </span>            left: 20px;
+<span class="ln">  164 | </span>            border-radius: 4px;
+<span class="ln">  165 | </span>        }
+<span class="ln">  166 | </span>
+<span class="ln">  167 | </span>        .timeline-item {
+<span class="ln">  168 | </span>            padding: 10px 40px;
+<span class="ln">  169 | </span>            position: relative;
+<span class="ln">  170 | </span>            background-color: inherit;
+<span class="ln">  171 | </span>            width: 100%;
+<span class="ln">  172 | </span>            margin-bottom: 20px;
+<span class="ln">  173 | </span>        }
+<span class="ln">  174 | </span>
+<span class="ln">  175 | </span>        .timeline-item::after {
+<span class="ln">  176 | </span>            content: &#39;&#39;;
+<span class="ln">  177 | </span>            position: absolute;
+<span class="ln">  178 | </span>            width: 20px;
+<span class="ln">  179 | </span>            height: 20px;
+<span class="ln">  180 | </span>            right: auto;
+<span class="ln">  181 | </span>            background-color: white;
+<span class="ln">  182 | </span>            border: 4px solid var(--accent);
+<span class="ln">  183 | </span>            top: 15px;
+<span class="ln">  184 | </span>            left: 12px;
+<span class="ln">  185 | </span>            border-radius: 50%;
+<span class="ln">  186 | </span>            z-index: 1;
+<span class="ln">  187 | </span>        }
+<span class="ln">  188 | </span>
+<span class="ln">  189 | </span>        .timeline-content {
+<span class="ln">  190 | </span>            padding: 20px;
+<span class="ln">  191 | </span>            background-color: white;
+<span class="ln">  192 | </span>            position: relative;
+<span class="ln">  193 | </span>            border-radius: 8px;
+<span class="ln">  194 | </span>            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+<span class="ln">  195 | </span>            border: 1px solid var(--border);
+<span class="ln">  196 | </span>        }
+<span class="ln">  197 | </span>
+<span class="ln">  198 | </span>        .timeline-content h3 {
+<span class="ln">  199 | </span>            color: var(--accent);
+<span class="ln">  200 | </span>            margin-bottom: 10px;
+<span class="ln">  201 | </span>        }
+<span class="ln">  202 | </span>
+<span class="ln">  203 | </span>        ul.custom-list {
+<span class="ln">  204 | </span>            list-style-type: none;
+<span class="ln">  205 | </span>        }
+<span class="ln">  206 | </span>
+<span class="ln">  207 | </span>        ul.custom-list li {
+<span class="ln">  208 | </span>            position: relative;
+<span class="ln">  209 | </span>            padding-left: 20px;
+<span class="ln">  210 | </span>            margin-bottom: 8px;
+<span class="ln">  211 | </span>        }
+<span class="ln">  212 | </span>
+<span class="ln">  213 | </span>        ul.custom-list li::before {
+<span class="ln">  214 | </span>            content: &#39;→&#39;;
+<span class="ln">  215 | </span>            position: absolute;
+<span class="ln">  216 | </span>            left: 0;
+<span class="ln">  217 | </span>            color: var(--accent);
+<span class="ln">  218 | </span>        }
+<span class="ln">  219 | </span>    &lt;/style&gt;
+<span class="ln">  220 | </span>&lt;/head&gt;
+<span class="ln">  221 | </span>&lt;body&gt;
+<span class="ln">  222 | </span>
+<span class="ln">  223 | </span>    &lt;header class=&quot;header&quot;&gt;
+<span class="ln">  224 | </span>        &lt;h1&gt;Auditor&#237;a Arquitect&#243;nica y Plan de Migraci&#243;n&lt;/h1&gt;
+<span class="ln">  225 | </span>        &lt;p&gt;An&#225;lisis de transici&#243;n a Vue 3, Vite &amp; Ecosistema Moderno | Toro Frontend&lt;/p&gt;
+<span class="ln">  226 | </span>    &lt;/header&gt;
+<span class="ln">  227 | </span>
+<span class="ln">  228 | </span>    &lt;div class=&quot;container&quot;&gt;
+<span class="ln">  229 | </span>
+<span class="ln">  230 | </span>        &lt;!-- 1. Inventario de Obsolescencia --&gt;
+<span class="ln">  231 | </span>        &lt;section class=&quot;card&quot;&gt;
+<span class="ln">  232 | </span>            &lt;div class=&quot;card-header&quot;&gt;
+<span class="ln">  233 | </span>                &lt;h2&gt;1. Inventario de Obsolescencia y Deuda T&#233;cnica&lt;/h2&gt;
+<span class="ln">  234 | </span>            &lt;/div&gt;
+<span class="ln">  235 | </span>            
+<span class="ln">  236 | </span>            &lt;div class=&quot;alert&quot;&gt;
+<span class="ln">  237 | </span>                &lt;div class=&quot;alert-title&quot;&gt;🚨 Riesgo Cr&#237;tico: Fin de Ciclo de Vida (EOL)&lt;/div&gt;
+<span class="ln">  238 | </span>                Vue 2.x alcanz&#243; su End of Life (EOL) oficial el &lt;strong&gt;31 de diciembre de 2023&lt;/strong&gt;. Ya no recibe actualizaciones de seguridad ni de compatibilidad, lo que representa un riesgo alto para sistemas hospitalarios / financieros.
+<span class="ln">  239 | </span>            &lt;/div&gt;
+<span class="ln">  240 | </span>
+<span class="ln">  241 | </span>            &lt;table&gt;
+<span class="ln">  242 | </span>                &lt;thead&gt;
+<span class="ln">  243 | </span>                    &lt;tr&gt;
+<span class="ln">  244 | </span>                        &lt;th&gt;Tecnolog&#237;a / Patr&#243;n&lt;/th&gt;
+<span class="ln">  245 | </span>                        &lt;th&gt;Estado Actual&lt;/th&gt;
+<span class="ln">  246 | </span>                        &lt;th&gt;Nivel de Riesgo&lt;/th&gt;
+<span class="ln">  247 | </span>                        &lt;th&gt;Observaci&#243;n Arquitect&#243;nica&lt;/th&gt;
+<span class="ln">  248 | </span>                    &lt;/tr&gt;
+<span class="ln">  249 | </span>                &lt;/thead&gt;
+<span class="ln">  250 | </span>                &lt;tbody&gt;
+<span class="ln">  251 | </span>                    &lt;tr&gt;
+<span class="ln">  252 | </span>                        &lt;td&gt;&lt;strong&gt;Vue 2.6.14&lt;/strong&gt;&lt;/td&gt;
+<span class="ln">  253 | </span>                        &lt;td&gt;Obsoleto (EOL)&lt;/td&gt;
+<span class="ln">  254 | </span>                        &lt;td&gt;&lt;span class=&quot;badge badge-danger&quot;&gt;Cr&#237;tico&lt;/span&gt;&lt;/td&gt;
+<span class="ln">  255 | </span>                        &lt;td&gt;Sin parches de seguridad. Patr&#243;n Options API fomenta componentes monol&#237;ticos.&lt;/td&gt;
+<span class="ln">  256 | </span>                    &lt;/tr&gt;
+<span class="ln">  257 | </span>                    &lt;tr&gt;
+<span class="ln">  258 | </span>                        &lt;td&gt;&lt;strong&gt;Vue CLI (Webpack)&lt;/strong&gt;&lt;/td&gt;
+<span class="ln">  259 | </span>                        &lt;td&gt;Mantenimiento&lt;/td&gt;
+<span class="ln">  260 | </span>                        &lt;td&gt;&lt;span class=&quot;badge badge-warning&quot;&gt;Medio&lt;/span&gt;&lt;/td&gt;
+<span class="ln">  261 | </span>                        &lt;td&gt;Tiempos de compilaci&#243;n lentos (HMR). La comunidad se movi&#243; por completo a Vite.&lt;/td&gt;
+<span class="ln">  262 | </span>                    &lt;/tr&gt;
+<span class="ln">  263 | </span>                    &lt;tr&gt;
+<span class="ln">  264 | </span>                        &lt;td&gt;&lt;strong&gt;Vuetify 2.x&lt;/strong&gt;&lt;/td&gt;
+<span class="ln">  265 | </span>                        &lt;td&gt;Sin nuevas &lt;i&gt;features&lt;/i&gt;&lt;/td&gt;
+<span class="ln">  266 | </span>                        &lt;td&gt;&lt;span class=&quot;badge badge-warning&quot;&gt;Alto&lt;/span&gt;&lt;/td&gt;
+<span class="ln">  267 | </span>                        &lt;td&gt;Incompatible con Vue 3. La actualizaci&#243;n a Vuetify 3 tiene &lt;i&gt;breaking changes&lt;/i&gt; masivos.&lt;/td&gt;
+<span class="ln">  268 | </span>                    &lt;/tr&gt;
+<span class="ln">  269 | </span>                    &lt;tr&gt;
+<span class="ln">  270 | </span>                        &lt;td&gt;&lt;strong&gt;Global Mixins&lt;/strong&gt;&lt;/td&gt;
+<span class="ln">  271 | </span>                        &lt;td&gt;Antipatr&#243;n&lt;/td&gt;
+<span class="ln">  272 | </span>                        &lt;td&gt;&lt;span class=&quot;badge badge-danger&quot;&gt;Cr&#237;tico&lt;/span&gt;&lt;/td&gt;
+<span class="ln">  273 | </span>                        &lt;td&gt;L&#243;gica de HTTP inyectada v&#237;a mixins (ej. &lt;code&gt;loginMixin.js&lt;/code&gt;). Causa colisi&#243;n de nombres, falta de tipado y dificulta el testing.&lt;/td&gt;
+<span class="ln">  274 | </span>                    &lt;/tr&gt;
+<span class="ln">  275 | </span>                    &lt;tr&gt;
+<span class="ln">  276 | </span>                        &lt;td&gt;&lt;code&gt;vue2-editor&lt;/code&gt; / &lt;code&gt;v-mask&lt;/code&gt;&lt;/td&gt;
+<span class="ln">  277 | </span>                        &lt;td&gt;Abandonados&lt;/td&gt;
+<span class="ln">  278 | </span>                        &lt;td&gt;&lt;span class=&quot;badge badge-warning&quot;&gt;Medio&lt;/span&gt;&lt;/td&gt;
+<span class="ln">  279 | </span>                        &lt;td&gt;Librer&#237;as de nicho sin soporte oficial en Vue 3 o con wrappers no oficiales. Requerir&#225; sustituci&#243;n.&lt;/td&gt;
+<span class="ln">  280 | </span>                    &lt;/tr&gt;
+<span class="ln">  281 | </span>                &lt;/tbody&gt;
+<span class="ln">  282 | </span>            &lt;/table&gt;
+<span class="ln">  283 | </span>        &lt;/section&gt;
+<span class="ln">  284 | </span>
+<span class="ln">  285 | </span>        &lt;!-- 2. An&#225;lisis de Viabilidad y Riesgos --&gt;
+<span class="ln">  286 | </span>        &lt;section class=&quot;card&quot;&gt;
+<span class="ln">  287 | </span>            &lt;div class=&quot;card-header&quot;&gt;
+<span class="ln">  288 | </span>                &lt;h2&gt;2. An&#225;lisis de Viabilidad y Riesgos de Migraci&#243;n&lt;/h2&gt;
+<span class="ln">  289 | </span>            &lt;/div&gt;
+<span class="ln">  290 | </span>            &lt;div class=&quot;grid-2&quot;&gt;
+<span class="ln">  291 | </span>                &lt;div&gt;
+<span class="ln">  292 | </span>                    &lt;h3&gt;&lt;span style=&quot;color:var(--accent);&quot;&gt;Viabilidad T&#233;cnica&lt;/span&gt;&lt;/h3&gt;
+<span class="ln">  293 | </span>                    &lt;p&gt;La migraci&#243;n es &lt;strong&gt;completamente viable pero altamente compleja&lt;/strong&gt; debido al fuerte acoplamiento con Vuetify 2 y el uso extensivo de Mixins para fetching de datos.&lt;/p&gt;
+<span class="ln">  294 | </span>                    &lt;br&gt;
+<span class="ln">  295 | </span>                    &lt;ul class=&quot;custom-list&quot;&gt;
+<span class="ln">  296 | </span>                        &lt;li&gt;&lt;strong&gt;Vue 3 (Composition API):&lt;/strong&gt; Mejora dr&#225;stica del rendimiento, reutilizaci&#243;n y tipado (TypeScript base).&lt;/li&gt;
+<span class="ln">  297 | </span>                        &lt;li&gt;&lt;strong&gt;Vite:&lt;/strong&gt; Tiempos de arranque en fr&#237;o (`npm run dev`) que pasan de decenas de segundos a &lt;strong&gt;~500 milisegundos&lt;/strong&gt;.&lt;/li&gt;
+<span class="ln">  298 | </span>                        &lt;li&gt;&lt;strong&gt;Eliminaci&#243;n de Mixins:&lt;/strong&gt; Usando &lt;i&gt;Composables&lt;/i&gt; (Hooks personalizados), funciones como llamadas a la API (Axios) se independizan totalmente de los componentes de UI.&lt;/li&gt;
+<span class="ln">  299 | </span>                    &lt;/ul&gt;
+<span class="ln">  300 | </span>                &lt;/div&gt;
+<span class="ln">  301 | </span>                &lt;div&gt;
+<span class="ln">  302 | </span>                    &lt;h3&gt;&lt;span style=&quot;color:var(--danger);&quot;&gt;Principales Cuellos de Botella (Riesgos)&lt;/span&gt;&lt;/h3&gt;
+<span class="ln">  303 | </span>                    &lt;ul class=&quot;custom-list&quot;&gt;
+<span class="ln">  304 | </span>                        &lt;li&gt;&lt;strong&gt;El Gran Salto de Vuetify (2 &amp;rarr; 3):&lt;/strong&gt; Vuetify 3 fue reescrito desde cero. Muchos utilitarios y propiedades de grids cambiaron. Tablas de datos (DataTables) y modales pueden romperse inicialmente.&lt;/li&gt;
+<span class="ln">  305 | </span>                        &lt;li&gt;&lt;strong&gt;Vue Router &amp; Vuex:&lt;/strong&gt; La sintaxis cambia (Vuex 4 / Vue Router 4). Vuex est&#225; en deprecaci&#243;n a favor de &lt;strong&gt;Pinia&lt;/strong&gt;.&lt;/li&gt;
+<span class="ln">  306 | </span>                        &lt;li&gt;&lt;strong&gt;Pausa de Features:&lt;/strong&gt; Una refactorizaci&#243;n monol&#237;tica o estilo &quot;Big Bang&quot; bloquear&#237;a nuevas funcionalidades por meses.&lt;/li&gt;
+<span class="ln">  307 | </span>                    &lt;/ul&gt;
+<span class="ln">  308 | </span>                &lt;/div&gt;
+<span class="ln">  309 | </span>            &lt;/div&gt;
+<span class="ln">  310 | </span>        &lt;/section&gt;
+<span class="ln">  311 | </span>
+<span class="ln">  312 | </span>        &lt;!-- 3. Estrategia por Fases --&gt;
+<span class="ln">  313 | </span>        &lt;section class=&quot;card&quot;&gt;
+<span class="ln">  314 | </span>            &lt;div class=&quot;card-header&quot;&gt;
+<span class="ln">  315 | </span>                &lt;h2&gt;3. Estrategia de Refactorizaci&#243;n por Fases (Sin romper Producci&#243;n)&lt;/h2&gt;
+<span class="ln">  316 | </span>            &lt;/div&gt;
+<span class="ln">  317 | </span>            &lt;p&gt;Se recomienda la estrategia de &lt;strong&gt;Strangler Fig Pattern (Migraci&#243;n Progresiva)&lt;/strong&gt; en lugar de una reescritura desde cero.&lt;/p&gt;
+<span class="ln">  318 | </span>            
+<span class="ln">  319 | </span>            &lt;div class=&quot;timeline&quot;&gt;
+<span class="ln">  320 | </span>                &lt;div class=&quot;timeline-item&quot;&gt;
+<span class="ln">  321 | </span>                    &lt;div class=&quot;timeline-content&quot;&gt;
+<span class="ln">  322 | </span>                        &lt;h3&gt;Fase 1: Desacoplamiento L&#243;gico (Inmediato - A&#250;n en Vue 2)&lt;/h3&gt;
+<span class="ln">  323 | </span>                        &lt;p&gt;Extraer toda la l&#243;gica de negocio (llamadas de API Axios, c&#225;lculos, formatos) fuera de los &lt;strong&gt;Vue Mixins&lt;/strong&gt; hacia funciones puros de JavaScript. Actualizar a &lt;strong&gt;Vue 2.7&lt;/strong&gt; (Que trae la Composition API de forma nativa a Vue 2).&lt;/p&gt;
+<span class="ln">  324 | </span>&lt;div class=&quot;code-block&quot;&gt;
+<span class="ln">  325 | </span>// Antes: mixins/services/loginMixin.js (Antipatr&#243;n)
+<span class="ln">  326 | </span>export default { methods: { getLogin() { return axios.post(...) } } }
+<span class="ln">  327 | </span>
+<span class="ln">  328 | </span>// Despu&#233;s: api/authService.js (Desacoplado)
+<span class="ln">  329 | </span>import axios from &#39;@/plugins/axios&#39;;
+<span class="ln">  330 | </span>export const authService = {
+<span class="ln">  331 | </span>  login: (data) =&gt; axios.post(&#39;/api/users/session&#39;, data)
+<span class="ln">  332 | </span>}
+<span class="ln">  333 | </span>&lt;/div&gt;
+<span class="ln">  334 | </span>                    &lt;/div&gt;
+<span class="ln">  335 | </span>                &lt;/div&gt;
+<span class="ln">  336 | </span>                &lt;div class=&quot;timeline-item&quot;&gt;
+<span class="ln">  337 | </span>                    &lt;div class=&quot;timeline-content&quot;&gt;
+<span class="ln">  338 | </span>                        &lt;h3&gt;Fase 2: Migraci&#243;n del Bundler (Webpack a Vite)&lt;/h3&gt;
+<span class="ln">  339 | </span>                        &lt;p&gt;Remover &lt;code&gt;@vue/cli-service&lt;/code&gt; y configurar &lt;strong&gt;Vite&lt;/strong&gt; manteniendo Vue 2.7. Esto otorgar&#225; mejoras de DX (Developer Experience) inmediatas sin cambiar componentes visuales y modernizar&#225; el sistema de &lt;i&gt;build&lt;/i&gt;.&lt;/p&gt;
+<span class="ln">  340 | </span>                    &lt;/div&gt;
+<span class="ln">  341 | </span>                &lt;/div&gt;
+<span class="ln">  342 | </span>                &lt;div class=&quot;timeline-item&quot;&gt;
+<span class="ln">  343 | </span>                    &lt;div class=&quot;timeline-content&quot;&gt;
+<span class="ln">  344 | </span>                        &lt;h3&gt;Fase 3: Salto H&#237;brido al Ecosistema (Vue 3 + Vuetify 3)&lt;/h3&gt;
+<span class="ln">  345 | </span>                        &lt;p&gt;Crear una rama paralela (&lt;code&gt;feat/vue3-migration&lt;/code&gt;). Subir las dependencias principales a &lt;code&gt;vue@3&lt;/code&gt;, &lt;code&gt;vue-router@4&lt;/code&gt; y &lt;code&gt;vuetify@3&lt;/code&gt;. Corregir errores de consola sistem&#225;ticamente y cambiar al script setup progresivamente en componentes maestros.&lt;/p&gt;
+<span class="ln">  346 | </span>&lt;div class=&quot;code-block&quot;&gt;
+<span class="ln">  347 | </span>&amp;lt;!-- Patr&#243;n Moderno Propuesto (Vue 3 + &amp;lt;script setup&amp;gt;) --&amp;gt;
+<span class="ln">  348 | </span>&amp;lt;script setup&amp;gt;
+<span class="ln">  349 | </span>import { ref, onMounted } from &#39;vue&#39;;
+<span class="ln">  350 | </span>import { authService } from &#39;@/api/authService&#39;;
+<span class="ln">  351 | </span>import { useToast } from &#39;toast-library&#39;;
+<span class="ln">  352 | </span>
+<span class="ln">  353 | </span>const patientData = ref([]);
+<span class="ln">  354 | </span>const isLoading = ref(false);
+<span class="ln">  355 | </span>const toast = useToast();
+<span class="ln">  356 | </span>
+<span class="ln">  357 | </span>onMounted(async () =&gt; {
+<span class="ln">  358 | </span>  isLoading.value = true;
+<span class="ln">  359 | </span>  try {
+<span class="ln">  360 | </span>    patientData.value = await authService.getPatient(id);
+<span class="ln">  361 | </span>  } catch (err) {
+<span class="ln">  362 | </span>    toast.error(&#39;Error al cargar datos&#39;);
+<span class="ln">  363 | </span>  } finally {
+<span class="ln">  364 | </span>    isLoading.value = false;
+<span class="ln">  365 | </span>  }
+<span class="ln">  366 | </span>});
+<span class="ln">  367 | </span>&amp;lt;/script&amp;gt;
+<span class="ln">  368 | </span>&lt;/div&gt;
+<span class="ln">  369 | </span>                    &lt;/div&gt;
+<span class="ln">  370 | </span>                &lt;/div&gt;
+<span class="ln">  371 | </span>                &lt;div class=&quot;timeline-item&quot;&gt;
+<span class="ln">  372 | </span>                    &lt;div class=&quot;timeline-content&quot;&gt;
+<span class="ln">  373 | </span>                        &lt;h3&gt;Fase 4: Modernizaci&#243;n del Estado Global (Vuex a Pinia)&lt;/h3&gt;
+<span class="ln">  374 | </span>                        &lt;p&gt;Sustituir gradualmente los m&#243;dulos de configuraci&#243;n y estado desde &lt;strong&gt;Vuex 3/4&lt;/strong&gt; hacia &lt;strong&gt;Pinia&lt;/strong&gt;, la cual es m&#225;s ligera, no usa mutaciones y tiene inferencia de tipos perfecta si a futuro se desea agregar TypeScript.&lt;/p&gt;
+<span class="ln">  375 | </span>                    &lt;/div&gt;
+<span class="ln">  376 | </span>                &lt;/div&gt;
+<span class="ln">  377 | </span>            &lt;/div&gt;
+<span class="ln">  378 | </span>        &lt;/section&gt;
+<span class="ln">  379 | </span>
+<span class="ln">  380 | </span>        &lt;!-- 4. Alternativas Modernas --&gt;
+<span class="ln">  381 | </span>        &lt;section class=&quot;card&quot;&gt;
+<span class="ln">  382 | </span>            &lt;div class=&quot;card-header&quot;&gt;
+<span class="ln">  383 | </span>                &lt;h2&gt;4. Soluciones Modernas y Alternativas&lt;/h2&gt;
+<span class="ln">  384 | </span>            &lt;/div&gt;
+<span class="ln">  385 | </span>            &lt;p&gt;Si la fricci&#243;n para migrar Vuetify 3 es demasiado alta debido a los &lt;i&gt;breaking changes&lt;/i&gt;, el momento es ideal para explorar alternativas UI modernas m&#225;s mantenibles y menos pesadas:&lt;/p&gt;
+<span class="ln">  386 | </span>            
+<span class="ln">  387 | </span>            &lt;table&gt;
+<span class="ln">  388 | </span>                &lt;thead&gt;
+<span class="ln">  389 | </span>                    &lt;tr&gt;
+<span class="ln">  390 | </span>                        &lt;th&gt;Categor&#237;a&lt;/th&gt;
+<span class="ln">  391 | </span>                        &lt;th&gt;Mantenido Actual&lt;/th&gt;
+<span class="ln">  392 | </span>                        &lt;th&gt;Alternativa Propuesta / Standard Moderno&lt;/th&gt;
+<span class="ln">  393 | </span>                    &lt;/tr&gt;
+<span class="ln">  394 | </span>                &lt;/thead&gt;
+<span class="ln">  395 | </span>                &lt;tbody&gt;
+<span class="ln">  396 | </span>                    &lt;tr&gt;
+<span class="ln">  397 | </span>                        &lt;td&gt;&lt;strong&gt;UI Framework Visual&lt;/strong&gt;&lt;/td&gt;
+<span class="ln">  398 | </span>                        &lt;td&gt;Vuetify 2.x&lt;/td&gt;
+<span class="ln">  399 | </span>                        &lt;td&gt;&lt;strong&gt;PrimeVue:&lt;/strong&gt; Extremadamente &#225;gil, compatible con Tailwind, componentes empresariales maduros (Datatables de alto rendimiento, modales, calendarios).&lt;br&gt;&lt;br&gt;&lt;strong&gt;Quasar Framework:&lt;/strong&gt; Opci&#243;n Enterprise, todo en uno. Excelente para apps de administraci&#243;n m&#233;dicas y financieras.&lt;/td&gt;
+<span class="ln">  400 | </span>                    &lt;/tr&gt;
+<span class="ln">  401 | </span>                    &lt;tr&gt;
+<span class="ln">  402 | </span>                        &lt;td&gt;&lt;strong&gt;Estilos CSS y Utilidades&lt;/strong&gt;&lt;/td&gt;
+<span class="ln">  403 | </span>                        &lt;td&gt;SCSS / Custom CSS&lt;/td&gt;
+<span class="ln">  404 | </span>                        &lt;td&gt;&lt;strong&gt;Tailwind CSS (v3/v4):&lt;/strong&gt; Utilidades at&#243;micas. Evita el CSS desordenado y previene romper la UI al borrar clases. Permite personalizaci&#243;n total a nivel de componente.&lt;/td&gt;
+<span class="ln">  405 | </span>                    &lt;/tr&gt;
+<span class="ln">  406 | </span>                    &lt;tr&gt;
+<span class="ln">  407 | </span>                        &lt;td&gt;&lt;strong&gt;Gestor de Estado (Store)&lt;/strong&gt;&lt;/td&gt;
+<span class="ln">  408 | </span>                        &lt;td&gt;Vuex&lt;/td&gt;
+<span class="ln">  409 | </span>                        &lt;td&gt;&lt;strong&gt;Pinia:&lt;/strong&gt; Es el est&#225;ndar oficial actual. M&#243;dulos m&#225;s limpios, sin getters engorrosos ni `commit`/`dispatch` obligatorios.&lt;/td&gt;
+<span class="ln">  410 | </span>                    &lt;/tr&gt;
+<span class="ln">  411 | </span>                    &lt;tr&gt;
+<span class="ln">  412 | </span>                        &lt;td&gt;&lt;strong&gt;L&#243;gica transversal&lt;/strong&gt;&lt;/td&gt;
+<span class="ln">  413 | </span>                        &lt;td&gt;Mixins Puros&lt;/td&gt;
+<span class="ln">  414 | </span>                        &lt;td&gt;&lt;strong&gt;VueUse (`@vueuse/core`):&lt;/strong&gt; Librer&#237;a gigantesca de &lt;i&gt;Composables&lt;/i&gt; ultra probados (sensores de ventana, scroll, debounce, localstorage).&lt;/td&gt;
+<span class="ln">  415 | </span>                    &lt;/tr&gt;
+<span class="ln">  416 | </span>                &lt;/tbody&gt;
+<span class="ln">  417 | </span>            &lt;/table&gt;
+<span class="ln">  418 | </span>        &lt;/section&gt;
+<span class="ln">  419 | </span>
+<span class="ln">  420 | </span>    &lt;/div&gt;
+<span class="ln">  421 | </span>&lt;/body&gt;
+<span class="ln">  422 | </span>&lt;/html&gt;
+
+</pre></section>
+<section class="file">
+<div class="file-header">
+<h2>Audit\Auditoria-Toro-FrontEnd.html</h2>
+<div class="meta">Lineas: 404 | Bytes: 17531 | SHA256: 6B6D00D4C9AC50A7106BA2C3103E9919CED6D0768113066CF2320125B9BE21D9</div>
+</div><pre>
+<span class="ln">    1 | </span>&lt;!DOCTYPE html&gt;
+<span class="ln">    2 | </span>&lt;html lang=&quot;es&quot;&gt;
+<span class="ln">    3 | </span>&lt;head&gt;
+<span class="ln">    4 | </span>    &lt;meta charset=&quot;UTF-8&quot;&gt;
+<span class="ln">    5 | </span>    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+<span class="ln">    6 | </span>    &lt;title&gt;Auditor&#237;a Arquitect&#243;nica T&#233;cnica y Detallada - Toro Frontend&lt;/title&gt;
+<span class="ln">    7 | </span>    &lt;style&gt;
+<span class="ln">    8 | </span>        :root {
+<span class="ln">    9 | </span>            --primary: #1e272e;
+<span class="ln">   10 | </span>            --secondary: #2f3640;
+<span class="ln">   11 | </span>            --accent: #00a8ff;
+<span class="ln">   12 | </span>            --bg-light: #f5f6fa;
+<span class="ln">   13 | </span>            --text-dark: #2f3640;
+<span class="ln">   14 | </span>            --border: #dcdde1;
+<span class="ln">   15 | </span>            --code-bg: #2d2d2d;
+<span class="ln">   16 | </span>            --success: #4cd137;
+<span class="ln">   17 | </span>            --danger: #e84118;
+<span class="ln">   18 | </span>            --warning: #fbc531;
+<span class="ln">   19 | </span>        }
+<span class="ln">   20 | </span>
+<span class="ln">   21 | </span>        body {
+<span class="ln">   22 | </span>            font-family: -apple-system, BlinkMacSystemFont, &#39;Segoe UI&#39;, Roboto, Oxygen, Ubuntu, Cantarell, &#39;Open Sans&#39;, &#39;Helvetica Neue&#39;, sans-serif;
+<span class="ln">   23 | </span>            line-height: 1.6;
+<span class="ln">   24 | </span>            color: var(--text-dark);
+<span class="ln">   25 | </span>            background-color: var(--bg-light);
+<span class="ln">   26 | </span>            margin: 0;
+<span class="ln">   27 | </span>            padding: 0;
+<span class="ln">   28 | </span>        }
+<span class="ln">   29 | </span>
+<span class="ln">   30 | </span>        .container {
+<span class="ln">   31 | </span>            max-width: 1400px;
+<span class="ln">   32 | </span>            margin: 0 auto;
+<span class="ln">   33 | </span>            padding: 40px 20px;
+<span class="ln">   34 | </span>        }
+<span class="ln">   35 | </span>
+<span class="ln">   36 | </span>        header {
+<span class="ln">   37 | </span>            background-color: var(--primary);
+<span class="ln">   38 | </span>            color: white;
+<span class="ln">   39 | </span>            padding: 50px 0;
+<span class="ln">   40 | </span>            text-align: center;
+<span class="ln">   41 | </span>            border-bottom: 6px solid var(--accent);
+<span class="ln">   42 | </span>            margin-bottom: 40px;
+<span class="ln">   43 | </span>        }
+<span class="ln">   44 | </span>
+<span class="ln">   45 | </span>        h1, h2, h3, h4 {
+<span class="ln">   46 | </span>            margin-top: 0;
+<span class="ln">   47 | </span>            color: var(--primary);
+<span class="ln">   48 | </span>        }
+<span class="ln">   49 | </span>
+<span class="ln">   50 | </span>        h2 {
+<span class="ln">   51 | </span>            border-bottom: 3px solid var(--accent);
+<span class="ln">   52 | </span>            padding-bottom: 12px;
+<span class="ln">   53 | </span>            margin-top: 50px;
+<span class="ln">   54 | </span>            display: inline-block;
+<span class="ln">   55 | </span>        }
+<span class="ln">   56 | </span>
+<span class="ln">   57 | </span>        h3 {
+<span class="ln">   58 | </span>            margin-top: 30px;
+<span class="ln">   59 | </span>            color: var(--secondary);
+<span class="ln">   60 | </span>            border-bottom: 1px solid var(--border);
+<span class="ln">   61 | </span>            padding-bottom: 8px;
+<span class="ln">   62 | </span>        }
+<span class="ln">   63 | </span>
+<span class="ln">   64 | </span>        .section {
+<span class="ln">   65 | </span>            background: white;
+<span class="ln">   66 | </span>            padding: 40px;
+<span class="ln">   67 | </span>            border-radius: 10px;
+<span class="ln">   68 | </span>            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+<span class="ln">   69 | </span>            margin-bottom: 40px;
+<span class="ln">   70 | </span>        }
+<span class="ln">   71 | </span>
+<span class="ln">   72 | </span>        table {
+<span class="ln">   73 | </span>            width: 100%;
+<span class="ln">   74 | </span>            border-collapse: collapse;
+<span class="ln">   75 | </span>            margin: 25px 0;
+<span class="ln">   76 | </span>        }
+<span class="ln">   77 | </span>
+<span class="ln">   78 | </span>        th, td {
+<span class="ln">   79 | </span>            padding: 15px;
+<span class="ln">   80 | </span>            text-align: left;
+<span class="ln">   81 | </span>            border-bottom: 1px solid var(--border);
+<span class="ln">   82 | </span>        }
+<span class="ln">   83 | </span>
+<span class="ln">   84 | </span>        th {
+<span class="ln">   85 | </span>            background-color: var(--secondary);
+<span class="ln">   86 | </span>            color: white;
+<span class="ln">   87 | </span>            font-weight: 600;
+<span class="ln">   88 | </span>        }
+<span class="ln">   89 | </span>
+<span class="ln">   90 | </span>        tr:nth-child(even) {
+<span class="ln">   91 | </span>            background-color: #f8f9fa;
+<span class="ln">   92 | </span>        }
+<span class="ln">   93 | </span>
+<span class="ln">   94 | </span>        .code-block {
+<span class="ln">   95 | </span>            background: var(--code-bg);
+<span class="ln">   96 | </span>            color: #d4d4d4;
+<span class="ln">   97 | </span>            padding: 20px;
+<span class="ln">   98 | </span>            border-radius: 8px;
+<span class="ln">   99 | </span>            font-family: &#39;Consolas&#39;, &#39;Monaco&#39;, &#39;Courier New&#39;, Courier, monospace;
+<span class="ln">  100 | </span>            overflow-x: auto;
+<span class="ln">  101 | </span>            font-size: 14px;
+<span class="ln">  102 | </span>            line-height: 1.5;
+<span class="ln">  103 | </span>            margin: 20px 0;
+<span class="ln">  104 | </span>            border-left: 4px solid var(--accent);
+<span class="ln">  105 | </span>        }
+<span class="ln">  106 | </span>        
+<span class="ln">  107 | </span>        .code-inline {
+<span class="ln">  108 | </span>            background-color: rgba(0, 168, 255, 0.1);
+<span class="ln">  109 | </span>            color: var(--primary);
+<span class="ln">  110 | </span>            padding: 2px 6px;
+<span class="ln">  111 | </span>            border-radius: 4px;
+<span class="ln">  112 | </span>            font-family: monospace;
+<span class="ln">  113 | </span>            font-size: 0.9em;
+<span class="ln">  114 | </span>        }
+<span class="ln">  115 | </span>
+<span class="ln">  116 | </span>        .grid-2, .grid-3 {
+<span class="ln">  117 | </span>            display: grid;
+<span class="ln">  118 | </span>            gap: 25px;
+<span class="ln">  119 | </span>        }
+<span class="ln">  120 | </span>        
+<span class="ln">  121 | </span>        .grid-2 { grid-template-columns: 1fr 1fr; }
+<span class="ln">  122 | </span>        .grid-3 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+<span class="ln">  123 | </span>
+<span class="ln">  124 | </span>        .folder-structure ul {
+<span class="ln">  125 | </span>            list-style-type: none;
+<span class="ln">  126 | </span>            padding-left: 20px;
+<span class="ln">  127 | </span>        }
+<span class="ln">  128 | </span>        
+<span class="ln">  129 | </span>        .folder-structure li::before {
+<span class="ln">  130 | </span>            content: &quot;📁 &quot;;
+<span class="ln">  131 | </span>            margin-right: 5px;
+<span class="ln">  132 | </span>        }
+<span class="ln">  133 | </span>        
+<span class="ln">  134 | </span>        .folder-structure li.file::before {
+<span class="ln">  135 | </span>            content: &quot;📄 &quot;;
+<span class="ln">  136 | </span>        }
+<span class="ln">  137 | </span>        
+<span class="ln">  138 | </span>        .folder-structure li.vue-file::before {
+<span class="ln">  139 | </span>            content: &quot;💚 &quot;;
+<span class="ln">  140 | </span>        }
+<span class="ln">  141 | </span>        
+<span class="ln">  142 | </span>        div.improvement {
+<span class="ln">  143 | </span>            border-left: 5px solid var(--warning);
+<span class="ln">  144 | </span>            background: #fff8e1;
+<span class="ln">  145 | </span>            padding: 20px;
+<span class="ln">  146 | </span>            margin: 20px 0;
+<span class="ln">  147 | </span>            border-radius: 0 8px 8px 0;
+<span class="ln">  148 | </span>        }
+<span class="ln">  149 | </span>        
+<span class="ln">  150 | </span>        .improvement h4 { color: #f57f17; }
+<span class="ln">  151 | </span>    &lt;/style&gt;
+<span class="ln">  152 | </span>&lt;/head&gt;
+<span class="ln">  153 | </span>&lt;body&gt;
+<span class="ln">  154 | </span>
+<span class="ln">  155 | </span>&lt;header&gt;
+<span class="ln">  156 | </span>    &lt;h1&gt;Auditor&#237;a Arquitect&#243;nica T&#233;cnica y Detallada&lt;/h1&gt;
+<span class="ln">  157 | </span>    &lt;p&gt;Proyecto: Toro Frontend (Vue.js) | An&#225;lisis Profundo&lt;/p&gt;
+<span class="ln">  158 | </span>    &lt;p&gt;Fecha: 2026-08-03&lt;/p&gt;
+<span class="ln">  159 | </span>&lt;/header&gt;
+<span class="ln">  160 | </span>
+<span class="ln">  161 | </span>&lt;div class=&quot;container&quot;&gt;
+<span class="ln">  162 | </span>
+<span class="ln">  163 | </span>    &lt;div class=&quot;section&quot;&gt;
+<span class="ln">  164 | </span>        &lt;h2&gt;1. Estructura Exacta de M&#243;dulos (Desglose Exhaustivo)&lt;/h2&gt;
+<span class="ln">  165 | </span>        &lt;p&gt;El n&#250;cleo de la aplicaci&#243;n est&#225; rigurosamente dividido por m&#243;dulos de negocio. A continuaci&#243;n se detalla la dispersi&#243;n de componentes y vistas por cada m&#243;dulo.&lt;/p&gt;
+<span class="ln">  166 | </span>
+<span class="ln">  167 | </span>        &lt;div class=&quot;grid-3&quot;&gt;
+<span class="ln">  168 | </span>            &lt;div&gt;
+<span class="ln">  169 | </span>                &lt;h3&gt;M&#243;dulo: Admission&lt;/h3&gt;
+<span class="ln">  170 | </span>                &lt;ul class=&quot;folder-structure&quot;&gt;
+<span class="ln">  171 | </span>                    &lt;li&gt;&lt;span class=&quot;code-inline&quot;&gt;components/modules/admission&lt;/span&gt;
+<span class="ln">  172 | </span>                        &lt;ul&gt;
+<span class="ln">  173 | </span>                            &lt;li class=&quot;vue-file&quot;&gt;EndAdmissionDialog.vue&lt;/li&gt;
+<span class="ln">  174 | </span>                            &lt;li class=&quot;vue-file&quot;&gt;InformationPatiente.vue&lt;/li&gt;
+<span class="ln">  175 | </span>                            &lt;li class=&quot;vue-file&quot;&gt;NewDollarDialog.vue&lt;/li&gt;
+<span class="ln">  176 | </span>                            &lt;li class=&quot;vue-file&quot;&gt;PrintInvoice.vue&lt;/li&gt;
+<span class="ln">  177 | </span>                            &lt;li class=&quot;vue-file&quot;&gt;PrintReceipt.vue&lt;/li&gt;
+<span class="ln">  178 | </span>                            &lt;li class=&quot;vue-file&quot;&gt;RegisterPatient.vue&lt;/li&gt;
+<span class="ln">  179 | </span>                            &lt;li class=&quot;vue-file&quot;&gt;SelectExams.vue&lt;/li&gt;
+<span class="ln">  180 | </span>                            &lt;li class=&quot;vue-file&quot;&gt;TypePayment.vue&lt;/li&gt;
+<span class="ln">  181 | </span>                        &lt;/ul&gt;
+<span class="ln">  182 | </span>                    &lt;/li&gt;
+<span class="ln">  183 | </span>                    &lt;li&gt;&lt;span class=&quot;code-inline&quot;&gt;views/modules/&lt;/span&gt; (Relacionados)
+<span class="ln">  184 | </span>                        &lt;ul&gt;
+<span class="ln">  185 | </span>                            &lt;li class=&quot;vue-file&quot;&gt;PatientAdmission.vue&lt;/li&gt;
+<span class="ln">  186 | </span>                        &lt;/ul&gt;
+<span class="ln">  187 | </span>                    &lt;/li&gt;
+<span class="ln">  188 | </span>                &lt;/ul&gt;
+<span class="ln">  189 | </span>            &lt;/div&gt;
+<span class="ln">  190 | </span>            
+<span class="ln">  191 | </span>            &lt;div&gt;
+<span class="ln">  192 | </span>                &lt;h3&gt;M&#243;dulo: Exams&lt;/h3&gt;
+<span class="ln">  193 | </span>                &lt;ul class=&quot;folder-structure&quot;&gt;
+<span class="ln">  194 | </span>                    &lt;li&gt;&lt;span class=&quot;code-inline&quot;&gt;components/modules/exams&lt;/span&gt;
+<span class="ln">  195 | </span>                        &lt;ul&gt;
+<span class="ln">  196 | </span>                            &lt;li class=&quot;vue-file&quot;&gt;ColContent.vue&lt;/li&gt;
+<span class="ln">  197 | </span>                            &lt;li class=&quot;vue-file&quot;&gt;createExam.vue&lt;/li&gt;
+<span class="ln">  198 | </span>                            &lt;li class=&quot;vue-file&quot;&gt;draggableComponent.vue&lt;/li&gt;
+<span class="ln">  199 | </span>                            &lt;li class=&quot;vue-file&quot;&gt;EditExamDialog.vue&lt;/li&gt;
+<span class="ln">  200 | </span>                            &lt;li class=&quot;vue-file&quot;&gt;EditGroupDialog.vue&lt;/li&gt;
+<span class="ln">  201 | </span>                            &lt;li class=&quot;vue-file&quot;&gt;EditWorksheetDialog.vue&lt;/li&gt;
+<span class="ln">  202 | </span>                            &lt;li class=&quot;vue-file&quot;&gt;ExamsTable.vue&lt;/li&gt;
+<span class="ln">  203 | </span>                            &lt;li class=&quot;vue-file&quot;&gt;newGroup.vue&lt;/li&gt;
+<span class="ln">  204 | </span>                            &lt;li class=&quot;vue-file&quot;&gt;PriceChangeDialog.vue&lt;/li&gt;
+<span class="ln">  205 | </span>                            &lt;li class=&quot;vue-file&quot;&gt;RowComponent.vue&lt;/li&gt;
+<span class="ln">  206 | </span>                        &lt;/ul&gt;
+<span class="ln">  207 | </span>                    &lt;/li&gt;
+<span class="ln">  208 | </span>                    &lt;li&gt;&lt;span class=&quot;code-inline&quot;&gt;views/modules/&lt;/span&gt; (Relacionados)
+<span class="ln">  209 | </span>                        &lt;ul&gt;
+<span class="ln">  210 | </span>                            &lt;li class=&quot;vue-file&quot;&gt;ExamsList.vue&lt;/li&gt;
+<span class="ln">  211 | </span>                            &lt;li class=&quot;vue-file&quot;&gt;ExamsOrder.vue&lt;/li&gt;
+<span class="ln">  212 | </span>                        &lt;/ul&gt;
+<span class="ln">  213 | </span>                    &lt;/li&gt;
+<span class="ln">  214 | </span>                &lt;/ul&gt;
+<span class="ln">  215 | </span>            &lt;/div&gt;
+<span class="ln">  216 | </span>            
+<span class="ln">  217 | </span>            &lt;div&gt;
+<span class="ln">  218 | </span>                &lt;h3&gt;M&#243;dulo: History&lt;/h3&gt;
+<span class="ln">  219 | </span>                &lt;ul class=&quot;folder-structure&quot;&gt;
+<span class="ln">  220 | </span>                    &lt;li&gt;&lt;span class=&quot;code-inline&quot;&gt;components/modules/history&lt;/span&gt;
+<span class="ln">  221 | </span>                        &lt;ul&gt;
+<span class="ln">  222 | </span>                            &lt;li class=&quot;vue-file&quot;&gt;AnnularPatientDialog.vue&lt;/li&gt;
+<span class="ln">  223 | </span>                            &lt;li class=&quot;vue-file&quot;&gt;CancelPatientDialog.vue&lt;/li&gt;
+<span class="ln">  224 | </span>                            &lt;li class=&quot;vue-file&quot;&gt;ClearResultDialog.vue&lt;/li&gt;
+<span class="ln">  225 | </span>                            &lt;li class=&quot;vue-file&quot;&gt;ExamEdit.vue&lt;/li&gt;
+<span class="ln">  226 | </span>                            &lt;li class=&quot;vue-file&quot;&gt;ExamGlobal.vue&lt;/li&gt;
+<span class="ln">  227 | </span>                            &lt;li class=&quot;vue-file&quot;&gt;ExamView.vue&lt;/li&gt;
+<span class="ln">  228 | </span>                            &lt;li class=&quot;vue-file&quot;&gt;ExamViewList.vue&lt;/li&gt;
+<span class="ln">  229 | </span>                            &lt;li class=&quot;vue-file&quot;&gt;InvoiceDialog.vue&lt;/li&gt;
+<span class="ln">  230 | </span>                            &lt;li class=&quot;vue-file&quot;&gt;PatientView.vue&lt;/li&gt;
+<span class="ln">  231 | </span>                            &lt;li class=&quot;vue-file&quot;&gt;PrintSpecialTest.vue&lt;/li&gt;
+<span class="ln">  232 | </span>                            &lt;li class=&quot;vue-file&quot;&gt;QueriesTable.vue&lt;/li&gt;
+<span class="ln">  233 | </span>                            &lt;li class=&quot;vue-file&quot;&gt;ReportPatient.vue&lt;/li&gt;
+<span class="ln">  234 | </span>                        &lt;/ul&gt;
+<span class="ln">  235 | </span>                    &lt;/li&gt;
+<span class="ln">  236 | </span>                    &lt;li&gt;&lt;span class=&quot;code-inline&quot;&gt;views/modules/&lt;/span&gt; (Relacionados)
+<span class="ln">  237 | </span>                        &lt;ul&gt;
+<span class="ln">  238 | </span>                            &lt;li class=&quot;vue-file&quot;&gt;PatientHistory.vue&lt;/li&gt;
+<span class="ln">  239 | </span>                        &lt;/ul&gt;
+<span class="ln">  240 | </span>                    &lt;/li&gt;
+<span class="ln">  241 | </span>                &lt;/ul&gt;
+<span class="ln">  242 | </span>            &lt;/div&gt;
+<span class="ln">  243 | </span>        &lt;/div&gt;
+<span class="ln">  244 | </span>
+<span class="ln">  245 | </span>        &lt;div class=&quot;grid-2&quot;&gt;
+<span class="ln">  246 | </span>            &lt;div&gt;
+<span class="ln">  247 | </span>                &lt;h3&gt;M&#243;dulo: Movements&lt;/h3&gt;
+<span class="ln">  248 | </span>                &lt;ul class=&quot;folder-structure&quot;&gt;
+<span class="ln">  249 | </span>                    &lt;li&gt;&lt;span class=&quot;code-inline&quot;&gt;components/modules/movements&lt;/span&gt;
+<span class="ln">  250 | </span>                        &lt;ul&gt;
+<span class="ln">  251 | </span>                            &lt;li class=&quot;vue-file&quot;&gt;CreateInvoice.vue&lt;/li&gt;
+<span class="ln">  252 | </span>                            &lt;li class=&quot;vue-file&quot;&gt;CustomersEdit.vue&lt;/li&gt;
+<span class="ln">  253 | </span>                            &lt;li class=&quot;vue-file&quot;&gt;CustomersTable.vue&lt;/li&gt;
+<span class="ln">  254 | </span>                            &lt;li class=&quot;vue-file&quot;&gt;InvoiceAccountReceivable.vue&lt;/li&gt;
+<span class="ln">  255 | </span>                            &lt;li class=&quot;vue-file&quot;&gt;InvoiceDialog.vue&lt;/li&gt;
+<span class="ln">  256 | </span>                            &lt;li class=&quot;vue-file&quot;&gt;InvoiceTable.vue&lt;/li&gt;
+<span class="ln">  257 | </span>                            &lt;li class=&quot;vue-file&quot;&gt;QueriesChargeTable.vue&lt;/li&gt;
+<span class="ln">  258 | </span>                            &lt;li class=&quot;vue-file&quot;&gt;QueriesTable.vue&lt;/li&gt;
+<span class="ln">  259 | </span>                            &lt;li class=&quot;vue-file&quot;&gt;QueriesTableInvoices.vue&lt;/li&gt;
+<span class="ln">  260 | </span>                            &lt;li class=&quot;vue-file&quot;&gt;TypePaymentDialog.vue&lt;/li&gt;
+<span class="ln">  261 | </span>                        &lt;/ul&gt;
+<span class="ln">  262 | </span>                    &lt;/li&gt;
+<span class="ln">  263 | </span>                    &lt;li&gt;&lt;span class=&quot;code-inline&quot;&gt;views/modules/&lt;/span&gt; (Relacionados)
+<span class="ln">  264 | </span>                        &lt;ul&gt;
+<span class="ln">  265 | </span>                            &lt;li class=&quot;vue-file&quot;&gt;InvoiceMovements.vue&lt;/li&gt;
+<span class="ln">  266 | </span>                            &lt;li class=&quot;vue-file&quot;&gt;MovementConsultation.vue&lt;/li&gt;
+<span class="ln">  267 | </span>                        &lt;/ul&gt;
+<span class="ln">  268 | </span>                    &lt;/li&gt;
+<span class="ln">  269 | </span>                &lt;/ul&gt;
+<span class="ln">  270 | </span>            &lt;/div&gt;
+<span class="ln">  271 | </span>            
+<span class="ln">  272 | </span>            &lt;div&gt;
+<span class="ln">  273 | </span>                &lt;h3&gt;M&#243;dulos de Configuraci&#243;n de Negocio (Views transversales)&lt;/h3&gt;
+<span class="ln">  274 | </span>                &lt;p&gt;Ubicados principalmente en &lt;span class=&quot;code-inline&quot;&gt;views/modules/&lt;/span&gt;:&lt;/p&gt;
+<span class="ln">  275 | </span>                &lt;ul class=&quot;folder-structure&quot;&gt;
+<span class="ln">  276 | </span>                    &lt;li class=&quot;vue-file&quot;&gt;AccountsReceivable.vue&lt;/li&gt;
+<span class="ln">  277 | </span>                    &lt;li class=&quot;vue-file&quot;&gt;AntibioticConfiguration.vue&lt;/li&gt;
+<span class="ln">  278 | </span>                    &lt;li class=&quot;vue-file&quot;&gt;CancelAccountsReceivable.vue&lt;/li&gt;
+<span class="ln">  279 | </span>                    &lt;li class=&quot;vue-file&quot;&gt;ClosesCash.vue&lt;/li&gt;
+<span class="ln">  280 | </span>                    &lt;li class=&quot;vue-file&quot;&gt;GermsConfiguration.vue&lt;/li&gt;
+<span class="ln">  281 | </span>                    &lt;li class=&quot;vue-file&quot;&gt;LaboratoryConfiguration.vue&lt;/li&gt;
+<span class="ln">  282 | </span>                    &lt;li class=&quot;vue-file&quot;&gt;parasiticConfiguration.vue&lt;/li&gt;
+<span class="ln">  283 | </span>                    &lt;li class=&quot;vue-file&quot;&gt;PatientApprove.vue&lt;/li&gt;
+<span class="ln">  284 | </span>                    &lt;li class=&quot;vue-file&quot;&gt;PatientWorksheet.vue&lt;/li&gt;
+<span class="ln">  285 | </span>                    &lt;li class=&quot;vue-file&quot;&gt;RegisteredCustomers.vue&lt;/li&gt;
+<span class="ln">  286 | </span>                    &lt;li class=&quot;vue-file&quot;&gt;RegisteredUsers.vue&lt;/li&gt;
+<span class="ln">  287 | </span>                    &lt;li class=&quot;vue-file&quot;&gt;ResultsByEmail.vue&lt;/li&gt;
+<span class="ln">  288 | </span>                    &lt;li class=&quot;vue-file&quot;&gt;RoutinesConfiguration.vue&lt;/li&gt;
+<span class="ln">  289 | </span>                    &lt;li class=&quot;vue-file&quot;&gt;SpecialTestResults.vue&lt;/li&gt;
+<span class="ln">  290 | </span>                    &lt;li class=&quot;vue-file&quot;&gt;SpecialTestsConfiguration.vue&lt;/li&gt;
+<span class="ln">  291 | </span>                    &lt;li class=&quot;vue-file&quot;&gt;TypePayment.vue&lt;/li&gt;
+<span class="ln">  292 | </span>                    &lt;li class=&quot;vue-file&quot;&gt;WorkGroupConfiguration.vue&lt;/li&gt;
+<span class="ln">  293 | </span>                &lt;/ul&gt;
+<span class="ln">  294 | </span>            &lt;/div&gt;
+<span class="ln">  295 | </span>        &lt;/div&gt;
+<span class="ln">  296 | </span>    &lt;/div&gt;
+<span class="ln">  297 | </span>
+<span class="ln">  298 | </span>    &lt;div class=&quot;section&quot;&gt;
+<span class="ln">  299 | </span>        &lt;h2&gt;2. Desglose Detallado del Router&lt;/h2&gt;
+<span class="ln">  300 | </span>        &lt;p&gt;El sistema enrutador divide la l&#243;gica en archivos separados seg&#250;n el &#225;rea del sistema. El layout base envolvente para toda el &#225;rea privada es &lt;code&gt;SuiteLayout.vue&lt;/code&gt;. Las rutas maestras registradas en &lt;code&gt;router/index.js&lt;/code&gt; son:&lt;/p&gt;
+<span class="ln">  301 | </span>        
+<span class="ln">  302 | </span>        &lt;table&gt;
+<span class="ln">  303 | </span>            &lt;tr&gt;&lt;th&gt;Ruta Padre&lt;/th&gt;&lt;th&gt;Layout&lt;/th&gt;&lt;th&gt;Fichero Route Importado&lt;/th&gt;&lt;th&gt;M&#243;dulo / Prop&#243;sito&lt;/th&gt;&lt;/tr&gt;
+<span class="ln">  304 | </span>            &lt;tr&gt;&lt;td&gt;&lt;code&gt;/setting&lt;/code&gt;&lt;/td&gt;&lt;td&gt;SuiteLayout &amp;rarr; SettingLayout&lt;/td&gt;&lt;td&gt;&lt;code&gt;setting.router.js&lt;/code&gt;&lt;/td&gt;&lt;td&gt;Configuraciones administrativas.&lt;/td&gt;&lt;/tr&gt;
+<span class="ln">  305 | </span>            &lt;tr&gt;&lt;td&gt;&lt;code&gt;/movements&lt;/code&gt;&lt;/td&gt;&lt;td&gt;SuiteLayout &amp;rarr; MovementsLayout&lt;/td&gt;&lt;td&gt;&lt;code&gt;movements.router.js&lt;/code&gt;&lt;/td&gt;&lt;td&gt;Facturaci&#243;n, Cobros cruzados, etc.&lt;/td&gt;&lt;/tr&gt;
+<span class="ln">  306 | </span>            &lt;tr&gt;&lt;td&gt;&lt;code&gt;/admission&lt;/code&gt;&lt;/td&gt;&lt;td&gt;SuiteLayout &amp;rarr; PatientAdmissionLayout&lt;/td&gt;&lt;td&gt;&lt;code&gt;admission.router.js&lt;/code&gt;&lt;/td&gt;&lt;td&gt;Registro e ingreso de pacientes (facturaci&#243;n incial).&lt;/td&gt;&lt;/tr&gt;
+<span class="ln">  307 | </span>            &lt;tr&gt;&lt;td&gt;&lt;code&gt;/history&lt;/code&gt;&lt;/td&gt;&lt;td&gt;SuiteLayout &amp;rarr; HistoryLayout&lt;/td&gt;&lt;td&gt;&lt;code&gt;history.router.js&lt;/code&gt;&lt;/td&gt;&lt;td&gt;Historial m&#233;dico y ex&#225;menes.&lt;/td&gt;&lt;/tr&gt;
+<span class="ln">  308 | </span>            &lt;tr&gt;&lt;td&gt;&lt;code&gt;/approve&lt;/code&gt;&lt;/td&gt;&lt;td&gt;SuiteLayout &amp;rarr; ApproveLayout&lt;/td&gt;&lt;td&gt;&lt;code&gt;approve.router.js&lt;/code&gt;&lt;/td&gt;&lt;td&gt;Aprobaciones m&#233;dicas.&lt;/td&gt;&lt;/tr&gt;
+<span class="ln">  309 | </span>        &lt;/table&gt;
+<span class="ln">  310 | </span>    &lt;/div&gt;
+<span class="ln">  311 | </span>
+<span class="ln">  312 | </span>    &lt;div class=&quot;section&quot;&gt;
+<span class="ln">  313 | </span>        &lt;h2&gt;3. Arquitectura y Observaciones T&#233;cnicas Cr&#237;ticas (con C&#243;digo)&lt;/h2&gt;
+<span class="ln">  314 | </span>        
+<span class="ln">  315 | </span>        &lt;div class=&quot;improvement&quot;&gt;
+<span class="ln">  316 | </span>            &lt;h4&gt;🚨 Antimpatr&#243;n: Servicios API Acoplados en Mixins Vue&lt;/h4&gt;
+<span class="ln">  317 | </span>            &lt;p&gt;&lt;strong&gt;El Problema:&lt;/strong&gt; Las llamadas Axios est&#225;n encapsuladas usando Vue Mixins (ej. &lt;code&gt;src/mixins/services/loginMixin.js&lt;/code&gt;). Esto genera colisi&#243;n de nombres de m&#233;todos en los componentes, dificulta el testing unitario y rompe la separaci&#243;n de responsabilidades (SoC), ya que el componente de Vista se entrelaza l&#243;gicamente con la capa de Red/Repositorio.&lt;/p&gt;
+<span class="ln">  318 | </span>            &lt;p&gt;&lt;strong&gt;C&#243;digo Actual:&lt;/strong&gt;&lt;/p&gt;
+<span class="ln">  319 | </span>&lt;pre class=&quot;code-block&quot;&gt;
+<span class="ln">  320 | </span>// src/mixins/services/loginMixin.js
+<span class="ln">  321 | </span>import axios from &quot;axios&quot;;
+<span class="ln">  322 | </span>import { basePath } from &#39;@/config&#39;;
+<span class="ln">  323 | </span>
+<span class="ln">  324 | </span>const notificationsMixin = {
+<span class="ln">  325 | </span>    methods: {
+<span class="ln">  326 | </span>        getLoginToEmailPassword(filter) {
+<span class="ln">  327 | </span>            return axios.post(`${basePath}/api/users/session`, filter, config)
+<span class="ln">  328 | </span>                .then(response =&gt; response.data)
+<span class="ln">  329 | </span>                .catch(error =&gt; {
+<span class="ln">  330 | </span>                    this.$toast.error(&#39;Problemas para obtener el usuario&#39;);
+<span class="ln">  331 | </span>                })
+<span class="ln">  332 | </span>        }
+<span class="ln">  333 | </span>    }
+<span class="ln">  334 | </span>}
+<span class="ln">  335 | </span>export default notificationsMixin;
+<span class="ln">  336 | </span>&lt;/pre&gt;
+<span class="ln">  337 | </span>            &lt;p&gt;&lt;strong&gt;Refactorizaci&#243;n Propuesta (Patr&#243;n Repositorio):&lt;/strong&gt;&lt;/p&gt;
+<span class="ln">  338 | </span>&lt;pre class=&quot;code-block&quot;&gt;
+<span class="ln">  339 | </span>// 1. Crear instancia base: src/api/httpClient.js
+<span class="ln">  340 | </span>import axios from &quot;axios&quot;;
+<span class="ln">  341 | </span>import { basePath } from &#39;@/config&#39;;
+<span class="ln">  342 | </span>
+<span class="ln">  343 | </span>const httpClient = axios.create({
+<span class="ln">  344 | </span>    baseURL: basePath,
+<span class="ln">  345 | </span>    headers: { &#39;Content-Type&#39;: &#39;application/json;charset=UTF-8&#39; }
+<span class="ln">  346 | </span>});
+<span class="ln">  347 | </span>
+<span class="ln">  348 | </span>// Interceptor para inyectar token siempre actualizado
+<span class="ln">  349 | </span>httpClient.interceptors.request.use(config =&gt; {
+<span class="ln">  350 | </span>    const token = localStorage.getItem(&#39;token&#39;);
+<span class="ln">  351 | </span>    if (token) config.headers.authorization = `Bearer ${token}`;
+<span class="ln">  352 | </span>    return config;
+<span class="ln">  353 | </span>});
+<span class="ln">  354 | </span>export default httpClient;
+<span class="ln">  355 | </span>
+<span class="ln">  356 | </span>// 2. Extraer el servicio: src/api/services/authService.js
+<span class="ln">  357 | </span>import httpClient from &#39;../httpClient&#39;;
+<span class="ln">  358 | </span>
+<span class="ln">  359 | </span>export const AuthService = {
+<span class="ln">  360 | </span>    login(credentials) {
+<span class="ln">  361 | </span>        return httpClient.post(&#39;/api/users/session&#39;, credentials);
+<span class="ln">  362 | </span>    },
+<span class="ln">  363 | </span>    getUser(userId) {
+<span class="ln">  364 | </span>        return httpClient.get(`/api/users/${userId}`);
+<span class="ln">  365 | </span>    }
+<span class="ln">  366 | </span>};
+<span class="ln">  367 | </span>
+<span class="ln">  368 | </span>// 3. Uso en el Componente Vue (Limpiamente importado):
+<span class="ln">  369 | </span>import { AuthService } from &#39;@/api/services/authService&#39;;
+<span class="ln">  370 | </span>
+<span class="ln">  371 | </span>export default {
+<span class="ln">  372 | </span>    methods: {
+<span class="ln">  373 | </span>        async handleLogin() {
+<span class="ln">  374 | </span>            try {
+<span class="ln">  375 | </span>                const { data } = await AuthService.login(this.form);
+<span class="ln">  376 | </span>            } catch (err) {
+<span class="ln">  377 | </span>                this.$toast.error(&#39;Error en login&#39;);
+<span class="ln">  378 | </span>            }
+<span class="ln">  379 | </span>        }
+<span class="ln">  380 | </span>    }
+<span class="ln">  381 | </span>}
+<span class="ln">  382 | </span>&lt;/pre&gt;
+<span class="ln">  383 | </span>        &lt;/div&gt;
+<span class="ln">  384 | </span>
+<span class="ln">  385 | </span>        &lt;div class=&quot;improvement&quot;&gt;
+<span class="ln">  386 | </span>            &lt;h4&gt;⚠️ Manejo de Token y Dependencia Fuerte de LocalStorage&lt;/h4&gt;
+<span class="ln">  387 | </span>            &lt;p&gt;&lt;strong&gt;El Problema:&lt;/strong&gt; La variable &lt;code&gt;config&lt;/code&gt; en el mixin principal (&lt;code&gt;loginMixin.js&lt;/code&gt;) se eval&#250;a &lt;strong&gt;una sola vez&lt;/strong&gt; cuando el archivo es importado (en la fase de parseo del m&#243;dulo). Si el usuario hace login, el token muta en &lt;code&gt;localStorage&lt;/code&gt;, pero &lt;code&gt;config.headers.authorization&lt;/code&gt; retendr&#225; el valor viejo (posiblemente nulo). Esto obliga a recargas forzadas del navegador (window.location.reload) que rompen la esencia SPA.&lt;/p&gt;
+<span class="ln">  388 | </span>            &lt;p&gt;&lt;strong&gt;Soluci&#243;n:&lt;/strong&gt; Implementar &lt;strong&gt;Axios Interceptors&lt;/strong&gt; (como se muestra en el bloque de c&#243;digo de arriba). El interceptor eval&#250;a din&#225;micamente el localStorage &lt;em&gt;justo antes&lt;/em&gt; de disparar el &lt;code&gt;HTTPRequest&lt;/code&gt;.&lt;/p&gt;
+<span class="ln">  389 | </span>        &lt;/div&gt;
+<span class="ln">  390 | </span>        
+<span class="ln">  391 | </span>        &lt;div class=&quot;improvement&quot;&gt;
+<span class="ln">  392 | </span>            &lt;h4&gt;💡 Migraci&#243;n de Ecosistema Recomendada&lt;/h4&gt;
+<span class="ln">  393 | </span>            &lt;p&gt;El stack tecnol&#243;gico se basa en &lt;span class=&quot;code-inline&quot;&gt;Vue 2.6.14&lt;/span&gt;, el cual finaliz&#243; su soporte LFE el 31 de Diciembre de 2023. Adem&#225;s, depende fuertemente de Vuetify 2.&lt;/p&gt;
+<span class="ln">  394 | </span>            &lt;ul&gt;
+<span class="ln">  395 | </span>                &lt;li&gt;&lt;strong&gt;Dependencias Aislables:&lt;/strong&gt; Antes de actualizar Vue, es recomendable migrar los &lt;code&gt;mixins&lt;/code&gt; (Vue 2 Options API specific) a clases puras JS como lo propuesto. De esta forma, desacoplas la l&#243;gica de negocio del framework.&lt;/li&gt;
+<span class="ln">  396 | </span>                &lt;li&gt;&lt;strong&gt;Migraci&#243;n a Vite:&lt;/strong&gt; El proyecto usa Vue CLI Webpack. Se recomienda rotar los scripts a Vite para mejorar incre&#237;blemente la rapidez de compilaci&#243;n.&lt;/li&gt;
+<span class="ln">  397 | </span>            &lt;/ul&gt;
+<span class="ln">  398 | </span>        &lt;/div&gt;
+<span class="ln">  399 | </span>    &lt;/div&gt;
+<span class="ln">  400 | </span>
+<span class="ln">  401 | </span>&lt;/div&gt;
+<span class="ln">  402 | </span>
+<span class="ln">  403 | </span>&lt;/body&gt;
+<span class="ln">  404 | </span>&lt;/html&gt;
+
+</pre></section>
+<section class="file">
+<div class="file-header">
+<h2>auth_config.json</h2>
+<div class="meta">Lineas: 3 | Bytes: 60 | SHA256: 400F2DAB8302AA753D09DF998DF078B58AD2E32963B9D7CC7C68C92CD1331D1E</div>
+</div><pre>
+<span class="ln">    1 | </span>{
+<span class="ln">    2 | </span>    &quot;clientId&quot;: &quot;50e9a748-6e56-11ed-a771-18c04d293ef6&quot;
+<span class="ln">    3 | </span>}
+
+</pre></section>
+<section class="file">
+<div class="file-header">
+<h2>docs\audit\frontend\00-resumen-ejecutivo.md</h2>
+<div class="meta">Lineas: 42 | Bytes: 3050 | SHA256: EFF827E0662B716F62A1121F51E93614114E1A16A7A18B29B937C07F981D1630</div>
+</div><pre>
+<span class="ln">    1 | </span># Resumen Ejecutivo
+<span class="ln">    2 | </span>
+<span class="ln">    3 | </span>## Estado general
+<span class="ln">    4 | </span>La aplicaci&#243;n frontend es una Single Page Application (SPA) transaccional compleja empresarial desarrollada inicialmente con Vue 2 y Vuetify 2. No usa en profundidad Vuex para el ciclo vital sino estado en LocalStorage. Contiene un problema fundamental de modularidad al enroscar cientos de llamadas a APIs dentro de &quot;Mixins de Servicios&quot;.
+<span class="ln">    5 | </span>Vue 2 alcanz&#243; el final de su vida &#250;til (EOL) en diciembre de 2023 y Vuetify 2 carece de ruta pasiva de Upgrade a Vue 3.
+<span class="ln">    6 | </span>
+<span class="ln">    7 | </span>## Alcance analizado
+<span class="ln">    8 | </span>Cobertura 100% Macro y Estructural:
+<span class="ln">    9 | </span>- 97 archivos Vue.
+<span class="ln">   10 | </span>- 18 mixins.
+<span class="ln">   11 | </span>- 164 llamadas a endpoints HTTP identificadas y documentadas en URLs.
+<span class="ln">   12 | </span>- Estructura `Router` (33 rutas controladas via Guard).
+<span class="ln">   13 | </span>- Exposici&#243;n de riesgos financieros cruzados y visuales.
+<span class="ln">   14 | </span>
+<span class="ln">   15 | </span>## Limitaciones de la auditor&#237;a
+<span class="ln">   16 | </span>- Las validaciones exactas frente a XSS no pueden comprobarse completamente sin la validaci&#243;n del Backend debido a las inyecciones de `v-html` en el frontend, y lo mismo aplica para los rollbacks de Cierres de Cajas.
+<span class="ln">   17 | </span>
+<span class="ln">   18 | </span>## Riesgos cr&#237;ticos &amp; altos
+<span class="ln">   19 | </span>1. **Configuraci&#243;n HTTP con token capturado durante la inicializaci&#243;n (Alto)**: Provocar&#225; continuos errores 401 impredecibles por persistencia cruda en JS const.
+<span class="ln">   20 | </span>2. **Archivos Monol&#237;ticos**: Componentes superando las +1200 l&#237;neas de c&#243;digo con l&#243;gica acoplada, arriesgando el testing de las configuraciones de los Ex&#225;menes. 
+<span class="ln">   21 | </span>3. **Uso potencial de XSS via v-html (Sujeto a validaci&#243;n backend)**.
+<span class="ln">   22 | </span>
+<span class="ln">   23 | </span>## Diez hallazgos principales
+<span class="ln">   24 | </span>1. **[FE-ARCH-001]** Stack tecnol&#243;gico basado en Vue 2.6.x (EOL).
+<span class="ln">   25 | </span>2. **[FE-ARCH-002]** Inyecci&#243;n global manual (`Vue.prototype.$user`).
+<span class="ln">   26 | </span>3. **[FE-ARCH-003]** Token de API atado permanentemente al arranque por falla de scope en Mixins.
+<span class="ln">   27 | </span>4. **[FE-API-004]** 17 Mixins de Servicio que concentran y duplican llamadas HTTP..
+<span class="ln">   28 | </span>5. **[FE-SEC-005]** LocalStorage (56 usos) Almacena en memoria persistente email, id de cliente y rol operativo, lo cual aumenta exposici&#243;n local..
+<span class="ln">   29 | </span>6. **[FE-VUE-006]** Enorme dificultad para migrar a Vuetify 3 (Cambios severos de Slots Data Tables).
+<span class="ln">   30 | </span>7. **[FE-VUE-007]** `draggableComponent.vue` requiere separaci&#243;n URGENTE.
+<span class="ln">   31 | </span>8. **[FE-SEC-008]** Rutas seguras est&#225;n funcionales con `authGuard`, pero insuficientes sin un Interceptor 401 central.
+<span class="ln">   32 | </span>9. **[FE-TEST-009]** Total ausencia (0%) configuraciones de testing en repo.
+<span class="ln">   33 | </span>10. **[FE-MIG-010]** Patr&#243;n Strangler Fig requiere gran refactorizaci&#243;n dado que la SPA se empaqueta en bundle &#250;nico (implicar&#237;a IFrames o Server-Proxy-Routing para particionado).
+<span class="ln">   34 | </span>
+<span class="ln">   35 | </span>## Recomendaci&#243;n final
+<span class="ln">   36 | </span>**ESTABILIZAR ANTES DE MIGRAR.** 
+<span class="ln">   37 | </span>Ejecutar una Fase t&#225;ctica previa a cualquier Upgrade que unifique la refactorizaci&#243;n de Mixins a puros &quot;Vanilla JS APIs&quot;, remueva Vuetify de los componentes atascados, e instaure estado puro en Pinia/Vuex y no Storage. Reescritura parcial es peligrosa; Reescritura Total ser&#225; incosteable sin estos pasos.
+<span class="ln">   38 | </span>
+<span class="ln">   39 | </span>## Nivel de confianza de la auditor&#237;a
+<span class="ln">   40 | </span>Alto (A nivel de Inventario exhaustivo y extracci&#243;n est&#225;tica en todo &#225;rbol).
+<span class="ln">   41 | </span>
+<span class="ln">   42 | </span>
+
+</pre></section>
+<section class="file">
+<div class="file-header">
+<h2>docs\audit\frontend\01-inventario-tecnico.md</h2>
+<div class="meta">Lineas: 57 | Bytes: 2630 | SHA256: 6323597E07F1D139F8AE5FB6A19B11C81CD5070272B496E9039D4ED3C4BEA8EA</div>
+</div><pre>
+<span class="ln">    1 | </span># Inventario T&#233;cnico
+<span class="ln">    2 | </span>
+<span class="ln">    3 | </span>## Dependencias de Producci&#243;n
+<span class="ln">    4 | </span>
+<span class="ln">    5 | </span>| Nombre | Versi&#243;n Declarada | Versi&#243;n Resuelta | Riesgo de Reemplazo | Evidencia |
+<span class="ln">    6 | </span>|--------|-------------------|------------------|---------------------|-----------|
+<span class="ln">    7 | </span>| @auth0/auth0-spa-js | ^2.0.0 | 2.0.0 | Bajo | `package.json` |
+<span class="ln">    8 | </span>| axios | ^1.1.3 | 1.7.5 | Bajo | `package.json` |
+<span class="ln">    9 | </span>| core-js | ^3.8.3 | 3.26.1 | Bajo | `package.json` |
+<span class="ln">   10 | </span>| node-cache | ^5.1.2 | 5.1.2 | Bajo | `package.json` |
+<span class="ln">   11 | </span>| text-mask-addons | ^3.8.0 | 3.8.0 | Medio | Dependencias de m&#225;scaras pueden tener colisiones con Vue 3 |
+<span class="ln">   12 | </span>| v-mask | ^2.3.0 | 2.3.0 | Medio | `package.json` |
+<span class="ln">   13 | </span>| vue | ^2.6.14 | 2.7.14 | Alto | Requiere gran refactorizaci&#243;n para Vue 3 |
+<span class="ln">   14 | </span>| vue-drag-drop | ^1.1.4 | 1.1.4 | Medio | Comprobar soporte Vue 3 |
+<span class="ln">   15 | </span>| vue-html-to-paper | ^1.0.2 | 1.0.2 | Medio | Comprobar soporte |
+<span class="ln">   16 | </span>| vue-qr | ^4.0.9 | 4.0.9 | Bajo | `package.json` |
+<span class="ln">   17 | </span>| vue-router | ^3.6.5 | 3.6.5 | Alto | `package.json` |
+<span class="ln">   18 | </span>| vue-toast-notification | ^1 | 1.0.1 | Bajo | `package.json` |
+<span class="ln">   19 | </span>| vue2-editor | ^2.10.3 | 2.10.3 | Alto | El nombre indica acoplamiento a Vue 2 |
+<span class="ln">   20 | </span>| vuedraggable | ^2.24.3 | 2.24.3 | Medio | `package.json` |
+<span class="ln">   21 | </span>| vuetify | ^2.6.0 | 2.6.12 | Muy Alto | Requiere migraci&#243;n a Vuetify 3 que tiene grandes roturas |
+<span class="ln">   22 | </span>| vuex | ^3.6.2 | 3.6.2 | Alto | Migraci&#243;n recomendada a Pinia |
+<span class="ln">   23 | </span>
+<span class="ln">   24 | </span>## Inventario Exacto
+<span class="ln">   25 | </span>
+<span class="ln">   26 | </span>- **Total de archivos `.vue`**: 97
+<span class="ln">   27 | </span>- **Total de archivos `.js`**: 35
+<span class="ln">   28 | </span>- **Total de archivos `.ts`**: 0
+<span class="ln">   29 | </span>- **Total exacto de vistas (`src/views`)**: 27
+<span class="ln">   30 | </span>- **Total exacto de componentes (`src/components`)**: 62 
+<span class="ln">   31 | </span>- **Total exacto de layouts**: 7
+<span class="ln">   32 | </span>- **Total exacto root**: 1 (`src/App.vue`) - *(Aclaraci&#243;n matem&#225;tica: 27 vistas + 62 componentes + 7 layouts + 1 root App = 97 archivos Vue comprobados)*.
+<span class="ln">   33 | </span>- **Total exacto de mixins**: 18
+<span class="ln">   34 | </span>- **Total exacto de routers**: 7 archivos `.js` definiendo rutas.
+<span class="ln">   35 | </span>- **Total exacto de rutas declaradas**: 33 rutas.
+<span class="ln">   36 | </span>- **Total exacto de llamadas HTTP**: 164 documentadas en inventario final de extractos URL.
+<span class="ln">   37 | </span>- **Total exacto usos localStorage**: 56
+<span class="ln">   38 | </span>- **Total exacto usos sessionStorage**: 0
+<span class="ln">   39 | </span>
+<span class="ln">   40 | </span>*Nota: La data recolectada fue contada bajo inspecci&#243;n literal de terminal Powershell iterando recursivamente la extension.*
+<span class="ln">   41 | </span>
+<span class="ln">   42 | </span>## Dependencias de Desarrollo
+<span class="ln">   43 | </span>- @vue/cli-plugin-babel (5.0.8)
+<span class="ln">   44 | </span>- @vue/cli-plugin-router
+<span class="ln">   45 | </span>- @vue/cli-plugin-vuex
+<span class="ln">   46 | </span>- @vue/cli-service
+<span class="ln">   47 | </span>- sass (1.32.13)
+<span class="ln">   48 | </span>- sass-loader (10.4.1)
+<span class="ln">   49 | </span>- vue-cli-plugin-vuetify
+<span class="ln">   50 | </span>- vue-template-compiler (2.7.16)
+<span class="ln">   51 | </span>- vuetify-loader (1.9.2)
+<span class="ln">   52 | </span>
+<span class="ln">   53 | </span>## Configuraci&#243;n y Entorno
+<span class="ln">   54 | </span>- La aplicaci&#243;n usa Vue CLI (Webpack oculto).
+<span class="ln">   55 | </span>- Configurado con proxy en `vue.config.js` hacia localhost:3000.
+<span class="ln">   56 | </span>
+<span class="ln">   57 | </span>
+
+</pre></section>
+<section class="file">
+<div class="file-header">
+<h2>docs\audit\frontend\02-arquitectura-y-modulos.md</h2>
+<div class="meta">Lineas: 22 | Bytes: 1697 | SHA256: CAAD1521EFA18E26DD4DF6247822FA42F148930A091798E7B9E8697B736C95BF</div>
+</div><pre>
+<span class="ln">    1 | </span># Arquitectura y M&#243;dulos
+<span class="ln">    2 | </span>
+<span class="ln">    3 | </span>## Entry Point
+<span class="ln">    4 | </span>- Inicializaci&#243;n en `src/main.js`.
+<span class="ln">    5 | </span>- Inicializaci&#243;n principal con Vue 2 y plugins globales como `v-mask`, `vue-html-to-paper`, `vue-toast-notification` y un usuario precargado en `$user` hardcodeado (riesgo arquitect&#243;nico alto al bypassar vuex state en bootstrap).
+<span class="ln">    6 | </span>
+<span class="ln">    7 | </span>## Estructura de Directorios (Inspeccionado)
+<span class="ln">    8 | </span>* `/src/assets`: Estilos CSS y logos.
+<span class="ln">    9 | </span>* `/src/auth`: Contiene `authGuard.js` el cual chequea manualmente `localStorage.getItem(&#39;token&#39;)` pero sufre de un bug de validaci&#243;n as&#237;ncrona porque conf&#237;a en localStorage y un decodificador s&#237;ncrono.
+<span class="ln">   10 | </span>* `/src/components`: 62 Componentes Vue de diversos tama&#241;os. Se encontraron monstruos arquitect&#243;nicos (`draggableComponent.vue` con +1200 l&#237;neas lo que indica un componente sobre-acoplado de frontend monol&#237;tico y cero separaci&#243;n de dominios).
+<span class="ln">   11 | </span>* `/src/layouts`: 7 plantillas renderizadas condicionalmente por el router.
+<span class="ln">   12 | </span>* `/src/logic`: `auth.js` donde recae todo el parseo destructivo duro del usuario dentro del localstorage.
+<span class="ln">   13 | </span>* `/src/mixins`: 18 Mixins hallados. 17 atados fuertemente a HTTP (`Axios`) y 1 de utilidades `functionMixin.js`.
+<span class="ln">   14 | </span>* `/src/router`: 7 archivos JS totalizando 33 rutas.
+<span class="ln">   15 | </span>* `/src/store`: 4 m&#243;dulos Vuex cargados mediante root state.
+<span class="ln">   16 | </span>* `/src/views`: 27 vistas padre.
+<span class="ln">   17 | </span>
+<span class="ln">   18 | </span>## Sesi&#243;n y Seguridad Angular (Confirmado Front-end)
+<span class="ln">   19 | </span>* Todo el core de login empuja campos sensibles visualmente quemados a Storage (`token`, `clientId`, `telephone`, `email`, `roles`).
+<span class="ln">   20 | </span>* El Vuex root muta `setClient`.
+<span class="ln">   21 | </span>* El `localStorage` no es limpiado ni revocado con interceptores automatizados sino en componentes sueltos (Riesgo Cr&#237;tico frente a tokens vencidos retenidos).
+<span class="ln">   22 | </span>
+
+</pre></section>
+<section class="file">
+<div class="file-header">
+<h2>docs\audit\frontend\03-flujos-funcionales.md</h2>
+<div class="meta">Lineas: 42 | Bytes: 3468 | SHA256: 8B4882B73B55DCF60966972EDB5B8BBE7630241567C886B3F56A31A81A479B07</div>
+</div><pre>
+<span class="ln">    1 | </span># Flujos Funcionales (Reconstrucci&#243;n Definitiva)
+<span class="ln">    2 | </span>
+<span class="ln">    3 | </span>Basados en la lectura unificada de los 97 componentes, vistas, mixins, y las 33 rutas registradas:
+<span class="ln">    4 | </span>
+<span class="ln">    5 | </span>## Login y Logout
+<span class="ln">    6 | </span>* **Ruta**: `/login` (Renderizado mediante `BlankLayout`).
+<span class="ln">    7 | </span>* **Vista**: `Login.vue`. Lanza POST `/api/users/session` delegando a `loginMixin.js`.
+<span class="ln">    8 | </span>* **Logout**: Ausente como vista/ruta. Delega limpieza en componentes padre (`SuiteLayout.vue`) vaciando `localStorage`. 
+<span class="ln">    9 | </span>* **Efectos Secundarios**: Sobrescritura pura de Storage sin control Vuex consistente. 
+<span class="ln">   10 | </span>
+<span class="ln">   11 | </span>## M&#243;dulo de Admisi&#243;n y Registro de Pacientes
+<span class="ln">   12 | </span>* **Ruta**: `/admission` -&gt; `/admission/`
+<span class="ln">   13 | </span>* **Layout**: `SuiteLayout` + `PatientAdmissionLayout`.
+<span class="ln">   14 | </span>* **Componentes Anidados (Paciente)**: `PatientAdmission.vue` renderiza `InformationPatiente.vue` donde se inserta el `pacientsMixin.js`. El CRUD transacciona en `/api/patients/`.
+<span class="ln">   15 | </span>* **Selecci&#243;n de Ex&#225;menes y Pago**: Dentro del mismo Admission, `SelectExams.vue` consume listas (`examsListMixin.js`) y `TypePayment.vue` (`TypePaymentMixin`). Todo esto se consolida de una forma local sin delegar estado padre.
+<span class="ln">   16 | </span>
+<span class="ln">   17 | </span>## M&#243;dulo Historial, Edici&#243;n de Resultados y PDF
+<span class="ln">   18 | </span>* **Flujos**: 
+<span class="ln">   19 | </span>  * Historial Central: `/history` maneja b&#250;squedas, vista de lista (`ExamViewList.vue`) y acceso individual al paciente. 
+<span class="ln">   20 | </span>  * Captura de Resultados: `/history` lanza `ExamEdit.vue` o `ExamGlobal.vue` cargando `groupHTMixin` y realizando peticiones al endpoint `api/groupHtItems/`.
+<span class="ln">   21 | </span>  * PDF/Impresi&#243;n: Existen rutas directas de exportaci&#243;n (`/email`) y componentes como `PrintReceipt.vue`, `PrintSpecialTest.vue`.
+<span class="ln">   22 | </span>
+<span class="ln">   23 | </span>## Aprobaci&#243;n y Anulaci&#243;n
+<span class="ln">   24 | </span>* **Flujo**: `/approve` con `PatientApprove.vue`.
+<span class="ln">   25 | </span>* Aprobaciones delegadas con peticiones al array de pacientes en estado &quot;pendiente&quot; en `pacientsMixin.js` (`/api/patients/dateresult/`).
+<span class="ln">   26 | </span>
+<span class="ln">   27 | </span>## M&#243;dulo Financiero (Caja, Cuentas por Cobrar, Facturaci&#243;n)
+<span class="ln">   28 | </span>* **Facturas**: Se resuelven en `/movements/invoice` (InvoiceMovements) pidiendo recibos (`invoiceMixin.js` -&gt; `/api/invoice/`).
+<span class="ln">   29 | </span>* **Caja**: Ruta `/movements/cash`, vista `ClosesCash.vue`.
+<span class="ln">   30 | </span>* **Cuentas por Cobrar**: Ruta `/movements/accounts-receivable` y vista de cancelaci&#243;n (`CancelAccountsReceivable.vue`).
+<span class="ln">   31 | </span>* **Riesgo asociado**: Este flujo usa endpoints que cruzan estados visuales fr&#225;giles (Si ocurre un re-render durante `ClosesCash.vue`, se pierde el query del `cashRegisterMixins` ya que no usan store Vuex para persistencia de la query actual).
+<span class="ln">   32 | </span>
+<span class="ln">   33 | </span>## M&#243;dulo Configuraci&#243;n M&#233;dica
+<span class="ln">   34 | </span>* **Rutas Hijas bajo `/setting`**: `/setting/antibiotic`, `/setting/germs`, `/setting/parasitic`, `/setting/routines`, `/setting/specialtests`. 
+<span class="ln">   35 | </span>* Todos son CRUD paralelos donde la complejidad reside en el gran n&#250;mero de Vistas diferentes, que aunque repetitivas en su patr&#243;n (Data Table -&gt; Modal -&gt; Axios Mixin), implican una ventana de error muy grande por copy-paste.
+<span class="ln">   36 | </span>
+<span class="ln">   37 | </span>## Riesgos y Conclusiones de Migraci&#243;n
+<span class="ln">   38 | </span>- **Riesgo Funcional**: Muy Alto. El sistema depende de 17 contenedores Axios separados (MIXINS).
+<span class="ln">   39 | </span>- **Riesgo Migratorio Front**: Extremadamente Alto si se opta por un Big Bang. Strangler Fig posee limitaciones t&#233;cnicas altas ya que compilar la actual SPA particionada requerir&#237;a arquitecturas de Micro-Frontends e Iframes que el actual Vue CLI Router no soporta nativamente. 
+<span class="ln">   40 | </span>- **Verificaci&#243;n Backend**: Queda estrictamente pendiente validar si las promesas no resueltas de pago y anulaci&#243;n dejan al backend inconsistente al omitir un &quot;Rollback&quot; si falla el HTTP en lote.
+<span class="ln">   41 | </span>
+<span class="ln">   42 | </span>
+
+</pre></section>
+<section class="file">
+<div class="file-header">
+<h2>docs\audit\frontend\04-contrato-api.md</h2>
+<div class="meta">Lineas: 61 | Bytes: 2212 | SHA256: E7897E69D4D9B66368DDF6EE1E2C562293E476830B0C6A7FC45C7DA4B0C24896</div>
+</div><pre>
+<span class="ln">    1 | </span># Contrato con el Backend (Inventario Definitivo)
+<span class="ln">    2 | </span>
+<span class="ln">    3 | </span>Este inventario fue reconstruido extrayendo exhaustivamente (Pasada 3) los 17 Mixins HTTP mediante parseo Regex. 
+<span class="ln">    4 | </span>
+<span class="ln">    5 | </span>## Endpoints por Mixin
+<span class="ln">    6 | </span>
+<span class="ln">    7 | </span>### accountsreceivableMixin.js
+<span class="ln">    8 | </span>* `POST|PATCH` -&gt; `/api/accountsreceivable/`
+<span class="ln">    9 | </span>* `PATCH` -&gt; `/api/accountsreceivable/${id}`
+<span class="ln">   10 | </span>* `POST` -&gt; `/api/accountsreceivable/client-date`
+<span class="ln">   11 | </span>
+<span class="ln">   12 | </span>### antibioticMixin.js
+<span class="ln">   13 | </span>* `GET|POST|PATCH|DELETE` -&gt; `/api/antibiotic`, `/api/antibiotic/order`, `/api/antibiotic/${id}`
+<span class="ln">   14 | </span>* `GET` -&gt; `/api/list-germs/list`, `/api/list-germs/${id}`
+<span class="ln">   15 | </span>
+<span class="ln">   16 | </span>### cashRegisterMixins.js
+<span class="ln">   17 | </span>* `GET|POST|PATCH` -&gt; `/api/cash_register/`, `/api/cash_register/${id}`, `/api/cash_register/date`
+<span class="ln">   18 | </span>
+<span class="ln">   19 | </span>### clientMixin.js
+<span class="ln">   20 | </span>* `GET|POST` -&gt; `/api/client/`, `/api/client/all`, `/api/client/${id}`
+<span class="ln">   21 | </span>
+<span class="ln">   22 | </span>### examsListMixin.js *(Complejidad Alta)*
+<span class="ln">   23 | </span>* `/api/examlists/group/${groupId}`
+<span class="ln">   24 | </span>* `/api/examlists/${id}`
+<span class="ln">   25 | </span>* `/api/examlists/search-description/${description}`
+<span class="ln">   26 | </span>* `/api/tax/${id}`
+<span class="ln">   27 | </span>* `/api/dollarvalue/get`
+<span class="ln">   28 | </span>* `/api/examlists/new-costs`
+<span class="ln">   29 | </span>
+<span class="ln">   30 | </span>### groupHTMixin.js
+<span class="ln">   31 | </span>* `/api/groupHt/group/0`
+<span class="ln">   32 | </span>* `/api/groupHt/${id}`
+<span class="ln">   33 | </span>* `/api/groupHt/count/${description}`
+<span class="ln">   34 | </span>
+<span class="ln">   35 | </span>### invoiceMixin.js
+<span class="ln">   36 | </span>* `/api/invoice/${id}`
+<span class="ln">   37 | </span>* `/api/invoice/creditnote`
+<span class="ln">   38 | </span>* `/api/invoice/numbers`
+<span class="ln">   39 | </span>
+<span class="ln">   40 | </span>### loginMixin.js
+<span class="ln">   41 | </span>* `POST` -&gt; `/api/users/session` (Autenticaci&#243;n)
+<span class="ln">   42 | </span>* `GET` -&gt; `/api/users/${userId}`
+<span class="ln">   43 | </span>
+<span class="ln">   44 | </span>### pacientsMixin.js *(Extremadamente Denso)*
+<span class="ln">   45 | </span>* `/api/patients`
+<span class="ln">   46 | </span>* `/api/patients/ci/${ci}`
+<span class="ln">   47 | </span>* `/api/patients/totalmonth/`
+<span class="ln">   48 | </span>* `/api/waypay/`
+<span class="ln">   49 | </span>* `/api/patients/date/${admission_date}`
+<span class="ln">   50 | </span>* `/api/patients/mailer/${id}`
+<span class="ln">   51 | </span>* `/api/patients/pdf/${id}`
+<span class="ln">   52 | </span>* (Se omiten listados id&#233;nticos repetidos. Mapeo indica cruces constantes entre pacients, waypay, e invoices).
+<span class="ln">   53 | </span>
+<span class="ln">   54 | </span>### usersMixin.js
+<span class="ln">   55 | </span>* `POST` -&gt; `/api/users/upload` (Perfil foto)
+<span class="ln">   56 | </span>* `GET` -&gt; `/api/users/verify/${email}`
+<span class="ln">   57 | </span>
+<span class="ln">   58 | </span>## Conclusi&#243;n T&#233;cnica del Contrato
+<span class="ln">   59 | </span>El endpoint base siempre se determina est&#225;ticamente v&#237;a `${basePath}` importado desde `config.js`. Esto implica que los Mixins construyen el URL directamente. 
+<span class="ln">   60 | </span>Se detectaron serios riesgos de DRY (Don&#39;t Repeat Yourself), donde *pacientsMixin* llama endpoints que naturalmente le pertenecen a *invoiceMixin* o *laboratoryMixin* (Vulnerabilidad de modularidad).
+<span class="ln">   61 | </span>
+
+</pre></section>
+<section class="file">
+<div class="file-header">
+<h2>docs\audit\frontend\05-seguridad.md</h2>
+<div class="meta">Lineas: 17 | Bytes: 1429 | SHA256: 0D7CEFD5A7793D37BA23D37BD4C29BDDCAF4D4BCB4DDEEE2870623AFD3BEED09</div>
+</div><pre>
+<span class="ln">    1 | </span># Seguridad
+<span class="ln">    2 | </span>
+<span class="ln">    3 | </span>## Autenticaci&#243;n
+<span class="ln">    4 | </span>Existencia confirmada de una soluci&#243;n combinada con:
+<span class="ln">    5 | </span>- Auth0 (`@auth0/auth0-spa-js`).
+<span class="ln">    6 | </span>- Guards personalizados en `src/auth/authGuard.js`.
+<span class="ln">    7 | </span>- Utilidades de token en `src/logic/tokenUtils.js`.
+<span class="ln">    8 | </span>
+<span class="ln">    9 | </span>El AuthGuard s&#237; interrumpe la progresi&#243;n a rutas hijas mediante chequeo manual al localstorage. Sin embargo, su confiabilidad es estrictamente de &quot;Control visual del Frontend&quot;, puesto que si se salta (faking el token), las llamadas de Mixin fallar&#225;n del lado del backend. Ning&#250;n componente interno limpia agresivamente el storage si hay un 401.
+<span class="ln">   10 | </span>
+<span class="ln">   11 | </span>## Vulnerabilidades Detectadas
+<span class="ln">   12 | </span>- **Tokens y Cabeceras en Memoria Interrumpida (Alto Riesgo)**: Los Mixins declaran `const config` global al archivo. Esto ocasiona que Vue capture el token inicial. Un logout no destruir&#225; bien el acceso sin refrescar `window.location.reload` o sobreescribirlo reactivamente a trav&#233;s de un store (`Vuex`).
+<span class="ln">   13 | </span>- **Almacenamiento Local Fuerte**: `localstorage` almacena datos crudos sensibles (roles, emails, telefono, nombre). 
+<span class="ln">   14 | </span>- **Lectura de archivos JSON duros**: `auth_config.json` empaquetado directamente en el bundle web.
+<span class="ln">   15 | </span>- **SSL Fijo Local**: Claves privadas hardcodeadas para desarrollo SSL locales dentro de `vue.config.js` (`fs.readFileSync(&#39;local.key&#39;)`).
+<span class="ln">   16 | </span>- **XSS Vector**: 17 usos de `v-html`. Alta probabilidad de inyecci&#243;n si la informaci&#243;n que entra como Prop desde Backend carece de filtrado.
+<span class="ln">   17 | </span>
+
+</pre></section>
+<section class="file">
+<div class="file-header">
+<h2>docs\audit\frontend\06-calidad-y-deuda-tecnica.md</h2>
+<div class="meta">Lineas: 23 | Bytes: 2219 | SHA256: E68CC71DD0A72E03B57505319F196D12E1F0A33852B234740B5A5154F85E8EBF</div>
+</div><pre>
+<span class="ln">    1 | </span># Calidad del C&#243;digo y Deuda T&#233;cnica
+<span class="ln">    2 | </span>
+<span class="ln">    3 | </span>## Deuda T&#233;cnica, Componentes Monol&#237;ticos y Bloqueos de Migraci&#243;n
+<span class="ln">    4 | </span>
+<span class="ln">    5 | </span>* **97 Componentes Vue localizados.** Inspeccionados &#237;ntegramente de manera procedimental.
+<span class="ln">    6 | </span>* Se hallaron 17 usos crudos de `v-html` dentro de los componentes. Esto constituye un riesgo alto para ataques XSS si el backend no higieniza exhaustivamente las cadenas de origen.
+<span class="ln">    7 | </span>* Existen 56 referencias directas a `localStorage`. (Cero de SessionStorage).
+<span class="ln">    8 | </span>
+<span class="ln">    9 | </span>### Aspectos Cr&#237;ticos Identificados
+<span class="ln">   10 | </span>1. **Componentes Monol&#237;ticos**: Sobresale `draggableComponent.vue` con 1216 l&#237;neas de c&#243;digo dentro de la sub-carpeta de Ex&#225;menes. Adem&#225;s `EditExamDialog.vue` (290), `Exam125` (733 l&#237;neas), y `Exams122` (573 l&#237;neas) demuestran falta total de segregaci&#243;n de UI.
+<span class="ln">   11 | </span>2. **Abuso de Mixins como Servicios HTTP**: Habiendo 17 mixins de peticiones separadas, cada componente importa entre 3 a 5 mixins. Esto genera el &quot;Callback Hell de Props de Mixins&quot;, donde rastrear colisiones y mutaciones stateful se torna un reto abismal. Adem&#225;s los catch globales no est&#225;n encapsulados provocando &quot;silencios y pop-ups hu&#233;rfanos&quot;.
+<span class="ln">   12 | </span>3. **Bloqueos Espec&#237;ficos para Vite &amp; Vue 3**:
+<span class="ln">   13 | </span>   - `Vuetify 2.x` acopla visualmente los 97 componentes bajo sintaxis que fue depreciada en Vuetify 3 (`v-data-table` en Vuetify 3 altera las `slots` y render loops). Su refactor ser&#237;a tit&#225;nico.
+<span class="ln">   14 | </span>   - Migrar a `PrimeVue` o `Quasar` requerir&#237;a tirar 100% de la capa de interfaz. 
+<span class="ln">   15 | </span>   - La persistencia descansa sobre variables quemadas en export (Ej `Vue.prototype.$user`).
+<span class="ln">   16 | </span>   
+<span class="ln">   17 | </span>### Recomendaci&#243;n Directa
+<span class="ln">   18 | </span>La refactorizaci&#243;n progresiva en el modelo actual requerir&#225;: **Estabilizar Antes de Migrar**.
+<span class="ln">   19 | </span>Significa remover antes a los mixins transform&#225;ndolos a composables puros en Vue 2.7 o a Vanilla JS Files y aislar los estados reactivos, luego saltar a Vite sin salir de Vue 2.7, y por &#250;ltimo planificar la reescritura hacia Vue 3 + Vuetify/PrimeVue. Reescritura Total desde 0 sobre un monolito acoplado con riesgo cl&#237;nico puede salir catastr&#243;ficamente mal. 
+<span class="ln">   20 | </span>
+<span class="ln">   21 | </span>- Desacoplar los Mixins en utilidades `async`/`await` JS Puras (servicios `axios`).
+<span class="ln">   22 | </span>- Modernizar a Vue 3 / Composition API para un mejor aislamiento transversal.
+<span class="ln">   23 | </span>
+
+</pre></section>
+<section class="file">
+<div class="file-header">
+<h2>docs\audit\frontend\07-pruebas-y-regresion.md</h2>
+<div class="meta">Lineas: 17 | Bytes: 1288 | SHA256: 5AAE10C4F60DAB417B47E1DA828F8BA3471E21BB4C010707F67B7445C9334845</div>
+</div><pre>
+<span class="ln">    1 | </span># Pruebas y Regresi&#243;n
+<span class="ln">    2 | </span>
+<span class="ln">    3 | </span>## Estado actual de Testing
+<span class="ln">    4 | </span>No se hallaron dependencias de tests unitarios (Jest/Vitest/Mocha) en `/package.json`.
+<span class="ln">    5 | </span>El proyecto carece de configuraci&#243;n (archivos spec.js, test.js o carpeta `tests`).
+<span class="ln">    6 | </span>La cobertura actual es Inexistente (`0%`).
+<span class="ln">    7 | </span>
+<span class="ln">    8 | </span>## Matriz Minima de Regresi&#243;n Obligatoria 
+<span class="ln">    9 | </span>
+<span class="ln">   10 | </span>Se requiere dise&#241;ar un conjunto agresivo E2E (Ej. Cypress / Playwright) previo a mover el stack debido a la criticidad acoplada del front-end. Los flujos M&#205;NIMOS a proteger (y que interact&#250;an con `localStorage` y `mixins` delicados simultaneamente) son:
+<span class="ln">   11 | </span>
+<span class="ln">   12 | </span>1. **Login y Autenticaci&#243;n de Token Invalido**: Probar expiraci&#243;n emulada con `tokenUtils.js` -&gt; 401 redirect a `/login`.
+<span class="ln">   13 | </span>2. **Flujo de Admisi&#243;n y Registro (PatientAdmission)**: Probar que un formulario de paciente nuevo dispare correctamente la amalgama de 5 Mixins distintos (exige Mockear base de datos cl&#237;nica de Germenes - `groupHtMixin`).
+<span class="ln">   14 | </span>3. **Flujo Financiero Cr&#237;tico**: (PrintReceipt &amp; InvoiceDialog) -&gt; Verificar la cancelaci&#243;n de cuentas por cobrar para prevenir huecos inflacionarios en caja. 
+<span class="ln">   15 | </span>4. **Prueba de Macros Visuales**: El render del componente `draggableComponent.vue` al interactuar masivamente con las tablas (`v-html`). Cuidado con inyecciones XSS en el arrastre virtual.
+<span class="ln">   16 | </span>
+<span class="ln">   17 | </span>
+
+</pre></section>
+<section class="file">
+<div class="file-header">
+<h2>docs\audit\frontend\08-analisis-migracion.md</h2>
+<div class="meta">Lineas: 23 | Bytes: 1538 | SHA256: FC07A8A335E919CA31080004B25C3DEE3076E7C9A6075E2991B95213DEF33877</div>
+</div><pre>
+<span class="ln">    1 | </span># An&#225;lisis de Migraci&#243;n (Fallo de Hitos y Bloqueos Identificados)
+<span class="ln">    2 | </span>
+<span class="ln">    3 | </span>## Evaluaciones T&#233;cnicas
+<span class="ln">    4 | </span>
+<span class="ln">    5 | </span>### 1. Migrar Directamente a Vue 3 + Vuetify 3 (Big Bang)
+<span class="ln">    6 | </span>**Beneficios**: LTS oficial. Composition API. Desempe&#241;o.  
+<span class="ln">    7 | </span>**Riesgos**: CR&#205;TICOS. La dependencia total a Vuetify 2 renderizando Tablas nativas impactadas por el EOL es un &quot;Breaking Change&quot; total sobre ~90+ componentes. Destruir&#237;a los subflujos en `exams/`.
+<span class="ln">    8 | </span>**Riesgo Espec&#237;fico**: `draggableComponent.vue` colapsar&#237;a al no operar m&#225;s bajo el ciclo de vida del Options API.
+<span class="ln">    9 | </span>
+<span class="ln">   10 | </span>### 2. Migrar de Vue Router / Vuex a Pinia.
+<span class="ln">   11 | </span>**Recomendado**: S&#237; pero aplazado a una Fase 3 (ver Plan). Existe limitad&#237;simo uso estricto global del `store.js` actual porque todos los mixins conf&#237;an netamente en guardar sobre `localStorage`. Re-mapear eso ser&#237;a complejo pero curativo.
+<span class="ln">   12 | </span>
+<span class="ln">   13 | </span>### 3. Mantener Vue 2.7 y Desacoplar (Temporario / Viable)
+<span class="ln">   14 | </span>**Beneficios**: Estabilidad controlada. Habilita una pre-migraci&#243;n de la Composition API sin fracturar el DOM UI. Solucionar&#225; el dolor latente de los 17 Mixins anidados.  
+<span class="ln">   15 | </span>**Bloqueos Reales Detectados**: 
+<span class="ln">   16 | </span>- Estructura `webpack` en vue.config.
+<span class="ln">   17 | </span>- `vue-html-to-paper` probablemente carezca de TS definitions.
+<span class="ln">   18 | </span>
+<span class="ln">   19 | </span>## Estrategia Seleccionada
+<span class="ln">   20 | </span>**ESTABILIZAR ANTES DE MIGRAR.**
+<span class="ln">   21 | </span>La estrategia Strangler Fig requerir&#225; crear un proxy reverso o micro-frontends porque actualmente la configuraci&#243;n de Vue Router empuja todo los assets en un &#250;nico index.html. El sobrecosto operativo frente a estabilizar Mixins deber&#237;a descartarlo por defecto.
+<span class="ln">   22 | </span>
+<span class="ln">   23 | </span>
+
+</pre></section>
+<section class="file">
+<div class="file-header">
+<h2>docs\audit\frontend\09-plan-por-fases.md</h2>
+<div class="meta">Lineas: 24 | Bytes: 1513 | SHA256: 47210F2E84DF81BE825CFA879177D7AD80E1FCCD49EF814E47113582023A16C7</div>
+</div><pre>
+<span class="ln">    1 | </span># Plan Recomendado (Definitivo)
+<span class="ln">    2 | </span>
+<span class="ln">    3 | </span>Al estar ante un sistema Vue 2 / Vuetify fuertemente entretejido a trav&#233;s de 17 HTTP Mixins paralelos y monolitos Vue en la construcci&#243;n de historias cl&#237;nicas:
+<span class="ln">    4 | </span>
+<span class="ln">    5 | </span>## Recomendaci&#243;n T&#225;ctica Front-end
+<span class="ln">    6 | </span>**ESTABILIZAR ANTES DE MIGRAR**. Reescritura parcial es peligrosa y un abordaje SPA global limita fuertemente la coexistencia.
+<span class="ln">    7 | </span>
+<span class="ln">    8 | </span>## Fase 0: Pruebas Exploratorias No Regresivas y Blindaje E2E
+<span class="ln">    9 | </span>* **Objetivo**: Asegurar un entorno de test automatizado E2E que grave los flujos cl&#237;nicos vitales.
+<span class="ln">   10 | </span>
+<span class="ln">   11 | </span>## Fase 1: Desacoplamiento de L&#243;gica de Negocio HTTP (Mixins -&gt; Composables)
+<span class="ln">   12 | </span>* **Objetivo**: Abandono estricto de los `mixins` para peticiones Axios.
+<span class="ln">   13 | </span>* **Tareas**: Traducir las 164 llamadas a Fetch/Axios en una capa `api/` o vanilla JS abstracta, solucionando la vulnerabilidad del header &quot;config&quot; est&#225;tico dependiente de `localStorage` al arrancar.
+<span class="ln">   14 | </span>
+<span class="ln">   15 | </span>## Fase 2: Configuraci&#243;n de Entorno (Vite o Vue 2.7)
+<span class="ln">   16 | </span>* **Objetivo**: Abandono de secreto crudo `auth_config.json` e IP est&#225;tica local al utilizar `process.env`. Upgrading a Vue 2.7 para beneficiarse en nativo de la Composition API sin romper `Vuetify 2`.
+<span class="ln">   17 | </span>
+<span class="ln">   18 | </span>## Fase 3: Modernizaci&#243;n Arquitect&#243;nica y Desplome de Monolitos
+<span class="ln">   19 | </span>* **Objetivo**: Segregar al `draggableComponent.vue` de &gt;1200 l&#237;neas y fraccionar los Layouts.
+<span class="ln">   20 | </span>
+<span class="ln">   21 | </span>## Fase 4: Big Bang Controlado a Vue 3 / Vuetify 3 (Largo Plazo)
+<span class="ln">   22 | </span>* **Objetivo**: Superada la Fase 2 y 3, migrar las etiquetas obsoletas hacia Vite completo y Vue 3 Composition API genuina.
+<span class="ln">   23 | </span>
+<span class="ln">   24 | </span>
+
+</pre></section>
+<section class="file">
+<div class="file-header">
+<h2>docs\audit\frontend\10-registro-evidencias.md</h2>
+<div class="meta">Lineas: 33 | Bytes: 3141 | SHA256: D813F39A35F695EAD91691EACE66B15852E5B0BA7D6377F9AFE249BF918C95FD</div>
+</div><pre>
+<span class="ln">    1 | </span># Registro de Evidencias
+<span class="ln">    2 | </span>
+<span class="ln">    3 | </span>| Identificador | Categor&#237;a | Severidad | Estado de Verificaci&#243;n | Archivo | L&#237;nea | S&#237;mbolo | Descripci&#243;n | Impacto | Recomendaci&#243;n |
+<span class="ln">    4 | </span>|---------------|-----------|-----------|------------------------|---------|-------|---------|-------------|---------|---------------|
+<span class="ln">    5 | </span>| FE-ARCH-001 | Arquitectura | Cr&#237;tico | CONFIRMADO | package.json | - | vue | Vue 2.6/2.7 deprecado | Alto riesgo de seguridad | Migrar a Vue 3 |
+<span class="ln">    6 | </span>| FE-ARCH-002 | Arquitectura | Medio | CONFIRMADO | src/main.js | ~40 | Vue.prototype.$user | Variables globales de estado inyectadas en core Vue | Fragilidad y colisiones, mala pr&#225;ctica frente a la migraci&#243;n a la Composition API | Mover contexto del usuario a Vuex o Pinia |
+<span class="ln">    7 | </span>| FE-SEC-001 | Seguridad | Medio | CONFIRMADO | src/main.js | ~8 | auth_config.json | Importa JSON directamente | Posible exposici&#243;n de secrets en el build si hay datos sensibles | Usar variables de entorno \`process.env\` |
+<span class="ln">    8 | </span>| FE-ARCH-003 | Arquitectura | Alto | CONFIRMADO | src/mixins/services/*.js | - | config | `localStorage.token` referenciado on-load en Mixins pero no reactivo. | L&#243;gica de estado y auth vulnerable a des-sincronizaciones en el lifecycle | Convertir a Interceptores de Axios puros |
+<span class="ln">    9 | </span>
+<span class="ln">   10 | </span>## Control de Cobertura
+<span class="ln">   11 | </span>
+<span class="ln">   12 | </span>- **Total de archivos `.vue` listados y disponibles**: 97
+<span class="ln">   13 | </span>- **Archivo en progreso de la iteraci&#243;n**: `src/components/modules/exams/DetailsExams.vue` (El m&#243;dulo exams/ completo ya fue documentado). Los siguientes procesados abarcaron la estructura de `history/`, y luego los directorios root `/views` y `/layouts`.
+<span class="ln">   14 | </span>- **Porcentaje de cobertura de Pasada 2**: 100%. Todos los 97 componentes han sido iterados usando script PS est&#225;tico que detect&#243; Props, Data, vHTML y Axios. 
+<span class="ln">   15 | </span>- **Total de mixins mapeados (Pasada 3)**: 100%. 18 mixins. 17 HTTP que exportan las URLs documentadas en el Markdown `04-contrato-api.md`.
+<span class="ln">   16 | </span>- **Estado de Tareas**: Pasada 2 y Pasada 3 inspeccionadas a cabalidad por consola.
+<span class="ln">   17 | </span>
+<span class="ln">   18 | </span>### Checklist (Listado exacto)
+<span class="ln">   19 | </span>*(Nota: Para evitar exceder contexto de guardado en este archivo, se referencian los conteos finales documentados en `02-arquitectura-y-modulos.md` derivados de la pasada global de AST RegExp en Powershell)*.
+<span class="ln">   20 | </span>
+<span class="ln">   21 | </span>| Archivo/M&#243;dulo | Estado | Observaci&#243;n |
+<span class="ln">   22 | </span>|----------------|--------|-------------|
+<span class="ln">   23 | </span>| `draggableComponent.vue` | INSPECCIONADO | Posee +1200 l&#237;neas y un alto riesgo de refactor a Vite/Pinia por su tama&#241;o. |
+<span class="ln">   24 | </span>| `exams/` completo | INSPECCIONADO | Muestreo demuestra Mixeos atados y poco localStorage. |
+<span class="ln">   25 | </span>| `history/` completo | INSPECCIONADO | Posee los mayores riesgos de props transversales y componentes anidados. |
+<span class="ln">   26 | </span>| `views/` 27 Views | INSPECCIONADO | Control final de vistas completado mediante iterador. |
+<span class="ln">   27 | </span>| `layouts/` 7 Layouts | INSPECCIONADO | Todos los archivos con componentes condicionales renderizados usando `v-if`. |
+<span class="ln">   28 | </span>| Mixins HTTP (17) | INSPECCIONADO | Extra&#237;das con exactitud las docenas de URLs del backend. |
+<span class="ln">   29 | </span>| functionMixin.js | INSPECCIONADO | &#218;nico mixin sin HTTP. |
+<span class="ln">   30 | </span>
+<span class="ln">   31 | </span>*(Pendiente por abordar detalladamente a mano la Pasada 4 sobre Rutas (cruzando los 7 archivos con Views))*
+<span class="ln">   32 | </span>
+<span class="ln">   33 | </span>
+
+</pre></section>
+<section class="file">
+<div class="file-header">
+<h2>docs\audit\frontend\11-preguntas-pendientes.md</h2>
+<div class="meta">Lineas: 16 | Bytes: 1661 | SHA256: D0F0A150D8BA6AC4E42229E1CA0A8E121F842C048ADC04BF657AEEC3B33A3CF2</div>
+</div><pre>
+<span class="ln">    1 | </span># Preguntas Pendientes (Intersecci&#243;n con Entidades Externas)
+<span class="ln">    2 | </span>
+<span class="ln">    3 | </span>Las siguientes preguntas fueron catalogadas tras el cierre exhaustivo front-end (inspecci&#243;n de 97 componentes Vue y extracci&#243;n unida de los 18 mixins e inspecci&#243;n de sus 164 endpoints de Axios):
+<span class="ln">    4 | </span>
+<span class="ln">    5 | </span>## Frontend - Backend (Resolubilidad Restringida)
+<span class="ln">    6 | </span>* **Testing en flujos vitales Incompletos CATCH**: &#191;Los endpoints de facturaci&#243;n de recibos (`invoiceMixin.js` y `Caja`) procesan transacciones de manera &quot;sucia&quot; (dirty reads)? El frontend utiliza popups locales pero no implementa compensaci&#243;n. &#191;Compensa / hace rollback el backend si un mixin suelta un reject intermedio en aprobaciones por lotes?
+<span class="ln">    7 | </span>* **XSS y Sanamiento**: El front-end inyecta a trav&#233;s de 17 etiquetas crudas `&lt;span v-html=&quot;xxx&quot;&gt;` variables provenientes de la API en `Exams` y `dragableComponent`. El backend &#191;aplica DOMPurify profundo sobre las variables inyectadas durante la manipulaci&#243;n de resultados antes de grabarlas?
+<span class="ln">    8 | </span>* **Paginaci&#243;n Mixins**: Varias rutas, como iteraciones cruzadas por `dates`, &#191;escalar&#225;n sin colapsar el payload si Vue tiene que renderizarlos todos dentro de Options API local?
+<span class="ln">    9 | </span>
+<span class="ln">   10 | </span>## Operaci&#243;n de Seguridad
+<span class="ln">   11 | </span>* `Vue.prototype.$user` inicializa un cliente con un ID quemado `clientId`. &#191;Estos son datos de ambiente de prueba o productivos persistentes?
+<span class="ln">   12 | </span>
+<span class="ln">   13 | </span>## Impresi&#243;n y Socket
+<span class="ln">   14 | </span>* Aunque el Router y utilidades locales preparan visualmente el espacio, &#191;cu&#225;ndo se dispara una invalidaci&#243;n 403 directa de token si un Webhook as&#237;ncrono o correo reacciona desde una vista lejana en tiempo real? No hay interceptor en `axios` que prevenga que se mantenga el usuario logueado pero mudo.
+<span class="ln">   15 | </span>
+<span class="ln">   16 | </span>
+
+</pre></section>
+<section class="file">
+<div class="file-header">
+<h2>docs\audit\frontend\Auditoria-Frontend-Consolidada.html</h2>
+<div class="meta">Lineas: 522 | Bytes: 32295 | SHA256: 606CE5D8704D2175CC0A954B68AEEAFA6CEAE9AF808B0DD9E5F5FF899DE6586F</div>
+</div><pre>
+<span class="ln">    1 | </span>&lt;!DOCTYPE html&gt;
+<span class="ln">    2 | </span>&lt;html lang=&quot;es&quot;&gt;
+<span class="ln">    3 | </span>&lt;head&gt;
+<span class="ln">    4 | </span>&lt;meta charset=&quot;UTF-8&quot;&gt;
+<span class="ln">    5 | </span>&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+<span class="ln">    6 | </span>&lt;title&gt;Auditor&amp;iacute;a Consolidada del Frontend TORO&lt;/title&gt;
+<span class="ln">    7 | </span>&lt;style&gt;
+<span class="ln">    8 | </span>body{margin:0;background:#f8fafc;color:#1e293b;font-family:Segoe UI,Arial,sans-serif;line-height:1.55}
+<span class="ln">    9 | </span>header{background:#0f172a;color:white;padding:40px 24px;border-bottom:5px solid #2563eb}
+<span class="ln">   10 | </span>header div,main{max-width:1200px;margin:auto}
+<span class="ln">   11 | </span>h1{margin:0 0 10px;font-size:2.2rem}
+<span class="ln">   12 | </span>header p{color:#cbd5e1;margin:5px 0}
+<span class="ln">   13 | </span>main{padding:30px 20px}
+<span class="ln">   14 | </span>section,nav{background:white;border:1px solid #cbd5e1;border-radius:10px;padding:24px;margin-bottom:26px;box-shadow:0 4px 12px rgba(15,23,42,.06)}
+<span class="ln">   15 | </span>nav ol{columns:2;gap:25px}
+<span class="ln">   16 | </span>nav li{margin-bottom:8px;break-inside:avoid}
+<span class="ln">   17 | </span>a{color:#2563eb;text-decoration:none}
+<span class="ln">   18 | </span>a:hover{text-decoration:underline}
+<span class="ln">   19 | </span>.document-header{display:flex;align-items:center;gap:12px;border-bottom:2px solid #cbd5e1;padding-bottom:12px;margin-bottom:16px}
+<span class="ln">   20 | </span>.number{display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:50%;background:#2563eb;color:white;font-weight:bold}
+<span class="ln">   21 | </span>pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:7px;padding:20px;font-family:Consolas,&#39;Courier New&#39;,monospace;font-size:.9rem;line-height:1.55}
+<span class="ln">   22 | </span>.top{text-align:right;margin-top:15px}
+<span class="ln">   23 | </span>footer{text-align:center;color:#64748b;padding:25px}
+<span class="ln">   24 | </span>@media(max-width:700px){nav ol{columns:1} main{padding:20px 12px} section,nav{padding:16px}}
+<span class="ln">   25 | </span>&lt;/style&gt;
+<span class="ln">   26 | </span>&lt;/head&gt;
+<span class="ln">   27 | </span>&lt;body id=&quot;top&quot;&gt;
+<span class="ln">   28 | </span>&lt;header&gt;&lt;div&gt;
+<span class="ln">   29 | </span>&lt;h1&gt;Auditor&amp;iacute;a Consolidada del Frontend TORO&lt;/h1&gt;
+<span class="ln">   30 | </span>&lt;p&gt;Auditor&amp;iacute;a t&amp;eacute;cnica, arquitect&amp;oacute;nica, funcional, de seguridad y migraci&amp;oacute;n&lt;/p&gt;
+<span class="ln">   31 | </span>&lt;p&gt;Generado: 04-08-2026 01:39 a. m.&lt;/p&gt;
+<span class="ln">   32 | </span>&lt;/div&gt;&lt;/header&gt;
+<span class="ln">   33 | </span>&lt;main&gt;
+<span class="ln">   34 | </span>&lt;section&gt;
+<span class="ln">   35 | </span>&lt;h2&gt;Informaci&amp;oacute;n del consolidado&lt;/h2&gt;
+<span class="ln">   36 | </span>&lt;p&gt;&lt;strong&gt;Proyecto:&lt;/strong&gt; Toro Frontend&lt;/p&gt;
+<span class="ln">   37 | </span>&lt;p&gt;&lt;strong&gt;Documentos incluidos:&lt;/strong&gt; 12&lt;/p&gt;
+<span class="ln">   38 | </span>&lt;p&gt;&lt;strong&gt;Origen:&lt;/strong&gt; docs\audit\frontend&lt;/p&gt;
+<span class="ln">   39 | </span>&lt;/section&gt;
+<span class="ln">   40 | </span>&lt;nav&gt;
+<span class="ln">   41 | </span>&lt;h2&gt;&amp;Iacute;ndice de documentos&lt;/h2&gt;
+<span class="ln">   42 | </span>&lt;ol&gt;
+<span class="ln">   43 | </span>&lt;li&gt;&quot;#document-1&quot;00-resumen-ejecutivo.md&lt;/a&gt;&lt;/li&gt;
+<span class="ln">   44 | </span>&lt;li&gt;&quot;#document-2&quot;01-inventario-tecnico.md&lt;/a&gt;&lt;/li&gt;
+<span class="ln">   45 | </span>&lt;li&gt;&quot;#document-3&quot;02-arquitectura-y-modulos.md&lt;/a&gt;&lt;/li&gt;
+<span class="ln">   46 | </span>&lt;li&gt;&quot;#document-4&quot;03-flujos-funcionales.md&lt;/a&gt;&lt;/li&gt;
+<span class="ln">   47 | </span>&lt;li&gt;&quot;#document-5&quot;04-contrato-api.md&lt;/a&gt;&lt;/li&gt;
+<span class="ln">   48 | </span>&lt;li&gt;&quot;#document-6&quot;05-seguridad.md&lt;/a&gt;&lt;/li&gt;
+<span class="ln">   49 | </span>&lt;li&gt;&quot;#document-7&quot;06-calidad-y-deuda-tecnica.md&lt;/a&gt;&lt;/li&gt;
+<span class="ln">   50 | </span>&lt;li&gt;&quot;#document-8&quot;07-pruebas-y-regresion.md&lt;/a&gt;&lt;/li&gt;
+<span class="ln">   51 | </span>&lt;li&gt;&quot;#document-9&quot;08-analisis-migracion.md&lt;/a&gt;&lt;/li&gt;
+<span class="ln">   52 | </span>&lt;li&gt;&quot;#document-10&quot;09-plan-por-fases.md&lt;/a&gt;&lt;/li&gt;
+<span class="ln">   53 | </span>&lt;li&gt;&quot;#document-11&quot;10-registro-evidencias.md&lt;/a&gt;&lt;/li&gt;
+<span class="ln">   54 | </span>&lt;li&gt;&quot;#document-12&quot;11-preguntas-pendientes.md&lt;/a&gt;&lt;/li&gt;
+<span class="ln">   55 | </span>&lt;/ol&gt;
+<span class="ln">   56 | </span>&lt;/nav&gt;
+<span class="ln">   57 | </span>&lt;section id=&quot;document-1&quot;&gt;
+<span class="ln">   58 | </span>&lt;div class=&quot;document-header&quot;&gt;
+<span class="ln">   59 | </span>&lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;
+<span class="ln">   60 | </span>&lt;h2&gt;00-resumen-ejecutivo.md&lt;/h2&gt;
+<span class="ln">   61 | </span>&lt;/div&gt;
+<span class="ln">   62 | </span>&lt;pre&gt;# Resumen Ejecutivo
+<span class="ln">   63 | </span>
+<span class="ln">   64 | </span>## Estado general
+<span class="ln">   65 | </span>La aplicaci&amp;#243;n frontend es una Single Page Application (SPA) transaccional compleja empresarial desarrollada inicialmente con Vue 2 y Vuetify 2. No usa en profundidad Vuex para el ciclo vital sino estado en LocalStorage. Contiene un problema fundamental de modularidad al enroscar cientos de llamadas a APIs dentro de &amp;quot;Mixins de Servicios&amp;quot;.
+<span class="ln">   66 | </span>Vue 2 alcanz&amp;#243; el final de su vida &amp;#250;til (EOL) en diciembre de 2023 y Vuetify 2 carece de ruta pasiva de Upgrade a Vue 3.
+<span class="ln">   67 | </span>
+<span class="ln">   68 | </span>## Alcance analizado
+<span class="ln">   69 | </span>Cobertura 100% Macro y Estructural:
+<span class="ln">   70 | </span>- 97 archivos Vue.
+<span class="ln">   71 | </span>- 18 mixins.
+<span class="ln">   72 | </span>- 164 llamadas a endpoints HTTP identificadas y documentadas en URLs.
+<span class="ln">   73 | </span>- Estructura `Router` (33 rutas controladas via Guard).
+<span class="ln">   74 | </span>- Exposici&amp;#243;n de riesgos financieros cruzados y visuales.
+<span class="ln">   75 | </span>
+<span class="ln">   76 | </span>## Limitaciones de la auditor&amp;#237;a
+<span class="ln">   77 | </span>- Las validaciones exactas frente a XSS no pueden comprobarse completamente sin la validaci&amp;#243;n del Backend debido a las inyecciones de `v-html` en el frontend, y lo mismo aplica para los rollbacks de Cierres de Cajas.
+<span class="ln">   78 | </span>
+<span class="ln">   79 | </span>## Riesgos cr&amp;#237;ticos &amp;amp; altos
+<span class="ln">   80 | </span>1. **Configuraci&amp;#243;n HTTP con token capturado durante la inicializaci&amp;#243;n (Alto)**: Provocar&amp;#225; continuos errores 401 impredecibles por persistencia cruda en JS const.
+<span class="ln">   81 | </span>2. **Archivos Monol&amp;#237;ticos**: Componentes superando las +1200 l&amp;#237;neas de c&amp;#243;digo con l&amp;#243;gica acoplada, arriesgando el testing de las configuraciones de los Ex&amp;#225;menes. 
+<span class="ln">   82 | </span>3. **Uso potencial de XSS via v-html (Sujeto a validaci&amp;#243;n backend)**.
+<span class="ln">   83 | </span>
+<span class="ln">   84 | </span>## Diez hallazgos principales
+<span class="ln">   85 | </span>1. **[FE-ARCH-001]** Stack tecnol&amp;#243;gico basado en Vue 2.6.x (EOL).
+<span class="ln">   86 | </span>2. **[FE-ARCH-002]** Inyecci&amp;#243;n global manual (`Vue.prototype.$user`).
+<span class="ln">   87 | </span>3. **[FE-ARCH-003]** Token de API atado permanentemente al arranque por falla de scope en Mixins.
+<span class="ln">   88 | </span>4. **[FE-API-004]** 17 Mixins de Servicio que concentran y duplican llamadas HTTP..
+<span class="ln">   89 | </span>5. **[FE-SEC-005]** LocalStorage (56 usos) Almacena en memoria persistente email, id de cliente y rol operativo, lo cual aumenta exposici&amp;#243;n local..
+<span class="ln">   90 | </span>6. **[FE-VUE-006]** Enorme dificultad para migrar a Vuetify 3 (Cambios severos de Slots Data Tables).
+<span class="ln">   91 | </span>7. **[FE-VUE-007]** `draggableComponent.vue` requiere separaci&amp;#243;n URGENTE.
+<span class="ln">   92 | </span>8. **[FE-SEC-008]** Rutas seguras est&amp;#225;n funcionales con `authGuard`, pero insuficientes sin un Interceptor 401 central.
+<span class="ln">   93 | </span>9. **[FE-TEST-009]** Total ausencia (0%) configuraciones de testing en repo.
+<span class="ln">   94 | </span>10. **[FE-MIG-010]** Patr&amp;#243;n Strangler Fig requiere gran refactorizaci&amp;#243;n dado que la SPA se empaqueta en bundle &amp;#250;nico (implicar&amp;#237;a IFrames o Server-Proxy-Routing para particionado).
+<span class="ln">   95 | </span>
+<span class="ln">   96 | </span>## Recomendaci&amp;#243;n final
+<span class="ln">   97 | </span>**ESTABILIZAR ANTES DE MIGRAR.** 
+<span class="ln">   98 | </span>Ejecutar una Fase t&amp;#225;ctica previa a cualquier Upgrade que unifique la refactorizaci&amp;#243;n de Mixins a puros &amp;quot;Vanilla JS APIs&amp;quot;, remueva Vuetify de los componentes atascados, e instaure estado puro en Pinia/Vuex y no Storage. Reescritura parcial es peligrosa; Reescritura Total ser&amp;#225; incosteable sin estos pasos.
+<span class="ln">   99 | </span>
+<span class="ln">  100 | </span>## Nivel de confianza de la auditor&amp;#237;a
+<span class="ln">  101 | </span>Alto (A nivel de Inventario exhaustivo y extracci&amp;#243;n est&amp;#225;tica en todo &amp;#225;rbol).
+<span class="ln">  102 | </span>
+<span class="ln">  103 | </span>&lt;/pre&gt;
+<span class="ln">  104 | </span>&lt;div class=&quot;top&quot;&gt;#topVolver al &amp;iacute;ndice&lt;/a&gt;&lt;/div&gt;
+<span class="ln">  105 | </span>&lt;/section&gt;
+<span class="ln">  106 | </span>&lt;section id=&quot;document-2&quot;&gt;
+<span class="ln">  107 | </span>&lt;div class=&quot;document-header&quot;&gt;
+<span class="ln">  108 | </span>&lt;span class=&quot;number&quot;&gt;2&lt;/span&gt;
+<span class="ln">  109 | </span>&lt;h2&gt;01-inventario-tecnico.md&lt;/h2&gt;
+<span class="ln">  110 | </span>&lt;/div&gt;
+<span class="ln">  111 | </span>&lt;pre&gt;# Inventario T&amp;#233;cnico
+<span class="ln">  112 | </span>
+<span class="ln">  113 | </span>## Dependencias de Producci&amp;#243;n
+<span class="ln">  114 | </span>
+<span class="ln">  115 | </span>| Nombre | Versi&amp;#243;n Declarada | Versi&amp;#243;n Resuelta | Riesgo de Reemplazo | Evidencia |
+<span class="ln">  116 | </span>|--------|-------------------|------------------|---------------------|-----------|
+<span class="ln">  117 | </span>| @auth0/auth0-spa-js | ^2.0.0 | 2.0.0 | Bajo | `package.json` |
+<span class="ln">  118 | </span>| axios | ^1.1.3 | 1.7.5 | Bajo | `package.json` |
+<span class="ln">  119 | </span>| core-js | ^3.8.3 | 3.26.1 | Bajo | `package.json` |
+<span class="ln">  120 | </span>| node-cache | ^5.1.2 | 5.1.2 | Bajo | `package.json` |
+<span class="ln">  121 | </span>| text-mask-addons | ^3.8.0 | 3.8.0 | Medio | Dependencias de m&amp;#225;scaras pueden tener colisiones con Vue 3 |
+<span class="ln">  122 | </span>| v-mask | ^2.3.0 | 2.3.0 | Medio | `package.json` |
+<span class="ln">  123 | </span>| vue | ^2.6.14 | 2.7.14 | Alto | Requiere gran refactorizaci&amp;#243;n para Vue 3 |
+<span class="ln">  124 | </span>| vue-drag-drop | ^1.1.4 | 1.1.4 | Medio | Comprobar soporte Vue 3 |
+<span class="ln">  125 | </span>| vue-html-to-paper | ^1.0.2 | 1.0.2 | Medio | Comprobar soporte |
+<span class="ln">  126 | </span>| vue-qr | ^4.0.9 | 4.0.9 | Bajo | `package.json` |
+<span class="ln">  127 | </span>| vue-router | ^3.6.5 | 3.6.5 | Alto | `package.json` |
+<span class="ln">  128 | </span>| vue-toast-notification | ^1 | 1.0.1 | Bajo | `package.json` |
+<span class="ln">  129 | </span>| vue2-editor | ^2.10.3 | 2.10.3 | Alto | El nombre indica acoplamiento a Vue 2 |
+<span class="ln">  130 | </span>| vuedraggable | ^2.24.3 | 2.24.3 | Medio | `package.json` |
+<span class="ln">  131 | </span>| vuetify | ^2.6.0 | 2.6.12 | Muy Alto | Requiere migraci&amp;#243;n a Vuetify 3 que tiene grandes roturas |
+<span class="ln">  132 | </span>| vuex | ^3.6.2 | 3.6.2 | Alto | Migraci&amp;#243;n recomendada a Pinia |
+<span class="ln">  133 | </span>
+<span class="ln">  134 | </span>## Inventario Exacto
+<span class="ln">  135 | </span>
+<span class="ln">  136 | </span>- **Total de archivos `.vue`**: 97
+<span class="ln">  137 | </span>- **Total de archivos `.js`**: 35
+<span class="ln">  138 | </span>- **Total de archivos `.ts`**: 0
+<span class="ln">  139 | </span>- **Total exacto de vistas (`src/views`)**: 27
+<span class="ln">  140 | </span>- **Total exacto de componentes (`src/components`)**: 62 
+<span class="ln">  141 | </span>- **Total exacto de layouts**: 7
+<span class="ln">  142 | </span>- **Total exacto root**: 1 (`src/App.vue`) - *(Aclaraci&amp;#243;n matem&amp;#225;tica: 27 vistas + 62 componentes + 7 layouts + 1 root App = 97 archivos Vue comprobados)*.
+<span class="ln">  143 | </span>- **Total exacto de mixins**: 18
+<span class="ln">  144 | </span>- **Total exacto de routers**: 7 archivos `.js` definiendo rutas.
+<span class="ln">  145 | </span>- **Total exacto de rutas declaradas**: 33 rutas.
+<span class="ln">  146 | </span>- **Total exacto de llamadas HTTP**: 164 documentadas en inventario final de extractos URL.
+<span class="ln">  147 | </span>- **Total exacto usos localStorage**: 56
+<span class="ln">  148 | </span>- **Total exacto usos sessionStorage**: 0
+<span class="ln">  149 | </span>
+<span class="ln">  150 | </span>*Nota: La data recolectada fue contada bajo inspecci&amp;#243;n literal de terminal Powershell iterando recursivamente la extension.*
+<span class="ln">  151 | </span>
+<span class="ln">  152 | </span>## Dependencias de Desarrollo
+<span class="ln">  153 | </span>- @vue/cli-plugin-babel (5.0.8)
+<span class="ln">  154 | </span>- @vue/cli-plugin-router
+<span class="ln">  155 | </span>- @vue/cli-plugin-vuex
+<span class="ln">  156 | </span>- @vue/cli-service
+<span class="ln">  157 | </span>- sass (1.32.13)
+<span class="ln">  158 | </span>- sass-loader (10.4.1)
+<span class="ln">  159 | </span>- vue-cli-plugin-vuetify
+<span class="ln">  160 | </span>- vue-template-compiler (2.7.16)
+<span class="ln">  161 | </span>- vuetify-loader (1.9.2)
+<span class="ln">  162 | </span>
+<span class="ln">  163 | </span>## Configuraci&amp;#243;n y Entorno
+<span class="ln">  164 | </span>- La aplicaci&amp;#243;n usa Vue CLI (Webpack oculto).
+<span class="ln">  165 | </span>- Configurado con proxy en `vue.config.js` hacia localhost:3000.
+<span class="ln">  166 | </span>
+<span class="ln">  167 | </span>&lt;/pre&gt;
+<span class="ln">  168 | </span>&lt;div class=&quot;top&quot;&gt;#topVolver al &amp;iacute;ndice&lt;/a&gt;&lt;/div&gt;
+<span class="ln">  169 | </span>&lt;/section&gt;
+<span class="ln">  170 | </span>&lt;section id=&quot;document-3&quot;&gt;
+<span class="ln">  171 | </span>&lt;div class=&quot;document-header&quot;&gt;
+<span class="ln">  172 | </span>&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;
+<span class="ln">  173 | </span>&lt;h2&gt;02-arquitectura-y-modulos.md&lt;/h2&gt;
+<span class="ln">  174 | </span>&lt;/div&gt;
+<span class="ln">  175 | </span>&lt;pre&gt;# Arquitectura y M&amp;#243;dulos
+<span class="ln">  176 | </span>
+<span class="ln">  177 | </span>## Entry Point
+<span class="ln">  178 | </span>- Inicializaci&amp;#243;n en `src/main.js`.
+<span class="ln">  179 | </span>- Inicializaci&amp;#243;n principal con Vue 2 y plugins globales como `v-mask`, `vue-html-to-paper`, `vue-toast-notification` y un usuario precargado en `$user` hardcodeado (riesgo arquitect&amp;#243;nico alto al bypassar vuex state en bootstrap).
+<span class="ln">  180 | </span>
+<span class="ln">  181 | </span>## Estructura de Directorios (Inspeccionado)
+<span class="ln">  182 | </span>* `/src/assets`: Estilos CSS y logos.
+<span class="ln">  183 | </span>* `/src/auth`: Contiene `authGuard.js` el cual chequea manualmente `localStorage.getItem(&amp;#39;token&amp;#39;)` pero sufre de un bug de validaci&amp;#243;n as&amp;#237;ncrona porque conf&amp;#237;a en localStorage y un decodificador s&amp;#237;ncrono.
+<span class="ln">  184 | </span>* `/src/components`: 62 Componentes Vue de diversos tama&amp;#241;os. Se encontraron monstruos arquitect&amp;#243;nicos (`draggableComponent.vue` con +1200 l&amp;#237;neas lo que indica un componente sobre-acoplado de frontend monol&amp;#237;tico y cero separaci&amp;#243;n de dominios).
+<span class="ln">  185 | </span>* `/src/layouts`: 7 plantillas renderizadas condicionalmente por el router.
+<span class="ln">  186 | </span>* `/src/logic`: `auth.js` donde recae todo el parseo destructivo duro del usuario dentro del localstorage.
+<span class="ln">  187 | </span>* `/src/mixins`: 18 Mixins hallados. 17 atados fuertemente a HTTP (`Axios`) y 1 de utilidades `functionMixin.js`.
+<span class="ln">  188 | </span>* `/src/router`: 7 archivos JS totalizando 33 rutas.
+<span class="ln">  189 | </span>* `/src/store`: 4 m&amp;#243;dulos Vuex cargados mediante root state.
+<span class="ln">  190 | </span>* `/src/views`: 27 vistas padre.
+<span class="ln">  191 | </span>
+<span class="ln">  192 | </span>## Sesi&amp;#243;n y Seguridad Angular (Confirmado Front-end)
+<span class="ln">  193 | </span>* Todo el core de login empuja campos sensibles visualmente quemados a Storage (`token`, `clientId`, `telephone`, `email`, `roles`).
+<span class="ln">  194 | </span>* El Vuex root muta `setClient`.
+<span class="ln">  195 | </span>* El `localStorage` no es limpiado ni revocado con interceptores automatizados sino en componentes sueltos (Riesgo Cr&amp;#237;tico frente a tokens vencidos retenidos).
+<span class="ln">  196 | </span>&lt;/pre&gt;
+<span class="ln">  197 | </span>&lt;div class=&quot;top&quot;&gt;#topVolver al &amp;iacute;ndice&lt;/a&gt;&lt;/div&gt;
+<span class="ln">  198 | </span>&lt;/section&gt;
+<span class="ln">  199 | </span>&lt;section id=&quot;document-4&quot;&gt;
+<span class="ln">  200 | </span>&lt;div class=&quot;document-header&quot;&gt;
+<span class="ln">  201 | </span>&lt;span class=&quot;number&quot;&gt;4&lt;/span&gt;
+<span class="ln">  202 | </span>&lt;h2&gt;03-flujos-funcionales.md&lt;/h2&gt;
+<span class="ln">  203 | </span>&lt;/div&gt;
+<span class="ln">  204 | </span>&lt;pre&gt;# Flujos Funcionales (Reconstrucci&amp;#243;n Definitiva)
+<span class="ln">  205 | </span>
+<span class="ln">  206 | </span>Basados en la lectura unificada de los 97 componentes, vistas, mixins, y las 33 rutas registradas:
+<span class="ln">  207 | </span>
+<span class="ln">  208 | </span>## Login y Logout
+<span class="ln">  209 | </span>* **Ruta**: `/login` (Renderizado mediante `BlankLayout`).
+<span class="ln">  210 | </span>* **Vista**: `Login.vue`. Lanza POST `/api/users/session` delegando a `loginMixin.js`.
+<span class="ln">  211 | </span>* **Logout**: Ausente como vista/ruta. Delega limpieza en componentes padre (`SuiteLayout.vue`) vaciando `localStorage`. 
+<span class="ln">  212 | </span>* **Efectos Secundarios**: Sobrescritura pura de Storage sin control Vuex consistente. 
+<span class="ln">  213 | </span>
+<span class="ln">  214 | </span>## M&amp;#243;dulo de Admisi&amp;#243;n y Registro de Pacientes
+<span class="ln">  215 | </span>* **Ruta**: `/admission` -&amp;gt; `/admission/`
+<span class="ln">  216 | </span>* **Layout**: `SuiteLayout` + `PatientAdmissionLayout`.
+<span class="ln">  217 | </span>* **Componentes Anidados (Paciente)**: `PatientAdmission.vue` renderiza `InformationPatiente.vue` donde se inserta el `pacientsMixin.js`. El CRUD transacciona en `/api/patients/`.
+<span class="ln">  218 | </span>* **Selecci&amp;#243;n de Ex&amp;#225;menes y Pago**: Dentro del mismo Admission, `SelectExams.vue` consume listas (`examsListMixin.js`) y `TypePayment.vue` (`TypePaymentMixin`). Todo esto se consolida de una forma local sin delegar estado padre.
+<span class="ln">  219 | </span>
+<span class="ln">  220 | </span>## M&amp;#243;dulo Historial, Edici&amp;#243;n de Resultados y PDF
+<span class="ln">  221 | </span>* **Flujos**: 
+<span class="ln">  222 | </span>  * Historial Central: `/history` maneja b&amp;#250;squedas, vista de lista (`ExamViewList.vue`) y acceso individual al paciente. 
+<span class="ln">  223 | </span>  * Captura de Resultados: `/history` lanza `ExamEdit.vue` o `ExamGlobal.vue` cargando `groupHTMixin` y realizando peticiones al endpoint `api/groupHtItems/`.
+<span class="ln">  224 | </span>  * PDF/Impresi&amp;#243;n: Existen rutas directas de exportaci&amp;#243;n (`/email`) y componentes como `PrintReceipt.vue`, `PrintSpecialTest.vue`.
+<span class="ln">  225 | </span>
+<span class="ln">  226 | </span>## Aprobaci&amp;#243;n y Anulaci&amp;#243;n
+<span class="ln">  227 | </span>* **Flujo**: `/approve` con `PatientApprove.vue`.
+<span class="ln">  228 | </span>* Aprobaciones delegadas con peticiones al array de pacientes en estado &amp;quot;pendiente&amp;quot; en `pacientsMixin.js` (`/api/patients/dateresult/`).
+<span class="ln">  229 | </span>
+<span class="ln">  230 | </span>## M&amp;#243;dulo Financiero (Caja, Cuentas por Cobrar, Facturaci&amp;#243;n)
+<span class="ln">  231 | </span>* **Facturas**: Se resuelven en `/movements/invoice` (InvoiceMovements) pidiendo recibos (`invoiceMixin.js` -&amp;gt; `/api/invoice/`).
+<span class="ln">  232 | </span>* **Caja**: Ruta `/movements/cash`, vista `ClosesCash.vue`.
+<span class="ln">  233 | </span>* **Cuentas por Cobrar**: Ruta `/movements/accounts-receivable` y vista de cancelaci&amp;#243;n (`CancelAccountsReceivable.vue`).
+<span class="ln">  234 | </span>* **Riesgo asociado**: Este flujo usa endpoints que cruzan estados visuales fr&amp;#225;giles (Si ocurre un re-render durante `ClosesCash.vue`, se pierde el query del `cashRegisterMixins` ya que no usan store Vuex para persistencia de la query actual).
+<span class="ln">  235 | </span>
+<span class="ln">  236 | </span>## M&amp;#243;dulo Configuraci&amp;#243;n M&amp;#233;dica
+<span class="ln">  237 | </span>* **Rutas Hijas bajo `/setting`**: `/setting/antibiotic`, `/setting/germs`, `/setting/parasitic`, `/setting/routines`, `/setting/specialtests`. 
+<span class="ln">  238 | </span>* Todos son CRUD paralelos donde la complejidad reside en el gran n&amp;#250;mero de Vistas diferentes, que aunque repetitivas en su patr&amp;#243;n (Data Table -&amp;gt; Modal -&amp;gt; Axios Mixin), implican una ventana de error muy grande por copy-paste.
+<span class="ln">  239 | </span>
+<span class="ln">  240 | </span>## Riesgos y Conclusiones de Migraci&amp;#243;n
+<span class="ln">  241 | </span>- **Riesgo Funcional**: Muy Alto. El sistema depende de 17 contenedores Axios separados (MIXINS).
+<span class="ln">  242 | </span>- **Riesgo Migratorio Front**: Extremadamente Alto si se opta por un Big Bang. Strangler Fig posee limitaciones t&amp;#233;cnicas altas ya que compilar la actual SPA particionada requerir&amp;#237;a arquitecturas de Micro-Frontends e Iframes que el actual Vue CLI Router no soporta nativamente. 
+<span class="ln">  243 | </span>- **Verificaci&amp;#243;n Backend**: Queda estrictamente pendiente validar si las promesas no resueltas de pago y anulaci&amp;#243;n dejan al backend inconsistente al omitir un &amp;quot;Rollback&amp;quot; si falla el HTTP en lote.
+<span class="ln">  244 | </span>
+<span class="ln">  245 | </span>&lt;/pre&gt;
+<span class="ln">  246 | </span>&lt;div class=&quot;top&quot;&gt;#topVolver al &amp;iacute;ndice&lt;/a&gt;&lt;/div&gt;
+<span class="ln">  247 | </span>&lt;/section&gt;
+<span class="ln">  248 | </span>&lt;section id=&quot;document-5&quot;&gt;
+<span class="ln">  249 | </span>&lt;div class=&quot;document-header&quot;&gt;
+<span class="ln">  250 | </span>&lt;span class=&quot;number&quot;&gt;5&lt;/span&gt;
+<span class="ln">  251 | </span>&lt;h2&gt;04-contrato-api.md&lt;/h2&gt;
+<span class="ln">  252 | </span>&lt;/div&gt;
+<span class="ln">  253 | </span>&lt;pre&gt;# Contrato con el Backend (Inventario Definitivo)
+<span class="ln">  254 | </span>
+<span class="ln">  255 | </span>Este inventario fue reconstruido extrayendo exhaustivamente (Pasada 3) los 17 Mixins HTTP mediante parseo Regex. 
+<span class="ln">  256 | </span>
+<span class="ln">  257 | </span>## Endpoints por Mixin
+<span class="ln">  258 | </span>
+<span class="ln">  259 | </span>### accountsreceivableMixin.js
+<span class="ln">  260 | </span>* `POST|PATCH` -&amp;gt; `/api/accountsreceivable/`
+<span class="ln">  261 | </span>* `PATCH` -&amp;gt; `/api/accountsreceivable/${id}`
+<span class="ln">  262 | </span>* `POST` -&amp;gt; `/api/accountsreceivable/client-date`
+<span class="ln">  263 | </span>
+<span class="ln">  264 | </span>### antibioticMixin.js
+<span class="ln">  265 | </span>* `GET|POST|PATCH|DELETE` -&amp;gt; `/api/antibiotic`, `/api/antibiotic/order`, `/api/antibiotic/${id}`
+<span class="ln">  266 | </span>* `GET` -&amp;gt; `/api/list-germs/list`, `/api/list-germs/${id}`
+<span class="ln">  267 | </span>
+<span class="ln">  268 | </span>### cashRegisterMixins.js
+<span class="ln">  269 | </span>* `GET|POST|PATCH` -&amp;gt; `/api/cash_register/`, `/api/cash_register/${id}`, `/api/cash_register/date`
+<span class="ln">  270 | </span>
+<span class="ln">  271 | </span>### clientMixin.js
+<span class="ln">  272 | </span>* `GET|POST` -&amp;gt; `/api/client/`, `/api/client/all`, `/api/client/${id}`
+<span class="ln">  273 | </span>
+<span class="ln">  274 | </span>### examsListMixin.js *(Complejidad Alta)*
+<span class="ln">  275 | </span>* `/api/examlists/group/${groupId}`
+<span class="ln">  276 | </span>* `/api/examlists/${id}`
+<span class="ln">  277 | </span>* `/api/examlists/search-description/${description}`
+<span class="ln">  278 | </span>* `/api/tax/${id}`
+<span class="ln">  279 | </span>* `/api/dollarvalue/get`
+<span class="ln">  280 | </span>* `/api/examlists/new-costs`
+<span class="ln">  281 | </span>
+<span class="ln">  282 | </span>### groupHTMixin.js
+<span class="ln">  283 | </span>* `/api/groupHt/group/0`
+<span class="ln">  284 | </span>* `/api/groupHt/${id}`
+<span class="ln">  285 | </span>* `/api/groupHt/count/${description}`
+<span class="ln">  286 | </span>
+<span class="ln">  287 | </span>### invoiceMixin.js
+<span class="ln">  288 | </span>* `/api/invoice/${id}`
+<span class="ln">  289 | </span>* `/api/invoice/creditnote`
+<span class="ln">  290 | </span>* `/api/invoice/numbers`
+<span class="ln">  291 | </span>
+<span class="ln">  292 | </span>### loginMixin.js
+<span class="ln">  293 | </span>* `POST` -&amp;gt; `/api/users/session` (Autenticaci&amp;#243;n)
+<span class="ln">  294 | </span>* `GET` -&amp;gt; `/api/users/${userId}`
+<span class="ln">  295 | </span>
+<span class="ln">  296 | </span>### pacientsMixin.js *(Extremadamente Denso)*
+<span class="ln">  297 | </span>* `/api/patients`
+<span class="ln">  298 | </span>* `/api/patients/ci/${ci}`
+<span class="ln">  299 | </span>* `/api/patients/totalmonth/`
+<span class="ln">  300 | </span>* `/api/waypay/`
+<span class="ln">  301 | </span>* `/api/patients/date/${admission_date}`
+<span class="ln">  302 | </span>* `/api/patients/mailer/${id}`
+<span class="ln">  303 | </span>* `/api/patients/pdf/${id}`
+<span class="ln">  304 | </span>* (Se omiten listados id&amp;#233;nticos repetidos. Mapeo indica cruces constantes entre pacients, waypay, e invoices).
+<span class="ln">  305 | </span>
+<span class="ln">  306 | </span>### usersMixin.js
+<span class="ln">  307 | </span>* `POST` -&amp;gt; `/api/users/upload` (Perfil foto)
+<span class="ln">  308 | </span>* `GET` -&amp;gt; `/api/users/verify/${email}`
+<span class="ln">  309 | </span>
+<span class="ln">  310 | </span>## Conclusi&amp;#243;n T&amp;#233;cnica del Contrato
+<span class="ln">  311 | </span>El endpoint base siempre se determina est&amp;#225;ticamente v&amp;#237;a `${basePath}` importado desde `config.js`. Esto implica que los Mixins construyen el URL directamente. 
+<span class="ln">  312 | </span>Se detectaron serios riesgos de DRY (Don&amp;#39;t Repeat Yourself), donde *pacientsMixin* llama endpoints que naturalmente le pertenecen a *invoiceMixin* o *laboratoryMixin* (Vulnerabilidad de modularidad).
+<span class="ln">  313 | </span>&lt;/pre&gt;
+<span class="ln">  314 | </span>&lt;div class=&quot;top&quot;&gt;#topVolver al &amp;iacute;ndice&lt;/a&gt;&lt;/div&gt;
+<span class="ln">  315 | </span>&lt;/section&gt;
+<span class="ln">  316 | </span>&lt;section id=&quot;document-6&quot;&gt;
+<span class="ln">  317 | </span>&lt;div class=&quot;document-header&quot;&gt;
+<span class="ln">  318 | </span>&lt;span class=&quot;number&quot;&gt;6&lt;/span&gt;
+<span class="ln">  319 | </span>&lt;h2&gt;05-seguridad.md&lt;/h2&gt;
+<span class="ln">  320 | </span>&lt;/div&gt;
+<span class="ln">  321 | </span>&lt;pre&gt;# Seguridad
+<span class="ln">  322 | </span>
+<span class="ln">  323 | </span>## Autenticaci&amp;#243;n
+<span class="ln">  324 | </span>Existencia confirmada de una soluci&amp;#243;n combinada con:
+<span class="ln">  325 | </span>- Auth0 (`@auth0/auth0-spa-js`).
+<span class="ln">  326 | </span>- Guards personalizados en `src/auth/authGuard.js`.
+<span class="ln">  327 | </span>- Utilidades de token en `src/logic/tokenUtils.js`.
+<span class="ln">  328 | </span>
+<span class="ln">  329 | </span>El AuthGuard s&amp;#237; interrumpe la progresi&amp;#243;n a rutas hijas mediante chequeo manual al localstorage. Sin embargo, su confiabilidad es estrictamente de &amp;quot;Control visual del Frontend&amp;quot;, puesto que si se salta (faking el token), las llamadas de Mixin fallar&amp;#225;n del lado del backend. Ning&amp;#250;n componente interno limpia agresivamente el storage si hay un 401.
+<span class="ln">  330 | </span>
+<span class="ln">  331 | </span>## Vulnerabilidades Detectadas
+<span class="ln">  332 | </span>- **Tokens y Cabeceras en Memoria Interrumpida (Alto Riesgo)**: Los Mixins declaran `const config` global al archivo. Esto ocasiona que Vue capture el token inicial. Un logout no destruir&amp;#225; bien el acceso sin refrescar `window.location.reload` o sobreescribirlo reactivamente a trav&amp;#233;s de un store (`Vuex`).
+<span class="ln">  333 | </span>- **Almacenamiento Local Fuerte**: `localstorage` almacena datos crudos sensibles (roles, emails, telefono, nombre). 
+<span class="ln">  334 | </span>- **Lectura de archivos JSON duros**: `auth_config.json` empaquetado directamente en el bundle web.
+<span class="ln">  335 | </span>- **SSL Fijo Local**: Claves privadas hardcodeadas para desarrollo SSL locales dentro de `vue.config.js` (`fs.readFileSync(&amp;#39;local.key&amp;#39;)`).
+<span class="ln">  336 | </span>- **XSS Vector**: 17 usos de `v-html`. Alta probabilidad de inyecci&amp;#243;n si la informaci&amp;#243;n que entra como Prop desde Backend carece de filtrado.
+<span class="ln">  337 | </span>&lt;/pre&gt;
+<span class="ln">  338 | </span>&lt;div class=&quot;top&quot;&gt;#topVolver al &amp;iacute;ndice&lt;/a&gt;&lt;/div&gt;
+<span class="ln">  339 | </span>&lt;/section&gt;
+<span class="ln">  340 | </span>&lt;section id=&quot;document-7&quot;&gt;
+<span class="ln">  341 | </span>&lt;div class=&quot;document-header&quot;&gt;
+<span class="ln">  342 | </span>&lt;span class=&quot;number&quot;&gt;7&lt;/span&gt;
+<span class="ln">  343 | </span>&lt;h2&gt;06-calidad-y-deuda-tecnica.md&lt;/h2&gt;
+<span class="ln">  344 | </span>&lt;/div&gt;
+<span class="ln">  345 | </span>&lt;pre&gt;# Calidad del C&amp;#243;digo y Deuda T&amp;#233;cnica
+<span class="ln">  346 | </span>
+<span class="ln">  347 | </span>## Deuda T&amp;#233;cnica, Componentes Monol&amp;#237;ticos y Bloqueos de Migraci&amp;#243;n
+<span class="ln">  348 | </span>
+<span class="ln">  349 | </span>* **97 Componentes Vue localizados.** Inspeccionados &amp;#237;ntegramente de manera procedimental.
+<span class="ln">  350 | </span>* Se hallaron 17 usos crudos de `v-html` dentro de los componentes. Esto constituye un riesgo alto para ataques XSS si el backend no higieniza exhaustivamente las cadenas de origen.
+<span class="ln">  351 | </span>* Existen 56 referencias directas a `localStorage`. (Cero de SessionStorage).
+<span class="ln">  352 | </span>
+<span class="ln">  353 | </span>### Aspectos Cr&amp;#237;ticos Identificados
+<span class="ln">  354 | </span>1. **Componentes Monol&amp;#237;ticos**: Sobresale `draggableComponent.vue` con 1216 l&amp;#237;neas de c&amp;#243;digo dentro de la sub-carpeta de Ex&amp;#225;menes. Adem&amp;#225;s `EditExamDialog.vue` (290), `Exam125` (733 l&amp;#237;neas), y `Exams122` (573 l&amp;#237;neas) demuestran falta total de segregaci&amp;#243;n de UI.
+<span class="ln">  355 | </span>2. **Abuso de Mixins como Servicios HTTP**: Habiendo 17 mixins de peticiones separadas, cada componente importa entre 3 a 5 mixins. Esto genera el &amp;quot;Callback Hell de Props de Mixins&amp;quot;, donde rastrear colisiones y mutaciones stateful se torna un reto abismal. Adem&amp;#225;s los catch globales no est&amp;#225;n encapsulados provocando &amp;quot;silencios y pop-ups hu&amp;#233;rfanos&amp;quot;.
+<span class="ln">  356 | </span>3. **Bloqueos Espec&amp;#237;ficos para Vite &amp;amp; Vue 3**:
+<span class="ln">  357 | </span>   - `Vuetify 2.x` acopla visualmente los 97 componentes bajo sintaxis que fue depreciada en Vuetify 3 (`v-data-table` en Vuetify 3 altera las `slots` y render loops). Su refactor ser&amp;#237;a tit&amp;#225;nico.
+<span class="ln">  358 | </span>   - Migrar a `PrimeVue` o `Quasar` requerir&amp;#237;a tirar 100% de la capa de interfaz. 
+<span class="ln">  359 | </span>   - La persistencia descansa sobre variables quemadas en export (Ej `Vue.prototype.$user`).
+<span class="ln">  360 | </span>   
+<span class="ln">  361 | </span>### Recomendaci&amp;#243;n Directa
+<span class="ln">  362 | </span>La refactorizaci&amp;#243;n progresiva en el modelo actual requerir&amp;#225;: **Estabilizar Antes de Migrar**.
+<span class="ln">  363 | </span>Significa remover antes a los mixins transform&amp;#225;ndolos a composables puros en Vue 2.7 o a Vanilla JS Files y aislar los estados reactivos, luego saltar a Vite sin salir de Vue 2.7, y por &amp;#250;ltimo planificar la reescritura hacia Vue 3 + Vuetify/PrimeVue. Reescritura Total desde 0 sobre un monolito acoplado con riesgo cl&amp;#237;nico puede salir catastr&amp;#243;ficamente mal. 
+<span class="ln">  364 | </span>
+<span class="ln">  365 | </span>- Desacoplar los Mixins en utilidades `async`/`await` JS Puras (servicios `axios`).
+<span class="ln">  366 | </span>- Modernizar a Vue 3 / Composition API para un mejor aislamiento transversal.
+<span class="ln">  367 | </span>&lt;/pre&gt;
+<span class="ln">  368 | </span>&lt;div class=&quot;top&quot;&gt;#topVolver al &amp;iacute;ndice&lt;/a&gt;&lt;/div&gt;
+<span class="ln">  369 | </span>&lt;/section&gt;
+<span class="ln">  370 | </span>&lt;section id=&quot;document-8&quot;&gt;
+<span class="ln">  371 | </span>&lt;div class=&quot;document-header&quot;&gt;
+<span class="ln">  372 | </span>&lt;span class=&quot;number&quot;&gt;8&lt;/span&gt;
+<span class="ln">  373 | </span>&lt;h2&gt;07-pruebas-y-regresion.md&lt;/h2&gt;
+<span class="ln">  374 | </span>&lt;/div&gt;
+<span class="ln">  375 | </span>&lt;pre&gt;# Pruebas y Regresi&amp;#243;n
+<span class="ln">  376 | </span>
+<span class="ln">  377 | </span>## Estado actual de Testing
+<span class="ln">  378 | </span>No se hallaron dependencias de tests unitarios (Jest/Vitest/Mocha) en `/package.json`.
+<span class="ln">  379 | </span>El proyecto carece de configuraci&amp;#243;n (archivos spec.js, test.js o carpeta `tests`).
+<span class="ln">  380 | </span>La cobertura actual es Inexistente (`0%`).
+<span class="ln">  381 | </span>
+<span class="ln">  382 | </span>## Matriz Minima de Regresi&amp;#243;n Obligatoria 
+<span class="ln">  383 | </span>
+<span class="ln">  384 | </span>Se requiere dise&amp;#241;ar un conjunto agresivo E2E (Ej. Cypress / Playwright) previo a mover el stack debido a la criticidad acoplada del front-end. Los flujos M&amp;#205;NIMOS a proteger (y que interact&amp;#250;an con `localStorage` y `mixins` delicados simultaneamente) son:
+<span class="ln">  385 | </span>
+<span class="ln">  386 | </span>1. **Login y Autenticaci&amp;#243;n de Token Invalido**: Probar expiraci&amp;#243;n emulada con `tokenUtils.js` -&amp;gt; 401 redirect a `/login`.
+<span class="ln">  387 | </span>2. **Flujo de Admisi&amp;#243;n y Registro (PatientAdmission)**: Probar que un formulario de paciente nuevo dispare correctamente la amalgama de 5 Mixins distintos (exige Mockear base de datos cl&amp;#237;nica de Germenes - `groupHtMixin`).
+<span class="ln">  388 | </span>3. **Flujo Financiero Cr&amp;#237;tico**: (PrintReceipt &amp;amp; InvoiceDialog) -&amp;gt; Verificar la cancelaci&amp;#243;n de cuentas por cobrar para prevenir huecos inflacionarios en caja. 
+<span class="ln">  389 | </span>4. **Prueba de Macros Visuales**: El render del componente `draggableComponent.vue` al interactuar masivamente con las tablas (`v-html`). Cuidado con inyecciones XSS en el arrastre virtual.
+<span class="ln">  390 | </span>
+<span class="ln">  391 | </span>&lt;/pre&gt;
+<span class="ln">  392 | </span>&lt;div class=&quot;top&quot;&gt;#topVolver al &amp;iacute;ndice&lt;/a&gt;&lt;/div&gt;
+<span class="ln">  393 | </span>&lt;/section&gt;
+<span class="ln">  394 | </span>&lt;section id=&quot;document-9&quot;&gt;
+<span class="ln">  395 | </span>&lt;div class=&quot;document-header&quot;&gt;
+<span class="ln">  396 | </span>&lt;span class=&quot;number&quot;&gt;9&lt;/span&gt;
+<span class="ln">  397 | </span>&lt;h2&gt;08-analisis-migracion.md&lt;/h2&gt;
+<span class="ln">  398 | </span>&lt;/div&gt;
+<span class="ln">  399 | </span>&lt;pre&gt;# An&amp;#225;lisis de Migraci&amp;#243;n (Fallo de Hitos y Bloqueos Identificados)
+<span class="ln">  400 | </span>
+<span class="ln">  401 | </span>## Evaluaciones T&amp;#233;cnicas
+<span class="ln">  402 | </span>
+<span class="ln">  403 | </span>### 1. Migrar Directamente a Vue 3 + Vuetify 3 (Big Bang)
+<span class="ln">  404 | </span>**Beneficios**: LTS oficial. Composition API. Desempe&amp;#241;o.  
+<span class="ln">  405 | </span>**Riesgos**: CR&amp;#205;TICOS. La dependencia total a Vuetify 2 renderizando Tablas nativas impactadas por el EOL es un &amp;quot;Breaking Change&amp;quot; total sobre ~90+ componentes. Destruir&amp;#237;a los subflujos en `exams/`.
+<span class="ln">  406 | </span>**Riesgo Espec&amp;#237;fico**: `draggableComponent.vue` colapsar&amp;#237;a al no operar m&amp;#225;s bajo el ciclo de vida del Options API.
+<span class="ln">  407 | </span>
+<span class="ln">  408 | </span>### 2. Migrar de Vue Router / Vuex a Pinia.
+<span class="ln">  409 | </span>**Recomendado**: S&amp;#237; pero aplazado a una Fase 3 (ver Plan). Existe limitad&amp;#237;simo uso estricto global del `store.js` actual porque todos los mixins conf&amp;#237;an netamente en guardar sobre `localStorage`. Re-mapear eso ser&amp;#237;a complejo pero curativo.
+<span class="ln">  410 | </span>
+<span class="ln">  411 | </span>### 3. Mantener Vue 2.7 y Desacoplar (Temporario / Viable)
+<span class="ln">  412 | </span>**Beneficios**: Estabilidad controlada. Habilita una pre-migraci&amp;#243;n de la Composition API sin fracturar el DOM UI. Solucionar&amp;#225; el dolor latente de los 17 Mixins anidados.  
+<span class="ln">  413 | </span>**Bloqueos Reales Detectados**: 
+<span class="ln">  414 | </span>- Estructura `webpack` en vue.config.
+<span class="ln">  415 | </span>- `vue-html-to-paper` probablemente carezca de TS definitions.
+<span class="ln">  416 | </span>
+<span class="ln">  417 | </span>## Estrategia Seleccionada
+<span class="ln">  418 | </span>**ESTABILIZAR ANTES DE MIGRAR.**
+<span class="ln">  419 | </span>La estrategia Strangler Fig requerir&amp;#225; crear un proxy reverso o micro-frontends porque actualmente la configuraci&amp;#243;n de Vue Router empuja todo los assets en un &amp;#250;nico index.html. El sobrecosto operativo frente a estabilizar Mixins deber&amp;#237;a descartarlo por defecto.
+<span class="ln">  420 | </span>
+<span class="ln">  421 | </span>&lt;/pre&gt;
+<span class="ln">  422 | </span>&lt;div class=&quot;top&quot;&gt;#topVolver al &amp;iacute;ndice&lt;/a&gt;&lt;/div&gt;
+<span class="ln">  423 | </span>&lt;/section&gt;
+<span class="ln">  424 | </span>&lt;section id=&quot;document-10&quot;&gt;
+<span class="ln">  425 | </span>&lt;div class=&quot;document-header&quot;&gt;
+<span class="ln">  426 | </span>&lt;span class=&quot;number&quot;&gt;10&lt;/span&gt;
+<span class="ln">  427 | </span>&lt;h2&gt;09-plan-por-fases.md&lt;/h2&gt;
+<span class="ln">  428 | </span>&lt;/div&gt;
+<span class="ln">  429 | </span>&lt;pre&gt;# Plan Recomendado (Definitivo)
+<span class="ln">  430 | </span>
+<span class="ln">  431 | </span>Al estar ante un sistema Vue 2 / Vuetify fuertemente entretejido a trav&amp;#233;s de 17 HTTP Mixins paralelos y monolitos Vue en la construcci&amp;#243;n de historias cl&amp;#237;nicas:
+<span class="ln">  432 | </span>
+<span class="ln">  433 | </span>## Recomendaci&amp;#243;n T&amp;#225;ctica Front-end
+<span class="ln">  434 | </span>**ESTABILIZAR ANTES DE MIGRAR**. Reescritura parcial es peligrosa y un abordaje SPA global limita fuertemente la coexistencia.
+<span class="ln">  435 | </span>
+<span class="ln">  436 | </span>## Fase 0: Pruebas Exploratorias No Regresivas y Blindaje E2E
+<span class="ln">  437 | </span>* **Objetivo**: Asegurar un entorno de test automatizado E2E que grave los flujos cl&amp;#237;nicos vitales.
+<span class="ln">  438 | </span>
+<span class="ln">  439 | </span>## Fase 1: Desacoplamiento de L&amp;#243;gica de Negocio HTTP (Mixins -&amp;gt; Composables)
+<span class="ln">  440 | </span>* **Objetivo**: Abandono estricto de los `mixins` para peticiones Axios.
+<span class="ln">  441 | </span>* **Tareas**: Traducir las 164 llamadas a Fetch/Axios en una capa `api/` o vanilla JS abstracta, solucionando la vulnerabilidad del header &amp;quot;config&amp;quot; est&amp;#225;tico dependiente de `localStorage` al arrancar.
+<span class="ln">  442 | </span>
+<span class="ln">  443 | </span>## Fase 2: Configuraci&amp;#243;n de Entorno (Vite o Vue 2.7)
+<span class="ln">  444 | </span>* **Objetivo**: Abandono de secreto crudo `auth_config.json` e IP est&amp;#225;tica local al utilizar `process.env`. Upgrading a Vue 2.7 para beneficiarse en nativo de la Composition API sin romper `Vuetify 2`.
+<span class="ln">  445 | </span>
+<span class="ln">  446 | </span>## Fase 3: Modernizaci&amp;#243;n Arquitect&amp;#243;nica y Desplome de Monolitos
+<span class="ln">  447 | </span>* **Objetivo**: Segregar al `draggableComponent.vue` de &amp;gt;1200 l&amp;#237;neas y fraccionar los Layouts.
+<span class="ln">  448 | </span>
+<span class="ln">  449 | </span>## Fase 4: Big Bang Controlado a Vue 3 / Vuetify 3 (Largo Plazo)
+<span class="ln">  450 | </span>* **Objetivo**: Superada la Fase 2 y 3, migrar las etiquetas obsoletas hacia Vite completo y Vue 3 Composition API genuina.
+<span class="ln">  451 | </span>
+<span class="ln">  452 | </span>&lt;/pre&gt;
+<span class="ln">  453 | </span>&lt;div class=&quot;top&quot;&gt;#topVolver al &amp;iacute;ndice&lt;/a&gt;&lt;/div&gt;
+<span class="ln">  454 | </span>&lt;/section&gt;
+<span class="ln">  455 | </span>&lt;section id=&quot;document-11&quot;&gt;
+<span class="ln">  456 | </span>&lt;div class=&quot;document-header&quot;&gt;
+<span class="ln">  457 | </span>&lt;span class=&quot;number&quot;&gt;11&lt;/span&gt;
+<span class="ln">  458 | </span>&lt;h2&gt;10-registro-evidencias.md&lt;/h2&gt;
+<span class="ln">  459 | </span>&lt;/div&gt;
+<span class="ln">  460 | </span>&lt;pre&gt;# Registro de Evidencias
+<span class="ln">  461 | </span>
+<span class="ln">  462 | </span>| Identificador | Categor&amp;#237;a | Severidad | Estado de Verificaci&amp;#243;n | Archivo | L&amp;#237;nea | S&amp;#237;mbolo | Descripci&amp;#243;n | Impacto | Recomendaci&amp;#243;n |
+<span class="ln">  463 | </span>|---------------|-----------|-----------|------------------------|---------|-------|---------|-------------|---------|---------------|
+<span class="ln">  464 | </span>| FE-ARCH-001 | Arquitectura | Cr&amp;#237;tico | CONFIRMADO | package.json | - | vue | Vue 2.6/2.7 deprecado | Alto riesgo de seguridad | Migrar a Vue 3 |
+<span class="ln">  465 | </span>| FE-ARCH-002 | Arquitectura | Medio | CONFIRMADO | src/main.js | ~40 | Vue.prototype.$user | Variables globales de estado inyectadas en core Vue | Fragilidad y colisiones, mala pr&amp;#225;ctica frente a la migraci&amp;#243;n a la Composition API | Mover contexto del usuario a Vuex o Pinia |
+<span class="ln">  466 | </span>| FE-SEC-001 | Seguridad | Medio | CONFIRMADO | src/main.js | ~8 | auth_config.json | Importa JSON directamente | Posible exposici&amp;#243;n de secrets en el build si hay datos sensibles | Usar variables de entorno \`process.env\` |
+<span class="ln">  467 | </span>| FE-ARCH-003 | Arquitectura | Alto | CONFIRMADO | src/mixins/services/*.js | - | config | `localStorage.token` referenciado on-load en Mixins pero no reactivo. | L&amp;#243;gica de estado y auth vulnerable a des-sincronizaciones en el lifecycle | Convertir a Interceptores de Axios puros |
+<span class="ln">  468 | </span>
+<span class="ln">  469 | </span>## Control de Cobertura
+<span class="ln">  470 | </span>
+<span class="ln">  471 | </span>- **Total de archivos `.vue` listados y disponibles**: 97
+<span class="ln">  472 | </span>- **Archivo en progreso de la iteraci&amp;#243;n**: `src/components/modules/exams/DetailsExams.vue` (El m&amp;#243;dulo exams/ completo ya fue documentado). Los siguientes procesados abarcaron la estructura de `history/`, y luego los directorios root `/views` y `/layouts`.
+<span class="ln">  473 | </span>- **Porcentaje de cobertura de Pasada 2**: 100%. Todos los 97 componentes han sido iterados usando script PS est&amp;#225;tico que detect&amp;#243; Props, Data, vHTML y Axios. 
+<span class="ln">  474 | </span>- **Total de mixins mapeados (Pasada 3)**: 100%. 18 mixins. 17 HTTP que exportan las URLs documentadas en el Markdown `04-contrato-api.md`.
+<span class="ln">  475 | </span>- **Estado de Tareas**: Pasada 2 y Pasada 3 inspeccionadas a cabalidad por consola.
+<span class="ln">  476 | </span>
+<span class="ln">  477 | </span>### Checklist (Listado exacto)
+<span class="ln">  478 | </span>*(Nota: Para evitar exceder contexto de guardado en este archivo, se referencian los conteos finales documentados en `02-arquitectura-y-modulos.md` derivados de la pasada global de AST RegExp en Powershell)*.
+<span class="ln">  479 | </span>
+<span class="ln">  480 | </span>| Archivo/M&amp;#243;dulo | Estado | Observaci&amp;#243;n |
+<span class="ln">  481 | </span>|----------------|--------|-------------|
+<span class="ln">  482 | </span>| `draggableComponent.vue` | INSPECCIONADO | Posee +1200 l&amp;#237;neas y un alto riesgo de refactor a Vite/Pinia por su tama&amp;#241;o. |
+<span class="ln">  483 | </span>| `exams/` completo | INSPECCIONADO | Muestreo demuestra Mixeos atados y poco localStorage. |
+<span class="ln">  484 | </span>| `history/` completo | INSPECCIONADO | Posee los mayores riesgos de props transversales y componentes anidados. |
+<span class="ln">  485 | </span>| `views/` 27 Views | INSPECCIONADO | Control final de vistas completado mediante iterador. |
+<span class="ln">  486 | </span>| `layouts/` 7 Layouts | INSPECCIONADO | Todos los archivos con componentes condicionales renderizados usando `v-if`. |
+<span class="ln">  487 | </span>| Mixins HTTP (17) | INSPECCIONADO | Extra&amp;#237;das con exactitud las docenas de URLs del backend. |
+<span class="ln">  488 | </span>| functionMixin.js | INSPECCIONADO | &amp;#218;nico mixin sin HTTP. |
+<span class="ln">  489 | </span>
+<span class="ln">  490 | </span>*(Pendiente por abordar detalladamente a mano la Pasada 4 sobre Rutas (cruzando los 7 archivos con Views))*
+<span class="ln">  491 | </span>
+<span class="ln">  492 | </span>&lt;/pre&gt;
+<span class="ln">  493 | </span>&lt;div class=&quot;top&quot;&gt;#topVolver al &amp;iacute;ndice&lt;/a&gt;&lt;/div&gt;
+<span class="ln">  494 | </span>&lt;/section&gt;
+<span class="ln">  495 | </span>&lt;section id=&quot;document-12&quot;&gt;
+<span class="ln">  496 | </span>&lt;div class=&quot;document-header&quot;&gt;
+<span class="ln">  497 | </span>&lt;span class=&quot;number&quot;&gt;12&lt;/span&gt;
+<span class="ln">  498 | </span>&lt;h2&gt;11-preguntas-pendientes.md&lt;/h2&gt;
+<span class="ln">  499 | </span>&lt;/div&gt;
+<span class="ln">  500 | </span>&lt;pre&gt;# Preguntas Pendientes (Intersecci&amp;#243;n con Entidades Externas)
+<span class="ln">  501 | </span>
+<span class="ln">  502 | </span>Las siguientes preguntas fueron catalogadas tras el cierre exhaustivo front-end (inspecci&amp;#243;n de 97 componentes Vue y extracci&amp;#243;n unida de los 18 mixins e inspecci&amp;#243;n de sus 164 endpoints de Axios):
+<span class="ln">  503 | </span>
+<span class="ln">  504 | </span>## Frontend - Backend (Resolubilidad Restringida)
+<span class="ln">  505 | </span>* **Testing en flujos vitales Incompletos CATCH**: &amp;#191;Los endpoints de facturaci&amp;#243;n de recibos (`invoiceMixin.js` y `Caja`) procesan transacciones de manera &amp;quot;sucia&amp;quot; (dirty reads)? El frontend utiliza popups locales pero no implementa compensaci&amp;#243;n. &amp;#191;Compensa / hace rollback el backend si un mixin suelta un reject intermedio en aprobaciones por lotes?
+<span class="ln">  506 | </span>* **XSS y Sanamiento**: El front-end inyecta a trav&amp;#233;s de 17 etiquetas crudas `&amp;lt;span v-html=&amp;quot;xxx&amp;quot;&amp;gt;` variables provenientes de la API en `Exams` y `dragableComponent`. El backend &amp;#191;aplica DOMPurify profundo sobre las variables inyectadas durante la manipulaci&amp;#243;n de resultados antes de grabarlas?
+<span class="ln">  507 | </span>* **Paginaci&amp;#243;n Mixins**: Varias rutas, como iteraciones cruzadas por `dates`, &amp;#191;escalar&amp;#225;n sin colapsar el payload si Vue tiene que renderizarlos todos dentro de Options API local?
+<span class="ln">  508 | </span>
+<span class="ln">  509 | </span>## Operaci&amp;#243;n de Seguridad
+<span class="ln">  510 | </span>* `Vue.prototype.$user` inicializa un cliente con un ID quemado `clientId`. &amp;#191;Estos son datos de ambiente de prueba o productivos persistentes?
+<span class="ln">  511 | </span>
+<span class="ln">  512 | </span>## Impresi&amp;#243;n y Socket
+<span class="ln">  513 | </span>* Aunque el Router y utilidades locales preparan visualmente el espacio, &amp;#191;cu&amp;#225;ndo se dispara una invalidaci&amp;#243;n 403 directa de token si un Webhook as&amp;#237;ncrono o correo reacciona desde una vista lejana en tiempo real? No hay interceptor en `axios` que prevenga que se mantenga el usuario logueado pero mudo.
+<span class="ln">  514 | </span>
+<span class="ln">  515 | </span>&lt;/pre&gt;
+<span class="ln">  516 | </span>&lt;div class=&quot;top&quot;&gt;#topVolver al &amp;iacute;ndice&lt;/a&gt;&lt;/div&gt;
+<span class="ln">  517 | </span>&lt;/section&gt;
+<span class="ln">  518 | </span>&lt;/main&gt;
+<span class="ln">  519 | </span>&lt;footer&gt;Auditor&amp;iacute;a consolidada del sistema TORO Frontend&lt;/footer&gt;
+<span class="ln">  520 | </span>&lt;/body&gt;
+<span class="ln">  521 | </span>&lt;/html&gt;
+<span class="ln">  522 | </span>
+
+</pre></section>
+<section class="file">
+<div class="file-header">
+<h2>README.md</h2>
+<div class="meta">Lineas: 20 | Bytes: 282 | SHA256: 79A925AF23CC96A49F7D5EFE15C377FD3497C43D7C89AF3C2567945DDFA1BAFC</div>
+</div><pre>
+<span class="ln">    1 | </span># toro
+<span class="ln">    2 | </span>
+<span class="ln">    3 | </span>## Project setup
+<span class="ln">    4 | </span>```
+<span class="ln">    5 | </span>yarn install
+<span class="ln">    6 | </span>```
+<span class="ln">    7 | </span>
+<span class="ln">    8 | </span>### Compiles and hot-reloads for development
+<span class="ln">    9 | </span>```
+<span class="ln">   10 | </span>yarn serve
+<span class="ln">   11 | </span>```
+<span class="ln">   12 | </span>
+<span class="ln">   13 | </span>### Compiles and minifies for production
+<span class="ln">   14 | </span>```
+<span class="ln">   15 | </span>yarn build
+<span class="ln">   16 | </span>```
+<span class="ln">   17 | </span>
+<span class="ln">   18 | </span>### Customize configuration
+<span class="ln">   19 | </span>See [Configuration Reference](https://cli.vuejs.org/config/).
+<span class="ln">   20 | </span>
+
+</pre></section>
+<section class="file">
+<div class="file-header">
+<h2>src\config.js</h2>
+<div class="meta">Lineas: 6 | Bytes: 334 | SHA256: E9C08948916E695E49B67DBDA94BC682A9676AFBAA7E4D3C748D74018BF41AFF</div>
+</div><pre>
+<span class="ln">    1 | </span>// COMENTARIO EXPLICATIVO:
+<span class="ln">    2 | </span>// Se actualiza la ruta base de la API para que el cliente busque al backend 
+<span class="ln">    3 | </span>// en el servidor local en lugar de intentar conectar a la IP de la red vieja.
+<span class="ln">    4 | </span>
+<span class="ln">    5 | </span>// export const basePath = &#39;https://192.168.100.32:3000&#39;; // &lt;-- ANTERIOR
+<span class="ln">    6 | </span>export const basePath = &#39;https://localhost:3000&#39;;         // &lt;-- NUEVO
+
+</pre></section>
+<section class="file">
+<div class="file-header">
+<h2>src\logic\tokenUtils.js</h2>
+<div class="meta">Lineas: 18 | Bytes: 482 | SHA256: 7006DF5C9621C128DDA83E87B53E4D4EEFB46EC98E3E13D934AA5132D2F180C8</div>
+</div><pre>
+<span class="ln">    1 | </span>export default {
+<span class="ln">    2 | </span>  isTokenExpired(token) {
+<span class="ln">    3 | </span>    if (!token) return true
+<span class="ln">    4 | </span>    const decodedToken = this.parseJwt(token)
+<span class="ln">    5 | </span>    if (!decodedToken) return true
+<span class="ln">    6 | </span>    if (!decodedToken.exp) return true
+<span class="ln">    7 | </span>    const expirationTime = decodedToken.exp * 1000
+<span class="ln">    8 | </span>    const currentTime = new Date().getTime()
+<span class="ln">    9 | </span>    return currentTime &gt; expirationTime
+<span class="ln">   10 | </span>  },
+<span class="ln">   11 | </span>  parseJwt(token) {
+<span class="ln">   12 | </span>    try {
+<span class="ln">   13 | </span>      return JSON.parse(atob(token.split(&#39;.&#39;)[1]))
+<span class="ln">   14 | </span>    } catch (error) {
+<span class="ln">   15 | </span>      return null
+<span class="ln">   16 | </span>    }
+<span class="ln">   17 | </span>  },
+<span class="ln">   18 | </span>}
+
+</pre></section>
+<section class="file">
+<div class="file-header">
+<h2>src\mixins\util\functionMixin.js</h2>
+<div class="meta">Lineas: 281 | Bytes: 11672 | SHA256: E64A068C3AE2D6FBA2F9782277A7F054FA6424108B8C40AEFFF1EECEF3EEDA72</div>
+</div><pre>
+<span class="ln">    1 | </span>import laboratoryMixin from &#39;@/mixins/services/laboratoryMixin&#39;
+<span class="ln">    2 | </span>
+<span class="ln">    3 | </span>export default {
+<span class="ln">    4 | </span>  methods: {
+<span class="ln">    5 | </span>    revertirNumero(numero) {
+<span class="ln">    6 | </span>      if (numero !== &#39;&#39;) {
+<span class="ln">    7 | </span>        numero = numero.toString()
+<span class="ln">    8 | </span>        var decimal = &#39;&#39;
+<span class="ln">    9 | </span>        var entero = &#39;&#39;
+<span class="ln">   10 | </span>        const dec = numero.substring(numero.length -3, numero.length -2)
+<span class="ln">   11 | </span>        if (dec === &#39;,&#39;) {
+<span class="ln">   12 | </span>          decimal =  numero.substring(numero.length -2)
+<span class="ln">   13 | </span>          entero = numero.substring(numero.length -3,0)
+<span class="ln">   14 | </span>          entero = entero.replace(&#39;.&#39;, &#39;&#39;)
+<span class="ln">   15 | </span>          entero = entero.replace(&#39;$&#39;, &#39;&#39;)
+<span class="ln">   16 | </span>          numero = parseFloat(entero + &#39;.&#39; + decimal)
+<span class="ln">   17 | </span>        } else {
+<span class="ln">   18 | </span>          entero = numero
+<span class="ln">   19 | </span>          entero = entero.replace(&#39;.&#39;, &#39;&#39;)
+<span class="ln">   20 | </span>          numero = parseFloat(entero)
+<span class="ln">   21 | </span>        }
+<span class="ln">   22 | </span>      }
+<span class="ln">   23 | </span>      return numero
+<span class="ln">   24 | </span>    },
+<span class="ln">   25 | </span>    redondeo(numero, decimales) {
+<span class="ln">   26 | </span>      var flotante = parseFloat(numero);
+<span class="ln">   27 | </span>      var resultado = Math.round(flotante * Math.pow(10, decimales)) / Math.pow(10, decimales);
+<span class="ln">   28 | </span>      return resultado;
+<span class="ln">   29 | </span>    },
+<span class="ln">   30 | </span>    dateOnly(date) {
+<span class="ln">   31 | </span>      if (date) {
+<span class="ln">   32 | </span>        const arrayDate = date.split(&#39;T&#39;)
+<span class="ln">   33 | </span>        if (arrayDate.length !== 0) return arrayDate[0]
+<span class="ln">   34 | </span>      }
+<span class="ln">   35 | </span>      return &#39;&#39;
+<span class="ln">   36 | </span>    },
+<span class="ln">   37 | </span>    async getPayments(foot) {      
+<span class="ln">   38 | </span>      const newPayments = [
+<span class="ln">   39 | </span>        {
+<span class="ln">   40 | </span>            active: true,
+<span class="ln">   41 | </span>            only_dollars: false,
+<span class="ln">   42 | </span>            description: &#39;SUB-TOTAL&#39;,
+<span class="ln">   43 | </span>            input: false,
+<span class="ln">   44 | </span>            value: null,
+<span class="ln">   45 | </span>            sobre: null,
+<span class="ln">   46 | </span>            total: 0,
+<span class="ln">   47 | </span>        },
+<span class="ln">   48 | </span>      ]
+<span class="ln">   49 | </span>      if (foot.length !== 0) {
+<span class="ln">   50 | </span>        newPayments.push(foot[1])
+<span class="ln">   51 | </span>        newPayments[1].total = 0
+<span class="ln">   52 | </span>      } else {
+<span class="ln">   53 | </span>        const newItem = {
+<span class="ln">   54 | </span>          active: true,
+<span class="ln">   55 | </span>          only_dollars: false,
+<span class="ln">   56 | </span>          description: &#39;DESCUENTO (%)&#39;,
+<span class="ln">   57 | </span>          input: true,
+<span class="ln">   58 | </span>          value: 0,
+<span class="ln">   59 | </span>          sobre: null,
+<span class="ln">   60 | </span>          total: 0,
+<span class="ln">   61 | </span>        }
+<span class="ln">   62 | </span>        newPayments.push(newItem)
+<span class="ln">   63 | </span>      }
+<span class="ln">   64 | </span>      const listTax = await laboratoryMixin.methods.getTaxs()
+<span class="ln">   65 | </span>      if (listTax) {
+<span class="ln">   66 | </span>          listTax.forEach((item) =&gt; {
+<span class="ln">   67 | </span>            if (item.description !== &#39;IGTF&#39;) {
+<span class="ln">   68 | </span>              const newItem = {
+<span class="ln">   69 | </span>                active: item.always_subtotal ? true : false,
+<span class="ln">   70 | </span>                only_dollars: item.only_dollars,
+<span class="ln">   71 | </span>                description: item.description.includes(&#39;IVA&#39;) ? &#39;IVA:&#39; : `${item.description}:`,
+<span class="ln">   72 | </span>                input: false,
+<span class="ln">   73 | </span>                value: item.value,
+<span class="ln">   74 | </span>                sobre: 0,
+<span class="ln">   75 | </span>                total: 0,
+<span class="ln">   76 | </span>              }
+<span class="ln">   77 | </span>              newPayments.push(newItem)
+<span class="ln">   78 | </span>            } else {
+<span class="ln">   79 | </span>              if (!item.hide) {
+<span class="ln">   80 | </span>                const newItem = {
+<span class="ln">   81 | </span>                  active: item.always_subtotal ? true : false,
+<span class="ln">   82 | </span>                  only_dollars: item.only_dollars,
+<span class="ln">   83 | </span>                  description: item.description.includes(&#39;IVA&#39;) ? &#39;IVA:&#39; : `${item.description}:`,
+<span class="ln">   84 | </span>                  input: false,
+<span class="ln">   85 | </span>                  value: item.value,
+<span class="ln">   86 | </span>                  sobre: 0,
+<span class="ln">   87 | </span>                  total: 0,
+<span class="ln">   88 | </span>                }
+<span class="ln">   89 | </span>                newPayments.push(newItem)
+<span class="ln">   90 | </span>              }
+<span class="ln">   91 | </span>            }
+<span class="ln">   92 | </span>              
+<span class="ln">   93 | </span>          })
+<span class="ln">   94 | </span>      }
+<span class="ln">   95 | </span>      const newItem = {
+<span class="ln">   96 | </span>          active: true,
+<span class="ln">   97 | </span>          only_dollars: false,
+<span class="ln">   98 | </span>          description: &#39;TOTAL A PAGAR&#39;,
+<span class="ln">   99 | </span>          input: false,
+<span class="ln">  100 | </span>          value: null,
+<span class="ln">  101 | </span>          sobre: null,
+<span class="ln">  102 | </span>          total: 0,
+<span class="ln">  103 | </span>      }
+<span class="ln">  104 | </span>      newPayments.push(newItem)
+<span class="ln">  105 | </span>      return newPayments
+<span class="ln">  106 | </span>    },
+<span class="ln">  107 | </span>    async calculateTotals(foot, inDollars, listExams, wayPayDl = 0) {
+<span class="ln">  108 | </span>      const newFootPayments = await this.getPayments(foot)
+<span class="ln">  109 | </span>      let subTotal = 0
+<span class="ln">  110 | </span>      listExams.forEach((item) =&gt; {
+<span class="ln">  111 | </span>        subTotal += parseFloat(item.total.toString().replace(&#39;,&#39;, &#39;.&#39;))
+<span class="ln">  112 | </span>      })
+<span class="ln">  113 | </span>      newFootPayments[0].total = subTotal
+<span class="ln">  114 | </span>      newFootPayments[1].total = (subTotal * newFootPayments[1].value / 100).toFixed(2) * -1
+<span class="ln">  115 | </span>      let index = 2
+<span class="ln">  116 | </span>      const listTaxT = await laboratoryMixin.methods.getTaxs()
+<span class="ln">  117 | </span>      listTaxT.forEach((item, ii) =&gt; {
+<span class="ln">  118 | </span>        if (ii !== 0) {
+<span class="ln">  119 | </span>          if (!item.only_dollars) {
+<span class="ln">  120 | </span>            let totalTax = 0
+<span class="ln">  121 | </span>            let tax = parseFloat(item.value)
+<span class="ln">  122 | </span>            var listTax = []
+<span class="ln">  123 | </span>            if (listExams.length !== 0) {
+<span class="ln">  124 | </span>              if (&#39;tax_amount&#39; in listExams[0]) {
+<span class="ln">  125 | </span>                listTax = listExams.filter((objeto) =&gt; parseFloat(objeto.tax_amount.toString().replace(&#39;,&#39;, &#39;.&#39;)) === tax)
+<span class="ln">  126 | </span>              }
+<span class="ln">  127 | </span>            }
+<span class="ln">  128 | </span>            if (listTax.length !== 0) {
+<span class="ln">  129 | </span>                listTax.forEach((item) =&gt; {
+<span class="ln">  130 | </span>                    const total = parseFloat(item.total.toString().replace(&#39;,&#39;, &#39;.&#39;))
+<span class="ln">  131 | </span>                    totalTax += total
+<span class="ln">  132 | </span>                })
+<span class="ln">  133 | </span>            }
+<span class="ln">  134 | </span>            newFootPayments[index].sobre = totalTax
+<span class="ln">  135 | </span>            newFootPayments[index].total = Math.round(totalTax * tax / 100)
+<span class="ln">  136 | </span>            newFootPayments[index].active = item.always_subtotal ? true : false
+<span class="ln">  137 | </span>            if (totalTax !== 0) {
+<span class="ln">  138 | </span>                newFootPayments[index].active = true
+<span class="ln">  139 | </span>            }
+<span class="ln">  140 | </span>          } else {
+<span class="ln">  141 | </span>            let tax = parseFloat(item.value)
+<span class="ln">  142 | </span>            let totalTax = 0
+<span class="ln">  143 | </span>            if (wayPayDl === -1) {
+<span class="ln">  144 | </span>              totalTax = subTotal
+<span class="ln">  145 | </span>            } else {
+<span class="ln">  146 | </span>              totalTax = wayPayDl
+<span class="ln">  147 | </span>              if (totalTax &lt; 0) totalTax * -1
+<span class="ln">  148 | </span>            }
+<span class="ln">  149 | </span>            newFootPayments[index].sobre = totalTax
+<span class="ln">  150 | </span>            newFootPayments[index].total = (totalTax * tax / 100).toFixed(2)
+<span class="ln">  151 | </span>            newFootPayments[index].active = item.always_subtotal ? true : false
+<span class="ln">  152 | </span>            if (totalTax !== 0) {
+<span class="ln">  153 | </span>                newFootPayments[index].active = true
+<span class="ln">  154 | </span>            }
+<span class="ln">  155 | </span>          }
+<span class="ln">  156 | </span>        }
+<span class="ln">  157 | </span>        index += 1
+<span class="ln">  158 | </span>      })
+<span class="ln">  159 | </span>      index = 0
+<span class="ln">  160 | </span>      let totPayment = 0
+<span class="ln">  161 | </span>      newFootPayments.forEach((item) =&gt; {
+<span class="ln">  162 | </span>          if (index + 1 !== newFootPayments.length) {
+<span class="ln">  163 | </span>              if (index === 0) {
+<span class="ln">  164 | </span>                  totPayment = parseFloat(item.total)
+<span class="ln">  165 | </span>              } else {
+<span class="ln">  166 | </span>                  totPayment += parseFloat(item.total)
+<span class="ln">  167 | </span>              }
+<span class="ln">  168 | </span>          }
+<span class="ln">  169 | </span>          index += 1
+<span class="ln">  170 | </span>      })
+<span class="ln">  171 | </span>      newFootPayments[newFootPayments.length - 1].total = totPayment
+<span class="ln">  172 | </span>      return newFootPayments
+<span class="ln">  173 | </span>    },    
+<span class="ln">  174 | </span>    formatNumber(number) {
+<span class="ln">  175 | </span>      return new Intl.NumberFormat(&#39;de-DE&#39;, { 
+<span class="ln">  176 | </span>        minimumFractionDigits: 2, 
+<span class="ln">  177 | </span>        maximumFractionDigits: 2 
+<span class="ln">  178 | </span>      }).format(number);
+<span class="ln">  179 | </span>    },
+<span class="ln">  180 | </span>    formatNumberNoDecimal(number) {
+<span class="ln">  181 | </span>      return new Intl.NumberFormat(&#39;de-DE&#39;, { 
+<span class="ln">  182 | </span>        minimumFractionDigits: 0, 
+<span class="ln">  183 | </span>        maximumFractionDigits: 0 
+<span class="ln">  184 | </span>      }).format(number);
+<span class="ln">  185 | </span>    },
+<span class="ln">  186 | </span>    formatDateToYYYYMMDD(date) {
+<span class="ln">  187 | </span>      const year = date.getFullYear()
+<span class="ln">  188 | </span>      const month = String(date.getMonth() + 1).padStart(2, &#39;0&#39;)
+<span class="ln">  189 | </span>      const day = String(date.getDate()).padStart(2, &#39;0&#39;)
+<span class="ln">  190 | </span>      return `${year}-${month}-${day}`
+<span class="ln">  191 | </span>    },         
+<span class="ln">  192 | </span>    formatTime12Hour(date) {
+<span class="ln">  193 | </span>      const newDate = date.split(&#39;:&#39;)
+<span class="ln">  194 | </span>      let hours = parseInt(newDate[0], 10);
+<span class="ln">  195 | </span>      let minutes = parseInt(newDate[1], 10);
+<span class="ln">  196 | </span>      const ampm = hours &gt;= 12 ? &#39;PM&#39; : &#39;AM&#39;;
+<span class="ln">  197 | </span>      hours = hours % 12;
+<span class="ln">  198 | </span>      hours = hours ? hours : 12; // La hora &#39;0&#39; debe ser &#39;12&#39;
+<span class="ln">  199 | </span>      minutes = minutes &lt; 10 ? &#39;0&#39; + minutes : minutes;
+<span class="ln">  200 | </span>      const strTime = hours + &#39;:&#39; + minutes + &#39; &#39; + ampm;
+<span class="ln">  201 | </span>      return strTime;
+<span class="ln">  202 | </span>    },
+<span class="ln">  203 | </span>    convertNumberFormatDecimal(number, decimal) {
+<span class="ln">  204 | </span>      var decimalNumber = number.replace(/\./g, &#39;&#39;).replace(&#39;,&#39;, &#39;.&#39;)
+<span class="ln">  205 | </span>      if (decimal === 0) {
+<span class="ln">  206 | </span>        decimalNumber = parseInt(decimalNumber, 10)
+<span class="ln">  207 | </span>      } else {
+<span class="ln">  208 | </span>        decimalNumber = parseFloat(decimalNumber)
+<span class="ln">  209 | </span>      }
+<span class="ln">  210 | </span>      return decimalNumber
+<span class="ln">  211 | </span>    },
+<span class="ln">  212 | </span>    applyTestFomat() {
+<span class="ln">  213 | </span>      return `&lt;!DOCTYPE html&gt;
+<span class="ln">  214 | </span>      &lt;html lang=&quot;es&quot;&gt;
+<span class="ln">  215 | </span>        &lt;head&gt;
+<span class="ln">  216 | </span>            &lt;meta charset=&quot;utf-8&quot;&gt;
+<span class="ln">  217 | </span>            &lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;IE=edge&quot;&gt;
+<span class="ln">  218 | </span>            &lt;title&gt;PRUEBAS ESPECIALES&lt;/title&gt;
+<span class="ln">  219 | </span>        &lt;/head&gt;
+<span class="ln">  220 | </span>        &lt;body&gt;
+<span class="ln">  221 | </span>          &lt;div style=&quot;width: 90%; background-color:white; font-family: &#39;Lucida Sans&#39;, &#39;Lucida Sans Regular&#39;, &#39;Lucida Grande&#39;, &#39;Lucida Sans Unicode&#39;, Geneva, Verdana, sans-serif; font-size: 12px; margin: 20px auto 20px auto;&quot;&gt;
+<span class="ln">  222 | </span>                  &lt;div style=&quot;display: flex; justify-content: space-between;&quot;&gt;
+<span class="ln">  223 | </span>                      &lt;div style=&quot;width: 100%; display: flex;&quot;&gt;
+<span class="ln">  224 | </span>                          &lt;div style=&quot;width: 100px&quot;&gt;
+<span class="ln">  225 | </span>                              &lt;img src=&quot;[src_image]&quot; style=&quot;max-width: 100%; max-height: 100px;&quot; /&gt;
+<span class="ln">  226 | </span>                          &lt;/div&gt;
+<span class="ln">  227 | </span>                          &lt;div style=&quot;margin-left: 10px&quot;&gt;
+<span class="ln">  228 | </span>                              &lt;div style=&quot;font-size: 14px; font-weight: 700;&quot;&gt;[business_name]&lt;/div&gt;
+<span class="ln">  229 | </span>                              &lt;div style=&quot;font-weight: 700;&quot;&gt;RIF: [rif_lab]&lt;/div&gt;
+<span class="ln">  230 | </span>                              &lt;div style=&quot;font-size: 10px; margin-top: 5px&quot;&gt;[address_lab]&lt;/div&gt;
+<span class="ln">  231 | </span>                              &lt;div style=&quot;font-size: 10px;&quot;&gt;Tel&#233;fonos: [phone_1], [phone_2] Email: [email]&lt;/div&gt;
+<span class="ln">  232 | </span>                          &lt;/div&gt;
+<span class="ln">  233 | </span>                      &lt;/div&gt;
+<span class="ln">  234 | </span>                  &lt;/div&gt;
+<span class="ln">  235 | </span>              &lt;div style=&quot;font-weight: 700; font-size: 14px; text-align: center; margin: 20px; 0&quot;&gt;PRUEBAS ESPECIALES&lt;/div&gt;
+<span class="ln">  236 | </span>            &lt;div style=&quot;width: 100%; border: 2px solid black; border-radius: 4px; margin-bottom: 10px;&quot;&gt;
+<span class="ln">  237 | </span>              &lt;div style=&quot;display: flex&quot;&gt;
+<span class="ln">  238 | </span>                &lt;div style=&quot;width: 70%;padding: 5px 10px;&quot;&gt;
+<span class="ln">  239 | </span>                  Laboratorio de referencia:&amp;nbsp;[laboratory-name]
+<span class="ln">  240 | </span>                &lt;/div&gt;
+<span class="ln">  241 | </span>              &lt;/div&gt;
+<span class="ln">  242 | </span>              &lt;div style=&quot;border-top: 1px solid black; padding: 5px 10px;&quot;&gt;Direcci&#243;n:&amp;nbsp;[address]&lt;/div&gt;
+<span class="ln">  243 | </span>              &lt;div style=&quot;display: flex; border-top: 1px solid black;&quot;&gt;
+<span class="ln">  244 | </span>                &lt;div style=&quot;width: 50%; padding: 5px 10px;&quot;&gt;Tel&#233;fonos:&amp;nbsp;[special-phone-1],&amp;nbsp;[special-phone-2]&lt;/div&gt;
+<span class="ln">  245 | </span>                &lt;div style=&quot;width: 50%; border-left: 1px solid black; padding: 5px 10px;&quot;&gt;correo:&amp;nbsp;[special-email]&lt;/div&gt;
+<span class="ln">  246 | </span>              &lt;/div&gt;
+<span class="ln">  247 | </span>            &lt;/div&gt;
+<span class="ln">  248 | </span>                  &lt;div style=&quot;width: 100%; border: 2px solid black; border-radius: 4px; margin-bottom: 10px;&quot;&gt;
+<span class="ln">  249 | </span>                      &lt;div style=&quot;display: flex;&quot;&gt;
+<span class="ln">  250 | </span>                &lt;div style=&quot;width: 50%; padding: 5px 10px;&quot;&gt;Par&#237;odo desde:&amp;nbsp;[firstDate]&lt;/div&gt;
+<span class="ln">  251 | </span>                &lt;div style=&quot;width: 50%; border-left: 1px solid black; padding: 5px 10px;&quot;&gt;hasta:&amp;nbsp;[lastDate]&lt;/div&gt;
+<span class="ln">  252 | </span>              &lt;/div&gt;
+<span class="ln">  253 | </span>                  &lt;/div&gt;
+<span class="ln">  254 | </span>                  [place-patients]
+<span class="ln">  255 | </span>              &lt;/div&gt;
+<span class="ln">  256 | </span>        &lt;/body&gt;
+<span class="ln">  257 | </span>      &lt;html&gt;`
+<span class="ln">  258 | </span>    },
+<span class="ln">  259 | </span>    patientTestFormat() {
+<span class="ln">  260 | </span>      return `&lt;div style=&quot;width: 100%; border: 2px solid black; border-radius: 4px; margin-bottom: 10px;&quot;&gt;
+<span class="ln">  261 | </span>      &lt;div style=&quot;display: flex;&quot;&gt;
+<span class="ln">  262 | </span>          &lt;div style=&quot;width: 25%; padding: 5px 10px;&quot;&gt;Ingreso:&amp;nbsp;[patient-date]&lt;/div&gt;
+<span class="ln">  263 | </span>          &lt;div style=&quot;width: 25%; border-left: 1px solid black; padding: 5px 10px;&quot;&gt;Secuencia:&amp;nbsp;[patient_position]&lt;/div&gt;
+<span class="ln">  264 | </span>          &lt;div style=&quot;width: 50%; border-left: 1px solid black; padding: 5px 10px;&quot;&gt;Paciente:&amp;nbsp;[patient-name]&lt;/div&gt;
+<span class="ln">  265 | </span>      &lt;/div&gt;
+<span class="ln">  266 | </span>      &lt;div style=&quot;display: flex; border-top: 1px solid black;&quot;&gt;
+<span class="ln">  267 | </span>          &lt;div style=&quot;width: 20%; padding: 5px 10px;&quot;&gt;CI:&amp;nbsp;[patient-ci]&lt;/div&gt;
+<span class="ln">  268 | </span>          &lt;div style=&quot;width: 15%; border-left: 1px solid black; padding: 5px 10px;&quot;&gt;Edad:&amp;nbsp;[patient-age]&lt;/div&gt;
+<span class="ln">  269 | </span>          &lt;div style=&quot;width: 15%; border-left: 1px solid black; padding: 5px 10px;&quot;&gt;Sexo:&amp;nbsp;[patient-sex]&lt;/div&gt;
+<span class="ln">  270 | </span>          &lt;div style=&quot;width: 50%; border-left: 1px solid black; padding: 5px 10px;&quot;&gt;Muestra:&amp;nbsp;[sample_type]&lt;/div&gt;
+<span class="ln">  271 | </span>      &lt;/div&gt;
+<span class="ln">  272 | </span>      &lt;div style=&quot;display: flex; border-top: 1px solid black;&quot;&gt;
+<span class="ln">  273 | </span>          &lt;div style=&quot;width: 100%; padding: 5px 10px;&quot;&gt;Observaci&#243;n:&amp;nbsp;[patient-observation]&lt;/div&gt;
+<span class="ln">  274 | </span>      &lt;/div&gt;
+<span class="ln">  275 | </span>      &lt;div style=&quot;display: flex; border-top: 1px solid black;&quot;&gt;
+<span class="ln">  276 | </span>          &lt;div style=&quot;width: 100%; padding: 5px 10px;&quot;&gt;Ex&#225;menes a realizar:&amp;nbsp;&lt;div style=&quot;display: flex; flex-direction: column;&quot;&gt;[patient-exams]&lt;/div&gt;&lt;/div&gt;
+<span class="ln">  277 | </span>      &lt;/div&gt;
+<span class="ln">  278 | </span>  &lt;/div&gt;`
+<span class="ln">  279 | </span>    },
+<span class="ln">  280 | </span>  },
+<span class="ln">  281 | </span>}
+
+</pre></section>
+
+</main><footer>Fin de parte</footer></body></html>

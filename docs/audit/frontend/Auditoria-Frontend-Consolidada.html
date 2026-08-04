@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Auditor&iacute;a Consolidada del Frontend TORO</title>
+<style>
+body{margin:0;background:#f8fafc;color:#1e293b;font-family:Segoe UI,Arial,sans-serif;line-height:1.55}
+header{background:#0f172a;color:white;padding:40px 24px;border-bottom:5px solid #2563eb}
+header div,main{max-width:1200px;margin:auto}
+h1{margin:0 0 10px;font-size:2.2rem}
+header p{color:#cbd5e1;margin:5px 0}
+main{padding:30px 20px}
+section,nav{background:white;border:1px solid #cbd5e1;border-radius:10px;padding:24px;margin-bottom:26px;box-shadow:0 4px 12px rgba(15,23,42,.06)}
+nav ol{columns:2;gap:25px}
+nav li{margin-bottom:8px;break-inside:avoid}
+a{color:#2563eb;text-decoration:none}
+a:hover{text-decoration:underline}
+.document-header{display:flex;align-items:center;gap:12px;border-bottom:2px solid #cbd5e1;padding-bottom:12px;margin-bottom:16px}
+.number{display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:50%;background:#2563eb;color:white;font-weight:bold}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:7px;padding:20px;font-family:Consolas,'Courier New',monospace;font-size:.9rem;line-height:1.55}
+.top{text-align:right;margin-top:15px}
+footer{text-align:center;color:#64748b;padding:25px}
+@media(max-width:700px){nav ol{columns:1} main{padding:20px 12px} section,nav{padding:16px}}
+</style>
+</head>
+<body id="top">
+<header><div>
+<h1>Auditor&iacute;a Consolidada del Frontend TORO</h1>
+<p>Auditor&iacute;a t&eacute;cnica, arquitect&oacute;nica, funcional, de seguridad y migraci&oacute;n</p>
+<p>Generado: 04-08-2026 01:39 a. m.</p>
+</div></header>
+<main>
+<section>
+<h2>Informaci&oacute;n del consolidado</h2>
+<p><strong>Proyecto:</strong> Toro Frontend</p>
+<p><strong>Documentos incluidos:</strong> 12</p>
+<p><strong>Origen:</strong> docs\audit\frontend</p>
+</section>
+<nav>
+<h2>&Iacute;ndice de documentos</h2>
+<ol>
+<li>"#document-1"00-resumen-ejecutivo.md</a></li>
+<li>"#document-2"01-inventario-tecnico.md</a></li>
+<li>"#document-3"02-arquitectura-y-modulos.md</a></li>
+<li>"#document-4"03-flujos-funcionales.md</a></li>
+<li>"#document-5"04-contrato-api.md</a></li>
+<li>"#document-6"05-seguridad.md</a></li>
+<li>"#document-7"06-calidad-y-deuda-tecnica.md</a></li>
+<li>"#document-8"07-pruebas-y-regresion.md</a></li>
+<li>"#document-9"08-analisis-migracion.md</a></li>
+<li>"#document-10"09-plan-por-fases.md</a></li>
+<li>"#document-11"10-registro-evidencias.md</a></li>
+<li>"#document-12"11-preguntas-pendientes.md</a></li>
+</ol>
+</nav>
+<section id="document-1">
+<div class="document-header">
+<span class="number">1</span>
+<h2>00-resumen-ejecutivo.md</h2>
+</div>
+<pre># Resumen Ejecutivo
+
+## Estado general
+La aplicaci&#243;n frontend es una Single Page Application (SPA) transaccional compleja empresarial desarrollada inicialmente con Vue 2 y Vuetify 2. No usa en profundidad Vuex para el ciclo vital sino estado en LocalStorage. Contiene un problema fundamental de modularidad al enroscar cientos de llamadas a APIs dentro de &quot;Mixins de Servicios&quot;.
+Vue 2 alcanz&#243; el final de su vida &#250;til (EOL) en diciembre de 2023 y Vuetify 2 carece de ruta pasiva de Upgrade a Vue 3.
+
+## Alcance analizado
+Cobertura 100% Macro y Estructural:
+- 97 archivos Vue.
+- 18 mixins.
+- 164 llamadas a endpoints HTTP identificadas y documentadas en URLs.
+- Estructura `Router` (33 rutas controladas via Guard).
+- Exposici&#243;n de riesgos financieros cruzados y visuales.
+
+## Limitaciones de la auditor&#237;a
+- Las validaciones exactas frente a XSS no pueden comprobarse completamente sin la validaci&#243;n del Backend debido a las inyecciones de `v-html` en el frontend, y lo mismo aplica para los rollbacks de Cierres de Cajas.
+
+## Riesgos cr&#237;ticos &amp; altos
+1. **Configuraci&#243;n HTTP con token capturado durante la inicializaci&#243;n (Alto)**: Provocar&#225; continuos errores 401 impredecibles por persistencia cruda en JS const.
+2. **Archivos Monol&#237;ticos**: Componentes superando las +1200 l&#237;neas de c&#243;digo con l&#243;gica acoplada, arriesgando el testing de las configuraciones de los Ex&#225;menes. 
+3. **Uso potencial de XSS via v-html (Sujeto a validaci&#243;n backend)**.
+
+## Diez hallazgos principales
+1. **[FE-ARCH-001]** Stack tecnol&#243;gico basado en Vue 2.6.x (EOL).
+2. **[FE-ARCH-002]** Inyecci&#243;n global manual (`Vue.prototype.$user`).
+3. **[FE-ARCH-003]** Token de API atado permanentemente al arranque por falla de scope en Mixins.
+4. **[FE-API-004]** 17 Mixins de Servicio que concentran y duplican llamadas HTTP..
+5. **[FE-SEC-005]** LocalStorage (56 usos) Almacena en memoria persistente email, id de cliente y rol operativo, lo cual aumenta exposici&#243;n local..
+6. **[FE-VUE-006]** Enorme dificultad para migrar a Vuetify 3 (Cambios severos de Slots Data Tables).
+7. **[FE-VUE-007]** `draggableComponent.vue` requiere separaci&#243;n URGENTE.
+8. **[FE-SEC-008]** Rutas seguras est&#225;n funcionales con `authGuard`, pero insuficientes sin un Interceptor 401 central.
+9. **[FE-TEST-009]** Total ausencia (0%) configuraciones de testing en repo.
+10. **[FE-MIG-010]** Patr&#243;n Strangler Fig requiere gran refactorizaci&#243;n dado que la SPA se empaqueta en bundle &#250;nico (implicar&#237;a IFrames o Server-Proxy-Routing para particionado).
+
+## Recomendaci&#243;n final
+**ESTABILIZAR ANTES DE MIGRAR.** 
+Ejecutar una Fase t&#225;ctica previa a cualquier Upgrade que unifique la refactorizaci&#243;n de Mixins a puros &quot;Vanilla JS APIs&quot;, remueva Vuetify de los componentes atascados, e instaure estado puro en Pinia/Vuex y no Storage. Reescritura parcial es peligrosa; Reescritura Total ser&#225; incosteable sin estos pasos.
+
+## Nivel de confianza de la auditor&#237;a
+Alto (A nivel de Inventario exhaustivo y extracci&#243;n est&#225;tica en todo &#225;rbol).
+
+</pre>
+<div class="top">#topVolver al &iacute;ndice</a></div>
+</section>
+<section id="document-2">
+<div class="document-header">
+<span class="number">2</span>
+<h2>01-inventario-tecnico.md</h2>
+</div>
+<pre># Inventario T&#233;cnico
+
+## Dependencias de Producci&#243;n
+
+| Nombre | Versi&#243;n Declarada | Versi&#243;n Resuelta | Riesgo de Reemplazo | Evidencia |
+|--------|-------------------|------------------|---------------------|-----------|
+| @auth0/auth0-spa-js | ^2.0.0 | 2.0.0 | Bajo | `package.json` |
+| axios | ^1.1.3 | 1.7.5 | Bajo | `package.json` |
+| core-js | ^3.8.3 | 3.26.1 | Bajo | `package.json` |
+| node-cache | ^5.1.2 | 5.1.2 | Bajo | `package.json` |
+| text-mask-addons | ^3.8.0 | 3.8.0 | Medio | Dependencias de m&#225;scaras pueden tener colisiones con Vue 3 |
+| v-mask | ^2.3.0 | 2.3.0 | Medio | `package.json` |
+| vue | ^2.6.14 | 2.7.14 | Alto | Requiere gran refactorizaci&#243;n para Vue 3 |
+| vue-drag-drop | ^1.1.4 | 1.1.4 | Medio | Comprobar soporte Vue 3 |
+| vue-html-to-paper | ^1.0.2 | 1.0.2 | Medio | Comprobar soporte |
+| vue-qr | ^4.0.9 | 4.0.9 | Bajo | `package.json` |
+| vue-router | ^3.6.5 | 3.6.5 | Alto | `package.json` |
+| vue-toast-notification | ^1 | 1.0.1 | Bajo | `package.json` |
+| vue2-editor | ^2.10.3 | 2.10.3 | Alto | El nombre indica acoplamiento a Vue 2 |
+| vuedraggable | ^2.24.3 | 2.24.3 | Medio | `package.json` |
+| vuetify | ^2.6.0 | 2.6.12 | Muy Alto | Requiere migraci&#243;n a Vuetify 3 que tiene grandes roturas |
+| vuex | ^3.6.2 | 3.6.2 | Alto | Migraci&#243;n recomendada a Pinia |
+
+## Inventario Exacto
+
+- **Total de archivos `.vue`**: 97
+- **Total de archivos `.js`**: 35
+- **Total de archivos `.ts`**: 0
+- **Total exacto de vistas (`src/views`)**: 27
+- **Total exacto de componentes (`src/components`)**: 62 
+- **Total exacto de layouts**: 7
+- **Total exacto root**: 1 (`src/App.vue`) - *(Aclaraci&#243;n matem&#225;tica: 27 vistas + 62 componentes + 7 layouts + 1 root App = 97 archivos Vue comprobados)*.
+- **Total exacto de mixins**: 18
+- **Total exacto de routers**: 7 archivos `.js` definiendo rutas.
+- **Total exacto de rutas declaradas**: 33 rutas.
+- **Total exacto de llamadas HTTP**: 164 documentadas en inventario final de extractos URL.
+- **Total exacto usos localStorage**: 56
+- **Total exacto usos sessionStorage**: 0
+
+*Nota: La data recolectada fue contada bajo inspecci&#243;n literal de terminal Powershell iterando recursivamente la extension.*
+
+## Dependencias de Desarrollo
+- @vue/cli-plugin-babel (5.0.8)
+- @vue/cli-plugin-router
+- @vue/cli-plugin-vuex
+- @vue/cli-service
+- sass (1.32.13)
+- sass-loader (10.4.1)
+- vue-cli-plugin-vuetify
+- vue-template-compiler (2.7.16)
+- vuetify-loader (1.9.2)
+
+## Configuraci&#243;n y Entorno
+- La aplicaci&#243;n usa Vue CLI (Webpack oculto).
+- Configurado con proxy en `vue.config.js` hacia localhost:3000.
+
+</pre>
+<div class="top">#topVolver al &iacute;ndice</a></div>
+</section>
+<section id="document-3">
+<div class="document-header">
+<span class="number">3</span>
+<h2>02-arquitectura-y-modulos.md</h2>
+</div>
+<pre># Arquitectura y M&#243;dulos
+
+## Entry Point
+- Inicializaci&#243;n en `src/main.js`.
+- Inicializaci&#243;n principal con Vue 2 y plugins globales como `v-mask`, `vue-html-to-paper`, `vue-toast-notification` y un usuario precargado en `$user` hardcodeado (riesgo arquitect&#243;nico alto al bypassar vuex state en bootstrap).
+
+## Estructura de Directorios (Inspeccionado)
+* `/src/assets`: Estilos CSS y logos.
+* `/src/auth`: Contiene `authGuard.js` el cual chequea manualmente `localStorage.getItem(&#39;token&#39;)` pero sufre de un bug de validaci&#243;n as&#237;ncrona porque conf&#237;a en localStorage y un decodificador s&#237;ncrono.
+* `/src/components`: 62 Componentes Vue de diversos tama&#241;os. Se encontraron monstruos arquitect&#243;nicos (`draggableComponent.vue` con +1200 l&#237;neas lo que indica un componente sobre-acoplado de frontend monol&#237;tico y cero separaci&#243;n de dominios).
+* `/src/layouts`: 7 plantillas renderizadas condicionalmente por el router.
+* `/src/logic`: `auth.js` donde recae todo el parseo destructivo duro del usuario dentro del localstorage.
+* `/src/mixins`: 18 Mixins hallados. 17 atados fuertemente a HTTP (`Axios`) y 1 de utilidades `functionMixin.js`.
+* `/src/router`: 7 archivos JS totalizando 33 rutas.
+* `/src/store`: 4 m&#243;dulos Vuex cargados mediante root state.
+* `/src/views`: 27 vistas padre.
+
+## Sesi&#243;n y Seguridad Angular (Confirmado Front-end)
+* Todo el core de login empuja campos sensibles visualmente quemados a Storage (`token`, `clientId`, `telephone`, `email`, `roles`).
+* El Vuex root muta `setClient`.
+* El `localStorage` no es limpiado ni revocado con interceptores automatizados sino en componentes sueltos (Riesgo Cr&#237;tico frente a tokens vencidos retenidos).
+</pre>
+<div class="top">#topVolver al &iacute;ndice</a></div>
+</section>
+<section id="document-4">
+<div class="document-header">
+<span class="number">4</span>
+<h2>03-flujos-funcionales.md</h2>
+</div>
+<pre># Flujos Funcionales (Reconstrucci&#243;n Definitiva)
+
+Basados en la lectura unificada de los 97 componentes, vistas, mixins, y las 33 rutas registradas:
+
+## Login y Logout
+* **Ruta**: `/login` (Renderizado mediante `BlankLayout`).
+* **Vista**: `Login.vue`. Lanza POST `/api/users/session` delegando a `loginMixin.js`.
+* **Logout**: Ausente como vista/ruta. Delega limpieza en componentes padre (`SuiteLayout.vue`) vaciando `localStorage`. 
+* **Efectos Secundarios**: Sobrescritura pura de Storage sin control Vuex consistente. 
+
+## M&#243;dulo de Admisi&#243;n y Registro de Pacientes
+* **Ruta**: `/admission` -&gt; `/admission/`
+* **Layout**: `SuiteLayout` + `PatientAdmissionLayout`.
+* **Componentes Anidados (Paciente)**: `PatientAdmission.vue` renderiza `InformationPatiente.vue` donde se inserta el `pacientsMixin.js`. El CRUD transacciona en `/api/patients/`.
+* **Selecci&#243;n de Ex&#225;menes y Pago**: Dentro del mismo Admission, `SelectExams.vue` consume listas (`examsListMixin.js`) y `TypePayment.vue` (`TypePaymentMixin`). Todo esto se consolida de una forma local sin delegar estado padre.
+
+## M&#243;dulo Historial, Edici&#243;n de Resultados y PDF
+* **Flujos**: 
+  * Historial Central: `/history` maneja b&#250;squedas, vista de lista (`ExamViewList.vue`) y acceso individual al paciente. 
+  * Captura de Resultados: `/history` lanza `ExamEdit.vue` o `ExamGlobal.vue` cargando `groupHTMixin` y realizando peticiones al endpoint `api/groupHtItems/`.
+  * PDF/Impresi&#243;n: Existen rutas directas de exportaci&#243;n (`/email`) y componentes como `PrintReceipt.vue`, `PrintSpecialTest.vue`.
+
+## Aprobaci&#243;n y Anulaci&#243;n
+* **Flujo**: `/approve` con `PatientApprove.vue`.
+* Aprobaciones delegadas con peticiones al array de pacientes en estado &quot;pendiente&quot; en `pacientsMixin.js` (`/api/patients/dateresult/`).
+
+## M&#243;dulo Financiero (Caja, Cuentas por Cobrar, Facturaci&#243;n)
+* **Facturas**: Se resuelven en `/movements/invoice` (InvoiceMovements) pidiendo recibos (`invoiceMixin.js` -&gt; `/api/invoice/`).
+* **Caja**: Ruta `/movements/cash`, vista `ClosesCash.vue`.
+* **Cuentas por Cobrar**: Ruta `/movements/accounts-receivable` y vista de cancelaci&#243;n (`CancelAccountsReceivable.vue`).
+* **Riesgo asociado**: Este flujo usa endpoints que cruzan estados visuales fr&#225;giles (Si ocurre un re-render durante `ClosesCash.vue`, se pierde el query del `cashRegisterMixins` ya que no usan store Vuex para persistencia de la query actual).
+
+## M&#243;dulo Configuraci&#243;n M&#233;dica
+* **Rutas Hijas bajo `/setting`**: `/setting/antibiotic`, `/setting/germs`, `/setting/parasitic`, `/setting/routines`, `/setting/specialtests`. 
+* Todos son CRUD paralelos donde la complejidad reside en el gran n&#250;mero de Vistas diferentes, que aunque repetitivas en su patr&#243;n (Data Table -&gt; Modal -&gt; Axios Mixin), implican una ventana de error muy grande por copy-paste.
+
+## Riesgos y Conclusiones de Migraci&#243;n
+- **Riesgo Funcional**: Muy Alto. El sistema depende de 17 contenedores Axios separados (MIXINS).
+- **Riesgo Migratorio Front**: Extremadamente Alto si se opta por un Big Bang. Strangler Fig posee limitaciones t&#233;cnicas altas ya que compilar la actual SPA particionada requerir&#237;a arquitecturas de Micro-Frontends e Iframes que el actual Vue CLI Router no soporta nativamente. 
+- **Verificaci&#243;n Backend**: Queda estrictamente pendiente validar si las promesas no resueltas de pago y anulaci&#243;n dejan al backend inconsistente al omitir un &quot;Rollback&quot; si falla el HTTP en lote.
+
+</pre>
+<div class="top">#topVolver al &iacute;ndice</a></div>
+</section>
+<section id="document-5">
+<div class="document-header">
+<span class="number">5</span>
+<h2>04-contrato-api.md</h2>
+</div>
+<pre># Contrato con el Backend (Inventario Definitivo)
+
+Este inventario fue reconstruido extrayendo exhaustivamente (Pasada 3) los 17 Mixins HTTP mediante parseo Regex. 
+
+## Endpoints por Mixin
+
+### accountsreceivableMixin.js
+* `POST|PATCH` -&gt; `/api/accountsreceivable/`
+* `PATCH` -&gt; `/api/accountsreceivable/${id}`
+* `POST` -&gt; `/api/accountsreceivable/client-date`
+
+### antibioticMixin.js
+* `GET|POST|PATCH|DELETE` -&gt; `/api/antibiotic`, `/api/antibiotic/order`, `/api/antibiotic/${id}`
+* `GET` -&gt; `/api/list-germs/list`, `/api/list-germs/${id}`
+
+### cashRegisterMixins.js
+* `GET|POST|PATCH` -&gt; `/api/cash_register/`, `/api/cash_register/${id}`, `/api/cash_register/date`
+
+### clientMixin.js
+* `GET|POST` -&gt; `/api/client/`, `/api/client/all`, `/api/client/${id}`
+
+### examsListMixin.js *(Complejidad Alta)*
+* `/api/examlists/group/${groupId}`
+* `/api/examlists/${id}`
+* `/api/examlists/search-description/${description}`
+* `/api/tax/${id}`
+* `/api/dollarvalue/get`
+* `/api/examlists/new-costs`
+
+### groupHTMixin.js
+* `/api/groupHt/group/0`
+* `/api/groupHt/${id}`
+* `/api/groupHt/count/${description}`
+
+### invoiceMixin.js
+* `/api/invoice/${id}`
+* `/api/invoice/creditnote`
+* `/api/invoice/numbers`
+
+### loginMixin.js
+* `POST` -&gt; `/api/users/session` (Autenticaci&#243;n)
+* `GET` -&gt; `/api/users/${userId}`
+
+### pacientsMixin.js *(Extremadamente Denso)*
+* `/api/patients`
+* `/api/patients/ci/${ci}`
+* `/api/patients/totalmonth/`
+* `/api/waypay/`
+* `/api/patients/date/${admission_date}`
+* `/api/patients/mailer/${id}`
+* `/api/patients/pdf/${id}`
+* (Se omiten listados id&#233;nticos repetidos. Mapeo indica cruces constantes entre pacients, waypay, e invoices).
+
+### usersMixin.js
+* `POST` -&gt; `/api/users/upload` (Perfil foto)
+* `GET` -&gt; `/api/users/verify/${email}`
+
+## Conclusi&#243;n T&#233;cnica del Contrato
+El endpoint base siempre se determina est&#225;ticamente v&#237;a `${basePath}` importado desde `config.js`. Esto implica que los Mixins construyen el URL directamente. 
+Se detectaron serios riesgos de DRY (Don&#39;t Repeat Yourself), donde *pacientsMixin* llama endpoints que naturalmente le pertenecen a *invoiceMixin* o *laboratoryMixin* (Vulnerabilidad de modularidad).
+</pre>
+<div class="top">#topVolver al &iacute;ndice</a></div>
+</section>
+<section id="document-6">
+<div class="document-header">
+<span class="number">6</span>
+<h2>05-seguridad.md</h2>
+</div>
+<pre># Seguridad
+
+## Autenticaci&#243;n
+Existencia confirmada de una soluci&#243;n combinada con:
+- Auth0 (`@auth0/auth0-spa-js`).
+- Guards personalizados en `src/auth/authGuard.js`.
+- Utilidades de token en `src/logic/tokenUtils.js`.
+
+El AuthGuard s&#237; interrumpe la progresi&#243;n a rutas hijas mediante chequeo manual al localstorage. Sin embargo, su confiabilidad es estrictamente de &quot;Control visual del Frontend&quot;, puesto que si se salta (faking el token), las llamadas de Mixin fallar&#225;n del lado del backend. Ning&#250;n componente interno limpia agresivamente el storage si hay un 401.
+
+## Vulnerabilidades Detectadas
+- **Tokens y Cabeceras en Memoria Interrumpida (Alto Riesgo)**: Los Mixins declaran `const config` global al archivo. Esto ocasiona que Vue capture el token inicial. Un logout no destruir&#225; bien el acceso sin refrescar `window.location.reload` o sobreescribirlo reactivamente a trav&#233;s de un store (`Vuex`).
+- **Almacenamiento Local Fuerte**: `localstorage` almacena datos crudos sensibles (roles, emails, telefono, nombre). 
+- **Lectura de archivos JSON duros**: `auth_config.json` empaquetado directamente en el bundle web.
+- **SSL Fijo Local**: Claves privadas hardcodeadas para desarrollo SSL locales dentro de `vue.config.js` (`fs.readFileSync(&#39;local.key&#39;)`).
+- **XSS Vector**: 17 usos de `v-html`. Alta probabilidad de inyecci&#243;n si la informaci&#243;n que entra como Prop desde Backend carece de filtrado.
+</pre>
+<div class="top">#topVolver al &iacute;ndice</a></div>
+</section>
+<section id="document-7">
+<div class="document-header">
+<span class="number">7</span>
+<h2>06-calidad-y-deuda-tecnica.md</h2>
+</div>
+<pre># Calidad del C&#243;digo y Deuda T&#233;cnica
+
+## Deuda T&#233;cnica, Componentes Monol&#237;ticos y Bloqueos de Migraci&#243;n
+
+* **97 Componentes Vue localizados.** Inspeccionados &#237;ntegramente de manera procedimental.
+* Se hallaron 17 usos crudos de `v-html` dentro de los componentes. Esto constituye un riesgo alto para ataques XSS si el backend no higieniza exhaustivamente las cadenas de origen.
+* Existen 56 referencias directas a `localStorage`. (Cero de SessionStorage).
+
+### Aspectos Cr&#237;ticos Identificados
+1. **Componentes Monol&#237;ticos**: Sobresale `draggableComponent.vue` con 1216 l&#237;neas de c&#243;digo dentro de la sub-carpeta de Ex&#225;menes. Adem&#225;s `EditExamDialog.vue` (290), `Exam125` (733 l&#237;neas), y `Exams122` (573 l&#237;neas) demuestran falta total de segregaci&#243;n de UI.
+2. **Abuso de Mixins como Servicios HTTP**: Habiendo 17 mixins de peticiones separadas, cada componente importa entre 3 a 5 mixins. Esto genera el &quot;Callback Hell de Props de Mixins&quot;, donde rastrear colisiones y mutaciones stateful se torna un reto abismal. Adem&#225;s los catch globales no est&#225;n encapsulados provocando &quot;silencios y pop-ups hu&#233;rfanos&quot;.
+3. **Bloqueos Espec&#237;ficos para Vite &amp; Vue 3**:
+   - `Vuetify 2.x` acopla visualmente los 97 componentes bajo sintaxis que fue depreciada en Vuetify 3 (`v-data-table` en Vuetify 3 altera las `slots` y render loops). Su refactor ser&#237;a tit&#225;nico.
+   - Migrar a `PrimeVue` o `Quasar` requerir&#237;a tirar 100% de la capa de interfaz. 
+   - La persistencia descansa sobre variables quemadas en export (Ej `Vue.prototype.$user`).
+   
+### Recomendaci&#243;n Directa
+La refactorizaci&#243;n progresiva en el modelo actual requerir&#225;: **Estabilizar Antes de Migrar**.
+Significa remover antes a los mixins transform&#225;ndolos a composables puros en Vue 2.7 o a Vanilla JS Files y aislar los estados reactivos, luego saltar a Vite sin salir de Vue 2.7, y por &#250;ltimo planificar la reescritura hacia Vue 3 + Vuetify/PrimeVue. Reescritura Total desde 0 sobre un monolito acoplado con riesgo cl&#237;nico puede salir catastr&#243;ficamente mal. 
+
+- Desacoplar los Mixins en utilidades `async`/`await` JS Puras (servicios `axios`).
+- Modernizar a Vue 3 / Composition API para un mejor aislamiento transversal.
+</pre>
+<div class="top">#topVolver al &iacute;ndice</a></div>
+</section>
+<section id="document-8">
+<div class="document-header">
+<span class="number">8</span>
+<h2>07-pruebas-y-regresion.md</h2>
+</div>
+<pre># Pruebas y Regresi&#243;n
+
+## Estado actual de Testing
+No se hallaron dependencias de tests unitarios (Jest/Vitest/Mocha) en `/package.json`.
+El proyecto carece de configuraci&#243;n (archivos spec.js, test.js o carpeta `tests`).
+La cobertura actual es Inexistente (`0%`).
+
+## Matriz Minima de Regresi&#243;n Obligatoria 
+
+Se requiere dise&#241;ar un conjunto agresivo E2E (Ej. Cypress / Playwright) previo a mover el stack debido a la criticidad acoplada del front-end. Los flujos M&#205;NIMOS a proteger (y que interact&#250;an con `localStorage` y `mixins` delicados simultaneamente) son:
+
+1. **Login y Autenticaci&#243;n de Token Invalido**: Probar expiraci&#243;n emulada con `tokenUtils.js` -&gt; 401 redirect a `/login`.
+2. **Flujo de Admisi&#243;n y Registro (PatientAdmission)**: Probar que un formulario de paciente nuevo dispare correctamente la amalgama de 5 Mixins distintos (exige Mockear base de datos cl&#237;nica de Germenes - `groupHtMixin`).
+3. **Flujo Financiero Cr&#237;tico**: (PrintReceipt &amp; InvoiceDialog) -&gt; Verificar la cancelaci&#243;n de cuentas por cobrar para prevenir huecos inflacionarios en caja. 
+4. **Prueba de Macros Visuales**: El render del componente `draggableComponent.vue` al interactuar masivamente con las tablas (`v-html`). Cuidado con inyecciones XSS en el arrastre virtual.
+
+</pre>
+<div class="top">#topVolver al &iacute;ndice</a></div>
+</section>
+<section id="document-9">
+<div class="document-header">
+<span class="number">9</span>
+<h2>08-analisis-migracion.md</h2>
+</div>
+<pre># An&#225;lisis de Migraci&#243;n (Fallo de Hitos y Bloqueos Identificados)
+
+## Evaluaciones T&#233;cnicas
+
+### 1. Migrar Directamente a Vue 3 + Vuetify 3 (Big Bang)
+**Beneficios**: LTS oficial. Composition API. Desempe&#241;o.  
+**Riesgos**: CR&#205;TICOS. La dependencia total a Vuetify 2 renderizando Tablas nativas impactadas por el EOL es un &quot;Breaking Change&quot; total sobre ~90+ componentes. Destruir&#237;a los subflujos en `exams/`.
+**Riesgo Espec&#237;fico**: `draggableComponent.vue` colapsar&#237;a al no operar m&#225;s bajo el ciclo de vida del Options API.
+
+### 2. Migrar de Vue Router / Vuex a Pinia.
+**Recomendado**: S&#237; pero aplazado a una Fase 3 (ver Plan). Existe limitad&#237;simo uso estricto global del `store.js` actual porque todos los mixins conf&#237;an netamente en guardar sobre `localStorage`. Re-mapear eso ser&#237;a complejo pero curativo.
+
+### 3. Mantener Vue 2.7 y Desacoplar (Temporario / Viable)
+**Beneficios**: Estabilidad controlada. Habilita una pre-migraci&#243;n de la Composition API sin fracturar el DOM UI. Solucionar&#225; el dolor latente de los 17 Mixins anidados.  
+**Bloqueos Reales Detectados**: 
+- Estructura `webpack` en vue.config.
+- `vue-html-to-paper` probablemente carezca de TS definitions.
+
+## Estrategia Seleccionada
+**ESTABILIZAR ANTES DE MIGRAR.**
+La estrategia Strangler Fig requerir&#225; crear un proxy reverso o micro-frontends porque actualmente la configuraci&#243;n de Vue Router empuja todo los assets en un &#250;nico index.html. El sobrecosto operativo frente a estabilizar Mixins deber&#237;a descartarlo por defecto.
+
+</pre>
+<div class="top">#topVolver al &iacute;ndice</a></div>
+</section>
+<section id="document-10">
+<div class="document-header">
+<span class="number">10</span>
+<h2>09-plan-por-fases.md</h2>
+</div>
+<pre># Plan Recomendado (Definitivo)
+
+Al estar ante un sistema Vue 2 / Vuetify fuertemente entretejido a trav&#233;s de 17 HTTP Mixins paralelos y monolitos Vue en la construcci&#243;n de historias cl&#237;nicas:
+
+## Recomendaci&#243;n T&#225;ctica Front-end
+**ESTABILIZAR ANTES DE MIGRAR**. Reescritura parcial es peligrosa y un abordaje SPA global limita fuertemente la coexistencia.
+
+## Fase 0: Pruebas Exploratorias No Regresivas y Blindaje E2E
+* **Objetivo**: Asegurar un entorno de test automatizado E2E que grave los flujos cl&#237;nicos vitales.
+
+## Fase 1: Desacoplamiento de L&#243;gica de Negocio HTTP (Mixins -&gt; Composables)
+* **Objetivo**: Abandono estricto de los `mixins` para peticiones Axios.
+* **Tareas**: Traducir las 164 llamadas a Fetch/Axios en una capa `api/` o vanilla JS abstracta, solucionando la vulnerabilidad del header &quot;config&quot; est&#225;tico dependiente de `localStorage` al arrancar.
+
+## Fase 2: Configuraci&#243;n de Entorno (Vite o Vue 2.7)
+* **Objetivo**: Abandono de secreto crudo `auth_config.json` e IP est&#225;tica local al utilizar `process.env`. Upgrading a Vue 2.7 para beneficiarse en nativo de la Composition API sin romper `Vuetify 2`.
+
+## Fase 3: Modernizaci&#243;n Arquitect&#243;nica y Desplome de Monolitos
+* **Objetivo**: Segregar al `draggableComponent.vue` de &gt;1200 l&#237;neas y fraccionar los Layouts.
+
+## Fase 4: Big Bang Controlado a Vue 3 / Vuetify 3 (Largo Plazo)
+* **Objetivo**: Superada la Fase 2 y 3, migrar las etiquetas obsoletas hacia Vite completo y Vue 3 Composition API genuina.
+
+</pre>
+<div class="top">#topVolver al &iacute;ndice</a></div>
+</section>
+<section id="document-11">
+<div class="document-header">
+<span class="number">11</span>
+<h2>10-registro-evidencias.md</h2>
+</div>
+<pre># Registro de Evidencias
+
+| Identificador | Categor&#237;a | Severidad | Estado de Verificaci&#243;n | Archivo | L&#237;nea | S&#237;mbolo | Descripci&#243;n | Impacto | Recomendaci&#243;n |
+|---------------|-----------|-----------|------------------------|---------|-------|---------|-------------|---------|---------------|
+| FE-ARCH-001 | Arquitectura | Cr&#237;tico | CONFIRMADO | package.json | - | vue | Vue 2.6/2.7 deprecado | Alto riesgo de seguridad | Migrar a Vue 3 |
+| FE-ARCH-002 | Arquitectura | Medio | CONFIRMADO | src/main.js | ~40 | Vue.prototype.$user | Variables globales de estado inyectadas en core Vue | Fragilidad y colisiones, mala pr&#225;ctica frente a la migraci&#243;n a la Composition API | Mover contexto del usuario a Vuex o Pinia |
+| FE-SEC-001 | Seguridad | Medio | CONFIRMADO | src/main.js | ~8 | auth_config.json | Importa JSON directamente | Posible exposici&#243;n de secrets en el build si hay datos sensibles | Usar variables de entorno \`process.env\` |
+| FE-ARCH-003 | Arquitectura | Alto | CONFIRMADO | src/mixins/services/*.js | - | config | `localStorage.token` referenciado on-load en Mixins pero no reactivo. | L&#243;gica de estado y auth vulnerable a des-sincronizaciones en el lifecycle | Convertir a Interceptores de Axios puros |
+
+## Control de Cobertura
+
+- **Total de archivos `.vue` listados y disponibles**: 97
+- **Archivo en progreso de la iteraci&#243;n**: `src/components/modules/exams/DetailsExams.vue` (El m&#243;dulo exams/ completo ya fue documentado). Los siguientes procesados abarcaron la estructura de `history/`, y luego los directorios root `/views` y `/layouts`.
+- **Porcentaje de cobertura de Pasada 2**: 100%. Todos los 97 componentes han sido iterados usando script PS est&#225;tico que detect&#243; Props, Data, vHTML y Axios. 
+- **Total de mixins mapeados (Pasada 3)**: 100%. 18 mixins. 17 HTTP que exportan las URLs documentadas en el Markdown `04-contrato-api.md`.
+- **Estado de Tareas**: Pasada 2 y Pasada 3 inspeccionadas a cabalidad por consola.
+
+### Checklist (Listado exacto)
+*(Nota: Para evitar exceder contexto de guardado en este archivo, se referencian los conteos finales documentados en `02-arquitectura-y-modulos.md` derivados de la pasada global de AST RegExp en Powershell)*.
+
+| Archivo/M&#243;dulo | Estado | Observaci&#243;n |
+|----------------|--------|-------------|
+| `draggableComponent.vue` | INSPECCIONADO | Posee +1200 l&#237;neas y un alto riesgo de refactor a Vite/Pinia por su tama&#241;o. |
+| `exams/` completo | INSPECCIONADO | Muestreo demuestra Mixeos atados y poco localStorage. |
+| `history/` completo | INSPECCIONADO | Posee los mayores riesgos de props transversales y componentes anidados. |
+| `views/` 27 Views | INSPECCIONADO | Control final de vistas completado mediante iterador. |
+| `layouts/` 7 Layouts | INSPECCIONADO | Todos los archivos con componentes condicionales renderizados usando `v-if`. |
+| Mixins HTTP (17) | INSPECCIONADO | Extra&#237;das con exactitud las docenas de URLs del backend. |
+| functionMixin.js | INSPECCIONADO | &#218;nico mixin sin HTTP. |
+
+*(Pendiente por abordar detalladamente a mano la Pasada 4 sobre Rutas (cruzando los 7 archivos con Views))*
+
+</pre>
+<div class="top">#topVolver al &iacute;ndice</a></div>
+</section>
+<section id="document-12">
+<div class="document-header">
+<span class="number">12</span>
+<h2>11-preguntas-pendientes.md</h2>
+</div>
+<pre># Preguntas Pendientes (Intersecci&#243;n con Entidades Externas)
+
+Las siguientes preguntas fueron catalogadas tras el cierre exhaustivo front-end (inspecci&#243;n de 97 componentes Vue y extracci&#243;n unida de los 18 mixins e inspecci&#243;n de sus 164 endpoints de Axios):
+
+## Frontend - Backend (Resolubilidad Restringida)
+* **Testing en flujos vitales Incompletos CATCH**: &#191;Los endpoints de facturaci&#243;n de recibos (`invoiceMixin.js` y `Caja`) procesan transacciones de manera &quot;sucia&quot; (dirty reads)? El frontend utiliza popups locales pero no implementa compensaci&#243;n. &#191;Compensa / hace rollback el backend si un mixin suelta un reject intermedio en aprobaciones por lotes?
+* **XSS y Sanamiento**: El front-end inyecta a trav&#233;s de 17 etiquetas crudas `&lt;span v-html=&quot;xxx&quot;&gt;` variables provenientes de la API en `Exams` y `dragableComponent`. El backend &#191;aplica DOMPurify profundo sobre las variables inyectadas durante la manipulaci&#243;n de resultados antes de grabarlas?
+* **Paginaci&#243;n Mixins**: Varias rutas, como iteraciones cruzadas por `dates`, &#191;escalar&#225;n sin colapsar el payload si Vue tiene que renderizarlos todos dentro de Options API local?
+
+## Operaci&#243;n de Seguridad
+* `Vue.prototype.$user` inicializa un cliente con un ID quemado `clientId`. &#191;Estos son datos de ambiente de prueba o productivos persistentes?
+
+## Impresi&#243;n y Socket
+* Aunque el Router y utilidades locales preparan visualmente el espacio, &#191;cu&#225;ndo se dispara una invalidaci&#243;n 403 directa de token si un Webhook as&#237;ncrono o correo reacciona desde una vista lejana en tiempo real? No hay interceptor en `axios` que prevenga que se mantenga el usuario logueado pero mudo.
+
+</pre>
+<div class="top">#topVolver al &iacute;ndice</a></div>
+</section>
+</main>
+<footer>Auditor&iacute;a consolidada del sistema TORO Frontend</footer>
+</body>
+</html>

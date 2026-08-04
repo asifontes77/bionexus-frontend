@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Auditoria Frontend TORO - 01-inventario-configuracion</title>
+<style>
+body{margin:0;background:#f8fafc;color:#172033;font-family:Segoe UI,Arial,sans-serif;line-height:1.5}
+header{background:#102a43;color:#fff;border-bottom:5px solid #16a085;padding:32px 22px}
+header div,main{max-width:1350px;margin:auto}main{padding:26px 16px}
+.notice,.file{background:#fff;border:1px solid #cbd5e1;border-radius:9px;margin-bottom:22px;box-shadow:0 3px 10px rgba(15,23,42,.06)}
+.notice{padding:18px}.file-header{background:#e8f5f2;border-bottom:1px solid #cbd5e1;padding:13px 17px}
+.file-header h2{font-size:1.1rem;margin:0 0 6px;overflow-wrap:anywhere}.meta{color:#475569;font-size:.88rem}
+pre{margin:0;padding:17px;white-space:pre-wrap;overflow-wrap:anywhere;tab-size:4;font-family:Consolas,Courier New,monospace;font-size:.84rem;line-height:1.46}
+.ln{display:inline-block;color:#64748b;min-width:5.7em;user-select:none}.redacted{color:#b91c1c;font-weight:700}
+footer{text-align:center;color:#64748b;padding:20px}</style></head><body>
+<header><div>
+<h1>Auditoria Frontend TORO - 01-inventario-configuracion</h1>
+<p>Parte: 1</p>
+<p>Raiz auditada: C:\Users\Alexis\Documents\Sistema TORO\Aplicacion\Toro Frontend</p>
+<p>Generado: 04-08-2026 09:41 a. m.</p>
+</div></header><main>
+<section class="notice"><strong>Extraccion estatica de solo lectura.</strong>
+<p>Los posibles secretos fueron reemplazados por [REDACTED]. Los numeros de linea corresponden al archivo original.</p></section>
+<section class="file">
+<div class="file-header">
+<h2>babel.config.js</h2>
+<div class="meta">Lineas: 6 | Bytes: 78 | SHA256: 2216D08F80A2DDC1382902DBEDC589E792B5D4A80DA8F244448BB4140447FFA8</div>
+</div><pre>
+<span class="ln">    1 | </span>module.exports = {
+<span class="ln">    2 | </span>  presets: [
+<span class="ln">    3 | </span>    &#39;@vue/cli-plugin-babel/preset&#39;
+<span class="ln">    4 | </span>  ]
+<span class="ln">    5 | </span>}
+<span class="ln">    6 | </span>
+
+</pre></section>
+<section class="file">
+<div class="file-header">
+<h2>jsconfig.json</h2>
+<div class="meta">Lineas: 20 | Bytes: 298 | SHA256: F9FBF1D145F2EA40AC3DFE34B3E491BA52170F74F232717386D23FD7875A17C3</div>
+</div><pre>
+<span class="ln">    1 | </span>{
+<span class="ln">    2 | </span>  &quot;compilerOptions&quot;: {
+<span class="ln">    3 | </span>    &quot;target&quot;: &quot;es5&quot;,
+<span class="ln">    4 | </span>    &quot;module&quot;: &quot;esnext&quot;,
+<span class="ln">    5 | </span>    &quot;baseUrl&quot;: &quot;./&quot;,
+<span class="ln">    6 | </span>    &quot;moduleResolution&quot;: &quot;node&quot;,
+<span class="ln">    7 | </span>    &quot;paths&quot;: {
+<span class="ln">    8 | </span>      &quot;@/*&quot;: [
+<span class="ln">    9 | </span>        &quot;src/*&quot;
+<span class="ln">   10 | </span>      ]
+<span class="ln">   11 | </span>    },
+<span class="ln">   12 | </span>    &quot;lib&quot;: [
+<span class="ln">   13 | </span>      &quot;esnext&quot;,
+<span class="ln">   14 | </span>      &quot;dom&quot;,
+<span class="ln">   15 | </span>      &quot;dom.iterable&quot;,
+<span class="ln">   16 | </span>      &quot;scripthost&quot;
+<span class="ln">   17 | </span>    ]
+<span class="ln">   18 | </span>  }
+<span class="ln">   19 | </span>}
+<span class="ln">   20 | </span>
+
+</pre></section>
+<section class="file">
+<div class="file-header">
+<h2>package.json</h2>
+<div class="meta">Lineas: 44 | Bytes: 1097 | SHA256: CE0E38659B2A1195E867BEF85A699105C4715EE6571D13E0E33EF193BBC42A49</div>
+</div><pre>
+<span class="ln">    1 | </span>{
+<span class="ln">    2 | </span>  &quot;name&quot;: &quot;toro&quot;,
+<span class="ln">    3 | </span>  &quot;version&quot;: &quot;0.1.0&quot;,
+<span class="ln">    4 | </span>  &quot;private&quot;: true,
+<span class="ln">    5 | </span>  &quot;scripts&quot;: {
+<span class="ln">    6 | </span>    &quot;serve&quot;: &quot;vue-cli-service serve&quot;,
+<span class="ln">    7 | </span>    &quot;build&quot;: &quot;vue-cli-service build&quot;
+<span class="ln">    8 | </span>  },
+<span class="ln">    9 | </span>  &quot;dependencies&quot;: {
+<span class="ln">   10 | </span>    &quot;@auth0/auth0-spa-js&quot;: &quot;^2.0.0&quot;,
+<span class="ln">   11 | </span>    &quot;axios&quot;: &quot;^1.1.3&quot;,
+<span class="ln">   12 | </span>    &quot;core-js&quot;: &quot;^3.8.3&quot;,
+<span class="ln">   13 | </span>    &quot;node-cache&quot;: &quot;^5.1.2&quot;,
+<span class="ln">   14 | </span>    &quot;text-mask-addons&quot;: &quot;^3.8.0&quot;,
+<span class="ln">   15 | </span>    &quot;v-mask&quot;: &quot;^2.3.0&quot;,
+<span class="ln">   16 | </span>    &quot;vue&quot;: &quot;^2.6.14&quot;,
+<span class="ln">   17 | </span>    &quot;vue-drag-drop&quot;: &quot;^1.1.4&quot;,
+<span class="ln">   18 | </span>    &quot;vue-html-to-paper&quot;: &quot;^1.0.2&quot;,
+<span class="ln">   19 | </span>    &quot;vue-qr&quot;: &quot;^4.0.9&quot;,
+<span class="ln">   20 | </span>    &quot;vue-router&quot;: &quot;^3.6.5&quot;,
+<span class="ln">   21 | </span>    &quot;vue-toast-notification&quot;: &quot;^1&quot;,
+<span class="ln">   22 | </span>    &quot;vue2-editor&quot;: &quot;^2.10.3&quot;,
+<span class="ln">   23 | </span>    &quot;vuedraggable&quot;: &quot;^2.24.3&quot;,
+<span class="ln">   24 | </span>    &quot;vuetify&quot;: &quot;^2.6.0&quot;,
+<span class="ln">   25 | </span>    &quot;vuex&quot;: &quot;^3.6.2&quot;
+<span class="ln">   26 | </span>  },
+<span class="ln">   27 | </span>  &quot;devDependencies&quot;: {
+<span class="ln">   28 | </span>    &quot;@vue/cli-plugin-babel&quot;: &quot;^5.0.8&quot;,
+<span class="ln">   29 | </span>    &quot;@vue/cli-plugin-router&quot;: &quot;~5.0.0&quot;,
+<span class="ln">   30 | </span>    &quot;@vue/cli-plugin-vuex&quot;: &quot;~5.0.0&quot;,
+<span class="ln">   31 | </span>    &quot;@vue/cli-service&quot;: &quot;~5.0.0&quot;,
+<span class="ln">   32 | </span>    &quot;sass&quot;: &quot;~1.32.0&quot;,
+<span class="ln">   33 | </span>    &quot;sass-loader&quot;: &quot;^10.0.0&quot;,
+<span class="ln">   34 | </span>    &quot;vue-cli-plugin-vuetify&quot;: &quot;~2.5.8&quot;,
+<span class="ln">   35 | </span>    &quot;vue-template-compiler&quot;: &quot;^2.6.14&quot;,
+<span class="ln">   36 | </span>    &quot;vuetify-loader&quot;: &quot;^1.7.0&quot;
+<span class="ln">   37 | </span>  },
+<span class="ln">   38 | </span>  &quot;browserslist&quot;: [
+<span class="ln">   39 | </span>    &quot;&gt; 1%&quot;,
+<span class="ln">   40 | </span>    &quot;last 2 versions&quot;,
+<span class="ln">   41 | </span>    &quot;not dead&quot;
+<span class="ln">   42 | </span>  ]
+<span class="ln">   43 | </span>}
+<span class="ln">   44 | </span>
+
+</pre></section>
+<section class="file">
+<div class="file-header">
+<h2>src\main.js</h2>
+<div class="meta">Lineas: 53 | Bytes: 1150 | SHA256: 1CDE916563D731D0BB0E7E5D836D067CD62AAF4559E37097EC844AAA571B57E5</div>
+</div><pre>
+<span class="ln">    1 | </span>import Vue from &#39;vue&#39;
+<span class="ln">    2 | </span>import VueHtmlToPaper from &#39;vue-html-to-paper&#39;
+<span class="ln">    3 | </span>import VMask from &#39;v-mask&#39;
+<span class="ln">    4 | </span>import App from &#39;./App.vue&#39;
+<span class="ln">    5 | </span>import router from &#39;./router&#39;
+<span class="ln">    6 | </span>import store from &#39;./store&#39;
+<span class="ln">    7 | </span>import vuetify from &#39;./plugins/vuetify&#39;
+<span class="ln">    8 | </span>import { clientId } from &#39;../auth_config.json&#39;
+<span class="ln">    9 | </span>import VueToast from &#39;vue-toast-notification&#39;;
+<span class="ln">   10 | </span>import &#39;vue-toast-notification/dist/theme-sugar.css&#39;;
+<span class="ln">   11 | </span>
+<span class="ln">   12 | </span>const publicPath = process.env.BASE_URL
+<span class="ln">   13 | </span>
+<span class="ln">   14 | </span>const options = {
+<span class="ln">   15 | </span>  name: &#39;_blank&#39;,
+<span class="ln">   16 | </span>  timeout: 1000,
+<span class="ln">   17 | </span>  autoClose: true,
+<span class="ln">   18 | </span>  windowTitle: &#39;Imprimir&#39;,
+<span class="ln">   19 | </span>  specs: [
+<span class="ln">   20 | </span>    &#39;fullscreen=yes&#39;,
+<span class="ln">   21 | </span>    &#39;titlebar=yes&#39;,
+<span class="ln">   22 | </span>    &#39;scrollbars=yes&#39;
+<span class="ln">   23 | </span>  ],
+<span class="ln">   24 | </span>  styles: [
+<span class="ln">   25 | </span>    &#39;https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css&#39;,
+<span class="ln">   26 | </span>    &#39;https://unpkg.com/kidlat-css/css/kidlat.css&#39;,
+<span class="ln">   27 | </span>    `${publicPath}printer.css`
+<span class="ln">   28 | </span>  ],
+<span class="ln">   29 | </span>}
+<span class="ln">   30 | </span>Vue.use(VMask)
+<span class="ln">   31 | </span>Vue.use(VueHtmlToPaper, options)
+<span class="ln">   32 | </span>Vue.use(VueToast, {
+<span class="ln">   33 | </span>  duration: 5000,
+<span class="ln">   34 | </span>  position: &quot;bottom&quot;,
+<span class="ln">   35 | </span>  dismissible: true,
+<span class="ln">   36 | </span>
+<span class="ln">   37 | </span>})
+<span class="ln">   38 | </span>
+<span class="ln">   39 | </span>Vue.config.productionTip = false
+<span class="ln">   40 | </span>
+<span class="ln">   41 | </span>
+<span class="ln">   42 | </span>Vue.prototype.$user = {
+<span class="ln">   43 | </span>  clientId: clientId,
+<span class="ln">   44 | </span>  name:&#39;Hector Vera&#39;,
+<span class="ln">   45 | </span>  token:&quot;<span class="redacted">[REDACTED]</span>&quot;
+<span class="ln">   46 | </span>}
+<span class="ln">   47 | </span>new Vue({
+<span class="ln">   48 | </span>  router,
+<span class="ln">   49 | </span>  store,
+<span class="ln">   50 | </span>  vuetify,
+<span class="ln">   51 | </span>  render: h =&gt; h(App)
+<span class="ln">   52 | </span>}).$mount(&#39;#app&#39;)
+<span class="ln">   53 | </span>
+
+</pre></section>
+<section class="file">
+<div class="file-header">
+<h2>src\plugins\vuetify.js</h2>
+<div class="meta">Lineas: 42 | Bytes: 1009 | SHA256: 80B0891456866A447F995D5CF7A9ADB5612B3840D7CB48A18AB00412015E65EC</div>
+</div><pre>
+<span class="ln">    1 | </span>import Vue from &#39;vue&#39;;
+<span class="ln">    2 | </span>import Vuetify from &#39;vuetify/lib/framework&#39;;
+<span class="ln">    3 | </span>
+<span class="ln">    4 | </span>Vue.use(Vuetify);
+<span class="ln">    5 | </span>
+<span class="ln">    6 | </span>export default new Vuetify({
+<span class="ln">    7 | </span>  theme: {
+<span class="ln">    8 | </span>      options: {
+<span class="ln">    9 | </span>        customProperties: true,
+<span class="ln">   10 | </span>      },
+<span class="ln">   11 | </span>    themes: {
+<span class="ln">   12 | </span>      light: {
+<span class="ln">   13 | </span>        primary: &#39;#005F73&#39;,
+<span class="ln">   14 | </span>        primary100: &#39;#0A9396&#39;,
+<span class="ln">   15 | </span>        secondary100: &#39;#FBE0C6&#39;,
+<span class="ln">   16 | </span>        secondary: &#39;#CA6702&#39;,
+<span class="ln">   17 | </span>        background: &#39;#F0F0F0&#39;,
+<span class="ln">   18 | </span>        background100: &#39;#e3e3e3&#39;,
+<span class="ln">   19 | </span>        accent: &#39;#001219&#39;,
+<span class="ln">   20 | </span>        error: &#39;#AE2012&#39;,
+<span class="ln">   21 | </span>        info: &#39;#0A9396&#39;,
+<span class="ln">   22 | </span>        success: &#39;#94D2BD&#39;,
+<span class="ln">   23 | </span>        warning: &#39;#EE9B00&#39;,
+<span class="ln">   24 | </span>        complement: &#39;#001219&#39;,
+<span class="ln">   25 | </span>        sidebar: &#39;#E9D8A6&#39;,
+<span class="ln">   26 | </span>        sidebarlite: &#39;#F5EED8&#39;,
+<span class="ln">   27 | </span>        gray: &#39;#E4F1ED&#39;,
+<span class="ln">   28 | </span>        gray100: &#39;#EEEEEE&#39;,
+<span class="ln">   29 | </span>        gray300: &#39;#8D9593&#39;,
+<span class="ln">   30 | </span>        texto: &#39;#212121&#39;,
+<span class="ln">   31 | </span>        orange: &#39;#EE9B00&#39;,
+<span class="ln">   32 | </span>        darkgray: &#39;#001219&#39;,
+<span class="ln">   33 | </span>        blue200: &#39;#B3DFE8&#39;,
+<span class="ln">   34 | </span>        lightcyan: &#39;#E6F4F7&#39;,
+<span class="ln">   35 | </span>        redlagoon: &#39;#9B2226&#39;,
+<span class="ln">   36 | </span>        bluebackground: &#39;#192930&#39;, 
+<span class="ln">   37 | </span>        cardhome: &#39;#BA2E45&#39;,
+<span class="ln">   38 | </span>      },
+<span class="ln">   39 | </span>    },
+<span class="ln">   40 | </span>  },
+<span class="ln">   41 | </span>});
+<span class="ln">   42 | </span>
+
+</pre></section>
+<section class="file">
+<div class="file-header">
+<h2>vue.config.js</h2>
+<div class="meta">Lineas: 28 | Bytes: 981 | SHA256: 3ED97AB453AED2F78C78FE90D19AE3C17354ED818E340F57ACB9E9508F689976</div>
+</div><pre>
+<span class="ln">    1 | </span>const { defineConfig } = require(&#39;@vue/cli-service&#39;)
+<span class="ln">    2 | </span>const path = require(&#39;path&#39;)
+<span class="ln">    3 | </span>const fs = require(&#39;fs&#39;)
+<span class="ln">    4 | </span>
+<span class="ln">    5 | </span>module.exports = defineConfig({
+<span class="ln">    6 | </span>  transpileDependencies: [
+<span class="ln">    7 | </span>    &#39;vuetify&#39;
+<span class="ln">    8 | </span>  ],
+<span class="ln">    9 | </span>  devServer: {
+<span class="ln">   10 | </span>    https: {
+<span class="ln">   11 | </span>      key: fs.readFileSync(&#39;local.key&#39;),
+<span class="ln">   12 | </span>      cert: fs.readFileSync(&#39;local.crt&#39;),
+<span class="ln">   13 | </span>    },
+<span class="ln">   14 | </span>    // COMENTARIO EXPLICATIVO: 
+<span class="ln">   15 | </span>    // Cambiamos el host de la IP fija del servidor anterior (&#39;192.168.100.32&#39;) 
+<span class="ln">   16 | </span>    // a &#39;localhost&#39; para que corra de manera local en tu laptop.
+<span class="ln">   17 | </span>    // host: &#39;192.168.100.32&#39;, // &lt;-- ANTERIOR (IP fija del servidor de red)
+<span class="ln">   18 | </span>    host: &#39;localhost&#39;,         // &lt;-- NUEVO (Entorno local)
+<span class="ln">   19 | </span>
+<span class="ln">   20 | </span>    port: 8080,
+<span class="ln">   21 | </span>
+<span class="ln">   22 | </span>    // COMENTARIO EXPLICATIVO: 
+<span class="ln">   23 | </span>    // El proxy redirige las peticiones que hace la interfaz hacia el backend. 
+<span class="ln">   24 | </span>    // Actualizamos la URL para que apunte al puerto 3000 de tu m&#225;quina local.
+<span class="ln">   25 | </span>    // proxy: &#39;https://192.168.100.32:3000&#39;, // &lt;-- ANTERIOR
+<span class="ln">   26 | </span>    proxy: &#39;https://localhost:3000&#39;         // &lt;-- NUEVO
+<span class="ln">   27 | </span>  }
+<span class="ln">   28 | </span>})
+
+</pre></section>
+
+</main><footer>Fin de parte</footer></body></html>
