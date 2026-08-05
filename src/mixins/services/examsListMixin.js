@@ -184,7 +184,7 @@ const notificationsMixin = {
         },
         getExamGroupListAll() {
             return axios
-            .get(`${basePath}/api/examgroup/all/0`, config)
+            .get(`${basePath}/api/examgroup/all`, config)
             .then((response) => response.data)
             .catch(function (error) {
                 // handle error
