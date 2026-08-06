@@ -15,7 +15,7 @@
     "v-mask": "^2.3.0",
     "vue": "2.7.16",
     "vue-drag-drop": "^1.1.4",
-    "vue-html-to-paper": "^1.0.2",
+    "vue-html-to-paper": "1.4.5",
     "vue-router": "^3.6.5",
     "vue-toast-notification": "^1",
     "vue2-editor": "^2.10.3",
