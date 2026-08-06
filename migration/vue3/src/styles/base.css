@@ -1,0 +1,90 @@
+:root {
+  font-family: Inter, Roboto, Arial, sans-serif;
+  color: #172033;
+  background: #f4f7fb;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+a {
+  color: #1565c0;
+}
+
+.migration-page {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+  padding: 24px;
+}
+
+.migration-card {
+  width: min(720px, 100%);
+  padding: 32px;
+  border: 1px solid #dce4ef;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 16px 48px rgba(30, 61, 98, 0.12);
+}
+
+.migration-card h1 {
+  margin: 0 0 16px;
+  font-size: clamp(32px, 6vw, 52px);
+}
+
+.migration-eyebrow {
+  margin: 0 0 8px;
+  color: #1565c0;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.migration-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin: 28px 0 0;
+}
+
+.migration-grid div {
+  padding: 16px;
+  border-radius: 12px;
+  background: #eef4fb;
+}
+
+.migration-grid dt {
+  color: #4f6075;
+  font-size: 13px;
+}
+
+.migration-grid dd {
+  margin: 6px 0 0;
+  font-weight: 700;
+}
+
+@media (max-width: 620px) {
+  .migration-card {
+    padding: 24px;
+  }
+
+  .migration-grid {
+    grid-template-columns: 1fr;
+  }
+}
