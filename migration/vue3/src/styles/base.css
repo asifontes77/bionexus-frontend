@@ -196,3 +196,9 @@ a {
     flex-direction: column;
   }
 }
+
+.login-success {
+  margin: 8px 0 0;
+  color: #067647;
+  font-weight: 700;
+}
