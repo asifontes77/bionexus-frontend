@@ -23,6 +23,6 @@ module.exports = defineConfig({
     // El proxy redirige las peticiones que hace la interfaz hacia el backend. 
     // Actualizamos la URL para que apunte al puerto 3000 de tu máquina local.
     // proxy: 'https://192.168.100.32:3000', // <-- ANTERIOR
-    proxy: 'https://localhost:3000'         // <-- NUEVO
+    proxy: 'http://127.0.0.1:3001',
   }
 })
