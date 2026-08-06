@@ -13,7 +13,7 @@
     "node-cache": "^5.1.2",
     "text-mask-addons": "^3.8.0",
     "v-mask": "^2.3.0",
-    "vue": "^2.6.14",
+    "vue": "2.7.16",
     "vue-drag-drop": "^1.1.4",
     "vue-html-to-paper": "^1.0.2",
     "vue-qr": "^4.0.9",
@@ -32,7 +32,7 @@
     "sass": "~1.32.0",
     "sass-loader": "^10.0.0",
     "vue-cli-plugin-vuetify": "~2.5.8",
-    "vue-template-compiler": "^2.6.14",
+    "vue-template-compiler": "2.7.16",
     "vuetify-loader": "^1.7.0"
   },
   "browserslist": [
