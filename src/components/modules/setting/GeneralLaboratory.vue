@@ -107,7 +107,12 @@
                             v-model="settingQR.activeQR"
                             label="Activar QR"
                         />
-                        <vue-qr v-if="settingQR.activeQR" :text="generatevCardData" :size="200" />
+                        <canvas
+                            v-if="settingQR.activeQR"
+                            ref="qrCanvas"
+                            width="200"
+                            height="200"
+                        />
                     </v-col>
                     <v-col v-if="settingQR.activeQR" cols="12" sm="6">
                         <v-text-field
@@ -181,13 +186,10 @@
 </template>
 
 <script>
-import VueQr from 'vue-qr'
+import QRCode from 'qrcode'
 
 export default {
     name: 'GeneralLaboratory',
-    components: {
-        VueQr
-    },
     props: {
         dataLaboratory: {
             type: Object,
@@ -215,6 +217,14 @@ export default {
             ],
         }
     },
+    watch: {
+        settingQR: {
+            deep: true,
+            handler() {
+                this.renderQRCode()
+            }
+        }
+    },
     computed: {
         generatevCardData() {
             const telefono = this.settingQR.phone.replace(new RegExp(' ', 'g'), '')
@@ -235,6 +245,21 @@ export default {
         }
     },
     methods: {
+        async renderQRCode() {
+            if (!this.settingQR || !this.settingQR.activeQR) return
+
+            await this.$nextTick()
+
+            if (!this.$refs.qrCanvas) return
+
+            try {
+                await QRCode.toCanvas(this.$refs.qrCanvas, this.generatevCardData, {
+                    width: 200
+                })
+            } catch (error) {
+                console.error('No se pudo generar el codigo QR.', error)
+            }
+        },
         clearMessage (type) {
             if (type === 'bioanalista') this.settingQR.bioanalista = ''
             if (type === 'codigo') this.settingQR.codigo = ''
