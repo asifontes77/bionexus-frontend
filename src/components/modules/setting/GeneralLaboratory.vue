@@ -92,7 +92,7 @@
                                 Licencia
                             </v-card-text>
                             <v-card-title class="pt-0 text-h6">
-                                {{ dataLaboratory.license }}prue
+                                {{ dataLaboratory.license }}
                             </v-card-title>
                         </v-card>
                     </v-col>

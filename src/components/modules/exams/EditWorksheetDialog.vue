@@ -68,7 +68,7 @@ export default {
     font-family: 'Courier New' !important;
 }
 .tamano {
-    width: 965spx;
+    width: 965px;
     margin-left: auto;
     margin-right: auto;
 }
