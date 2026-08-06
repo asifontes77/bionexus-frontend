@@ -1,16 +1,16 @@
-<template>
+﻿<template>
   <main class="login-page">
     <section class="login-card" aria-labelledby="login-title">
       <div class="login-brand">
         <p class="migration-eyebrow">TORO</p>
         <h1 id="login-title">
-          {{ licenseRequired ? 'Registrar licencia' : 'Iniciar sesion' }}
+          {{ licenseRequired ? "Registrar licencia" : "Iniciar sesion" }}
         </h1>
         <p>
           {{
             licenseRequired
-              ? 'Ingrese la licencia del laboratorio para continuar.'
-              : 'Ingrese sus credenciales para continuar.'
+              ? "Ingrese la licencia del laboratorio para continuar."
+              : "Ingrese sus credenciales para continuar."
           }}
         </p>
       </div>
@@ -30,7 +30,7 @@
           required
           :disabled="loading"
           @keydown.space.prevent
-        >
+        />
 
         <label for="password">Contrasena</label>
         <input
@@ -41,22 +41,18 @@
           autocomplete="current-password"
           required
           :disabled="loading"
-        >
+        />
 
         <p v-if="message" class="login-message" role="alert">
           {{ message }}
         </p>
 
         <button type="submit" :disabled="loading || !canSubmitLogin">
-          {{ loading ? 'Iniciando...' : 'Iniciar sesion' }}
+          {{ loading ? "Iniciando..." : "Iniciar sesion" }}
         </button>
       </form>
 
-      <form
-        v-else
-        class="login-form"
-        @submit.prevent="submitLicense"
-      >
+      <form v-else class="login-form" @submit.prevent="submitLicense">
         <label for="license">Licencia</label>
         <input
           id="license"
@@ -66,7 +62,7 @@
           autocomplete="off"
           required
           :disabled="loading"
-        >
+        />
 
         <p v-if="message" class="login-message" role="alert">
           {{ message }}
@@ -77,7 +73,7 @@
         </p>
 
         <button type="submit" :disabled="loading || !canSubmitLicense">
-          {{ loading ? 'Registrando...' : 'Registrar licencia' }}
+          {{ loading ? "Registrando..." : "Registrar licencia" }}
         </button>
 
         <button
@@ -94,92 +90,101 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { ApiError } from '@/api/apiClient'
-import { loginUser } from '@/services/authService'
-import { updateLaboratoryLicense } from '@/services/laboratoryService'
-import { useSessionStore } from '@/stores/session'
+import { computed, ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { ApiError } from "@/api/apiClient";
+import { loginUser } from "@/services/authService";
+import { updateLaboratoryLicense } from "@/services/laboratoryService";
+import { useSessionStore } from "@/stores/session";
 
-const route = useRoute()
-const router = useRouter()
-const sessionStore = useSessionStore()
+const route = useRoute();
+const router = useRouter();
+const sessionStore = useSessionStore();
 
-const username = ref('')
-const password = ref('')
-const license = ref('')
-const loading = ref(false)
-const message = ref('')
-const licenseRequired = ref(false)
-const licenseRegistered = ref(false)
+const username = ref("");
+const password = ref("");
+const license = ref("");
+const loading = ref(false);
+const message = ref("");
+const licenseRequired = ref(false);
+const licenseRegistered = ref(false);
 
-const canSubmitLogin = computed(() =>
-  username.value !== '' && password.value !== ''
-)
+const canSubmitLogin = computed(
+  () => username.value !== "" && password.value !== ""
+);
 
-const canSubmitLicense = computed(() => license.value !== '')
+const canSubmitLicense = computed(() => license.value !== "");
 
 async function submitLogin() {
-  if (!canSubmitLogin.value || loading.value) return
+  if (!canSubmitLogin.value || loading.value) return;
 
-  loading.value = true
-  message.value = ''
-  licenseRegistered.value = false
+  loading.value = true;
+  message.value = "";
+  licenseRegistered.value = false;
 
   try {
     const response = await loginUser(
       username.value.toLowerCase(),
       password.value
-    )
+    );
 
-    if (response?.response === 'INVALID_LICENSE_KEY') {
-      licenseRequired.value = true
-      password.value = ''
-      message.value = 'La licencia del sistema no es valida.'
-      return
+    if (response?.response === "INVALID_LICENSE_KEY") {
+      licenseRequired.value = true;
+      password.value = "";
+      message.value = "La licencia del sistema no es valida.";
+      return;
     }
 
-    sessionStore.start(response)
+    sessionStore.start(response);
 
     const redirect =
-      typeof route.query.redirect === 'string'
-        ? route.query.redirect
-        : '/'
+      typeof route.query.redirect === "string" ? route.query.redirect : "/";
 
-    await router.replace(redirect)
+    await router.replace(redirect);
   } catch (error) {
-    if (error instanceof ApiError && error.status === 401) {
-      message.value = 'Nombre de usuario o contrasena incorrectos.'
+    if (
+      error instanceof ApiError &&
+      error.status === 403 &&
+      error.data?.message === "INVALID_LICENSE_KEY"
+    ) {
+      licenseRequired.value = true;
+      password.value = "";
+      message.value = "La licencia del sistema no es valida.";
+    } else if (
+      error instanceof ApiError &&
+      (error.status === 401 || error.status === 404)
+    ) {
+      message.value = "Nombre de usuario o contrasena incorrectos.";
     } else {
-      message.value = 'No fue posible iniciar sesion.'
+      message.value = "No fue posible iniciar sesion.";
     }
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 
 async function submitLicense() {
-  if (!canSubmitLicense.value || loading.value) return
+  if (!canSubmitLicense.value || loading.value) return;
 
-  loading.value = true
-  message.value = ''
-  licenseRegistered.value = false
+  loading.value = true;
+  message.value = "";
+  licenseRegistered.value = false;
 
   try {
-    await updateLaboratoryLicense(license.value)
-    license.value = ''
-    licenseRegistered.value = true
+    await updateLaboratoryLicense(license.value);
+    license.value = "";
+    licenseRegistered.value = true;
   } catch {
-    message.value = 'No fue posible registrar la licencia.'
+    message.value = "No fue posible registrar la licencia.";
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 
 function returnToLogin() {
-  licenseRequired.value = false
-  licenseRegistered.value = false
-  license.value = ''
-  message.value = ''
+  licenseRequired.value = false;
+  licenseRegistered.value = false;
+  license.value = "";
+  message.value = "";
 }
 </script>
