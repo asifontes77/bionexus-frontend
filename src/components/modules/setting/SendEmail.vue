@@ -42,7 +42,10 @@
                     <v-text-field
                         v-model="dataLaboratory.sendEmail.pass"
                         label="Contraseña usuario"
-                        placeholder="Escriba contraseña"
+                        placeholder="Escriba una nueva contrasena"
+                        type="password"
+                        hint="Dejela vacia para conservar la contrasena actual"
+                        persistent-hint
                         outlined
                         dense
                     />
@@ -83,7 +86,6 @@ export default {
             }
         }
         this.dataLaboratory.sendEmail = sendEmail
-        console.log('this.dataLaboratory en email: ', this.dataLaboratory)
     },
 }
 </script>

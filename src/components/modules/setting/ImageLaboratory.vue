@@ -89,12 +89,10 @@ export default {
         },
         async onFileChange(e) {
             this.selectedFile = e.target.files[0];
-            console.log('this.selectedFile: ', this.selectedFile)
             if (this.selectedFile) {
                 const formData = new FormData()
                 formData.append("file", this.selectedFile)
                 const result = await this.sendImageFile(formData)
-                console.log('foto: ', result)
                 if (result) {
                     
                     this.imgLab = `${this.basePath}/images/${result.logo}`

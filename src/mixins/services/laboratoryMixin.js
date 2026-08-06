@@ -10,6 +10,12 @@ const config = {
     },
 }
 
+const uploadConfig = {
+    headers: {
+        'authorization': `Bearer ${localStorage.getItem('token') ? localStorage.getItem('token') : ''}`,
+    },
+}
+
 const laboratoryMixin = {
     methods: {
         getUniqueLabData(id) {
@@ -94,7 +100,7 @@ const laboratoryMixin = {
         },
         sendImageFile(formData) {
             return axios
-            .post(`${basePath}/api/laboratory/upload`, formData)
+            .post(`${basePath}/api/laboratory/upload`, formData, uploadConfig)
             .then((response) => response.data)
             .catch((error) => {
                 console.log('hay error: ',error);

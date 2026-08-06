@@ -116,13 +116,11 @@ export default {
         async getDataLaboratory() {
             const result = await this.getLaboratorySetting()
             this.dataLaboratory = result
-            console.log('this.dataLaboratory: ', this.dataLaboratory)
         },
         async setLaboratory() {
             if (this.changeValid()) {
                 this.activeProgress = true
                 const dataLaboratoryTmp = JSON.parse(JSON.stringify(this.dataLaboratory))
-                console.log('dataLaboratoryTmp: ', dataLaboratoryTmp)
                 const id = dataLaboratoryTmp.id
                 delete dataLaboratoryTmp.id
                 await this.updateLaboratory(id, dataLaboratoryTmp)
