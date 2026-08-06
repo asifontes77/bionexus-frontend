@@ -1,5 +1,6 @@
-import { createRouter, createWebHistory } from 'vue-router'
+﻿import { createRouter, createWebHistory } from 'vue-router'
 import { useSessionStore } from '@/stores/session'
+import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue'
 import LoginView from '@/views/LoginView.vue'
 import MigrationHomeView from '@/views/MigrationHomeView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
@@ -16,12 +17,27 @@ const routes = [
   },
   {
     path: '/',
-    name: 'migration-home',
-    component: MigrationHomeView,
+    component: AuthenticatedLayout,
     meta: {
-      requiresAuth: true,
-      title: 'TORO Vue 3'
-    }
+      requiresAuth: true
+    },
+    children: [
+      {
+        path: '',
+        redirect: {
+          name: 'dashboard'
+        }
+      },
+      {
+        path: 'dashboard',
+        name: 'dashboard',
+        component: MigrationHomeView,
+        meta: {
+          requiresAuth: true,
+          title: 'Inicio'
+        }
+      }
+    ]
   },
   {
     path: '/:pathMatch(.*)*',
@@ -53,7 +69,7 @@ router.beforeEach((to) => {
 
   if (to.name === 'login' && sessionStore.isAuthenticated) {
     return {
-      name: 'migration-home'
+      name: 'dashboard'
     }
   }
 
@@ -61,9 +77,10 @@ router.beforeEach((to) => {
 })
 
 router.afterEach((to) => {
-  document.title = typeof to.meta.title === 'string'
-    ? to.meta.title
-    : 'TORO'
+  document.title =
+    typeof to.meta.title === 'string'
+      ? `${to.meta.title} | TORO`
+      : 'TORO'
 })
 
 export default router
