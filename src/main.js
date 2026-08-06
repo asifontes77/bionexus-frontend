@@ -5,7 +5,7 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
-import { clientId } from '../auth_config.json'
+import authConfig from '../auth_config.json'
 import VueToast from 'vue-toast-notification';
 import 'vue-toast-notification/dist/theme-sugar.css';
 
@@ -40,7 +40,7 @@ Vue.config.productionTip = false
 
 
 Vue.prototype.$user = {
-  clientId: clientId,
+  clientId: authConfig.clientId,
   name:'Hector Vera',
   token:''
 }
