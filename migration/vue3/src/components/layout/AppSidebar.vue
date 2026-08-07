@@ -145,6 +145,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { navigationItems } from '@/config/navigation'
+import { useAuthorizationStore } from "@/stores/authorization";
 
 const props = defineProps({
   open: {
@@ -163,6 +164,7 @@ const props = defineProps({
 
 const emit = defineEmits(['close', 'toggle-pin'])
 const openGroups = ref([])
+const authorizationStore = useAuthorizationStore();
 
 const userRoles = computed(() => {
   const roles = props.user?.roles
@@ -190,21 +192,39 @@ function hasRequiredRole(requiredRoles) {
   )
 }
 
+function hasRequiredPermissions(requiredPermissions) {
+  if (
+    !Array.isArray(requiredPermissions) ||
+    requiredPermissions.length === 0
+  ) {
+    return true;
+  }
+
+  return authorizationStore.hasAllPermissions(requiredPermissions);
+}
+
+function canAccessNavigationItem(item) {
+  return (
+    hasRequiredRole(item.roles) &&
+    hasRequiredPermissions(item.permissions)
+  );
+}
+
 const authorizedNavigation = computed(() =>
   navigationItems
-    .filter((item) => hasRequiredRole(item.roles))
+    .filter((item) => canAccessNavigationItem(item))
     .map((item) => {
-      if (!Array.isArray(item.children)) return item
+      if (!Array.isArray(item.children)) return item;
 
       return {
         ...item,
         children: item.children.filter((child) =>
-          hasRequiredRole(child.roles)
-        )
-      }
+          canAccessNavigationItem(child),
+        ),
+      };
     })
-    .filter((item) => !item.children || item.children.length > 0)
-)
+    .filter((item) => !item.children || item.children.length > 0),
+);
 
 const migrationSummary = computed(() => {
   const destinations = authorizedNavigation.value.reduce(
