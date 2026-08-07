@@ -43,6 +43,7 @@ import { useRoute, useRouter } from 'vue-router'
 import AppBreadcrumb from '@/components/layout/AppBreadcrumb.vue'
 import AppSidebar from '@/components/layout/AppSidebar.vue'
 import AppTopbar from '@/components/layout/AppTopbar.vue'
+import { useAuthorizationStore } from '@/stores/authorization'
 import { useSessionStore } from '@/stores/session'
 
 const SIDEBAR_PIN_STORAGE_KEY = 'toro.sidebar.pinned'
@@ -50,6 +51,7 @@ const SIDEBAR_PIN_STORAGE_KEY = 'toro.sidebar.pinned'
 const route = useRoute()
 const router = useRouter()
 const sessionStore = useSessionStore()
+const authorizationStore = useAuthorizationStore()
 const sidebarOpen = ref(false)
 const sidebarPinned = ref(readSidebarPinnedPreference())
 
@@ -98,6 +100,7 @@ function toggleSidebarPin() {
 
 async function logout() {
   closeSidebar()
+  authorizationStore.clear()
   sessionStore.clear()
   await router.replace({ name: 'login' })
 }

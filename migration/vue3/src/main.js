@@ -2,6 +2,7 @@
 import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
+import { useAuthorizationStore } from './stores/authorization'
 import { useSessionStore } from './stores/session'
 import './styles/theme.css'
 import './styles/base.css'
@@ -12,7 +13,19 @@ const pinia = createPinia()
 app.use(pinia)
 
 const sessionStore = useSessionStore(pinia)
+const authorizationStore = useAuthorizationStore(pinia)
+
 sessionStore.hydrate()
+
+if (sessionStore.isAuthenticated) {
+  try {
+    await authorizationStore.loadContext()
+  } catch {
+    authorizationStore.clear()
+  }
+} else {
+  authorizationStore.clear()
+}
 
 app.use(router)
 app.mount('#app')

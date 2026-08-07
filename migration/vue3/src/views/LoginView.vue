@@ -95,11 +95,13 @@ import { useRoute, useRouter } from "vue-router";
 import { ApiError } from "@/api/apiClient";
 import { loginUser } from "@/services/authService";
 import { updateLaboratoryLicense } from "@/services/laboratoryService";
+import { useAuthorizationStore } from "@/stores/authorization";
 import { useSessionStore } from "@/stores/session";
 
 const route = useRoute();
 const router = useRouter();
 const sessionStore = useSessionStore();
+const authorizationStore = useAuthorizationStore();
 
 const username = ref("");
 const password = ref("");
@@ -136,12 +138,19 @@ async function submitLogin() {
     }
 
     sessionStore.start(response);
+    authorizationStore.clear();
+    await authorizationStore.loadContext({
+      force: true
+    });
 
     const redirect =
       typeof route.query.redirect === "string" ? route.query.redirect : "/";
 
     await router.replace(redirect);
   } catch (error) {
+    authorizationStore.clear();
+    sessionStore.clear();
+
     if (
       error instanceof ApiError &&
       error.status === 403 &&
