@@ -1,4 +1,4 @@
-import axios from "axios"
+﻿import axios from "axios"
 import store from '@/store'
 
 import { basePath } from '@/config';
@@ -95,12 +95,17 @@ const usersMixin = {
                 })
         },
         verifySignature(id, passwordSignature) {
+            const body = {
+                userId: id,
+                passwordSignature,
+            }
+
             return axios
-                .get(`${basePath}/api/users/verifypassword/${id}/${passwordSignature}`, config)
+                .post(`${basePath}/api/users/verify-signature`, body, config)
                 .then((response) => response.data)
                 .catch((error) => {
                     console.log('hay error: ',error);
-                    this.$toast.error('Problemas para verificar la contraseña del usuario')
+                    this.$toast.error('Problemas para verificar la contraseÃ±a del usuario')
                 })
         },
     },
