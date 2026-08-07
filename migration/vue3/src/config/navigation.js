@@ -2,30 +2,249 @@
   {
     key: 'dashboard',
     label: 'Inicio',
+    abbreviation: 'IN',
     routeName: 'dashboard',
-    abbreviation: 'IN'
-  }
-]
-
-export const plannedModules = [
-  {
-    key: 'laboratories',
-    label: 'Laboratorios',
-    abbreviation: 'LA'
+    legacyRouteName: 'home',
+    roles: ['user', 'admin'],
+    migrated: true
   },
   {
-    key: 'licenses',
-    label: 'Licencias',
-    abbreviation: 'LI'
+    key: 'history',
+    label: 'Historia',
+    abbreviation: 'HI',
+    legacyRouteName: 'PatientHistory',
+    roles: ['user', 'admin'],
+    migrated: false
   },
   {
-    key: 'users',
-    label: 'Usuarios',
-    abbreviation: 'US'
+    key: 'daily-routine',
+    label: 'Rutina diaria',
+    abbreviation: 'RD',
+    roles: ['user', 'admin'],
+    children: [
+      {
+        key: 'patient-admission',
+        label: 'Ingreso de pacientes',
+        abbreviation: 'IP',
+        legacyRouteName: 'PatientAdmission',
+        legacyPath: '/admission',
+        roles: ['user', 'admin'],
+        migrated: false
+      },
+      {
+        key: 'worksheet',
+        label: 'Hoja de trabajo',
+        abbreviation: 'HT',
+        legacyRouteName: 'Worksheet',
+        legacyPath: '/worksheet',
+        roles: ['user', 'admin'],
+        migrated: false
+      },
+      {
+        key: 'patient-approve',
+        label: 'Aprobar resultados',
+        abbreviation: 'AR',
+        legacyRouteName: 'PatientApprove',
+        legacyPath: '/approve',
+        roles: ['user', 'admin'],
+        migrated: false
+      },
+      {
+        key: 'results-email',
+        label: 'Entrega de resultados por email',
+        abbreviation: 'CE',
+        legacyRouteName: 'ResultsByEmail',
+        legacyPath: '/email',
+        roles: ['user', 'admin'],
+        migrated: false
+      },
+      {
+        key: 'special-test-results',
+        label: 'Pruebas especiales',
+        abbreviation: 'PE',
+        legacyRouteName: 'SpecialTestResults',
+        legacyPath: '/special',
+        roles: ['user', 'admin'],
+        migrated: false
+      }
+    ]
+  },
+  {
+    key: 'movements',
+    label: 'Movimientos',
+    abbreviation: 'MO',
+    roles: ['admin'],
+    children: [
+      {
+        key: 'cash',
+        label: 'Caja',
+        abbreviation: 'CA',
+        legacyRouteName: 'Cash',
+        legacyPath: '/movements/cash',
+        roles: ['admin'],
+        migrated: false
+      },
+      {
+        key: 'movement-consultation',
+        label: 'Consultas',
+        abbreviation: 'CM',
+        legacyRouteName: 'consultation',
+        legacyPath: '/movements/consultation',
+        roles: ['admin'],
+        migrated: false
+      },
+      {
+        key: 'accounts-receivable',
+        label: 'Cuentas por cobrar',
+        abbreviation: 'CC',
+        legacyRouteName: 'accountsReceivable',
+        legacyPath: '/movements/accounts-receivable',
+        roles: ['admin'],
+        migrated: false
+      },
+      {
+        key: 'cancel-accounts-receivable',
+        label: 'Cancelacion de cuentas por cobrar',
+        abbreviation: 'CX',
+        legacyRouteName: 'cancelAccountsReceivable',
+        legacyPath: '/movements/cancelinvoice',
+        roles: ['admin'],
+        migrated: false
+      },
+      {
+        key: 'issued-invoices',
+        label: 'Facturas emitidas',
+        abbreviation: 'FE',
+        legacyRouteName: 'issuedInvoices',
+        legacyPath: '/movements/invoice',
+        roles: ['admin'],
+        migrated: false
+      },
+      {
+        key: 'registered-customers',
+        label: 'Clientes registrados',
+        abbreviation: 'CR',
+        legacyRouteName: 'registeredCustomers',
+        legacyPath: '/movements/customers',
+        roles: ['admin'],
+        migrated: false
+      }
+    ]
   },
   {
     key: 'settings',
     label: 'Configuracion',
-    abbreviation: 'CO'
+    abbreviation: 'CO',
+    roles: ['admin'],
+    children: [
+      {
+        key: 'exams-list',
+        label: 'Lista de examenes',
+        abbreviation: 'LE',
+        legacyRouteName: 'ExamsList',
+        legacyPath: '/setting/exams',
+        roles: ['admin'],
+        migrated: false
+      },
+      {
+        key: 'exams-order',
+        label: 'Ordenar examenes',
+        abbreviation: 'OE',
+        legacyRouteName: 'ExamsOrder',
+        legacyPath: '/setting/order',
+        roles: ['admin'],
+        migrated: false
+      },
+      {
+        key: 'routines',
+        label: 'Rutinas de examenes',
+        abbreviation: 'RE',
+        legacyRouteName: 'Routines',
+        legacyPath: '/setting/routines',
+        roles: ['admin'],
+        migrated: false
+      },
+      {
+        key: 'antibiotics',
+        label: 'Lista de antibioticos',
+        abbreviation: 'AN',
+        legacyRouteName: 'Antibiotic',
+        legacyPath: '/setting/antibiotic',
+        roles: ['admin'],
+        migrated: false
+      },
+      {
+        key: 'germs',
+        label: 'Lista de germenes',
+        abbreviation: 'GE',
+        legacyRouteName: 'Germs',
+        legacyPath: '/setting/germs',
+        roles: ['admin'],
+        migrated: false
+      },
+      {
+        key: 'parasitic',
+        label: 'Formas parasitarias',
+        abbreviation: 'FP',
+        legacyRouteName: 'Parasitic',
+        legacyPath: '/setting/parasitic',
+        roles: ['admin'],
+        migrated: false
+      },
+      {
+        key: 'work-groups',
+        label: 'Grupos de hojas de trabajo',
+        abbreviation: 'GH',
+        legacyRouteName: 'WorkGroup',
+        legacyPath: '/setting/workgroup',
+        roles: ['admin'],
+        migrated: false
+      },
+      {
+        key: 'special-tests',
+        label: 'Pruebas especiales',
+        abbreviation: 'PE',
+        legacyRouteName: 'SpecialTests',
+        legacyPath: '/setting/specialtests',
+        roles: ['admin'],
+        migrated: false
+      },
+      {
+        key: 'payment-types',
+        label: 'Formas de pago',
+        abbreviation: 'PG',
+        legacyRouteName: 'TypePayment',
+        legacyPath: '/setting/typepayment',
+        roles: ['admin'],
+        migrated: false
+      },
+      {
+        key: 'users',
+        label: 'Usuarios',
+        abbreviation: 'US',
+        legacyRouteName: 'Users',
+        legacyPath: '/setting/users',
+        roles: ['admin'],
+        migrated: false
+      },
+      {
+        key: 'laboratory',
+        label: 'Laboratorio',
+        abbreviation: 'LA',
+        legacyRouteName: 'Laboratory',
+        legacyPath: '/setting/laboratory',
+        roles: ['admin'],
+        migrated: false
+      }
+    ]
+  },
+  {
+    key: 'about',
+    label: 'Acerca de',
+    abbreviation: 'AC',
+    legacyRouteName: 'about',
+    legacyPath: '/about',
+    roles: ['user', 'admin'],
+    migrated: false
   }
 ]

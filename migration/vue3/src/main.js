@@ -1,8 +1,9 @@
-import { createApp } from 'vue'
+﻿import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 import { useSessionStore } from './stores/session'
+import './styles/theme.css'
 import './styles/base.css'
 
 const app = createApp(App)
