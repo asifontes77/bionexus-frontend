@@ -5,6 +5,7 @@ import AuthenticatedLayout from "@/layouts/AuthenticatedLayout.vue";
 import LoginView from "@/views/LoginView.vue";
 import MigrationHomeView from "@/views/MigrationHomeView.vue";
 import NotFoundView from "@/views/NotFoundView.vue";
+import RolesPermissionsView from "@/views/RolesPermissionsView.vue";
 
 const routes = [
   {
@@ -36,6 +37,16 @@ const routes = [
         meta: {
           requiresAuth: true,
           title: "Inicio",
+        },
+      },
+      {
+        path: "security/roles",
+        name: "security-roles",
+        component: RolesPermissionsView,
+        meta: {
+          requiresAuth: true,
+          permissions: ["security.roles.read", "security.permissions.read"],
+          title: "Roles y permisos",
         },
       },
     ],
