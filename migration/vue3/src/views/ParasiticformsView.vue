@@ -23,12 +23,12 @@
             </div>
         </header>
 
-        <div v-if="loadError" class="parasitic-message parasitic-message-error" role="alert">
+        <div v-if="loadError" class="parasitic-message parasitic-message-error toro-message toro-message-error" role="alert">
             <strong>No fue posible cargar las formas parasitarias.</strong>
             <span>{{ loadError }}</span>
         </div>
 
-        <div v-if="loading && !loaded" class="parasitic-message" role="status">
+        <div v-if="loading && !loaded" class="parasitic-message toro-message" role="status">
             Cargando formas parasitarias...
         </div>
 
@@ -107,7 +107,7 @@
                                     parasiticform.annulled,
                             }"></span>
 
-                            <span class="parasitic-list-copy">
+                            <span class="parasitic-list-copy toro-option-copy">
                                 <strong>{{ parasiticform.description }}</strong>
                                 <small>Identificador #{{ parasiticform.id }}</small>
                             </span>
@@ -145,7 +145,7 @@
                         Seleccione un registro para consultar o modificar sus datos.
                     </div>
 
-                    <form v-else class="parasitic-form" @submit.prevent="saveChanges">
+                    <form v-else class="parasitic-form toro-form" @submit.prevent="saveChanges">
                         <label>
                             <span>Descripción</span>
 
@@ -159,7 +159,7 @@
                         </label>
 
                         <label v-if="!creating" class="parasitic-state-option" :class="{
-                            'parasitic-state-option-disabled':
+                            'toro-option-disabled':
                                 !canChangeStatus || saving,
                         }">
                             <input v-model="draft.annulled" type="checkbox" :disabled="!canChangeStatus || saving" />
@@ -181,11 +181,11 @@
                             modificarla.
                         </div>
 
-                        <div v-if="saveError" class="parasitic-message parasitic-message-error" role="alert">
+                        <div v-if="saveError" class="parasitic-message parasitic-message-error toro-message toro-message-error" role="alert">
                             {{ saveError }}
                         </div>
 
-                        <div v-if="saveMessage" class="parasitic-message parasitic-message-success" role="status">
+                        <div v-if="saveMessage" class="parasitic-message parasitic-message-success toro-message toro-message-success" role="status">
                             {{ saveMessage }}
                         </div>
 
@@ -217,7 +217,7 @@
                             </span>
                         </div>
 
-                        <div class="parasitic-form-actions">
+                        <div class="parasitic-form-actions toro-form-actions">
                             <button type="button" class="parasitic-action parasitic-action-secondary toro-action toro-action-secondary"
                                 :disabled="!hasChanges || saving" @click="discardChanges">
                                 {{ creating ? "Limpiar" : "Descartar" }}

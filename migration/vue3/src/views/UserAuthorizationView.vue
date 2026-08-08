@@ -15,12 +15,12 @@
             </button>
         </header>
 
-        <div v-if="usersError" class="user-security-message user-security-message-error" role="alert">
+        <div v-if="usersError" class="user-security-message user-security-message-error toro-message toro-message-error" role="alert">
             <strong>No fue posible cargar los usuarios.</strong>
             <span>{{ usersError }}</span>
         </div>
 
-        <div v-if="usersLoading && !usersLoaded" class="user-security-message" role="status">
+        <div v-if="usersLoading && !usersLoaded" class="user-security-message toro-message" role="status">
             Cargando usuarios...
         </div>
 
@@ -88,7 +88,7 @@
                                 {{ getUserInitials(user) }}
                             </span>
 
-                            <span class="user-list-copy">
+                            <span class="user-list-copy toro-option-copy">
                                 <strong>{{ user.name || "Usuario sin nombre" }}</strong>
                                 <small>@{{ user.userName || "sin-usuario" }}</small>
                                 <small>{{ user.position || "Sin cargo registrado" }}</small>
@@ -121,7 +121,7 @@
                         Consultando autorización...
                     </div>
 
-                    <div v-else-if="authorizationError" class="user-security-message user-security-message-error"
+                    <div v-else-if="authorizationError" class="user-security-message user-security-message-error toro-message toro-message-error"
                         role="alert">
                         {{ authorizationError }}
                     </div>
@@ -181,7 +181,7 @@
                                 próximo guardado.
                             </div>
 
-                            <div v-if="rolesError" class="role-assignment-message role-assignment-error" role="alert">
+                            <div v-if="rolesError" class="role-assignment-message role-assignment-error toro-inline-message toro-message-error" role="alert">
                                 {{ rolesError }}
                             </div>
 
@@ -195,9 +195,9 @@
 
                             <div v-else class="role-assignment-list">
                                 <label v-for="role in roles" :key="role.id" class="role-assignment-option" :class="{
-                                    'role-assignment-option-selected':
+                                    'toro-option-selected':
                                         isRoleSelected(role.id),
-                                    'role-assignment-option-disabled':
+                                    'toro-option-disabled':
                                         !role.isActive ||
                                         !canAssignRoles,
                                 }">
@@ -206,7 +206,7 @@
                                         savingRoles
                                         " @change="toggleRole(role)" />
 
-                                    <span class="role-assignment-copy">
+                                    <span class="role-assignment-copy toro-option-copy">
                                         <strong>{{ role.code }}</strong>
                                         <small>{{ role.name }}</small>
                                         <small>{{ role.description || "Sin descripción" }}</small>
@@ -220,17 +220,17 @@
                                 </label>
                             </div>
 
-                            <div v-if="saveRolesError" class="role-assignment-message role-assignment-error"
+                            <div v-if="saveRolesError" class="role-assignment-message role-assignment-error toro-inline-message toro-message-error"
                                 role="alert">
                                 {{ saveRolesError }}
                             </div>
 
-                            <div v-if="saveRolesMessage" class="role-assignment-message role-assignment-success"
+                            <div v-if="saveRolesMessage" class="role-assignment-message role-assignment-success toro-inline-message toro-message-success"
                                 role="status">
                                 {{ saveRolesMessage }}
                             </div>
 
-                            <div v-if="canAssignRoles" class="role-assignment-actions">
+                            <div v-if="canAssignRoles" class="role-assignment-actions toro-form-actions">
                                 <span>
                                     {{
                                         hasRoleChanges
@@ -272,7 +272,7 @@
                                 No existen permisos heredados desde roles activos.
                             </div>
 
-                            <ul v-else class="authorization-list">
+                            <ul v-else class="authorization-list toro-list">
                                 <li v-for="permission in authorization.inheritedPermissions" :key="permission.id">
                                     <span>
                                         <strong>{{ permission.code }}</strong>
@@ -306,7 +306,7 @@
                                 nuevamente y serán retiradas en el próximo guardado.
                             </div>
 
-                            <div v-if="permissionsError" class="override-message override-message-error" role="alert">
+                            <div v-if="permissionsError" class="override-message override-message-error toro-inline-message toro-message-error" role="alert">
                                 {{ permissionsError }}
                             </div>
 
@@ -321,8 +321,8 @@
                                 No existen permisos disponibles.
                             </div>
 
-                            <div v-else class="override-modules">
-                                <section v-for="module in permissionModules" :key="module.name" class="override-module">
+                            <div v-else class="override-modules toro-form">
+                                <section v-for="module in permissionModules" :key="module.name" class="override-module toro-section">
                                     <header>
                                         <h5>{{ module.name }}</h5>
                                         <span>{{ module.permissions.length }}</span>
@@ -382,16 +382,16 @@
                                 </section>
                             </div>
 
-                            <div v-if="saveOverridesError" class="override-message override-message-error" role="alert">
+                            <div v-if="saveOverridesError" class="override-message override-message-error toro-inline-message toro-message-error" role="alert">
                                 {{ saveOverridesError }}
                             </div>
 
-                            <div v-if="saveOverridesMessage" class="override-message override-message-success"
+                            <div v-if="saveOverridesMessage" class="override-message override-message-success toro-inline-message toro-message-success"
                                 role="status">
                                 {{ saveOverridesMessage }}
                             </div>
 
-                            <div v-if="canAssignPermissionOverrides" class="override-actions">
+                            <div v-if="canAssignPermissionOverrides" class="override-actions toro-form-actions">
                                 <span>
                                     {{
                                         hasOverrideChanges

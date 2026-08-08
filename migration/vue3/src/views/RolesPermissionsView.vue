@@ -90,7 +90,7 @@
 
         <div
           v-if="createRoleError"
-          class="role-form-message role-form-message-error role-form-wide"
+          class="role-form-message role-form-message-error role-form-wide toro-inline-message toro-message-error"
           role="alert"
         >
           {{ createRoleError }}
@@ -98,7 +98,7 @@
 
         <div
           v-if="createRoleMessage"
-          class="role-form-message role-form-message-success role-form-wide"
+          class="role-form-message role-form-message-success role-form-wide toro-inline-message toro-message-success"
           role="status"
         >
           {{ createRoleMessage }}
@@ -125,12 +125,12 @@
       </form>
     </article>
 
-    <div v-if="errorMessage" class="security-message security-message-error" role="alert">
+    <div v-if="errorMessage" class="security-message security-message-error toro-message toro-message-error" role="alert">
       <strong>No fue posible cargar la informaciÃ³n.</strong>
       <span>{{ errorMessage }}</span>
     </div>
 
-    <div v-if="loading && !loaded" class="security-message" role="status">
+    <div v-if="loading && !loaded" class="security-message toro-message" role="status">
       Cargando roles y permisos...
     </div>
 
@@ -218,7 +218,7 @@
           <template v-else>
             <form
               v-if="canUpdateRoles"
-              class="role-metadata-form"
+              class="role-metadata-form toro-form"
               @submit.prevent="updateRole"
             >
               <div class="role-detail toro-detail">
@@ -303,7 +303,7 @@
 
               <div
                 v-if="updateRoleError"
-                class="role-form-message role-form-message-error"
+                class="role-form-message role-form-message-error toro-inline-message toro-message-error"
                 role="alert"
               >
                 {{ updateRoleError }}
@@ -311,7 +311,7 @@
 
               <div
                 v-if="updateRoleMessage"
-                class="role-form-message role-form-message-success"
+                class="role-form-message role-form-message-success toro-inline-message toro-message-success"
                 role="status"
               >
                 {{ updateRoleMessage }}
