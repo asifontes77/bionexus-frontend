@@ -271,3 +271,278 @@
   background: var(--toro-color-surface-soft);
   box-shadow: inset 3px 0 0 var(--toro-color-accent);
 }
+
+/* TORO_ADMINISTRATIVE_COMPONENTS_START
+ * Shared messages, fields, forms, options, lists and internal sections.
+ */
+
+/* Messages */
+
+.toro-message,
+.security-message,
+.user-security-message,
+.parasitic-message {
+  display: grid;
+  gap: var(--toro-space-1);
+  padding: var(--toro-space-4);
+  border: 1px solid var(--toro-color-border);
+  border-radius: var(--toro-radius-md);
+  color: var(--toro-color-text-secondary);
+  background: var(--toro-color-surface);
+}
+
+.toro-inline-message,
+.role-form-message,
+.role-assignment-message,
+.override-message {
+  padding: var(--toro-space-3);
+  border: 1px solid var(--toro-color-border);
+  border-radius: var(--toro-radius-md);
+}
+
+.toro-message-error,
+.security-message-error,
+.role-form-message-error,
+.assigned-permissions-error,
+.user-security-message-error,
+.role-assignment-error,
+.override-message-error,
+.parasitic-message-error {
+  border-color: var(--toro-color-danger-border);
+  color: var(--toro-color-danger);
+  background: var(--toro-color-danger-soft);
+}
+
+.toro-message-success,
+.role-form-message-success,
+.assigned-permissions-success,
+.role-assignment-success,
+.override-message-success,
+.parasitic-message-success {
+  border-color: var(--toro-color-success-border);
+  color: var(--toro-color-success);
+  background: var(--toro-color-success-soft);
+}
+
+/* Forms and fields */
+
+.toro-form,
+.role-metadata-form,
+.permission-modules,
+.override-modules,
+.parasitic-form {
+  display: grid;
+  gap: var(--toro-space-3);
+}
+
+.toro-field-group,
+.role-list,
+.role-form label,
+.role-metadata-form > label,
+.role-assignment-list,
+.parasitic-search,
+.parasitic-form > label:not(.parasitic-state-option) {
+  display: grid;
+  gap: var(--toro-space-2);
+}
+
+.toro-field-label,
+.role-form label > span,
+.role-metadata-form > label > span,
+.user-search span,
+.parasitic-search span,
+.parasitic-form label > span:first-child {
+  color: var(--toro-color-text-secondary);
+  font-size: var(--toro-font-size-sm);
+  font-weight: var(--toro-font-weight-bold);
+}
+
+.toro-field,
+.user-search input,
+.parasitic-search input,
+.parasitic-form input[type="text"] {
+  width: 100%;
+  min-height: var(--toro-control-height);
+  padding: 0 var(--toro-space-3);
+  border: 1px solid var(--toro-color-border-strong);
+  border-radius: var(--toro-radius-md);
+  color: var(--toro-color-text);
+  background: var(--toro-color-surface);
+}
+
+.toro-field:focus,
+.role-form input:focus,
+.role-form textarea:focus,
+.role-metadata-form input:focus,
+.role-metadata-form textarea:focus,
+.user-search input:focus,
+.override-option select:focus,
+.parasitic-search input:focus,
+.parasitic-form input[type="text"]:focus {
+  border-color: var(--toro-color-primary);
+  outline: var(--toro-focus-ring);
+}
+
+.toro-field-help,
+.role-form small,
+.role-metadata-form small,
+.parasitic-form small {
+  color: var(--toro-color-text-muted);
+  font-size: var(--toro-font-size-xs);
+}
+
+/* Form actions */
+
+.toro-form-actions,
+.permission-editor-actions,
+.role-assignment-actions,
+.override-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--toro-space-3);
+  padding-top: var(--toro-space-3);
+  border-top: 1px solid var(--toro-color-border);
+}
+
+.toro-form-actions-buttons,
+.permission-editor-actions > div,
+.role-assignment-actions > div,
+.override-actions > div {
+  display: flex;
+  gap: var(--toro-space-2);
+}
+
+/* Selectable options */
+
+.toro-option-copy,
+.permission-option-copy,
+.user-list-copy,
+.role-assignment-copy,
+.parasitic-list-copy {
+  display: grid;
+  min-width: 0;
+  flex: 1;
+  gap: 2px;
+}
+
+.toro-option-copy-truncated,
+.role-content strong,
+.role-content small,
+.user-list-copy strong,
+.user-list-copy small,
+.parasitic-list-copy strong,
+.parasitic-list-copy small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.toro-option-selected,
+.permission-option-selected,
+.role-assignment-option-selected {
+  background: var(--toro-color-selection-soft);
+}
+
+.toro-option-disabled,
+.permission-option-disabled,
+.role-assignment-option-disabled,
+.parasitic-state-option-disabled {
+  cursor: not-allowed;
+  opacity: 0.68;
+}
+
+/* Administrative lists */
+
+.toro-list,
+.assigned-permissions-list,
+.authorization-list {
+  display: grid;
+  gap: var(--toro-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.toro-list-item,
+.assigned-permissions-list li,
+.authorization-list li {
+  display: flex;
+  min-height: var(--toro-table-row-height);
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--toro-space-3);
+  padding: var(--toro-space-2) var(--toro-space-3);
+  border: 1px solid var(--toro-color-border);
+  border-radius: var(--toro-radius-md);
+  background: var(--toro-color-surface-soft);
+}
+
+.toro-list-copy-compact,
+.assigned-permissions-list li > span:first-child,
+.permission-item > div,
+.authorization-list li > span:first-child,
+.override-option-copy {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.toro-list-item:hover,
+.role-item:hover,
+.user-list-item:hover,
+.parasitic-list-item:hover {
+  border-color: var(--toro-color-primary);
+  background: var(--toro-color-surface-soft);
+}
+
+.toro-list-item:disabled,
+.role-item:disabled,
+.user-list-item:disabled,
+.parasitic-list-item:disabled {
+  cursor: wait;
+}
+
+.toro-list-item-muted,
+.user-list-item-hidden,
+.parasitic-list-item-annulled {
+  opacity: 0.72;
+}
+
+/* Internal sections */
+
+.toro-section,
+.permission-editor-module,
+.permission-modules section,
+.override-module {
+  overflow: hidden;
+  border: 1px solid var(--toro-color-border);
+  border-radius: var(--toro-radius-md);
+}
+
+.toro-section-heading,
+.permission-editor-module > header,
+.override-module > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--toro-space-2) var(--toro-space-3);
+  background: var(--toro-color-surface-soft);
+}
+
+.toro-section-title,
+.permission-editor-module h5,
+.permission-modules h4,
+.override-module h5 {
+  margin: 0;
+  color: var(--toro-color-primary-strong);
+  text-transform: capitalize;
+}
+
+/* Shared muted text */
+
+.toro-muted {
+  color: var(--toro-color-text-muted);
+}
+
+/* TORO_ADMINISTRATIVE_COMPONENTS_END */
