@@ -201,7 +201,7 @@
                                     {{
                                         selectedParasiticform.annulled
                                             ? "Oculta"
-                                    : "Visible"
+                                            : "Visible"
                                     }}
                                 </dd>
                             </div>
@@ -230,7 +230,7 @@
                                         ? "Guardando..."
                                         : creating
                                             ? "Crear registro"
-                                : "Guardar cambios"
+                                            : "Guardar cambios"
                                 }}
                             </button>
                         </div>
@@ -720,15 +720,15 @@ onMounted(loadParasiticforms);
 }
 
 .parasitic-message-error {
-    border-color: #f4b4ae;
+    border-color: var(--toro-color-danger-border);
     color: var(--toro-color-danger);
-    background: #fff4f2;
+    background: var(--toro-color-danger-soft);
 }
 
 .parasitic-message-success {
-    border-color: #a6dfc3;
+    border-color: var(--toro-color-success-border);
     color: var(--toro-color-success);
-    background: #ecfdf3;
+    background: var(--toro-color-success-soft);
 }
 
 .parasitic-metrics {
@@ -845,7 +845,7 @@ onMounted(loadParasiticforms);
 .parasitic-search input:focus,
 .parasitic-form input[type="text"]:focus {
     border-color: var(--toro-color-primary);
-    outline: 3px solid rgba(63, 120, 152, 0.14);
+    outline: var(--toro-focus-ring);
 }
 
 .parasitic-form small {
@@ -929,14 +929,14 @@ onMounted(loadParasiticforms);
     padding: 5px 8px;
     border-radius: 999px;
     color: var(--toro-color-success);
-    background: #ecfdf3;
+    background: var(--toro-color-success-soft);
     font-size: var(--toro-font-size-xs);
     font-weight: var(--toro-font-weight-bold);
 }
 
 .parasitic-badge-annulled {
     color: var(--toro-color-warning);
-    background: #fffaeb;
+    background: var(--toro-color-warning-soft);
 }
 
 .parasitic-form {
@@ -977,7 +977,7 @@ onMounted(loadParasiticforms);
     padding: var(--toro-space-3);
     border-left: 3px solid var(--toro-color-warning);
     color: var(--toro-color-warning);
-    background: #fffaeb;
+    background: var(--toro-color-warning-soft);
 }
 
 .parasitic-detail {

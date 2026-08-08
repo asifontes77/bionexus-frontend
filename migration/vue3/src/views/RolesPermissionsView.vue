@@ -1230,9 +1230,9 @@ onMounted(loadCatalogs);
 }
 
 .security-message-error {
-  border-color: #f4b4ae;
+  border-color: var(--toro-color-danger-border);
   color: var(--toro-color-danger);
-  background: #fff4f2;
+  background: var(--toro-color-danger-soft);
 }
 
 .security-metrics {
@@ -1358,7 +1358,7 @@ onMounted(loadCatalogs);
   place-items: center;
   border-radius: var(--toro-radius-md);
   color: var(--toro-color-primary-strong);
-  background: #e7f1f6;
+  background: var(--toro-color-info-soft);
   font-size: var(--toro-font-size-xs);
   font-weight: var(--toro-font-weight-heavy);
   text-transform: uppercase;
@@ -1387,14 +1387,14 @@ onMounted(loadCatalogs);
   padding: 5px 8px;
   border-radius: 999px;
   color: var(--toro-color-success);
-  background: #ecfdf3;
+  background: var(--toro-color-success-soft);
   font-size: var(--toro-font-size-xs);
   font-weight: var(--toro-font-weight-bold);
 }
 
 .status-badge-inactive {
   color: var(--toro-color-warning);
-  background: #fffaeb;
+  background: var(--toro-color-warning-soft);
 }
 
 .role-form-panel {
@@ -1453,7 +1453,7 @@ onMounted(loadCatalogs);
 .role-metadata-form input:focus,
 .role-metadata-form textarea:focus {
   border-color: var(--toro-color-primary);
-  outline: 3px solid rgba(63, 120, 152, 0.14);
+  outline: var(--toro-focus-ring);
 }
 
 .role-form small,
@@ -1478,15 +1478,15 @@ onMounted(loadCatalogs);
 }
 
 .role-form-message-error {
-  border-color: #f4b4ae;
+  border-color: var(--toro-color-danger-border);
   color: var(--toro-color-danger);
-  background: #fff4f2;
+  background: var(--toro-color-danger-soft);
 }
 
 .role-form-message-success {
-  border-color: #a6dfc3;
+  border-color: var(--toro-color-success-border);
   color: var(--toro-color-success);
-  background: #ecfdf3;
+  background: var(--toro-color-success-soft);
 }
 
 .role-form-actions {
@@ -1563,13 +1563,13 @@ onMounted(loadCatalogs);
   padding: var(--toro-space-3);
   border-left: 3px solid var(--toro-color-warning);
   color: var(--toro-color-warning);
-  background: #fffaeb;
+  background: var(--toro-color-warning-soft);
 }
 
 .assigned-permissions-success {
-  border-color: #a6dfc3;
+  border-color: var(--toro-color-success-border);
   color: var(--toro-color-success);
-  background: #ecfdf3;
+  background: var(--toro-color-success-soft);
 }
 
 .permission-editor {
@@ -1608,7 +1608,7 @@ onMounted(loadCatalogs);
 }
 
 .permission-option-selected {
-  background: #edf6fa;
+  background: var(--toro-color-selection-soft);
 }
 
 .permission-option-disabled {
@@ -1739,9 +1739,9 @@ onMounted(loadCatalogs);
 }
 
 .assigned-permissions-error {
-  border-color: #f4b4ae;
+  border-color: var(--toro-color-danger-border);
   color: var(--toro-color-danger);
-  background: #fff4f2;
+  background: var(--toro-color-danger-soft);
 }
 
 .assigned-permissions-list {

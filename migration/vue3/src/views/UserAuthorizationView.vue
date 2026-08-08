@@ -1168,9 +1168,9 @@ onMounted(loadUsers);
 }
 
 .user-security-message-error {
-    border-color: #f4b4ae;
+    border-color: var(--toro-color-danger-border);
     color: var(--toro-color-danger);
-    background: #fff4f2;
+    background: var(--toro-color-danger-soft);
 }
 
 .user-security-metrics {
@@ -1280,7 +1280,7 @@ onMounted(loadUsers);
 
 .user-search input:focus {
     border-color: var(--toro-color-primary);
-    outline: 3px solid rgba(63, 120, 152, 0.14);
+    outline: var(--toro-focus-ring);
 }
 
 .user-list {
@@ -1332,7 +1332,7 @@ onMounted(loadUsers);
     place-items: center;
     border-radius: var(--toro-radius-md);
     color: var(--toro-color-primary-strong);
-    background: #e7f1f6;
+    background: var(--toro-color-info-soft);
     font-size: var(--toro-font-size-sm);
     font-weight: var(--toro-font-weight-heavy);
 }
@@ -1361,7 +1361,7 @@ onMounted(loadUsers);
     padding: 5px 8px;
     border-radius: 999px;
     color: var(--toro-color-success);
-    background: #ecfdf3;
+    background: var(--toro-color-success-soft);
     font-size: var(--toro-font-size-xs);
     font-weight: var(--toro-font-weight-bold);
 }
@@ -1369,12 +1369,12 @@ onMounted(loadUsers);
 .user-status-hidden,
 .authorization-badge-inactive {
     color: var(--toro-color-warning);
-    background: #fffaeb;
+    background: var(--toro-color-warning-soft);
 }
 
 .authorization-badge-deny {
     color: var(--toro-color-danger);
-    background: #fff4f2;
+    background: var(--toro-color-danger-soft);
 }
 
 .user-detail {
@@ -1499,7 +1499,7 @@ onMounted(loadUsers);
 
 .role-assignment-option-selected {
     border-color: var(--toro-color-primary);
-    background: #edf6fa;
+    background: var(--toro-color-selection-soft);
 }
 
 .role-assignment-option-disabled {
@@ -1534,7 +1534,7 @@ onMounted(loadUsers);
     padding: var(--toro-space-3);
     border-left: 3px solid var(--toro-color-warning);
     color: var(--toro-color-warning);
-    background: #fffaeb;
+    background: var(--toro-color-warning-soft);
 }
 
 .role-assignment-message {
@@ -1544,15 +1544,15 @@ onMounted(loadUsers);
 }
 
 .role-assignment-error {
-    border-color: #f4b4ae;
+    border-color: var(--toro-color-danger-border);
     color: var(--toro-color-danger);
-    background: #fff4f2;
+    background: var(--toro-color-danger-soft);
 }
 
 .role-assignment-success {
-    border-color: #a6dfc3;
+    border-color: var(--toro-color-success-border);
     color: var(--toro-color-success);
-    background: #ecfdf3;
+    background: var(--toro-color-success-soft);
 }
 
 .role-assignment-actions {
@@ -1668,7 +1668,7 @@ onMounted(loadUsers);
 
 .override-option select:focus {
     border-color: var(--toro-color-primary);
-    outline: 3px solid rgba(63, 120, 152, 0.14);
+    outline: var(--toro-focus-ring);
 }
 
 .override-option select:disabled {
@@ -1679,7 +1679,7 @@ onMounted(loadUsers);
     padding: var(--toro-space-3);
     border-left: 3px solid var(--toro-color-warning);
     color: var(--toro-color-warning);
-    background: #fffaeb;
+    background: var(--toro-color-warning-soft);
 }
 
 .override-message {
@@ -1689,15 +1689,15 @@ onMounted(loadUsers);
 }
 
 .override-message-error {
-    border-color: #f4b4ae;
+    border-color: var(--toro-color-danger-border);
     color: var(--toro-color-danger);
-    background: #fff4f2;
+    background: var(--toro-color-danger-soft);
 }
 
 .override-message-success {
-    border-color: #a6dfc3;
+    border-color: var(--toro-color-success-border);
     color: var(--toro-color-success);
-    background: #ecfdf3;
+    background: var(--toro-color-success-soft);
 }
 
 .override-actions {

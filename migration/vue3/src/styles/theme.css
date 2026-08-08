@@ -9,8 +9,15 @@
   --toro-color-accent-soft: #fff1e8;
   --toro-color-accent-border: #f6c3a5;
   --toro-color-success: #397f7a;
+  --toro-color-success-soft: #ecfdf3;
+  --toro-color-success-border: #a6dfc3;
   --toro-color-warning: #9a6700;
+  --toro-color-warning-soft: #fffaeb;
   --toro-color-danger: #b42318;
+  --toro-color-danger-soft: #fff4f2;
+  --toro-color-danger-border: #f4b4ae;
+  --toro-color-info-soft: #e7f1f6;
+  --toro-color-selection-soft: #edf6fa;
 
   /* Surfaces */
   --toro-color-background: #f3f8fb;
@@ -50,6 +57,7 @@
   /* Borders and effects */
   --toro-color-border: #d8e5eb;
   --toro-color-border-strong: #bfd2dc;
+  --toro-focus-ring: 3px solid rgba(63, 120, 152, 0.14);
 
   --toro-radius-sm: 6px;
   --toro-radius-md: 9px;
