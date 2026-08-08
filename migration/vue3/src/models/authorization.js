@@ -126,6 +126,21 @@ export function normalizeSafeUser(value) {
   };
 }
 
+export function normalizeSafeUsers(value) {
+  return asArray(value)
+    .map(normalizeSafeUser)
+    .filter((user) => user !== null)
+    .sort((left, right) => {
+      const nameComparison = left.name.localeCompare(right.name);
+
+      if (nameComparison !== 0) {
+        return nameComparison;
+      }
+
+      return left.userName.localeCompare(right.userName);
+    });
+}
+
 export function normalizePermissionOverride(value) {
   if (!value || typeof value !== "object") return null;
 

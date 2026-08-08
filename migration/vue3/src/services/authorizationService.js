@@ -8,6 +8,7 @@ import {
   normalizeSecurityPermissions,
   normalizeSecurityRoles,
   normalizeUserAuthorization,
+  normalizeSafeUsers,
 } from "@/models/authorization";
 
 export async function getAuthorizationContext() {
@@ -26,6 +27,12 @@ export async function getAuthorizationPermissions() {
   const response = await apiRequest("/api/authorization/permissions");
 
   return normalizeSecurityPermissions(response);
+}
+
+export async function getAuthorizationUsers() {
+  const response = await apiRequest("/api/users/order");
+
+  return normalizeSafeUsers(response);
 }
 
 export async function getRolePermissions(roleId) {
