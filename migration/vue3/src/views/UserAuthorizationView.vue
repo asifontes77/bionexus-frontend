@@ -80,7 +80,10 @@
                                     selectedUser?.id === user.id,
                                 'user-list-item-hidden':
                                     user.hidden,
-                            }" :disabled="authorizationLoading || savingRoles" @click="selectUser(user)">
+                            }" :disabled="authorizationLoading ||
+                                savingRoles ||
+                                savingOverrides
+                                " @click="selectUser(user)">
                             <span class="user-list-avatar">
                                 {{ getUserInitials(user) }}
                             </span>
@@ -292,31 +295,129 @@
                                     <h4>Overrides</h4>
                                 </div>
 
-                                <span>{{ authorization.permissionOverrides.length }}</span>
+                                <span>
+                                    {{ authorization.permissionOverrides.length }}
+                                </span>
                             </header>
 
-                            <div v-if="authorization.permissionOverrides.length === 0"
-                                class="user-security-empty user-security-empty-compact">
-                                El usuario no tiene excepciones individuales.
+                            <div v-if="inactivePermissionOverrides.length > 0" class="override-warning">
+                                El usuario conserva excepciones sobre permisos inactivos para
+                                fines de consulta. Estas excepciones no pueden seleccionarse
+                                nuevamente y serán retiradas en el próximo guardado.
                             </div>
 
-                            <ul v-else class="authorization-list">
-                                <li v-for="override in authorization.permissionOverrides" :key="override.permission.id">
-                                    <span>
-                                        <strong>{{ override.permission.code }}</strong>
-                                        <small>
-                                            {{ override.permission.module || "general" }}
-                                        </small>
-                                    </span>
+                            <div v-if="permissionsError" class="override-message override-message-error" role="alert">
+                                {{ permissionsError }}
+                            </div>
 
-                                    <span class="authorization-badge" :class="{
-                                        'authorization-badge-deny':
-                                            override.effect === 'deny',
-                                    }">
-                                        {{ override.effect === "deny" ? "Denegar" : "Permitir" }}
-                                    </span>
-                                </li>
-                            </ul>
+                            <div v-if="!canAssignPermissionOverrides"
+                                class="user-security-empty user-security-empty-compact">
+                                La cuenta actual puede consultar las excepciones, pero no
+                                modificarlas.
+                            </div>
+
+                            <div v-if="permissions.length === 0"
+                                class="user-security-empty user-security-empty-compact">
+                                No existen permisos disponibles.
+                            </div>
+
+                            <div v-else class="override-modules">
+                                <section v-for="module in permissionModules" :key="module.name" class="override-module">
+                                    <header>
+                                        <h5>{{ module.name }}</h5>
+                                        <span>{{ module.permissions.length }}</span>
+                                    </header>
+
+                                    <div v-for="permission in module.permissions" :key="permission.id"
+                                        class="override-option" :class="{
+                                            'override-option-disabled':
+                                                !permission.isActive ||
+                                                !canAssignPermissionOverrides,
+                                        }">
+                                        <span class="override-option-copy">
+                                            <strong>{{ permission.code }}</strong>
+                                            <small>{{ permission.name }}</small>
+                                        </span>
+
+                                        <select :value="getPermissionOverrideEffect(
+                                            permission.id,
+                                        )
+                                            " :disabled="!permission.isActive ||
+                                                !canAssignPermissionOverrides ||
+                                                savingOverrides
+                                                " @change="
+                                                    setPermissionOverride(
+                                                        permission,
+                                                        $event.target.value,
+                                                    )
+                                                    ">
+                                            <option value="">Sin override</option>
+                                            <option :value="PermissionEffect.Allow">
+                                                Permitir
+                                            </option>
+                                            <option :value="PermissionEffect.Deny">
+                                                Denegar
+                                            </option>
+                                        </select>
+
+                                        <span class="authorization-badge" :class="{
+                                            'authorization-badge-deny':
+                                                getPermissionOverrideEffect(
+                                                    permission.id,
+                                                ) === PermissionEffect.Deny,
+                                        }">
+                                            {{
+                                                getPermissionOverrideEffect(
+                                                    permission.id,
+                                                ) === PermissionEffect.Allow
+                                                    ? "Permitir"
+                                                    : getPermissionOverrideEffect(
+                                                        permission.id,
+                                                    ) === PermissionEffect.Deny
+                                                        ? "Denegar"
+                                                        : "Heredado"
+                                            }}
+                                        </span>
+                                    </div>
+                                </section>
+                            </div>
+
+                            <div v-if="saveOverridesError" class="override-message override-message-error" role="alert">
+                                {{ saveOverridesError }}
+                            </div>
+
+                            <div v-if="saveOverridesMessage" class="override-message override-message-success"
+                                role="status">
+                                {{ saveOverridesMessage }}
+                            </div>
+
+                            <div v-if="canAssignPermissionOverrides" class="override-actions">
+                                <span>
+                                    {{
+                                        hasOverrideChanges
+                                            ? "Existen cambios pendientes."
+                                            : "Las excepciones están sincronizadas."
+                                    }}
+                                </span>
+
+                                <div>
+                                    <button type="button" class="override-button override-button-secondary" :disabled="!hasOverrideChanges ||
+                                        savingOverrides
+                                        " @click="discardOverrideChanges">
+                                        Descartar
+                                    </button>
+
+                                    <button type="button" class="override-button override-button-primary" :disabled="!hasOverrideChanges ||
+                                        savingOverrides
+                                        " @click="saveOverrideChanges">
+                                        {{
+                                            savingOverrides
+                                                ? "Guardando..."
+                                                : "Guardar excepciones"
+                                        }}
+                                    </button>
+                                </div>
+                            </div>
                         </section>
 
                         <section class="authorization-section">
@@ -390,8 +491,9 @@
                         </section>
 
                         <p class="user-security-note">
-                            La asignación de roles está disponible únicamente para cuentas con
-                            autorización. Las excepciones individuales permanecen en modo de consulta.
+                            La asignación de roles y las excepciones individuales están
+                            disponibles únicamente para cuentas autorizadas. El backend
+                            continúa siendo la autoridad del contexto efectivo.
                         </p>
                     </template>
                 </article>
@@ -403,11 +505,14 @@
 <script setup>
 import { computed, onMounted, ref } from "vue";
 import {
+    getAuthorizationPermissions,
     getAuthorizationRoles,
     getAuthorizationUsers,
     getUserAuthorization,
+    replaceUserPermissionOverrides,
     replaceUserRoles,
 } from "@/services/authorizationService";
+import { PermissionEffect } from "@/models/authorization";
 import { useAuthorizationStore } from "@/stores/authorization";
 
 const authorizationStore = useAuthorizationStore();
@@ -428,6 +533,13 @@ const draftRoleIds = ref([]);
 const savingRoles = ref(false);
 const saveRolesError = ref("");
 const saveRolesMessage = ref("");
+const permissions = ref([]);
+const permissionsError = ref("");
+const savedOverrides = ref([]);
+const draftOverrides = ref([]);
+const savingOverrides = ref(false);
+const saveOverridesError = ref("");
+const saveOverridesMessage = ref("");
 
 const visibleUsersCount = computed(
     () => users.value.filter((user) => !user.hidden).length,
@@ -451,6 +563,49 @@ const inactiveAssignedRoles = computed(
             (role) => !role.isActive,
         ) ?? [],
 );
+
+const canAssignPermissionOverrides = computed(() =>
+    authorizationStore.hasPermission(
+        "security.users.assign-permissions",
+    ),
+);
+
+const hasOverrideChanges = computed(
+    () =>
+        serializeOverrides(draftOverrides.value) !==
+        serializeOverrides(savedOverrides.value),
+);
+
+const inactivePermissionOverrides = computed(
+    () =>
+        authorization.value?.permissionOverrides.filter(
+            (override) => !override.permission.isActive,
+        ) ?? [],
+);
+
+const permissionModules = computed(() => {
+    const modules = new Map();
+
+    for (const permission of permissions.value) {
+        const moduleName =
+            permission.module || "general";
+
+        if (!modules.has(moduleName)) {
+            modules.set(moduleName, []);
+        }
+
+        modules.get(moduleName).push(permission);
+    }
+
+    return Array.from(modules.entries())
+        .map(([name, modulePermissions]) => ({
+            name,
+            permissions: modulePermissions,
+        }))
+        .sort((left, right) =>
+            left.name.localeCompare(right.name),
+        );
+});
 
 const filteredUsers = computed(() => {
     const filter = searchText.value.trim().toLowerCase();
@@ -543,6 +698,123 @@ function synchronizeAssignedRoles() {
     saveRolesMessage.value = "";
 }
 
+function normalizeOverrides(overrides) {
+    const normalized = [];
+    const permissionIds = new Set();
+
+    for (const override of overrides) {
+        if (
+            !override ||
+            !Number.isInteger(override.permissionId) ||
+            override.permissionId <= 0 ||
+            (
+                override.effect !== PermissionEffect.Allow &&
+                override.effect !== PermissionEffect.Deny
+            ) ||
+            permissionIds.has(override.permissionId)
+        ) {
+            continue;
+        }
+
+        permissionIds.add(override.permissionId);
+
+        normalized.push({
+            permissionId: override.permissionId,
+            effect: override.effect,
+        });
+    }
+
+    return normalized.sort(
+        (left, right) =>
+            left.permissionId - right.permissionId,
+    );
+}
+
+function serializeOverrides(overrides) {
+    return normalizeOverrides(overrides)
+        .map(
+            (override) =>
+                `${override.permissionId}:${override.effect}`,
+        )
+        .join(",");
+}
+
+function getPermissionOverrideEffect(permissionId) {
+    return (
+        draftOverrides.value.find(
+            (override) =>
+                override.permissionId === permissionId,
+        )?.effect ?? ""
+    );
+}
+
+function setPermissionOverride(permission, effect) {
+    if (
+        !canAssignPermissionOverrides.value ||
+        !permission.isActive ||
+        savingOverrides.value
+    ) {
+        return;
+    }
+
+    saveOverridesError.value = "";
+    saveOverridesMessage.value = "";
+
+    const remainingOverrides =
+        draftOverrides.value.filter(
+            (override) =>
+                override.permissionId !== permission.id,
+        );
+
+    if (
+        effect === PermissionEffect.Allow ||
+        effect === PermissionEffect.Deny
+    ) {
+        remainingOverrides.push({
+            permissionId: permission.id,
+            effect,
+        });
+    }
+
+    draftOverrides.value =
+        normalizeOverrides(remainingOverrides);
+}
+
+function discardOverrideChanges() {
+    draftOverrides.value =
+        savedOverrides.value.map((override) => ({
+            ...override,
+        }));
+
+    saveOverridesError.value = "";
+    saveOverridesMessage.value = "";
+}
+
+function synchronizePermissionOverrides() {
+    const currentOverrides =
+        authorization.value?.permissionOverrides ?? [];
+
+    savedOverrides.value = normalizeOverrides(
+        currentOverrides
+            .filter(
+                (override) =>
+                    override.permission.isActive,
+            )
+            .map((override) => ({
+                permissionId: override.permission.id,
+                effect: override.effect,
+            })),
+    );
+
+    draftOverrides.value =
+        savedOverrides.value.map((override) => ({
+            ...override,
+        }));
+
+    saveOverridesError.value = "";
+    saveOverridesMessage.value = "";
+}
+
 function getUserInitials(user) {
     const source =
         user?.name?.trim() ||
@@ -561,7 +833,8 @@ async function selectUser(user) {
     if (
         selectedUser.value?.id === user.id ||
         authorizationLoading.value ||
-        savingRoles.value
+        savingRoles.value ||
+        savingOverrides.value
     ) {
         return;
     }
@@ -580,6 +853,10 @@ async function loadSelectedUserAuthorization() {
     draftRoleIds.value = [];
     saveRolesError.value = "";
     saveRolesMessage.value = "";
+    savedOverrides.value = [];
+    draftOverrides.value = [];
+    saveOverridesError.value = "";
+    saveOverridesMessage.value = "";
 
     if (!user) {
         authorizationLoading.value = false;
@@ -609,6 +886,7 @@ async function loadSelectedUserAuthorization() {
         authorization.value = loadedAuthorization;
 
         synchronizeAssignedRoles();
+        synchronizePermissionOverrides();
     } catch (error) {
         if (
             requestId !== authorizationRequestId ||
@@ -690,6 +968,68 @@ async function saveRoleChanges() {
     }
 }
 
+async function saveOverrideChanges() {
+    const user = selectedUser.value;
+
+    if (
+        !user ||
+        !canAssignPermissionOverrides.value ||
+        !hasOverrideChanges.value ||
+        savingOverrides.value
+    ) {
+        return;
+    }
+
+    savingOverrides.value = true;
+    saveOverridesError.value = "";
+    saveOverridesMessage.value = "";
+
+    try {
+        await replaceUserPermissionOverrides(
+            user.id,
+            draftOverrides.value,
+        );
+
+        await loadSelectedUserAuthorization();
+
+        if (authorizationStore.userId === user.id) {
+            await authorizationStore.loadContext({
+                force: true,
+            });
+        }
+
+        saveOverridesMessage.value =
+            "Las excepciones del usuario fueron actualizadas.";
+    } catch (error) {
+        const backendMessage =
+            typeof error?.message === "string"
+                ? error.message
+                : "";
+
+        const messages = {
+            PERMISSIONS_NOT_FOUND_OR_INACTIVE:
+                "Uno o más permisos no existen o están inactivos.",
+            PERMISSION_OVERRIDE_DUPLICATED:
+                "No puede registrarse más de una excepción para el mismo permiso.",
+            PERMISSION_EFFECT_INVALID:
+                "El efecto seleccionado no es válido.",
+            PERMISSION_ID_INVALID:
+                "Uno de los identificadores de permiso no es válido.",
+            USER_NOT_FOUND:
+                "El usuario seleccionado ya no existe.",
+            USER_ID_INVALID:
+                "El identificador del usuario no es válido.",
+        };
+
+        saveOverridesError.value =
+            messages[backendMessage] ||
+            backendMessage ||
+            "No fue posible guardar las excepciones del usuario.";
+    } finally {
+        savingOverrides.value = false;
+    }
+}
+
 async function loadUsers() {
     if (usersLoading.value) {
         return;
@@ -701,15 +1041,21 @@ async function loadUsers() {
     usersError.value = "";
 
     try {
-        const [loadedUsers, loadedRoles] =
-            await Promise.all([
-                getAuthorizationUsers(),
-                getAuthorizationRoles(),
-            ]);
+        const [
+            loadedUsers,
+            loadedRoles,
+            loadedPermissions,
+        ] = await Promise.all([
+            getAuthorizationUsers(),
+            getAuthorizationRoles(),
+            getAuthorizationPermissions(),
+        ]);
 
         users.value = loadedUsers;
         roles.value = loadedRoles;
+        permissions.value = loadedPermissions;
         rolesError.value = "";
+        permissionsError.value = "";
 
         selectedUser.value =
             loadedUsers.find(
@@ -732,6 +1078,11 @@ async function loadUsers() {
             roles.value = [];
             rolesError.value =
                 "No fue posible cargar el catálogo de roles.";
+            permissions.value = [];
+            permissionsError.value =
+                "No fue posible cargar el catálogo de permisos.";
+            savedOverrides.value = [];
+            draftOverrides.value = [];
             selectedUser.value = null;
             authorization.value = null;
             savedRoleIds.value = [];
@@ -1247,6 +1598,151 @@ onMounted(loadUsers);
     background: var(--toro-color-primary);
 }
 
+.override-modules {
+    display: grid;
+    gap: var(--toro-space-3);
+}
+
+.override-module {
+    overflow: hidden;
+    border: 1px solid var(--toro-color-border);
+    border-radius: var(--toro-radius-md);
+}
+
+.override-module>header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--toro-space-2) var(--toro-space-3);
+    background: var(--toro-color-surface-soft);
+}
+
+.override-module h5 {
+    margin: 0;
+    color: var(--toro-color-primary-strong);
+    text-transform: capitalize;
+}
+
+.override-module header>span {
+    color: var(--toro-color-text-muted);
+    font-weight: var(--toro-font-weight-bold);
+}
+
+.override-option {
+    display: grid;
+    min-height: var(--toro-table-row-height);
+    grid-template-columns: minmax(0, 1fr) 150px auto;
+    align-items: center;
+    gap: var(--toro-space-3);
+    padding: var(--toro-space-2) var(--toro-space-3);
+    border-top: 1px solid var(--toro-color-border);
+}
+
+.override-option-disabled {
+    opacity: 0.68;
+}
+
+.override-option-copy {
+    display: grid;
+    min-width: 0;
+    gap: 2px;
+}
+
+.override-option-copy strong {
+    overflow-wrap: anywhere;
+}
+
+.override-option-copy small {
+    color: var(--toro-color-text-muted);
+}
+
+.override-option select {
+    width: 100%;
+    min-height: var(--toro-control-height);
+    padding: 0 var(--toro-space-2);
+    border: 1px solid var(--toro-color-border-strong);
+    border-radius: var(--toro-radius-md);
+    color: var(--toro-color-text);
+    background: var(--toro-color-surface);
+}
+
+.override-option select:focus {
+    border-color: var(--toro-color-primary);
+    outline: 3px solid rgba(63, 120, 152, 0.14);
+}
+
+.override-option select:disabled {
+    cursor: not-allowed;
+}
+
+.override-warning {
+    padding: var(--toro-space-3);
+    border-left: 3px solid var(--toro-color-warning);
+    color: var(--toro-color-warning);
+    background: #fffaeb;
+}
+
+.override-message {
+    padding: var(--toro-space-3);
+    border: 1px solid var(--toro-color-border);
+    border-radius: var(--toro-radius-md);
+}
+
+.override-message-error {
+    border-color: #f4b4ae;
+    color: var(--toro-color-danger);
+    background: #fff4f2;
+}
+
+.override-message-success {
+    border-color: #a6dfc3;
+    color: var(--toro-color-success);
+    background: #ecfdf3;
+}
+
+.override-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--toro-space-3);
+    padding-top: var(--toro-space-3);
+    border-top: 1px solid var(--toro-color-border);
+}
+
+.override-actions>span {
+    color: var(--toro-color-text-muted);
+}
+
+.override-actions>div {
+    display: flex;
+    gap: var(--toro-space-2);
+}
+
+.override-button {
+    min-height: var(--toro-control-height);
+    padding: 0 var(--toro-space-4);
+    border-radius: var(--toro-radius-md);
+    cursor: pointer;
+    font-weight: var(--toro-font-weight-bold);
+}
+
+.override-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
+.override-button-secondary {
+    border: 1px solid var(--toro-color-border-strong);
+    color: var(--toro-color-primary-strong);
+    background: var(--toro-color-surface);
+}
+
+.override-button-primary {
+    border: 1px solid var(--toro-color-primary);
+    color: var(--toro-color-text-inverse);
+    background: var(--toro-color-primary);
+}
+
 .effective-summary {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1377,6 +1873,25 @@ onMounted(loadUsers);
     }
 
     .role-assignment-button {
+        width: 100%;
+    }
+
+    .override-option {
+        grid-template-columns: 1fr;
+        align-items: stretch;
+    }
+
+    .override-actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .override-actions>div {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .override-button {
         width: 100%;
     }
 }
