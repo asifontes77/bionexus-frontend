@@ -1,8 +1,8 @@
 ﻿<template>
-  <section class="security-page" aria-labelledby="security-title">
-    <header class="security-header">
+  <section class="security-page toro-page" aria-labelledby="security-title">
+    <header class="security-header toro-page-header">
       <div>
-        <p class="security-eyebrow">AdministraciÃ³n de seguridad</p>
+        <p class="security-eyebrow toro-page-eyebrow">AdministraciÃ³n de seguridad</p>
         <h2 id="security-title">Roles y permisos</h2>
         <p>
           Consulta los roles configurados y el catÃ¡logo de permisos
@@ -32,7 +32,7 @@
     </header>
 
     <article v-if="canCreateRoles" class="role-form-panel">
-      <div class="security-panel-heading">
+      <div class="security-panel-heading toro-panel-heading">
         <div>
           <p>Nuevo registro</p>
           <h3>Crear rol configurable</h3>
@@ -107,7 +107,7 @@
         <div class="role-form-actions role-form-wide">
           <button
             type="button"
-            class="permission-action permission-action-secondary"
+            class="permission-action permission-action-secondary toro-action toro-action-secondary"
             :disabled="creatingRole"
             @click="resetCreateRoleForm"
           >
@@ -116,7 +116,7 @@
 
           <button
             type="submit"
-            class="permission-action permission-action-primary"
+            class="permission-action permission-action-primary toro-action toro-action-primary"
             :disabled="!canSubmitCreateRole"
           >
             {{ creatingRole ? "Creando..." : "Crear rol" }}
@@ -135,7 +135,7 @@
     </div>
 
     <template v-else>
-      <div class="security-metrics">
+      <div class="security-metrics toro-metrics">
         <article>
           <span>Roles</span>
           <strong>{{ roles.length }}</strong>
@@ -162,8 +162,8 @@
       </div>
 
       <div class="security-grid">
-        <article class="security-panel">
-          <div class="security-panel-heading">
+        <article class="security-panel toro-panel">
+          <div class="security-panel-heading toro-panel-heading">
             <div>
               <p>CatÃ¡logo</p>
               <h3>Roles</h3>
@@ -172,7 +172,7 @@
             <span>{{ roles.length }}</span>
           </div>
 
-          <div v-if="roles.length === 0" class="security-empty">
+          <div v-if="roles.length === 0" class="security-empty toro-empty-state">
             No existen roles disponibles.
           </div>
 
@@ -194,7 +194,7 @@
               </span>
 
               <span
-                class="status-badge"
+                class="status-badge toro-badge"
                 :class="{ 'status-badge-inactive': !role.isActive }"
               >
                 {{ role.isActive ? "Activo" : "Inactivo" }}
@@ -203,15 +203,15 @@
           </div>
         </article>
 
-        <article class="security-panel">
-          <div class="security-panel-heading">
+        <article class="security-panel toro-panel">
+          <div class="security-panel-heading toro-panel-heading">
             <div>
               <p>Detalle</p>
               <h3>Rol seleccionado</h3>
             </div>
           </div>
 
-          <div v-if="!selectedRole" class="security-empty">
+          <div v-if="!selectedRole" class="security-empty toro-empty-state">
             Seleccione un rol para consultar sus datos.
           </div>
 
@@ -221,7 +221,7 @@
               class="role-metadata-form"
               @submit.prevent="updateRole"
             >
-              <div class="role-detail">
+              <div class="role-detail toro-detail">
                 <div>
                   <dt>Identificador</dt>
                   <dd>{{ selectedRole.id }}</dd>
@@ -320,7 +320,7 @@
               <div class="role-form-actions">
                 <button
                   type="button"
-                  class="permission-action permission-action-secondary"
+                  class="permission-action permission-action-secondary toro-action toro-action-secondary"
                   :disabled="
                     !hasRoleMetadataChanges ||
                     editingRole
@@ -332,7 +332,7 @@
 
                 <button
                   type="submit"
-                  class="permission-action permission-action-primary"
+                  class="permission-action permission-action-primary toro-action toro-action-primary"
                   :disabled="!canSubmitRoleUpdate"
                 >
                   {{ editingRole ? "Guardando..." : "Guardar datos" }}
@@ -340,7 +340,7 @@
               </div>
             </form>
 
-            <dl v-else class="role-detail">
+            <dl v-else class="role-detail toro-detail">
               <div>
                 <dt>Identificador</dt>
                 <dd>{{ selectedRole.id }}</dd>

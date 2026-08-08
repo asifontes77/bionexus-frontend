@@ -1,8 +1,8 @@
 <template>
-    <section class="user-security-page" aria-labelledby="user-security-title">
-        <header class="user-security-header">
+    <section class="user-security-page toro-page" aria-labelledby="user-security-title">
+        <header class="user-security-header toro-page-header">
             <div>
-                <p class="user-security-eyebrow">Administración de seguridad</p>
+                <p class="user-security-eyebrow toro-page-eyebrow">Administración de seguridad</p>
                 <h2 id="user-security-title">Usuarios y autorización</h2>
                 <p>
                     Consulta los roles, permisos heredados, excepciones y contexto efectivo
@@ -25,7 +25,7 @@
         </div>
 
         <template v-else>
-            <div class="user-security-metrics">
+            <div class="user-security-metrics toro-metrics">
                 <article>
                     <span>Usuarios</span>
                     <strong>{{ users.length }}</strong>
@@ -52,8 +52,8 @@
             </div>
 
             <div class="user-security-grid">
-                <article class="user-security-panel">
-                    <div class="user-security-panel-heading">
+                <article class="user-security-panel toro-panel">
+                    <div class="user-security-panel-heading toro-panel-heading">
                         <div>
                             <p>Directorio seguro</p>
                             <h3>Usuarios</h3>
@@ -69,7 +69,7 @@
                             placeholder="Nombre, usuario, correo o cargo" />
                     </label>
 
-                    <div v-if="filteredUsers.length === 0" class="user-security-empty">
+                    <div v-if="filteredUsers.length === 0" class="user-security-empty toro-empty-state">
                         No existen usuarios que coincidan con la búsqueda.
                     </div>
 
@@ -94,15 +94,15 @@
                                 <small>{{ user.position || "Sin cargo registrado" }}</small>
                             </span>
 
-                            <span class="user-status" :class="{ 'user-status-hidden': user.hidden }">
+                            <span class="user-status toro-badge" :class="{ 'user-status-hidden': user.hidden }">
                                 {{ user.hidden ? "Oculto" : "Visible" }}
                             </span>
                         </button>
                     </div>
                 </article>
 
-                <article class="user-security-panel">
-                    <div class="user-security-panel-heading">
+                <article class="user-security-panel toro-panel">
+                    <div class="user-security-panel-heading toro-panel-heading">
                         <div>
                             <p>Detalle administrativo</p>
                             <h3>Autorización del usuario</h3>
@@ -113,11 +113,11 @@
                         </span>
                     </div>
 
-                    <div v-if="!selectedUser" class="user-security-empty">
+                    <div v-if="!selectedUser" class="user-security-empty toro-empty-state">
                         Seleccione un usuario para consultar su autorización.
                     </div>
 
-                    <div v-else-if="authorizationLoading" class="user-security-empty" role="status">
+                    <div v-else-if="authorizationLoading" class="user-security-empty toro-empty-state" role="status">
                         Consultando autorización...
                     </div>
 
@@ -127,7 +127,7 @@
                     </div>
 
                     <template v-else-if="authorization">
-                        <dl class="user-detail">
+                        <dl class="user-detail toro-detail">
                             <div>
                                 <dt>Nombre</dt>
                                 <dd>{{ authorization.user.name || "Sin nombre" }}</dd>
@@ -175,7 +175,7 @@
                                 <span>{{ authorization.assignedRoles.length }}</span>
                             </header>
 
-                            <div v-if="inactiveAssignedRoles.length > 0" class="role-assignment-warning">
+                            <div v-if="inactiveAssignedRoles.length > 0" class="role-assignment-warning toro-warning">
                                 El usuario conserva roles inactivos para fines de consulta. Los roles
                                 inactivos no pueden seleccionarse nuevamente y serán retirados en el
                                 próximo guardado.
@@ -185,11 +185,11 @@
                                 {{ rolesError }}
                             </div>
 
-                            <div v-if="!canAssignRoles" class="user-security-empty user-security-empty-compact">
+                            <div v-if="!canAssignRoles" class="user-security-empty user-security-empty-compact toro-empty-state">
                                 La cuenta actual puede consultar los roles asignados, pero no modificarlos.
                             </div>
 
-                            <div v-if="roles.length === 0" class="user-security-empty user-security-empty-compact">
+                            <div v-if="roles.length === 0" class="user-security-empty user-security-empty-compact toro-empty-state">
                                 No existen roles disponibles.
                             </div>
 
@@ -212,7 +212,7 @@
                                         <small>{{ role.description || "Sin descripción" }}</small>
                                     </span>
 
-                                    <span class="authorization-badge" :class="{
+                                    <span class="authorization-badge toro-badge" :class="{
                                         'authorization-badge-inactive': !role.isActive,
                                     }">
                                         {{ role.isActive ? "Activo" : "Inactivo" }}
@@ -241,13 +241,13 @@
 
                                 <div>
                                     <button type="button"
-                                        class="role-assignment-button role-assignment-button-secondary" :disabled="!hasRoleChanges ||
+                                        class="role-assignment-button role-assignment-button-secondary toro-action toro-action-secondary" :disabled="!hasRoleChanges ||
                                             savingRoles
                                             " @click="discardRoleChanges">
                                         Descartar
                                     </button>
 
-                                    <button type="button" class="role-assignment-button role-assignment-button-primary"
+                                    <button type="button" class="role-assignment-button role-assignment-button-primary toro-action toro-action-primary"
                                         :disabled="!hasRoleChanges ||
                                             savingRoles
                                             " @click="saveRoleChanges">
@@ -268,7 +268,7 @@
                             </header>
 
                             <div v-if="authorization.inheritedPermissions.length === 0"
-                                class="user-security-empty user-security-empty-compact">
+                                class="user-security-empty user-security-empty-compact toro-empty-state">
                                 No existen permisos heredados desde roles activos.
                             </div>
 
@@ -279,7 +279,7 @@
                                         <small>{{ permission.module || "general" }}</small>
                                     </span>
 
-                                    <span class="authorization-badge" :class="{
+                                    <span class="authorization-badge toro-badge" :class="{
                                         'authorization-badge-inactive': !permission.isActive,
                                     }">
                                         {{ permission.isActive ? "Activo" : "Inactivo" }}
@@ -300,7 +300,7 @@
                                 </span>
                             </header>
 
-                            <div v-if="inactivePermissionOverrides.length > 0" class="override-warning">
+                            <div v-if="inactivePermissionOverrides.length > 0" class="override-warning toro-warning">
                                 El usuario conserva excepciones sobre permisos inactivos para
                                 fines de consulta. Estas excepciones no pueden seleccionarse
                                 nuevamente y serán retiradas en el próximo guardado.
@@ -311,13 +311,13 @@
                             </div>
 
                             <div v-if="!canAssignPermissionOverrides"
-                                class="user-security-empty user-security-empty-compact">
+                                class="user-security-empty user-security-empty-compact toro-empty-state">
                                 La cuenta actual puede consultar las excepciones, pero no
                                 modificarlas.
                             </div>
 
                             <div v-if="permissions.length === 0"
-                                class="user-security-empty user-security-empty-compact">
+                                class="user-security-empty user-security-empty-compact toro-empty-state">
                                 No existen permisos disponibles.
                             </div>
 
@@ -360,7 +360,7 @@
                                             </option>
                                         </select>
 
-                                        <span class="authorization-badge" :class="{
+                                        <span class="authorization-badge toro-badge" :class="{
                                             'authorization-badge-deny':
                                                 getPermissionOverrideEffect(
                                                     permission.id,
@@ -401,13 +401,13 @@
                                 </span>
 
                                 <div>
-                                    <button type="button" class="override-button override-button-secondary" :disabled="!hasOverrideChanges ||
+                                    <button type="button" class="override-button override-button-secondary toro-action toro-action-secondary" :disabled="!hasOverrideChanges ||
                                         savingOverrides
                                         " @click="discardOverrideChanges">
                                         Descartar
                                     </button>
 
-                                    <button type="button" class="override-button override-button-primary" :disabled="!hasOverrideChanges ||
+                                    <button type="button" class="override-button override-button-primary toro-action toro-action-primary" :disabled="!hasOverrideChanges ||
                                         savingOverrides
                                         " @click="saveOverrideChanges">
                                         {{
@@ -432,7 +432,7 @@
                                 </span>
                             </header>
 
-                            <div v-if="!authorization.context" class="user-security-empty user-security-empty-compact">
+                            <div v-if="!authorization.context" class="user-security-empty user-security-empty-compact toro-empty-state">
                                 El usuario no dispone de un contexto efectivo activo.
                             </div>
 

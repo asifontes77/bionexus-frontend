@@ -1,8 +1,8 @@
 <template>
-    <section class="parasitic-page" aria-labelledby="parasitic-title">
-        <header class="parasitic-header">
+    <section class="parasitic-page toro-page" aria-labelledby="parasitic-title">
+        <header class="parasitic-header toro-page-header">
             <div>
-                <p class="parasitic-eyebrow">Configuración</p>
+                <p class="parasitic-eyebrow toro-page-eyebrow">Configuración</p>
                 <h2 id="parasitic-title">Formas parasitarias</h2>
                 <p>
                     Administra las descripciones disponibles y controla cuáles permanecen
@@ -11,12 +11,12 @@
             </div>
 
             <div class="parasitic-header-actions">
-                <button v-if="canCreate" type="button" class="parasitic-action parasitic-action-secondary"
+                <button v-if="canCreate" type="button" class="parasitic-action parasitic-action-secondary toro-action toro-action-secondary"
                     :disabled="loading || saving" @click="startCreation">
                     Nueva forma
                 </button>
 
-                <button type="button" class="parasitic-action parasitic-action-primary" :disabled="loading || saving"
+                <button type="button" class="parasitic-action parasitic-action-primary toro-action toro-action-primary" :disabled="loading || saving"
                     @click="loadParasiticforms">
                     {{ loading ? "Actualizando..." : "Actualizar" }}
                 </button>
@@ -33,7 +33,7 @@
         </div>
 
         <template v-else>
-            <div class="parasitic-metrics">
+            <div class="parasitic-metrics toro-metrics">
                 <article>
                     <span>Total</span>
                     <strong>{{ parasiticforms.length }}</strong>
@@ -68,8 +68,8 @@
             </div>
 
             <div class="parasitic-grid">
-                <article class="parasitic-panel">
-                    <div class="parasitic-panel-heading">
+                <article class="parasitic-panel toro-panel">
+                    <div class="parasitic-panel-heading toro-panel-heading">
                         <div>
                             <p>Catálogo administrativo</p>
                             <h3>Registros</h3>
@@ -85,7 +85,7 @@
                             placeholder="Escriba parte de la descripción" :disabled="saving" />
                     </label>
 
-                    <div v-if="filteredParasiticforms.length === 0" class="parasitic-empty">
+                    <div v-if="filteredParasiticforms.length === 0" class="parasitic-empty toro-empty-state">
                         {{
                             parasiticforms.length === 0
                                 ? "No existen formas parasitarias registradas."
@@ -112,7 +112,7 @@
                                 <small>Identificador #{{ parasiticform.id }}</small>
                             </span>
 
-                            <span class="parasitic-badge" :class="{
+                            <span class="parasitic-badge toro-badge" :class="{
                                 'parasitic-badge-annulled':
                                     parasiticform.annulled,
                             }">
@@ -122,8 +122,8 @@
                     </div>
                 </article>
 
-                <article class="parasitic-panel">
-                    <div class="parasitic-panel-heading">
+                <article class="parasitic-panel toro-panel">
+                    <div class="parasitic-panel-heading toro-panel-heading">
                         <div>
                             <p>{{ creating ? "Nuevo registro" : "Configuración" }}</p>
                             <h3>
@@ -141,7 +141,7 @@
                         </span>
                     </div>
 
-                    <div v-if="!creating && !selectedParasiticform" class="parasitic-empty">
+                    <div v-if="!creating && !selectedParasiticform" class="parasitic-empty toro-empty-state">
                         Seleccione un registro para consultar o modificar sus datos.
                     </div>
 
@@ -176,7 +176,7 @@
                             </span>
                         </label>
 
-                        <div v-if="!creating && !canUpdateDescription" class="parasitic-permission-note">
+                        <div v-if="!creating && !canUpdateDescription" class="parasitic-permission-note toro-warning">
                             La cuenta actual puede consultar la descripción, pero no
                             modificarla.
                         </div>
@@ -189,7 +189,7 @@
                             {{ saveMessage }}
                         </div>
 
-                        <dl v-if="!creating" class="parasitic-detail">
+                        <dl v-if="!creating" class="parasitic-detail toro-detail">
                             <div>
                                 <dt>Identificador</dt>
                                 <dd>{{ selectedParasiticform.id }}</dd>
@@ -218,12 +218,12 @@
                         </div>
 
                         <div class="parasitic-form-actions">
-                            <button type="button" class="parasitic-action parasitic-action-secondary"
+                            <button type="button" class="parasitic-action parasitic-action-secondary toro-action toro-action-secondary"
                                 :disabled="!hasChanges || saving" @click="discardChanges">
                                 {{ creating ? "Limpiar" : "Descartar" }}
                             </button>
 
-                            <button type="submit" class="parasitic-action parasitic-action-primary"
+                            <button type="submit" class="parasitic-action parasitic-action-primary toro-action toro-action-primary"
                                 :disabled="!canSubmit">
                                 {{
                                     saving
@@ -236,7 +236,7 @@
                         </div>
                     </form>
 
-                    <p class="parasitic-note">
+                    <p class="parasitic-note toro-note">
                         Los cambios se guardan únicamente para el registro seleccionado.
                         No se realizan actualizaciones masivas.
                     </p>
