@@ -1,3 +1,273 @@
-/* TORO shared components
+﻿/* TORO shared components
  * Reusable visual primitives shared by Vue 3 views.
  */
+
+/* Administrative pages */
+
+.toro-page,
+.security-page,
+.user-security-page,
+.parasitic-page {
+  display: grid;
+  gap: var(--toro-space-4);
+}
+
+/* Page headers */
+
+.toro-page-header,
+.security-header,
+.user-security-header,
+.parasitic-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--toro-space-5);
+  padding: var(--toro-space-5);
+  border: 1px solid var(--toro-color-border);
+  border-radius: var(--toro-radius-lg);
+  background: var(--toro-color-surface);
+  box-shadow: var(--toro-shadow-sm);
+}
+
+.toro-page-header h2,
+.security-header h2,
+.user-security-header h2,
+.parasitic-header h2 {
+  margin: 0;
+  color: var(--toro-color-primary-strong);
+  font-size: var(--toro-font-size-display);
+}
+
+.toro-page-description,
+.security-header p:not(.security-eyebrow),
+.user-security-header p:not(.user-security-eyebrow),
+.parasitic-header p:not(.parasitic-eyebrow) {
+  max-width: 720px;
+  margin-top: var(--toro-space-2);
+  color: var(--toro-color-text-secondary);
+  line-height: 1.5;
+}
+
+.toro-page-eyebrow,
+.security-eyebrow,
+.user-security-eyebrow,
+.parasitic-eyebrow {
+  margin-bottom: var(--toro-space-1) !important;
+  color: var(--toro-color-accent);
+  font-size: var(--toro-font-size-xs);
+  font-weight: var(--toro-font-weight-heavy);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* Metrics */
+
+.toro-metrics,
+.security-metrics,
+.user-security-metrics,
+.parasitic-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--toro-space-3);
+}
+
+.toro-metric,
+.security-metrics article,
+.user-security-metrics article,
+.parasitic-metrics article {
+  display: grid;
+  gap: var(--toro-space-1);
+  padding: var(--toro-panel-padding);
+  border: 1px solid var(--toro-color-border);
+  border-radius: var(--toro-radius-md);
+  background: var(--toro-color-surface);
+  box-shadow: var(--toro-shadow-sm);
+}
+
+.toro-metric-label,
+.security-metrics span,
+.user-security-metrics span,
+.parasitic-metrics span {
+  color: var(--toro-color-text-muted);
+  font-size: var(--toro-font-size-xs);
+  font-weight: var(--toro-font-weight-heavy);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Panels */
+
+.toro-panel,
+.security-panel,
+.user-security-panel,
+.parasitic-panel {
+  min-width: 0;
+  padding: var(--toro-panel-padding);
+  border: 1px solid var(--toro-color-border);
+  border-radius: var(--toro-radius-md);
+  background: var(--toro-color-surface);
+  box-shadow: var(--toro-shadow-sm);
+}
+
+.toro-panel-heading,
+.security-panel-heading,
+.user-security-panel-heading,
+.parasitic-panel-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--toro-space-3);
+  margin-bottom: var(--toro-space-4);
+}
+
+.toro-panel-eyebrow,
+.security-panel-heading p,
+.user-security-panel-heading p,
+.parasitic-panel-heading p {
+  margin: 0;
+  color: var(--toro-color-accent);
+  font-size: var(--toro-font-size-xs);
+  font-weight: var(--toro-font-weight-heavy);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.toro-panel-count,
+.security-panel-heading > span,
+.user-security-panel-heading > span,
+.parasitic-panel-heading > span {
+  padding: 5px 9px;
+  border-radius: 999px;
+  color: var(--toro-color-primary-strong);
+  background: var(--toro-color-surface-soft);
+  font-weight: var(--toro-font-weight-bold);
+}
+
+/* Empty states */
+
+.toro-empty-state,
+.security-empty,
+.user-security-empty,
+.parasitic-empty {
+  padding: var(--toro-space-6);
+  border: 1px dashed var(--toro-color-border-strong);
+  border-radius: var(--toro-radius-md);
+  color: var(--toro-color-text-muted);
+  text-align: center;
+}
+
+/* Actions */
+
+.toro-action,
+.permission-action,
+.role-assignment-button,
+.override-button,
+.parasitic-action {
+  min-height: var(--toro-control-height);
+  padding: 0 var(--toro-space-4);
+  border-radius: var(--toro-radius-md);
+  cursor: pointer;
+  font-weight: var(--toro-font-weight-bold);
+}
+
+.toro-action-primary,
+.permission-action-primary,
+.role-assignment-button-primary,
+.override-button-primary,
+.parasitic-action-primary {
+  border: 1px solid var(--toro-color-primary);
+  color: var(--toro-color-text-inverse);
+  background: var(--toro-color-primary);
+}
+
+.toro-action-secondary,
+.permission-action-secondary,
+.role-assignment-button-secondary,
+.override-button-secondary,
+.parasitic-action-secondary {
+  border: 1px solid var(--toro-color-border-strong);
+  color: var(--toro-color-primary-strong);
+  background: var(--toro-color-surface);
+}
+
+/* Status badges */
+
+.toro-badge,
+.status-badge,
+.user-status,
+.authorization-badge,
+.parasitic-badge {
+  flex: 0 0 auto;
+  padding: 5px 8px;
+  border-radius: 999px;
+  color: var(--toro-color-success);
+  background: var(--toro-color-success-soft);
+  font-size: var(--toro-font-size-xs);
+  font-weight: var(--toro-font-weight-bold);
+}
+
+.toro-badge-warning,
+.status-badge-inactive,
+.user-status-hidden,
+.authorization-badge-inactive,
+.parasitic-badge-annulled {
+  color: var(--toro-color-warning);
+  background: var(--toro-color-warning-soft);
+}
+
+/* Notes and warnings */
+
+.toro-note,
+.security-note,
+.user-security-note,
+.parasitic-note {
+  margin: var(--toro-space-4) 0 0;
+  padding: var(--toro-space-3);
+  border-left: 3px solid var(--toro-color-accent);
+  color: var(--toro-color-text-secondary);
+  background: var(--toro-color-accent-soft);
+}
+
+.toro-warning,
+.assigned-permissions-warning,
+.role-assignment-warning,
+.override-warning,
+.parasitic-permission-note {
+  padding: var(--toro-space-3);
+  border-left: 3px solid var(--toro-color-warning);
+  color: var(--toro-color-warning);
+  background: var(--toro-color-warning-soft);
+}
+
+/* Entity details */
+
+.toro-detail,
+.role-detail,
+.user-detail,
+.parasitic-detail {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--toro-space-3);
+  margin: 0;
+}
+
+.toro-detail dt,
+.role-detail dt,
+.user-detail dt,
+.parasitic-detail dt {
+  color: var(--toro-color-text-muted);
+  font-size: var(--toro-font-size-xs);
+  font-weight: var(--toro-font-weight-heavy);
+  text-transform: uppercase;
+}
+
+/* Selected list items */
+
+.toro-list-item-selected,
+.role-item-selected,
+.user-list-item-selected,
+.parasitic-list-item-selected {
+  border-color: var(--toro-color-primary);
+  background: var(--toro-color-surface-soft);
+  box-shadow: inset 3px 0 0 var(--toro-color-accent);
+}
