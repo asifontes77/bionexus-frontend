@@ -136,6 +136,59 @@
             </div>
           </dl>
 
+          <section v-if="selectedRole" class="assigned-permissions">
+            <header>
+              <div>
+                <p>Asignaciones actuales</p>
+                <h4>Permisos del rol</h4>
+              </div>
+
+              <span>{{ assignedPermissions.length }}</span>
+            </header>
+
+            <div
+              v-if="assignedPermissionsLoading"
+              class="assigned-permissions-status"
+              role="status"
+            >
+              Consultando permisos asignados...
+            </div>
+
+            <div
+              v-else-if="assignedPermissionsError"
+              class="assigned-permissions-status assigned-permissions-error"
+              role="alert"
+            >
+              {{ assignedPermissionsError }}
+            </div>
+
+            <div
+              v-else-if="assignedPermissions.length === 0"
+              class="assigned-permissions-status"
+            >
+              El rol no tiene permisos asignados.
+            </div>
+
+            <ul v-else class="assigned-permissions-list">
+              <li
+                v-for="permission in assignedPermissions"
+                :key="permission.id"
+              >
+                <span>
+                  <strong>{{ permission.code }}</strong>
+                  <small>{{ permission.name }}</small>
+                </span>
+
+                <span
+                  class="status-badge"
+                  :class="{ 'status-badge-inactive': !permission.isActive }"
+                >
+                  {{ permission.isActive ? "Activo" : "Inactivo" }}
+                </span>
+              </li>
+            </ul>
+          </section>
+
           <p class="security-note">
             La edición del rol y la asignación de permisos se habilitarán en un
             incremento posterior.
@@ -195,11 +248,16 @@ import { computed, onMounted, ref } from "vue";
 import {
   getAuthorizationPermissions,
   getAuthorizationRoles,
+  getRolePermissions,
 } from "@/services/authorizationService";
 
 const roles = ref([]);
 const permissions = ref([]);
 const selectedRole = ref(null);
+const assignedPermissions = ref([]);
+const assignedPermissionsLoading = ref(false);
+const assignedPermissionsError = ref("");
+let assignedPermissionsRequestId = 0;
 const loading = ref(false);
 const loaded = ref(false);
 const errorMessage = ref("");
@@ -233,8 +291,53 @@ const permissionModules = computed(() => {
     .sort((left, right) => left.name.localeCompare(right.name));
 });
 
-function selectRole(role) {
+async function selectRole(role) {
   selectedRole.value = role;
+  await loadAssignedPermissions();
+}
+
+async function loadAssignedPermissions() {
+  const role = selectedRole.value;
+  const requestId = ++assignedPermissionsRequestId;
+
+  assignedPermissions.value = [];
+  assignedPermissionsError.value = "";
+
+  if (!role) {
+    assignedPermissionsLoading.value = false;
+    return;
+  }
+
+  assignedPermissionsLoading.value = true;
+
+  try {
+    const loadedPermissions = await getRolePermissions(role.id);
+
+    if (
+      requestId !== assignedPermissionsRequestId ||
+      selectedRole.value?.id !== role.id
+    ) {
+      return;
+    }
+
+    assignedPermissions.value = loadedPermissions;
+  } catch (error) {
+    if (
+      requestId !== assignedPermissionsRequestId ||
+      selectedRole.value?.id !== role.id
+    ) {
+      return;
+    }
+
+    assignedPermissionsError.value =
+      typeof error?.message === "string"
+        ? error.message
+        : "No fue posible consultar los permisos asignados.";
+  } finally {
+    if (requestId === assignedPermissionsRequestId) {
+      assignedPermissionsLoading.value = false;
+    }
+  }
 }
 
 async function loadCatalogs() {
@@ -261,6 +364,8 @@ async function loadCatalogs() {
       selectedRole.value = loadedRoles[0];
     }
 
+    await loadAssignedPermissions();
+
     loaded.value = true;
   } catch (error) {
     errorMessage.value =
@@ -272,6 +377,9 @@ async function loadCatalogs() {
       roles.value = [];
       permissions.value = [];
       selectedRole.value = null;
+      assignedPermissions.value = [];
+      assignedPermissionsError.value = "";
+      assignedPermissionsRequestId += 1;
     }
   } finally {
     loading.value = false;
@@ -553,6 +661,95 @@ onMounted(loadCatalogs);
   border-left: 3px solid var(--toro-color-accent);
   color: var(--toro-color-text-secondary);
   background: var(--toro-color-accent-soft);
+}
+
+.assigned-permissions {
+  display: grid;
+  gap: var(--toro-space-3);
+  margin-top: var(--toro-space-4);
+  padding-top: var(--toro-space-4);
+  border-top: 1px solid var(--toro-color-border);
+}
+
+.assigned-permissions header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--toro-space-3);
+}
+
+.assigned-permissions h4,
+.assigned-permissions p {
+  margin: 0;
+}
+
+.assigned-permissions h4 {
+  margin-top: var(--toro-space-1);
+  color: var(--toro-color-primary-strong);
+}
+
+.assigned-permissions p {
+  color: var(--toro-color-accent);
+  font-size: var(--toro-font-size-xs);
+  font-weight: var(--toro-font-weight-heavy);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.assigned-permissions header > span {
+  padding: 5px 9px;
+  border-radius: 999px;
+  color: var(--toro-color-primary-strong);
+  background: var(--toro-color-surface-soft);
+  font-weight: var(--toro-font-weight-bold);
+}
+
+.assigned-permissions-status {
+  padding: var(--toro-space-3);
+  border: 1px dashed var(--toro-color-border-strong);
+  border-radius: var(--toro-radius-md);
+  color: var(--toro-color-text-muted);
+  text-align: center;
+}
+
+.assigned-permissions-error {
+  border-color: #f4b4ae;
+  color: var(--toro-color-danger);
+  background: #fff4f2;
+}
+
+.assigned-permissions-list {
+  display: grid;
+  gap: var(--toro-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.assigned-permissions-list li {
+  display: flex;
+  min-height: var(--toro-table-row-height);
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--toro-space-3);
+  padding: var(--toro-space-2) var(--toro-space-3);
+  border: 1px solid var(--toro-color-border);
+  border-radius: var(--toro-radius-md);
+  background: var(--toro-color-surface-soft);
+}
+
+.assigned-permissions-list li > span:first-child {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.assigned-permissions-list strong {
+  overflow-wrap: anywhere;
+}
+
+.assigned-permissions-list small {
+  color: var(--toro-color-text-muted);
 }
 
 .permission-modules {

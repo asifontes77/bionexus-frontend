@@ -11,7 +11,7 @@ import {
 } from "@/models/authorization";
 
 export async function getAuthorizationContext() {
-  const response = await apiRequest("/api/authorization/context");
+  const response = await apiRequest("/api/authorization/me");
 
   return normalizeAuthorizationContext(response);
 }
@@ -24,6 +24,14 @@ export async function getAuthorizationRoles() {
 
 export async function getAuthorizationPermissions() {
   const response = await apiRequest("/api/authorization/permissions");
+
+  return normalizeSecurityPermissions(response);
+}
+
+export async function getRolePermissions(roleId) {
+  const response = await apiRequest(
+    `/api/authorization/roles/${roleId}/permissions`,
+  );
 
   return normalizeSecurityPermissions(response);
 }
