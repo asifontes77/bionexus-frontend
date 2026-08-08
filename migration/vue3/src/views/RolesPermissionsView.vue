@@ -162,36 +162,147 @@
               {{ assignedPermissionsError }}
             </div>
 
-            <div
-              v-else-if="assignedPermissions.length === 0"
-              class="assigned-permissions-status"
-            >
-              El rol no tiene permisos asignados.
-            </div>
+            <template v-else>
+              <div
+                v-if="selectedRole.code === 'admin'"
+                class="assigned-permissions-warning"
+              >
+                El rol administrador debe conservar los permisos esenciales
+                definidos por el backend.
+              </div>
 
-            <ul v-else class="assigned-permissions-list">
-              <li
-                v-for="permission in assignedPermissions"
-                :key="permission.id"
+              <div
+                v-if="inactiveAssignedPermissions.length > 0"
+                class="assigned-permissions-warning"
+              >
+                Este rol conserva permisos inactivos para fines de consulta.
+                Los permisos inactivos no pueden seleccionarse nuevamente y
+                serán retirados en el próximo guardado.
+              </div>
+
+              <div
+                v-if="!canAssignPermissions"
+                class="assigned-permissions-status"
+              >
+                La cuenta actual puede consultar las asignaciones, pero no
+                modificarlas.
+              </div>
+
+              <div v-if="permissions.length === 0" class="assigned-permissions-status">
+                No existen permisos disponibles.
+              </div>
+
+              <div v-else class="permission-editor">
+                <section
+                  v-for="module in permissionModules"
+                  :key="module.name"
+                  class="permission-editor-module"
+                >
+                  <header>
+                    <h5>{{ module.name }}</h5>
+                    <span>{{ module.permissions.length }}</span>
+                  </header>
+
+                  <label
+                    v-for="permission in module.permissions"
+                    :key="permission.id"
+                    class="permission-option"
+                    :class="{
+                      'permission-option-selected':
+                        isPermissionSelected(permission.id),
+                      'permission-option-disabled':
+                        !permission.isActive ||
+                        !canAssignPermissions,
+                    }"
+                  >
+                    <input
+                      type="checkbox"
+                      :checked="isPermissionSelected(permission.id)"
+                      :disabled="
+                        !permission.isActive ||
+                        !canAssignPermissions ||
+                        savingPermissions
+                      "
+                      @change="togglePermission(permission)"
+                    />
+
+                    <span class="permission-option-copy">
+                      <strong>{{ permission.code }}</strong>
+                      <small>{{ permission.name }}</small>
+                    </span>
+
+                    <span
+                      class="status-badge"
+                      :class="{
+                        'status-badge-inactive': !permission.isActive,
+                      }"
+                    >
+                      {{ permission.isActive ? "Activo" : "Inactivo" }}
+                    </span>
+                  </label>
+                </section>
+              </div>
+
+              <div
+                v-if="savePermissionsError"
+                class="assigned-permissions-status assigned-permissions-error"
+                role="alert"
+              >
+                {{ savePermissionsError }}
+              </div>
+
+              <div
+                v-if="savePermissionsMessage"
+                class="assigned-permissions-status assigned-permissions-success"
+                role="status"
+              >
+                {{ savePermissionsMessage }}
+              </div>
+
+              <div
+                v-if="canAssignPermissions"
+                class="permission-editor-actions"
               >
                 <span>
-                  <strong>{{ permission.code }}</strong>
-                  <small>{{ permission.name }}</small>
+                  {{
+                    hasPermissionChanges
+                      ? "Existen cambios pendientes."
+                      : "Las asignaciones están sincronizadas."
+                  }}
                 </span>
 
-                <span
-                  class="status-badge"
-                  :class="{ 'status-badge-inactive': !permission.isActive }"
-                >
-                  {{ permission.isActive ? "Activo" : "Inactivo" }}
-                </span>
-              </li>
-            </ul>
+                <div>
+                  <button
+                    type="button"
+                    class="permission-action permission-action-secondary"
+                    :disabled="
+                      !hasPermissionChanges ||
+                      savingPermissions
+                    "
+                    @click="discardPermissionChanges"
+                  >
+                    Descartar
+                  </button>
+
+                  <button
+                    type="button"
+                    class="permission-action permission-action-primary"
+                    :disabled="
+                      !hasPermissionChanges ||
+                      savingPermissions
+                    "
+                    @click="savePermissionChanges"
+                  >
+                    {{ savingPermissions ? "Guardando..." : "Guardar" }}
+                  </button>
+                </div>
+              </div>
+            </template>
           </section>
 
           <p class="security-note">
-            La edición del rol y la asignación de permisos se habilitarán en un
-            incremento posterior.
+            Los metadatos del rol permanecen en modo de consulta. La asignación
+            de permisos está disponible únicamente para cuentas autorizadas.
           </p>
         </article>
       </div>
@@ -251,6 +362,9 @@ import {
   getRolePermissions,
 } from "@/services/authorizationService";
 
+import { useAuthorizationStore } from "@/stores/authorization";
+
+const authorizationStore = useAuthorizationStore();
 const roles = ref([]);
 const permissions = ref([]);
 const selectedRole = ref(null);
@@ -258,6 +372,11 @@ const assignedPermissions = ref([]);
 const assignedPermissionsLoading = ref(false);
 const assignedPermissionsError = ref("");
 let assignedPermissionsRequestId = 0;
+const savedPermissionIds = ref([]);
+const draftPermissionIds = ref([]);
+const savingPermissions = ref(false);
+const savePermissionsError = ref("");
+const savePermissionsMessage = ref("");
 const loading = ref(false);
 const loaded = ref(false);
 const errorMessage = ref("");
@@ -268,6 +387,24 @@ const activeRolesCount = computed(
 
 const activePermissionsCount = computed(
   () => permissions.value.filter((permission) => permission.isActive).length,
+);
+
+const canAssignPermissions = computed(() =>
+  authorizationStore.hasPermission(
+    "security.roles.assign-permissions",
+  ),
+);
+
+const hasPermissionChanges = computed(
+  () =>
+    normalizePermissionIds(draftPermissionIds.value).join(",") !==
+    normalizePermissionIds(savedPermissionIds.value).join(","),
+);
+
+const inactiveAssignedPermissions = computed(() =>
+  assignedPermissions.value.filter(
+    (permission) => !permission.isActive,
+  ),
 );
 
 const permissionModules = computed(() => {
@@ -291,8 +428,69 @@ const permissionModules = computed(() => {
     .sort((left, right) => left.name.localeCompare(right.name));
 });
 
+function normalizePermissionIds(permissionIds) {
+  return Array.from(
+    new Set(
+      permissionIds.filter(
+        (permissionId) =>
+          Number.isInteger(permissionId) &&
+          permissionId > 0,
+      ),
+    ),
+  ).sort((left, right) => left - right);
+}
+
+function isPermissionSelected(permissionId) {
+  return draftPermissionIds.value.includes(permissionId);
+}
+
+function togglePermission(permission) {
+  if (
+    !canAssignPermissions.value ||
+    !permission.isActive ||
+    savingPermissions.value
+  ) {
+    return;
+  }
+
+  savePermissionsError.value = "";
+  savePermissionsMessage.value = "";
+
+  if (isPermissionSelected(permission.id)) {
+    draftPermissionIds.value =
+      draftPermissionIds.value.filter(
+        (permissionId) => permissionId !== permission.id,
+      );
+
+    return;
+  }
+
+  draftPermissionIds.value = normalizePermissionIds([
+    ...draftPermissionIds.value,
+    permission.id,
+  ]);
+}
+
+function discardPermissionChanges() {
+  draftPermissionIds.value = [
+    ...savedPermissionIds.value,
+  ];
+
+  savePermissionsError.value = "";
+  savePermissionsMessage.value = "";
+}
+
 async function selectRole(role) {
+  if (
+    selectedRole.value?.id === role.id ||
+    savingPermissions.value
+  ) {
+    return;
+  }
+
   selectedRole.value = role;
+  savePermissionsError.value = "";
+  savePermissionsMessage.value = "";
   await loadAssignedPermissions();
 }
 
@@ -302,6 +500,10 @@ async function loadAssignedPermissions() {
 
   assignedPermissions.value = [];
   assignedPermissionsError.value = "";
+  savedPermissionIds.value = [];
+  draftPermissionIds.value = [];
+  savePermissionsError.value = "";
+  savePermissionsMessage.value = "";
 
   if (!role) {
     assignedPermissionsLoading.value = false;
@@ -321,6 +523,16 @@ async function loadAssignedPermissions() {
     }
 
     assignedPermissions.value = loadedPermissions;
+    savedPermissionIds.value = normalizePermissionIds(
+      loadedPermissions
+        .filter((permission) => permission.isActive)
+        .map((permission) => permission.id),
+    );
+
+    draftPermissionIds.value = [
+      ...savedPermissionIds.value,
+    ];
+
   } catch (error) {
     if (
       requestId !== assignedPermissionsRequestId ||
@@ -337,6 +549,64 @@ async function loadAssignedPermissions() {
     if (requestId === assignedPermissionsRequestId) {
       assignedPermissionsLoading.value = false;
     }
+  }
+}
+
+async function savePermissionChanges() {
+  const role = selectedRole.value;
+
+  if (
+    !role ||
+    !canAssignPermissions.value ||
+    !hasPermissionChanges.value ||
+    savingPermissions.value
+  ) {
+    return;
+  }
+
+  savingPermissions.value = true;
+  savePermissionsError.value = "";
+  savePermissionsMessage.value = "";
+
+  try {
+    await replaceRolePermissions(
+      role.id,
+      draftPermissionIds.value,
+    );
+
+    await loadAssignedPermissions();
+
+    try {
+      await authorizationStore.loadContext({
+        force: true,
+      });
+    } catch {
+      authorizationStore.clear();
+    }
+
+    savePermissionsMessage.value =
+      "Los permisos del rol fueron actualizados.";
+  } catch (error) {
+    const backendMessage =
+      typeof error?.message === "string"
+        ? error.message
+        : "";
+
+    const messages = {
+      ADMIN_ESSENTIAL_PERMISSIONS_REQUIRED:
+        "El rol administrador debe conservar todos los permisos esenciales.",
+      PERMISSIONS_NOT_FOUND_OR_INACTIVE:
+        "Uno o más permisos no existen o están inactivos.",
+      ROLE_NOT_FOUND:
+        "El rol seleccionado ya no existe.",
+    };
+
+    savePermissionsError.value =
+      messages[backendMessage] ||
+      backendMessage ||
+      "No fue posible guardar los permisos del rol.";
+  } finally {
+    savingPermissions.value = false;
   }
 }
 
@@ -655,6 +925,128 @@ onMounted(loadCatalogs);
   font-weight: var(--toro-font-weight-medium);
 }
 
+.assigned-permissions-warning {
+  padding: var(--toro-space-3);
+  border-left: 3px solid var(--toro-color-warning);
+  color: var(--toro-color-warning);
+  background: #fffaeb;
+}
+
+.assigned-permissions-success {
+  border-color: #a6dfc3;
+  color: var(--toro-color-success);
+  background: #ecfdf3;
+}
+
+.permission-editor {
+  display: grid;
+  gap: var(--toro-space-3);
+}
+
+.permission-editor-module {
+  overflow: hidden;
+  border: 1px solid var(--toro-color-border);
+  border-radius: var(--toro-radius-md);
+}
+
+.permission-editor-module > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--toro-space-2) var(--toro-space-3);
+  background: var(--toro-color-surface-soft);
+}
+
+.permission-editor-module h5 {
+  margin: 0;
+  color: var(--toro-color-primary-strong);
+  text-transform: capitalize;
+}
+
+.permission-option {
+  display: flex;
+  min-height: var(--toro-table-row-height);
+  align-items: center;
+  gap: var(--toro-space-3);
+  padding: var(--toro-space-2) var(--toro-space-3);
+  border-top: 1px solid var(--toro-color-border);
+  cursor: pointer;
+}
+
+.permission-option-selected {
+  background: #edf6fa;
+}
+
+.permission-option-disabled {
+  cursor: not-allowed;
+  opacity: 0.68;
+}
+
+.permission-option input {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  accent-color: var(--toro-color-primary);
+}
+
+.permission-option-copy {
+  display: grid;
+  min-width: 0;
+  flex: 1;
+  gap: 2px;
+}
+
+.permission-option-copy strong {
+  overflow-wrap: anywhere;
+}
+
+.permission-option-copy small {
+  color: var(--toro-color-text-muted);
+}
+
+.permission-editor-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--toro-space-3);
+  padding-top: var(--toro-space-3);
+  border-top: 1px solid var(--toro-color-border);
+}
+
+.permission-editor-actions > span {
+  color: var(--toro-color-text-muted);
+}
+
+.permission-editor-actions > div {
+  display: flex;
+  gap: var(--toro-space-2);
+}
+
+.permission-action {
+  min-height: var(--toro-control-height);
+  padding: 0 var(--toro-space-4);
+  border-radius: var(--toro-radius-md);
+  cursor: pointer;
+  font-weight: var(--toro-font-weight-bold);
+}
+
+.permission-action:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.permission-action-secondary {
+  border: 1px solid var(--toro-color-border-strong);
+  color: var(--toro-color-primary-strong);
+  background: var(--toro-color-surface);
+}
+
+.permission-action-primary {
+  border: 1px solid var(--toro-color-primary);
+  color: var(--toro-color-text-inverse);
+  background: var(--toro-color-primary);
+}
+
 .security-note {
   margin: var(--toro-space-4) 0 0;
   padding: var(--toro-space-3);
@@ -842,6 +1234,20 @@ onMounted(loadCatalogs);
 
   .role-item {
     align-items: flex-start;
+  }
+
+  .permission-editor-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .permission-editor-actions > div {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .permission-action {
+    width: 100%;
   }
 }
 </style>
