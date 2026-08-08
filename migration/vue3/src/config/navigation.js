@@ -242,7 +242,11 @@
     key: "security",
     label: "Seguridad",
     abbreviation: "SE",
-    permissions: ["security.roles.read", "security.permissions.read"],
+    permissions: [
+      "security.roles.read",
+      "security.permissions.read",
+      "security.users.read",
+    ],
     children: [
       {
         key: "security-roles",
@@ -250,6 +254,14 @@
         abbreviation: "RP",
         routeName: "security-roles",
         permissions: ["security.roles.read", "security.permissions.read"],
+        migrated: true,
+      },
+      {
+        key: "security-users",
+        label: "Usuarios y autorización",
+        abbreviation: "UA",
+        routeName: "security-users",
+        permissions: ["security.users.read"],
         migrated: true,
       },
     ],

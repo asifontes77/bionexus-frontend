@@ -6,6 +6,7 @@ import LoginView from "@/views/LoginView.vue";
 import MigrationHomeView from "@/views/MigrationHomeView.vue";
 import NotFoundView from "@/views/NotFoundView.vue";
 import RolesPermissionsView from "@/views/RolesPermissionsView.vue";
+import UserAuthorizationView from "@/views/UserAuthorizationView.vue";
 
 const routes = [
   {
@@ -47,6 +48,16 @@ const routes = [
           requiresAuth: true,
           permissions: ["security.roles.read", "security.permissions.read"],
           title: "Roles y permisos",
+        },
+      },
+      {
+        path: "security/users",
+        name: "security-users",
+        component: UserAuthorizationView,
+        meta: {
+          requiresAuth: true,
+          permissions: ["security.users.read"],
+          title: "Usuarios y autorización",
         },
       },
     ],
