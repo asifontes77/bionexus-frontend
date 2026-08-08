@@ -6,6 +6,10 @@ import { useAuthorizationStore } from './stores/authorization'
 import { useSessionStore } from './stores/session'
 import './styles/theme.css'
 import './styles/base.css'
+import './styles/layout.css'
+import './styles/components.css'
+import './styles/pages.css'
+import './styles/utilities.css'
 
 const app = createApp(App)
 const pinia = createPinia()
