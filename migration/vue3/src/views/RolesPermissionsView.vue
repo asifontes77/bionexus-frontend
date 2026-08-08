@@ -195,7 +195,7 @@
 
               <span
                 class="status-badge toro-badge"
-                :class="{ 'status-badge-inactive': !role.isActive }"
+                :class="{ 'toro-badge-warning': !role.isActive }"
               >
                 {{ role.isActive ? "Activo" : "Inactivo" }}
               </span>

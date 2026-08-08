@@ -113,7 +113,7 @@
                             </span>
 
                             <span class="parasitic-badge toro-badge" :class="{
-                                'parasitic-badge-annulled':
+                                'toro-badge-warning':
                                     parasiticform.annulled,
                             }">
                                 {{ parasiticform.annulled ? "Oculta" : "Visible" }}

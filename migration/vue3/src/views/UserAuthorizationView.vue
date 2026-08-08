@@ -94,7 +94,7 @@
                                 <small>{{ user.position || "Sin cargo registrado" }}</small>
                             </span>
 
-                            <span class="user-status toro-badge" :class="{ 'user-status-hidden': user.hidden }">
+                            <span class="user-status toro-badge" :class="{ 'toro-badge-warning': user.hidden }">
                                 {{ user.hidden ? "Oculto" : "Visible" }}
                             </span>
                         </button>
@@ -213,7 +213,7 @@
                                     </span>
 
                                     <span class="authorization-badge toro-badge" :class="{
-                                        'authorization-badge-inactive': !role.isActive,
+                                        'toro-badge-warning': !role.isActive,
                                     }">
                                         {{ role.isActive ? "Activo" : "Inactivo" }}
                                     </span>
@@ -280,7 +280,7 @@
                                     </span>
 
                                     <span class="authorization-badge toro-badge" :class="{
-                                        'authorization-badge-inactive': !permission.isActive,
+                                        'toro-badge-warning': !permission.isActive,
                                     }">
                                         {{ permission.isActive ? "Activo" : "Inactivo" }}
                                     </span>
