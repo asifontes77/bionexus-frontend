@@ -7,6 +7,7 @@ import MigrationHomeView from "@/views/MigrationHomeView.vue";
 import NotFoundView from "@/views/NotFoundView.vue";
 import RolesPermissionsView from "@/views/RolesPermissionsView.vue";
 import UserAuthorizationView from "@/views/UserAuthorizationView.vue";
+import ParasiticformsView from "@/views/ParasiticformsView.vue";
 
 const routes = [
   {
@@ -58,6 +59,16 @@ const routes = [
           requiresAuth: true,
           permissions: ["security.users.read"],
           title: "Usuarios y autorización",
+        },
+      },
+      {
+        path: "configuration/parasiticforms",
+        name: "configuration-parasiticforms",
+        component: ParasiticformsView,
+        meta: {
+          requiresAuth: true,
+          permissions: ["parasiticforms.read"],
+          title: "Formas parasitarias",
         },
       },
     ],

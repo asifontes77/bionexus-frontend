@@ -135,7 +135,6 @@
     key: "settings",
     label: "Configuracion",
     abbreviation: "CO",
-    roles: ["admin"],
     children: [
       {
         key: "exams-list",
@@ -186,10 +185,9 @@
         key: "parasitic",
         label: "Formas parasitarias",
         abbreviation: "FP",
-        legacyRouteName: "Parasitic",
-        legacyPath: "/setting/parasitic",
-        roles: ["admin"],
-        migrated: false,
+        routeName: "configuration-parasiticforms",
+        permissions: ["parasiticforms.read"],
+        migrated: true,
       },
       {
         key: "work-groups",
