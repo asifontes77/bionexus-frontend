@@ -13,7 +13,7 @@
 .migration-card {
   width: min(720px, 100%);
   padding: 32px;
-  border: 1px solid #dce4ef;
+  border: 1px solid var(--toro-color-card-border);
   border-radius: 16px;
   background: #ffffff;
   box-shadow: 0 16px 48px rgba(30, 61, 98, 0.12);
@@ -45,7 +45,7 @@
 .login-card {
   width: min(440px, 100%);
   padding: 32px;
-  border: 1px solid #dce4ef;
+  border: 1px solid var(--toro-color-card-border);
   border-radius: 16px;
   background: #ffffff;
   box-shadow: 0 16px 48px rgba(30, 61, 98, 0.14);
@@ -115,7 +115,7 @@
 
 .login-success {
   margin: 8px 0 0;
-  color: #067647;
+  color: var(--toro-color-success-strong);
   font-weight: 700;
 }
 
@@ -201,14 +201,14 @@
   min-width: 0;
   gap: 5px;
   padding: 20px;
-  border: 1px solid #dfe7f1;
+  border: 1px solid var(--toro-color-border-subtle);
   border-radius: 14px;
   background: #ffffff;
-  box-shadow: 0 8px 22px rgba(34, 59, 87, 0.05);
+  box-shadow: 0 8px 22px var(--toro-shadow-panel-soft);
 }
 
 .dashboard-metric-label {
-  color: #718096;
+  color: var(--toro-color-text-muted-strong);
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.08em;
@@ -223,7 +223,7 @@
 }
 
 .dashboard-metric-card span:last-child {
-  color: #718096;
+  color: var(--toro-color-text-muted-strong);
   font-size: 12px;
 }
 
@@ -235,10 +235,10 @@
 
 .dashboard-panel {
   padding: 24px;
-  border: 1px solid #dfe7f1;
+  border: 1px solid var(--toro-color-border-subtle);
   border-radius: 16px;
   background: #ffffff;
-  box-shadow: 0 8px 22px rgba(34, 59, 87, 0.05);
+  box-shadow: 0 8px 22px var(--toro-shadow-panel-soft);
 }
 
 .dashboard-panel-heading {
@@ -260,7 +260,7 @@
 }
 
 .dashboard-panel-eyebrow {
-  color: #718096;
+  color: var(--toro-color-text-muted-strong);
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.1em;
@@ -270,7 +270,7 @@
 .dashboard-panel-badge {
   padding: 6px 9px;
   border-radius: 999px;
-  color: #067647;
+  color: var(--toro-color-success-strong);
   background: var(--toro-color-success-soft);
   font-size: 10px;
   font-weight: 800;
@@ -304,7 +304,7 @@
   flex: 0 0 28px;
   place-items: center;
   border-radius: 7px;
-  color: #067647;
+  color: var(--toro-color-success-strong);
   background: var(--toro-color-success-soft);
   font-size: 9px;
   font-weight: 800;

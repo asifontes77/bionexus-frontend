@@ -78,4 +78,17 @@
   --toro-control-height: 36px;
   --toro-table-row-height: 38px;
   --toro-panel-padding: 16px;
+  /* Global layout and page semantic tokens */
+  --toro-color-text-muted-strong: #718096;
+  --toro-color-sidebar-interaction: rgba(255, 255, 255, 0.08);
+  --toro-color-success-strong: #067647;
+  --toro-color-border-subtle: #dfe7f1;
+  --toro-color-sidebar-child-disabled: #7189a2;
+  --toro-color-sidebar-link-disabled: #8198b0;
+  --toro-color-sidebar-meta: #a9bfd7;
+  --toro-color-card-border: #dce4ef;
+  --toro-color-sidebar-text: #dce8f5;
+  --toro-shadow-panel-soft: rgba(34, 59, 87, 0.05);
+  --toro-color-sidebar-divider: rgba(255, 255, 255, 0.1);
+  --toro-color-sidebar-scrollbar: rgba(173, 197, 222, 0.34);
 }
