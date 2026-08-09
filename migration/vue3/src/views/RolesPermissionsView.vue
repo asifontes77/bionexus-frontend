@@ -2,10 +2,10 @@
   <section class="security-page toro-page" aria-labelledby="security-title">
     <header class="security-header toro-page-header">
       <div>
-        <p class="security-eyebrow toro-page-eyebrow">AdministraciÃ³n de seguridad</p>
+        <p class="security-eyebrow toro-page-eyebrow">Administración de seguridad</p>
         <h2 id="security-title">Roles y permisos</h2>
         <p>
-          Consulta los roles configurados y el catÃ¡logo de permisos
+          Consulta los roles configurados y el catálogo de permisos
           administrado por el backend.
         </p>
       </div>
@@ -43,7 +43,7 @@
 
       <form class="role-form" @submit.prevent="createRole">
         <label>
-          <span>CÃ³digo</span>
+          <span>Código</span>
           <input
             v-model.trim="createRoleForm.code"
             type="text"
@@ -55,8 +55,8 @@
           />
 
           <small>
-            Debe comenzar con una letra. Puede contener letras minÃºsculas,
-            nÃºmeros, puntos, guiones y guiones bajos.
+            Debe comenzar con una letra. Puede contener letras minúsculas,
+            números, puntos, guiones y guiones bajos.
           </small>
         </label>
 
@@ -74,12 +74,12 @@
         </label>
 
         <label class="role-form-wide">
-          <span>DescripciÃ³n</span>
+          <span>Descripción</span>
           <textarea
             v-model="createRoleForm.description"
             maxlength="250"
             rows="3"
-            placeholder="DescripciÃ³n opcional"
+            placeholder="Descripción opcional"
             :disabled="creatingRole"
           ></textarea>
 
@@ -126,7 +126,7 @@
     </article>
 
     <div v-if="errorMessage" class="security-message security-message-error toro-message toro-message-error" role="alert">
-      <strong>No fue posible cargar la informaciÃ³n.</strong>
+      <strong>No fue posible cargar la información.</strong>
       <span>{{ errorMessage }}</span>
     </div>
 
@@ -149,9 +149,9 @@
         </article>
 
         <article>
-          <span>MÃ³dulos</span>
+          <span>Módulos</span>
           <strong>{{ permissionModules.length }}</strong>
-          <small>Ãreas con permisos</small>
+          <small>Áreas con permisos</small>
         </article>
 
         <article>
@@ -165,7 +165,7 @@
         <article class="security-panel toro-panel">
           <div class="security-panel-heading toro-panel-heading">
             <div>
-              <p>CatÃ¡logo</p>
+              <p>Catálogo</p>
               <h3>Roles</h3>
             </div>
 
@@ -190,7 +190,7 @@
 
               <span class="role-content">
                 <strong>{{ role.name }}</strong>
-                <small>{{ role.description || "Sin descripciÃ³n" }}</small>
+                <small>{{ role.description || "Sin descripción" }}</small>
               </span>
 
               <span
@@ -228,7 +228,7 @@
                 </div>
 
                 <div>
-                  <dt>CÃ³digo inmutable</dt>
+                  <dt>Código inmutable</dt>
                   <dd>{{ selectedRole.code }}</dd>
                 </div>
 
@@ -260,7 +260,7 @@
               </label>
 
               <label>
-                <span>DescripciÃ³n</span>
+                <span>Descripción</span>
                 <textarea
                   v-model="updateRoleForm.description"
                   maxlength="250"
@@ -347,7 +347,7 @@
               </div>
 
               <div>
-                <dt>CÃ³digo</dt>
+                <dt>Código</dt>
                 <dd>{{ selectedRole.code }}</dd>
               </div>
 
@@ -357,8 +357,8 @@
               </div>
 
               <div>
-                <dt>DescripciÃ³n</dt>
-                <dd>{{ selectedRole.description || "Sin descripciÃ³n" }}</dd>
+                <dt>Descripción</dt>
+                <dd>{{ selectedRole.description || "Sin descripción" }}</dd>
               </div>
 
               <div>
@@ -414,7 +414,7 @@
               >
                 Este rol conserva permisos inactivos para fines de consulta.
                 Los permisos inactivos no pueden seleccionarse nuevamente y
-                serÃ¡n retirados en el prÃ³ximo guardado.
+                serán retirados en el próximo guardado.
               </div>
 
               <div
@@ -504,7 +504,7 @@
                   {{
                     hasPermissionChanges
                       ? "Existen cambios pendientes."
-                      : "Las asignaciones estÃ¡n sincronizadas."
+                      : "Las asignaciones están sincronizadas."
                   }}
                 </span>
 
@@ -538,8 +538,8 @@
           </section>
 
           <p class="security-note">
-            La creaciÃ³n, ediciÃ³n y asignaciÃ³n de permisos se habilitan de forma
-            independiente segÃºn los permisos efectivos de la cuenta actual.
+            La creación, edición y asignación de permisos se habilitan de forma
+            independiente según los permisos efectivos de la cuenta actual.
           </p>
         </article>
       </div>
@@ -547,7 +547,7 @@
       <article class="security-panel">
         <div class="security-panel-heading">
           <div>
-            <p>CatÃ¡logo global</p>
+            <p>Catálogo global</p>
             <h3>Permisos</h3>
           </div>
 
@@ -746,27 +746,27 @@ function getRoleErrorMessage(error, fallbackMessage) {
 
   const messages = {
     ROLE_CODE_ALREADY_EXISTS:
-      "Ya existe un rol con el cÃ³digo indicado.",
+      "Ya existe un rol con el código indicado.",
     ROLE_CODE_REQUIRED:
-      "El cÃ³digo del rol es obligatorio.",
+      "El código del rol es obligatorio.",
     ROLE_CODE_INVALID:
-      "El cÃ³digo debe comenzar con una letra y solo puede contener letras minÃºsculas, nÃºmeros, puntos, guiones y guiones bajos.",
+      "El código debe comenzar con una letra y solo puede contener letras minúsculas, números, puntos, guiones y guiones bajos.",
     ROLE_CODE_TOO_LONG:
-      "El cÃ³digo no puede superar los 60 caracteres.",
+      "El código no puede superar los 60 caracteres.",
     ROLE_NAME_REQUIRED:
       "El nombre del rol es obligatorio.",
     ROLE_NAME_TOO_LONG:
       "El nombre no puede superar los 100 caracteres.",
     ROLE_DESCRIPTION_TOO_LONG:
-      "La descripciÃ³n no puede superar los 250 caracteres.",
+      "La descripción no puede superar los 250 caracteres.",
     ROLE_ACTIVE_STATE_INVALID:
-      "El estado activo del rol no es vÃ¡lido.",
+      "El estado activo del rol no es válido.",
     ROLE_NOT_FOUND:
       "El rol seleccionado ya no existe.",
     ROLE_CODE_IMMUTABLE:
-      "El cÃ³digo del rol no puede modificarse.",
+      "El código del rol no puede modificarse.",
     ROLE_SYSTEM_FLAG_IMMUTABLE:
-      "La condiciÃ³n de rol de sistema no puede modificarse.",
+      "La condición de rol de sistema no puede modificarse.",
     ADMIN_ROLE_MUST_REMAIN_ACTIVE:
       "El rol administrador debe permanecer activo.",
   };
@@ -976,7 +976,7 @@ async function savePermissionChanges() {
       ADMIN_ESSENTIAL_PERMISSIONS_REQUIRED:
         "El rol administrador debe conservar todos los permisos esenciales.",
       PERMISSIONS_NOT_FOUND_OR_INACTIVE:
-        "Uno o mÃ¡s permisos no existen o estÃ¡n inactivos.",
+        "Uno o más permisos no existen o están inactivos.",
       ROLE_NOT_FOUND:
         "El rol seleccionado ya no existe.",
     };
@@ -1129,7 +1129,7 @@ async function loadCatalogs(options = {}) {
     errorMessage.value =
       typeof error?.message === "string"
         ? error.message
-        : "OcurriÃ³ un error inesperado.";
+        : "Ocurrió un error inesperado.";
 
     if (!loaded.value) {
       roles.value = [];
