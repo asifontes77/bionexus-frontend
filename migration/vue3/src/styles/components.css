@@ -206,11 +206,7 @@
   font-weight: var(--toro-font-weight-bold);
 }
 
-.toro-badge-warning,
-.status-badge-inactive,
-.user-status-hidden,
-.authorization-badge-inactive,
-.parasitic-badge-annulled {
+.toro-badge-warning {
   color: var(--toro-color-warning);
   background: var(--toro-color-warning-soft);
 }
@@ -218,8 +214,6 @@
 /* Notes and warnings */
 
 .toro-note,
-.security-note,
-.user-security-note,
 .parasitic-note {
   margin: var(--toro-space-4) 0 0;
   padding: var(--toro-space-3);
@@ -229,7 +223,6 @@
 }
 
 .toro-warning,
-.assigned-permissions-warning,
 .role-assignment-warning,
 .override-warning,
 .parasitic-permission-note {
@@ -303,7 +296,6 @@
 .toro-message-error,
 .security-message-error,
 .role-form-message-error,
-.assigned-permissions-error,
 .user-security-message-error,
 .role-assignment-error,
 .override-message-error,
@@ -315,7 +307,6 @@
 
 .toro-message-success,
 .role-form-message-success,
-.assigned-permissions-success,
 .role-assignment-success,
 .override-message-success,
 .parasitic-message-success {
@@ -328,7 +319,6 @@
 
 .toro-form,
 .role-metadata-form,
-.permission-modules,
 .override-modules,
 .parasitic-form {
   display: grid;
@@ -394,7 +384,6 @@
 /* Form actions */
 
 .toro-form-actions,
-.permission-editor-actions,
 .role-assignment-actions,
 .override-actions {
   display: flex;
@@ -406,7 +395,6 @@
 }
 
 .toro-form-actions-buttons,
-.permission-editor-actions > div,
 .role-assignment-actions > div,
 .override-actions > div {
   display: flex;
@@ -416,7 +404,6 @@
 /* Selectable options */
 
 .toro-option-copy,
-.permission-option-copy,
 .user-list-copy,
 .role-assignment-copy,
 .parasitic-list-copy {
@@ -438,16 +425,11 @@
   white-space: nowrap;
 }
 
-.toro-option-selected,
-.permission-option-selected,
-.role-assignment-option-selected {
+.toro-option-selected {
   background: var(--toro-color-selection-soft);
 }
 
-.toro-option-disabled,
-.permission-option-disabled,
-.role-assignment-option-disabled,
-.parasitic-state-option-disabled {
+.toro-option-disabled {
   cursor: not-allowed;
   opacity: 0.68;
 }
@@ -455,7 +437,6 @@
 /* Administrative lists */
 
 .toro-list,
-.assigned-permissions-list,
 .authorization-list {
   display: grid;
   gap: var(--toro-space-2);
@@ -465,7 +446,6 @@
 }
 
 .toro-list-item,
-.assigned-permissions-list li,
 .authorization-list li {
   display: flex;
   min-height: var(--toro-table-row-height);
@@ -479,8 +459,6 @@
 }
 
 .toro-list-copy-compact,
-.assigned-permissions-list li > span:first-child,
-.permission-item > div,
 .authorization-list li > span:first-child,
 .override-option-copy {
   display: grid;
@@ -512,8 +490,6 @@
 /* Internal sections */
 
 .toro-section,
-.permission-editor-module,
-.permission-modules section,
 .override-module {
   overflow: hidden;
   border: 1px solid var(--toro-color-border);
@@ -521,7 +497,6 @@
 }
 
 .toro-section-heading,
-.permission-editor-module > header,
 .override-module > header {
   display: flex;
   align-items: center;
@@ -531,8 +506,6 @@
 }
 
 .toro-section-title,
-.permission-editor-module h5,
-.permission-modules h4,
 .override-module h5 {
   margin: 0;
   color: var(--toro-color-primary-strong);
