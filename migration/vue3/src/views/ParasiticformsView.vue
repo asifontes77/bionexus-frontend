@@ -95,7 +95,7 @@
 
                     <div v-else class="parasitic-list">
                         <button v-for="parasiticform in filteredParasiticforms" :key="parasiticform.id" type="button"
-                            class="parasitic-list-item" :class="{
+                            class="parasitic-list-item toro-list-item" :class="{
                                 'parasitic-list-item-selected':
                                     !creating &&
                                     selectedParasiticform?.id === parasiticform.id,
@@ -792,10 +792,6 @@ onMounted(loadParasiticforms);
 }
 
 @media (max-width: 620px) {
-    .parasitic-header {
-        align-items: flex-start;
-        flex-direction: column;
-    }
 
     .parasitic-header-actions {
         display: grid;
@@ -803,22 +799,9 @@ onMounted(loadParasiticforms);
         grid-template-columns: 1fr;
     }
 
-    .parasitic-action {
-        width: 100%;
-    }
-
     .parasitic-metrics,
     .parasitic-detail {
         grid-template-columns: 1fr;
-    }
-
-    .parasitic-list-item {
-        align-items: flex-start;
-    }
-
-    .parasitic-form-actions {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
     }
 }
 </style>

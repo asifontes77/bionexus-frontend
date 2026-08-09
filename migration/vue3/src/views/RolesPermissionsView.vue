@@ -104,7 +104,7 @@
           {{ createRoleMessage }}
         </div>
 
-        <div class="role-form-actions role-form-wide">
+        <div class="role-form-actions role-form-wide toro-form-actions">
           <button
             type="button"
             class="permission-action permission-action-secondary toro-action toro-action-secondary"
@@ -181,7 +181,7 @@
               v-for="role in roles"
               :key="role.id"
               type="button"
-              class="role-item"
+              class="role-item toro-list-item"
               :class="{ 'role-item-selected': selectedRole?.id === role.id }"
               :disabled="savingPermissions || creatingRole || editingRole"
               @click="selectRole(role)"
@@ -317,7 +317,7 @@
                 {{ updateRoleMessage }}
               </div>
 
-              <div class="role-form-actions">
+              <div class="role-form-actions toro-form-actions">
                 <button
                   type="button"
                   class="permission-action permission-action-secondary toro-action toro-action-secondary"
@@ -1501,15 +1501,6 @@ onMounted(loadCatalogs);
     grid-template-columns: 1fr 1fr;
   }
 
-  .role-form-actions .permission-action {
-    width: 100%;
-  }
-
-  .security-header {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
   .security-metrics,
   .role-detail {
     grid-template-columns: 1fr;
@@ -1517,10 +1508,6 @@ onMounted(loadCatalogs);
 
   .security-header button {
     width: 100%;
-  }
-
-  .role-item {
-    align-items: flex-start;
   }
 
   .permission-editor-actions {
@@ -1531,10 +1518,6 @@ onMounted(loadCatalogs);
   .permission-editor-actions > div {
     display: grid;
     grid-template-columns: 1fr 1fr;
-  }
-
-  .permission-action {
-    width: 100%;
   }
 }
 </style>

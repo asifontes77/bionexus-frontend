@@ -74,7 +74,7 @@
                     </div>
 
                     <div v-else class="user-list">
-                        <button v-for="user in filteredUsers" :key="user.id" type="button" class="user-list-item"
+                        <button v-for="user in filteredUsers" :key="user.id" type="button" class="user-list-item toro-list-item"
                             :class="{
                                 'user-list-item-selected':
                                     selectedUser?.id === user.id,
@@ -194,7 +194,7 @@
                             </div>
 
                             <div v-else class="role-assignment-list">
-                                <label v-for="role in roles" :key="role.id" class="role-assignment-option" :class="{
+                                <label v-for="role in roles" :key="role.id" class="role-assignment-option toro-option" :class="{
                                     'toro-option-selected':
                                         isRoleSelected(role.id),
                                     'toro-option-disabled':
@@ -1429,10 +1429,6 @@ onMounted(loadUsers);
 }
 
 @media (max-width: 620px) {
-    .user-security-header {
-        align-items: flex-start;
-        flex-direction: column;
-    }
 
     .user-security-header button {
         width: 100%;
@@ -1445,26 +1441,9 @@ onMounted(loadUsers);
         grid-template-columns: 1fr;
     }
 
-    .user-list-item {
-        align-items: flex-start;
-    }
-
-    .role-assignment-option {
-        align-items: flex-start;
-    }
-
-    .role-assignment-actions {
-        align-items: stretch;
-        flex-direction: column;
-    }
-
     .role-assignment-actions>div {
         display: grid;
         grid-template-columns: 1fr 1fr;
-    }
-
-    .role-assignment-button {
-        width: 100%;
     }
 
     .override-option {
@@ -1472,18 +1451,9 @@ onMounted(loadUsers);
         align-items: stretch;
     }
 
-    .override-actions {
-        align-items: stretch;
-        flex-direction: column;
-    }
-
     .override-actions>div {
         display: grid;
         grid-template-columns: 1fr 1fr;
-    }
-
-    .override-button {
-        width: 100%;
     }
 }
 </style>
