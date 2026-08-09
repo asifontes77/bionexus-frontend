@@ -109,7 +109,7 @@
 
 .login-message {
   margin: 8px 0 0;
-  color: #b42318;
+  color: var(--toro-color-danger);
   font-weight: 700;
 }
 
@@ -271,14 +271,14 @@
   padding: 6px 9px;
   border-radius: 999px;
   color: #067647;
-  background: #ecfdf3;
+  background: var(--toro-color-success-soft);
   font-size: 10px;
   font-weight: 800;
 }
 
 .dashboard-panel-badge-pending {
-  color: #9a6700;
-  background: #fffaeb;
+  color: var(--toro-color-warning);
+  background: var(--toro-color-warning-soft);
 }
 
 .dashboard-checklist {
@@ -305,7 +305,7 @@
   place-items: center;
   border-radius: 7px;
   color: #067647;
-  background: #ecfdf3;
+  background: var(--toro-color-success-soft);
   font-size: 9px;
   font-weight: 800;
 }

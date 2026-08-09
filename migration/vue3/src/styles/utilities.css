@@ -1,3 +1,11 @@
-/* TORO utilities
- * Small deliberate utility classes. Avoid framework-style proliferation.
+/*
+ * TORO utilities
+ *
+ * Reserved for small, single-purpose utility classes that are reused
+ * across unrelated views and cannot be expressed by a component primitive.
+ *
+ * Keep this file empty until a repeated use case is demonstrated.
+ * Page structure belongs in layout.css or pages.css.
+ * Reusable visual components belong in components.css.
+ * Design tokens belong in theme.css.
  */
