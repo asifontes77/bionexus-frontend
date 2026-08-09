@@ -5,9 +5,7 @@
 /* Administrative pages */
 
 .toro-page,
-.security-page,
-.user-security-page,
-.parasitic-page {
+.security-page {
   display: grid;
   gap: var(--toro-space-4);
 }
@@ -147,8 +145,7 @@
 
 .toro-empty-state,
 .security-empty,
-.user-security-empty,
-.parasitic-empty {
+.user-security-empty {
   padding: var(--toro-space-6);
   border: 1px dashed var(--toro-color-border-strong);
   border-radius: var(--toro-radius-md);
@@ -170,21 +167,13 @@
   font-weight: var(--toro-font-weight-bold);
 }
 
-.toro-action-primary,
-.permission-action-primary,
-.role-assignment-button-primary,
-.override-button-primary,
-.parasitic-action-primary {
+.toro-action-primary {
   border: 1px solid var(--toro-color-primary);
   color: var(--toro-color-text-inverse);
   background: var(--toro-color-primary);
 }
 
-.toro-action-secondary,
-.permission-action-secondary,
-.role-assignment-button-secondary,
-.override-button-secondary,
-.parasitic-action-secondary {
+.toro-action-secondary {
   border: 1px solid var(--toro-color-border-strong);
   color: var(--toro-color-primary-strong);
   background: var(--toro-color-surface);
@@ -193,10 +182,7 @@
 /* Status badges */
 
 .toro-badge,
-.status-badge,
-.user-status,
-.authorization-badge,
-.parasitic-badge {
+.authorization-badge {
   flex: 0 0 auto;
   padding: 5px 8px;
   border-radius: 999px;
@@ -213,8 +199,7 @@
 
 /* Notes and warnings */
 
-.toro-note,
-.parasitic-note {
+.toro-note {
   margin: var(--toro-space-4) 0 0;
   padding: var(--toro-space-3);
   border-left: 3px solid var(--toro-color-accent);
@@ -222,10 +207,7 @@
   background: var(--toro-color-accent-soft);
 }
 
-.toro-warning,
-.role-assignment-warning,
-.override-warning,
-.parasitic-permission-note {
+.toro-warning {
   padding: var(--toro-space-3);
   border-left: 3px solid var(--toro-color-warning);
   color: var(--toro-color-warning);
@@ -286,7 +268,6 @@
 
 .toro-inline-message,
 .role-form-message,
-.role-assignment-message,
 .override-message {
   padding: var(--toro-space-3);
   border: 1px solid var(--toro-color-border);
@@ -294,22 +275,13 @@
 }
 
 .toro-message-error,
-.security-message-error,
-.role-form-message-error,
-.user-security-message-error,
-.role-assignment-error,
-.override-message-error,
-.parasitic-message-error {
+.security-message-error {
   border-color: var(--toro-color-danger-border);
   color: var(--toro-color-danger);
   background: var(--toro-color-danger-soft);
 }
 
-.toro-message-success,
-.role-form-message-success,
-.role-assignment-success,
-.override-message-success,
-.parasitic-message-success {
+.toro-message-success {
   border-color: var(--toro-color-success-border);
   color: var(--toro-color-success);
   background: var(--toro-color-success-soft);
@@ -319,7 +291,6 @@
 
 .toro-form,
 .role-metadata-form,
-.override-modules,
 .parasitic-form {
   display: grid;
   gap: var(--toro-space-3);
@@ -405,7 +376,6 @@
 
 .toro-option-copy,
 .user-list-copy,
-.role-assignment-copy,
 .parasitic-list-copy {
   display: grid;
   min-width: 0;
