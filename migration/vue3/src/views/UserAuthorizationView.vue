@@ -193,7 +193,7 @@
                                 No existen roles disponibles.
                             </div>
 
-                            <div v-else class="role-assignment-list">
+                            <div v-else class="role-assignment-list toro-field-group">
                                 <label v-for="role in roles" :key="role.id" class="role-assignment-option toro-option" :class="{
                                     'toro-option-selected':
                                         isRoleSelected(role.id),
@@ -334,7 +334,7 @@
                                                 !permission.isActive ||
                                                 !canAssignPermissionOverrides,
                                         }">
-                                        <span class="override-option-copy">
+                                        <span class="override-option-copy toro-list-copy-compact">
                                             <strong>{{ permission.code }}</strong>
                                             <small>{{ permission.name }}</small>
                                         </span>

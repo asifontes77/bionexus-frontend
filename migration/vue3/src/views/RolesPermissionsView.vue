@@ -176,7 +176,7 @@
             No existen roles disponibles.
           </div>
 
-          <div v-else class="role-list">
+          <div v-else class="role-list toro-field-group">
             <button
               v-for="role in roles"
               :key="role.id"

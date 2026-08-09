@@ -297,10 +297,8 @@
 }
 
 .toro-field-group,
-.role-list,
 .role-form label,
 .role-metadata-form > label,
-.role-assignment-list,
 .parasitic-search,
 .parasitic-form > label:not(.parasitic-state-option) {
   display: grid;
@@ -429,8 +427,7 @@
 }
 
 .toro-list-copy-compact,
-.authorization-list li > span:first-child,
-.override-option-copy {
+.authorization-list li > span:first-child {
   display: grid;
   min-width: 0;
   gap: 2px;
