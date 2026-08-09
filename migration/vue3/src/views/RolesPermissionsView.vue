@@ -38,7 +38,7 @@
           <h3>Crear rol configurable</h3>
         </div>
 
-        <span>security.roles.create</span>
+        <span>Creación de roles</span>
       </div>
 
       <form class="role-form" @submit.prevent="createRole">
@@ -432,11 +432,11 @@
               <div v-else class="permission-editor">
                 <section
                   v-for="module in permissionModules"
-                  :key="module.name"
+                  :key="module.key"
                   class="permission-editor-module"
                 >
                   <header>
-                    <h5>{{ module.name }}</h5>
+                    <h5>{{ module.label }}</h5>
                     <span>{{ module.permissions.length }}</span>
                   </header>
 
@@ -464,8 +464,8 @@
                     />
 
                     <span class="permission-option-copy">
-                      <strong>{{ permission.code }}</strong>
-                      <small>{{ permission.name }}</small>
+                      <strong>{{ permission.displayName }}</strong>
+                      <small>{{ permission.displayDescription }}</small>
                     </span>
 
                     <span
@@ -559,9 +559,9 @@
         </div>
 
         <div v-else class="permission-modules">
-          <section v-for="module in permissionModules" :key="module.name">
+          <section v-for="module in permissionModules" :key="module.key">
             <header>
-              <h4>{{ module.name }}</h4>
+              <h4>{{ module.label }}</h4>
               <span>{{ module.permissions.length }}</span>
             </header>
 
@@ -572,8 +572,8 @@
                 class="permission-item"
               >
                 <div>
-                  <strong>{{ permission.code }}</strong>
-                  <span>{{ permission.name }}</span>
+                  <strong>{{ permission.displayName }}</strong>
+                  <span>{{ permission.displayDescription }}</span>
                 </div>
 
                 <span
@@ -593,6 +593,9 @@
 
 <script setup>
 import { computed, onMounted, ref } from "vue";
+import {
+  groupPermissionsForPresentation,
+} from "@/presentation/permissionPresentation";
 import {
   createAuthorizationRole,
   getAuthorizationPermissions,
@@ -709,26 +712,11 @@ const canSubmitRoleUpdate = computed(
     hasRoleMetadataChanges.value,
 );
 
-const permissionModules = computed(() => {
-  const modules = new Map();
-
-  for (const permission of permissions.value) {
-    const moduleName = permission.module || "general";
-
-    if (!modules.has(moduleName)) {
-      modules.set(moduleName, []);
-    }
-
-    modules.get(moduleName).push(permission);
-  }
-
-  return Array.from(modules.entries())
-    .map(([name, modulePermissions]) => ({
-      name,
-      permissions: modulePermissions,
-    }))
-    .sort((left, right) => left.name.localeCompare(right.name));
-});
+const permissionModules = computed(() =>
+  groupPermissionsForPresentation(
+    permissions.value,
+  ),
+);
 
 function normalizeOptionalText(value) {
   if (typeof value !== "string") {

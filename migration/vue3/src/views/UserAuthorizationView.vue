@@ -275,8 +275,8 @@
                             <ul v-else class="authorization-list toro-list">
                                 <li v-for="permission in authorization.inheritedPermissions" :key="permission.id">
                                     <span>
-                                        <strong>{{ permission.code }}</strong>
-                                        <small>{{ permission.module || "general" }}</small>
+                                        <strong>{{ getPermissionDisplayName(permission) }}</strong>
+                                        <small>{{ getPermissionModuleLabel(permission) }}</small>
                                     </span>
 
                                     <span class="authorization-badge toro-badge" :class="{
@@ -322,9 +322,9 @@
                             </div>
 
                             <div v-else class="override-modules toro-form">
-                                <section v-for="module in permissionModules" :key="module.name" class="override-module toro-section">
+                                <section v-for="module in permissionModules" :key="module.key" class="override-module toro-section">
                                     <header>
-                                        <h5>{{ module.name }}</h5>
+                                        <h5>{{ module.label }}</h5>
                                         <span>{{ module.permissions.length }}</span>
                                     </header>
 
@@ -335,8 +335,8 @@
                                                 !canAssignPermissionOverrides,
                                         }">
                                         <span class="override-option-copy toro-list-copy-compact">
-                                            <strong>{{ permission.code }}</strong>
-                                            <small>{{ permission.name }}</small>
+                                            <strong>{{ permission.displayName }}</strong>
+                                            <small>{{ permission.displayDescription }}</small>
                                         </span>
 
                                         <select :value="getPermissionOverrideEffect(
@@ -465,7 +465,7 @@
                                         <ul v-if="authorization.context.permissions.length > 0">
                                             <li v-for="permission in authorization.context.permissions"
                                                 :key="permission">
-                                                {{ permission }}
+                                                {{ formatPermissionCode(permission) }}
                                             </li>
                                         </ul>
 
@@ -480,7 +480,7 @@
                                         ">
                                             <li v-for="permission in authorization.context
                                                 .deniedPermissions" :key="permission">
-                                                {{ permission }}
+                                                {{ formatPermissionCode(permission) }}
                                             </li>
                                         </ul>
 
@@ -504,6 +504,12 @@
 
 <script setup>
 import { computed, onMounted, ref } from "vue";
+import {
+    formatPermissionCode,
+    getPermissionDisplayName,
+    getPermissionModuleLabel,
+    groupPermissionsForPresentation,
+} from "@/presentation/permissionPresentation";
 import {
     getAuthorizationPermissions,
     getAuthorizationRoles,
@@ -583,29 +589,11 @@ const inactivePermissionOverrides = computed(
         ) ?? [],
 );
 
-const permissionModules = computed(() => {
-    const modules = new Map();
-
-    for (const permission of permissions.value) {
-        const moduleName =
-            permission.module || "general";
-
-        if (!modules.has(moduleName)) {
-            modules.set(moduleName, []);
-        }
-
-        modules.get(moduleName).push(permission);
-    }
-
-    return Array.from(modules.entries())
-        .map(([name, modulePermissions]) => ({
-            name,
-            permissions: modulePermissions,
-        }))
-        .sort((left, right) =>
-            left.name.localeCompare(right.name),
-        );
-});
+const permissionModules = computed(() =>
+    groupPermissionsForPresentation(
+        permissions.value,
+    ),
+);
 
 const filteredUsers = computed(() => {
     const filter = searchText.value.trim().toLowerCase();
