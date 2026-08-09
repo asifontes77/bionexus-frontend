@@ -546,3 +546,35 @@
 }
 
 /* TORO_ADMINISTRATIVE_COMPONENTS_END */
+
+/* TORO_SHARED_RESPONSIVE_START
+ * Shared mobile behavior for reusable TORO visual primitives.
+ */
+
+@media (max-width: 620px) {
+  .toro-page-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .toro-action {
+    width: 100%;
+  }
+
+  .toro-list-item,
+  .toro-option {
+    align-items: flex-start;
+  }
+
+  .toro-form-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .toro-form-actions-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* TORO_SHARED_RESPONSIVE_END */
