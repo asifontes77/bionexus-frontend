@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="toro-status-cell">
     <span
       class="toro-badge toro-status-badge"
@@ -21,9 +21,16 @@ const props = defineProps({
   },
 });
 
-const isActive = computed(
-  () => props.params?.data?.isActive === true,
-);
+const isActive = computed(() => {
+  const value = props.params?.value;
+  if (value === "Activo") return true;
+  if (value === "Inactivo") return false;
+
+  const data = props.params?.data;
+  if (typeof data?.isActive === "boolean") return data.isActive;
+  if (typeof data?.hidden === "boolean") return !data.hidden;
+  return false;
+});
 </script>
 
 <style scoped>

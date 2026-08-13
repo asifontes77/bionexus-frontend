@@ -1,4 +1,4 @@
-﻿/* TORO shared components
+/* TORO shared components
  * Reusable visual primitives shared by Vue 3 views.
  */
 
@@ -518,3 +518,163 @@
 }
 
 /* TORO_SHARED_RESPONSIVE_END */
+
+/* TORO TOAST SYSTEM START */
+.toro-toast-region {
+  position: fixed;
+  z-index: 5000;
+  inset-block-start: var(--toro-space-4);
+  inset-inline-end: var(--toro-space-4);
+  width: min(420px, calc(100vw - 32px));
+  pointer-events: none;
+}
+
+.toro-toast-stack { display: grid; gap: var(--toro-space-2); }
+.toro-toast {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--toro-space-3);
+  padding: var(--toro-space-3);
+  border: 1px solid var(--toro-color-border-strong);
+  border-radius: var(--toro-radius-md);
+  background: var(--toro-color-surface);
+  box-shadow: var(--toro-shadow-md);
+  color: var(--toro-color-text);
+  pointer-events: auto;
+}
+.toro-toast p { margin: 0; line-height: 1.4; }
+.toro-toast-success { border-inline-start: 4px solid var(--toro-color-success); }
+.toro-toast-info { border-inline-start: 4px solid var(--toro-color-primary); }
+.toro-toast-warning { border-inline-start: 4px solid var(--toro-color-warning); }
+.toro-toast-error { border-inline-start: 4px solid var(--toro-color-danger); }
+.toro-toast-close {
+  display: inline-grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: currentColor;
+  cursor: pointer;
+}
+.toro-toast-close:hover { background: var(--toro-color-selection-soft); }
+.toro-toast-enter-active, .toro-toast-leave-active { transition: opacity 180ms ease, transform 180ms ease; }
+.toro-toast-enter-from, .toro-toast-leave-to { opacity: 0; transform: translateY(-8px); }
+@media (max-width: 640px) {
+  .toro-toast-region { inset-inline: 8px; width: auto; }
+}
+/* TORO TOAST SYSTEM END */
+
+
+
+/* TORO TOAST SEMANTIC BACKGROUNDS START */
+.toro-toast-success {
+  background: color-mix(
+    in srgb,
+    var(--toro-color-success-soft) 58%,
+    var(--toro-color-surface)
+  );
+}
+
+.toro-toast-info {
+  background: color-mix(
+    in srgb,
+    var(--toro-color-info-soft) 58%,
+    var(--toro-color-surface)
+  );
+}
+
+.toro-toast-warning {
+  background: color-mix(
+    in srgb,
+    var(--toro-color-warning-soft) 60%,
+    var(--toro-color-surface)
+  );
+}
+
+.toro-toast-error {
+  background: color-mix(
+    in srgb,
+    var(--toro-color-danger-soft) 52%,
+    var(--toro-color-surface)
+  );
+}
+
+@supports not (background: color-mix(in srgb, white, black)) {
+  .toro-toast-success { background: var(--toro-color-success-soft); }
+  .toro-toast-info { background: var(--toro-color-info-soft); }
+  .toro-toast-warning { background: var(--toro-color-warning-soft); }
+  .toro-toast-error { background: var(--toro-color-danger-soft); }
+}
+/* TORO TOAST SEMANTIC BACKGROUNDS END */
+
+/* TORO TOAST PROGRESS START */
+.toro-toast {
+  position: relative;
+  overflow: hidden;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+}
+.toro-toast-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.toro-toast-control,
+.toro-toast-close {
+  display: inline-grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: currentColor;
+  cursor: pointer;
+}
+.toro-toast-control:hover,
+.toro-toast-close:hover {
+  background: var(--toro-color-accent-soft);
+  color: var(--toro-color-accent-strong);
+}
+.toro-toast-control:focus-visible,
+.toro-toast-close:focus-visible {
+  outline: 2px solid var(--toro-color-accent-strong);
+  outline-offset: 2px;
+}
+.toro-toast-progress-track {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  height: 4px;
+  overflow: hidden;
+  background: rgb(255 255 255 / 42%);
+  pointer-events: none;
+}
+.toro-toast-progress {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-origin: left center;
+  transition: transform 50ms linear;
+  background: var(--toro-color-accent-strong);
+}
+.toro-toast-paused {
+  box-shadow: 0 0 0 2px var(--toro-color-accent-soft), var(--toro-shadow-md);
+}
+.toro-toast:focus-visible {
+  outline: 2px solid var(--toro-color-accent-strong);
+  outline-offset: 2px;
+}
+.toro-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--toro-space-2);
+}
+.toro-action > .toro-icon,
+.toro-action > .material-symbols-rounded { flex: 0 0 auto; }
+/* TORO TOAST PROGRESS END */

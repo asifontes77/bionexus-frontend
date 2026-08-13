@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="toro-permission-tree">
     <div
       v-if="treeItems.length === 0"
@@ -175,7 +175,7 @@ const props = defineProps({
   emptyText: {
     type: String,
     default:
-      "No existen permisos que coincidan con la busqueda.",
+      "No existen permisos que coincidan con la búsqueda.",
   },
 });
 

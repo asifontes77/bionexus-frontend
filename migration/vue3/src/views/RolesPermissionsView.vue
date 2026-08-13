@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <section class="roles-admin" aria-label="Administracion de roles y permisos">
     <div v-if="errorMessage" class="toro-message toro-message-error" role="alert">
       <strong>No fue posible cargar la informacion.</strong>
@@ -15,7 +15,7 @@
           <label class="roles-search">
             <span>Buscar rol</span>
             <input v-model="roleSearchText" class="toro-field" type="search" autocomplete="off"
-              placeholder="Codigo, nombre o descripcion" />
+              placeholder="Código, nombre o descripción" />
           </label>
 
           <label class="roles-status-filter">
@@ -34,16 +34,19 @@
 
           <div class="roles-toolbar-actions">
             <button type="button" class="toro-action toro-action-secondary" @click="openPermissionCatalogDialog">
-              Ver catalogo
+  <ToroActionIcon action="catalog" />
+              Ver catálogo
             </button>
 
             <button v-if="canCreateRoles" type="button" class="toro-action toro-action-secondary" :disabled="loading"
               @click="openCreateRoleDialog">
+  <ToroActionIcon action="create" />
               Nuevo rol
             </button>
 
             <button type="button" class="toro-action toro-action-primary"
               :disabled="loading || creatingRole || editingRole" @click="loadCatalogs">
+  <ToroActionIcon action="refresh" />
               {{ loading ? "Actualizando..." : "Actualizar" }}
             </button>
           </div>
@@ -70,7 +73,7 @@
 </section>
     </template>
 
-    <dialog ref="createRoleDialog" class="toro-dialog role-dialog" @close="resetCreateRoleForm">
+    <dialog ref="createRoleDialog" class="toro-dialog role-dialog" @close="resetCreateRoleForm" tabindex="-1">
       <form class="dialog-shell" novalidate @submit.prevent="submitCreateRoleDialog">
         <header class="dialog-header">
           <div>
@@ -78,38 +81,12 @@
             <h3>Crear rol</h3>
           </div>
 
-                    <ToroActionButton
-            type="button"
-            variant="subtle"
-            size="sm"
-            label=""
-            aria-label="Cerrar"
-            title="Cerrar"
-            class="dialog-icon-close"
-            @click="closeCreateRoleDialog"
-          >
-            <svg
-              class="dialog-close-icon"
-              viewBox="0 0 24 24"
-              width="18"
-              height="18"
-              aria-hidden="true"
-              focusable="false"
-            >
-              <path
-                d="M6 6l12 12M18 6L6 18"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-              />
-            </svg>
-          </ToroActionButton>
+          <ToroDialogCloseButton @click="closeCreateRoleDialog" />
         </header>
 
         <div class="dialog-body role-dialog-form">
                     <ToroFormField
-            label="Codigo"
+            label="Código"
             field-id="create-role-code"
             :error="createRoleCodeError"
             help="Letras minusculas, numeros, puntos, guiones y guiones bajos."
@@ -156,7 +133,7 @@
           </ToroFormField>
 
                     <ToroFormField
-            label="Descripcion"
+            label="Descripción"
             field-id="create-role-description"
             :help="`${createRoleForm.description.length} de 250 caracteres`"
             wide
@@ -167,7 +144,7 @@
               class="toro-field"
               maxlength="250"
               rows="4"
-              placeholder="Descripcion opcional"
+              placeholder="Descripción opcional"
               :disabled="creatingRole"
               aria-describedby="create-role-description-help"
             ></textarea>
@@ -186,17 +163,19 @@
         <footer class="dialog-footer">
           <button type="button" class="toro-action toro-action-secondary" :disabled="creatingRole"
             @click="closeCreateRoleDialog">
+  <ToroActionIcon action="cancel" />
             Cancelar
           </button>
 
           <button type="submit" class="toro-action toro-action-primary" :disabled="creatingRole || !canCreateRoles">
+  <ToroActionIcon action="create" />
             {{ creatingRole ? "Creando..." : "Crear rol" }}
           </button>
         </footer>
       </form>
     </dialog>
 
-    <dialog ref="roleDetailDialog" class="toro-dialog role-dialog">
+    <dialog ref="roleDetailDialog" class="toro-dialog role-dialog" tabindex="-1">
       <div class="dialog-shell">
         <header class="dialog-header">
           <div>
@@ -204,33 +183,7 @@
             <h3>{{ selectedRole?.name || "Rol" }}</h3>
           </div>
 
-                    <ToroActionButton
-            type="button"
-            variant="subtle"
-            size="sm"
-            label=""
-            aria-label="Cerrar"
-            title="Cerrar"
-            class="dialog-icon-close"
-            @click="closeRoleDetailDialog"
-          >
-            <svg
-              class="dialog-close-icon"
-              viewBox="0 0 24 24"
-              width="18"
-              height="18"
-              aria-hidden="true"
-              focusable="false"
-            >
-              <path
-                d="M6 6l12 12M18 6L6 18"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-              />
-            </svg>
-          </ToroActionButton>
+          <ToroDialogCloseButton @click="closeRoleDetailDialog" />
         </header>
 
         <div v-if="selectedRole" class="dialog-body role-summary-card">
@@ -251,8 +204,8 @@
           </div>
 
           <section class="role-summary-description">
-            <span>Descripcion</span>
-            <p>{{ selectedRole.description || "Sin descripcion" }}</p>
+            <span>Descripción</span>
+            <p>{{ selectedRole.description || "Sin descripción" }}</p>
           </section>
 
           <dl class="role-summary-metadata">
@@ -269,13 +222,14 @@
         </div>
         <footer class="dialog-footer">
           <button type="button" class="toro-action toro-action-secondary" @click="closeRoleDetailDialog">
+  <ToroActionIcon action="close" />
             Cerrar
           </button>
         </footer>
       </div>
     </dialog>
 
-    <dialog ref="editRoleDialog" class="toro-dialog role-dialog">
+    <dialog ref="editRoleDialog" class="toro-dialog role-dialog" tabindex="-1">
       <form class="dialog-shell" novalidate @submit.prevent="submitEditRoleDialog">
         <header class="dialog-header">
           <div>
@@ -283,40 +237,14 @@
             <h3>{{ selectedRole?.name || "Rol" }}</h3>
           </div>
 
-                    <ToroActionButton
-            type="button"
-            variant="subtle"
-            size="sm"
-            label=""
-            aria-label="Cerrar"
-            title="Cerrar"
-            class="dialog-icon-close"
-            @click="closeEditRoleDialog"
-          >
-            <svg
-              class="dialog-close-icon"
-              viewBox="0 0 24 24"
-              width="18"
-              height="18"
-              aria-hidden="true"
-              focusable="false"
-            >
-              <path
-                d="M6 6l12 12M18 6L6 18"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-              />
-            </svg>
-          </ToroActionButton>
+          <ToroDialogCloseButton @click="closeEditRoleDialog" />
         </header>
 
         <div class="dialog-body role-dialog-form">
                     <ToroFormField
-            label="Codigo"
+            label="Código"
             field-id="edit-role-code"
-            help="El codigo identifica al rol y no puede modificarse."
+            help="El código identifica al rol y no puede modificarse."
             disabled
           >
             <input
@@ -350,7 +278,7 @@
           </ToroFormField>
 
                     <ToroFormField
-            label="Descripcion"
+            label="Descripción"
             field-id="edit-role-description"
             :help="`${updateRoleForm.description.length} de 250 caracteres`"
             wide
@@ -394,21 +322,23 @@
         <footer class="dialog-footer">
           <button type="button" class="toro-action toro-action-secondary" :disabled="editingRole"
             @click="closeEditRoleDialog">
+  <ToroActionIcon action="cancel" />
             Cancelar
           </button>
 
           <button type="submit" class="toro-action toro-action-primary" :disabled="editingRole || !canUpdateRoles || !hasRoleMetadataChanges">
+  <ToroActionIcon action="save" />
             {{ editingRole ? "Guardando..." : "Guardar" }}
           </button>
         </footer>
       </form>
     </dialog>
 
-    <dialog ref="rolePermissionsDialog" class="toro-dialog permissions-dialog">
+    <dialog ref="rolePermissionsDialog" class="toro-dialog permissions-dialog" tabindex="-1">
       <div class="dialog-shell">
         <header class="dialog-header">
           <div>
-            <p>Asignacion de permisos</p>
+            <p>Asignación de permisos</p>
             <h3>
               {{ selectedRole?.name || "Rol" }}
               <span v-if="selectedRole?.code" class="role-dialog-code">
@@ -417,40 +347,14 @@
             </h3>
           </div>
 
-                    <ToroActionButton
-            type="button"
-            variant="subtle"
-            size="sm"
-            label=""
-            aria-label="Cerrar"
-            title="Cerrar"
-            class="dialog-icon-close"
-            @click="closeRolePermissionsDialog"
-          >
-            <svg
-              class="dialog-close-icon"
-              viewBox="0 0 24 24"
-              width="18"
-              height="18"
-              aria-hidden="true"
-              focusable="false"
-            >
-              <path
-                d="M6 6l12 12M18 6L6 18"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-              />
-            </svg>
-          </ToroActionButton>
+          <ToroDialogCloseButton @click="closeRolePermissionsDialog" />
         </header>
 
         <div class="permissions-dialog-toolbar role-permissions-toolbar">
           <label>
             <span>Buscar permiso</span>
             <input v-model="permissionSearchText" class="toro-field" type="search" autocomplete="off"
-              placeholder="Nombre, descripcion o modulo" />
+              placeholder="Nombre, descripción o módulo" />
           </label>
 
           <span>
@@ -477,7 +381,7 @@
             </div>
 
             <div v-if="filteredPermissionModules.length === 0" class="toro-empty-state">
-              No existen permisos que coincidan con la busqueda.
+              No existen permisos que coincidan con la búsqueda.
             </div>
 
             <ToroPermissionTree
@@ -489,7 +393,7 @@
               :disabled="!canAssignPermissions || savingPermissions"
               @toggle-permission="togglePermission"
               @toggle-module="toggleModulePermissions"
-              empty-text="No existen permisos que coincidan con la busqueda."
+              empty-text="No existen permisos que coincidan con la búsqueda."
             />
 
             <div v-if="savePermissionsError" class="toro-inline-message toro-message-error" role="alert">
@@ -507,65 +411,41 @@
             {{
               hasPermissionChanges
                 ? "Existen cambios pendientes."
-                : "Las asignaciones estan sincronizadas."
+                : "Las asignaciones están sincronizadas."
             }}
           </span>
 
           <button type="button" class="toro-action toro-action-secondary" :disabled="savingPermissions"
             @click="closeRolePermissionsDialog">
+  <ToroActionIcon action="cancel" />
             Cancelar
           </button>
 
           <button v-if="canAssignPermissions" type="button" class="toro-action toro-action-primary"
             :disabled="!hasPermissionChanges || savingPermissions" @click="submitRolePermissionsDialog">
+  <ToroActionIcon action="assignPermissions" />
             {{ savingPermissions ? "Guardando..." : "Guardar permisos" }}
           </button>
         </footer>
       </div>
     </dialog>
 
-    <dialog ref="permissionCatalogDialog" class="toro-dialog catalog-dialog toro-catalog-layout">
+    <dialog ref="permissionCatalogDialog" class="toro-dialog catalog-dialog toro-catalog-layout" tabindex="-1">
       <div class="dialog-shell">
         <header class="dialog-header">
           <div>
-            <p>Catalogo global</p>
+            <p>Catálogo global</p>
             <h3>Permisos</h3>
           </div>
 
-                    <ToroActionButton
-            type="button"
-            variant="subtle"
-            size="sm"
-            label=""
-            aria-label="Cerrar"
-            title="Cerrar"
-            class="dialog-icon-close"
-            @click="closePermissionCatalogDialog"
-          >
-            <svg
-              class="dialog-close-icon"
-              viewBox="0 0 24 24"
-              width="18"
-              height="18"
-              aria-hidden="true"
-              focusable="false"
-            >
-              <path
-                d="M6 6l12 12M18 6L6 18"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-              />
-            </svg>
-          </ToroActionButton>
+          <ToroDialogCloseButton @click="closePermissionCatalogDialog" />
         </header>
 
         <div class="permissions-dialog-toolbar catalog-permissions-toolbar">
           <label>
             <span>Buscar permiso</span>
             <input v-model="catalogSearchText" class="toro-field" type="search" autocomplete="off"
-              placeholder="Nombre, descripcion o modulo" />
+              placeholder="Nombre, descripción o módulo" />
           </label>
 
           <span><strong>{{ filteredCatalogPermissions.length }}</strong> permisos</span>
@@ -576,11 +456,12 @@
             class="catalog-tree"
             :permissions="filteredCatalogPermissions"
             :search-text="catalogSearchText"
-            empty-text="No existen permisos que coincidan con la busqueda."
+            empty-text="No existen permisos que coincidan con la búsqueda."
           />
         </div>
         <footer class="dialog-footer">
           <button type="button" class="toro-action toro-action-secondary" @click="closePermissionCatalogDialog">
+  <ToroActionIcon action="close" />
             Cerrar
           </button>
         </footer>
@@ -601,6 +482,7 @@ import ToroFormField from "@/components/ui/ToroFormField.vue";
 import {
   groupPermissionsForPresentation,
   presentPermission,
+
 } from "@/presentation/permissionPresentation";
 import {
   createAuthorizationRole,
@@ -612,6 +494,11 @@ import {
 } from "@/services/authorizationService";
 
 import { useAuthorizationStore } from "@/stores/authorization";
+import ToroDialogCloseButton from "@/components/ui/ToroDialogCloseButton.vue";
+import { useToroToast } from "@/composables/useToroToast";
+import ToroActionIcon from "@/components/ui/ToroActionIcon.vue";
+
+const toast = useToroToast();
 
 const authorizationStore = useAuthorizationStore();
 const roles = ref([]);
@@ -787,7 +674,7 @@ const roleActions = computed(() => [
 const roleColumnDefs = computed(() => [
   {
     field: "code",
-    headerName: "Codigo",
+    headerName: "Código",
     sort: "asc",
     minWidth: 135,
     maxWidth: 200,
@@ -803,10 +690,10 @@ const roleColumnDefs = computed(() => [
   },
   {
     field: "description",
-    headerName: "Descripcion",
+    headerName: "Descripción",
     minWidth: 300,
     flex: 2,
-    valueFormatter: ({ value }) => value || "Sin descripcion",
+    valueFormatter: ({ value }) => value || "Sin descripción",
     cellClass: "toro-grid-muted-cell",
   },
   {
@@ -1133,6 +1020,7 @@ function discardPermissionChanges() {
 function showDialog(dialogReference) {
   if (dialogReference.value?.open !== true) {
     dialogReference.value?.showModal();
+  focusOpenedDialog(dialogReference);
   }
 }
 
@@ -1221,6 +1109,7 @@ async function toggleRoleStatus(role) {
   ) {
     errorMessage.value =
       "El rol administrador debe permanecer activo.";
+    toast.error(errorMessage.value);
     return;
   }
 
@@ -1427,6 +1316,7 @@ async function loadAssignedPermissions() {
       typeof error?.message === "string"
         ? error.message
         : "No fue posible consultar los permisos asignados.";
+    toast.error(assignedPermissionsError.value);
   } finally {
     if (requestId === assignedPermissionsRequestId) {
       assignedPermissionsLoading.value = false;
@@ -1468,6 +1358,8 @@ async function savePermissionChanges() {
 
     savePermissionsMessage.value =
       "Los permisos del rol fueron actualizados.";
+
+    toast.success(savePermissionsMessage.value);
   } catch (error) {
     const backendMessage =
       typeof error?.message === "string"
@@ -1487,6 +1379,7 @@ async function savePermissionChanges() {
       messages[backendMessage] ||
       backendMessage ||
       "No fue posible guardar los permisos del rol.";
+    toast.error(savePermissionsError.value);
   } finally {
     savingPermissions.value = false;
   }
@@ -1523,11 +1416,14 @@ async function createRole() {
 
     createRoleMessage.value =
       "El rol fue creado correctamente.";
+
+    toast.success(createRoleMessage.value);
   } catch (error) {
     createRoleError.value = getRoleErrorMessage(
       error,
       "No fue posible crear el rol.",
     );
+    toast.error(createRoleError.value);
   } finally {
     creatingRole.value = false;
   }
@@ -1550,6 +1446,7 @@ async function updateRole() {
     updateRoleError.value =
       "El rol administrador debe permanecer activo.";
 
+    toast.error(updateRoleError.value);
     return;
   }
 
@@ -1580,11 +1477,14 @@ async function updateRole() {
 
     updateRoleMessage.value =
       "Los datos del rol fueron actualizados.";
+
+    toast.success(updateRoleMessage.value);
   } catch (error) {
     updateRoleError.value = getRoleErrorMessage(
       error,
       "No fue posible actualizar el rol.",
     );
+    toast.error(updateRoleError.value);
   } finally {
     editingRole.value = false;
   }
@@ -1632,6 +1532,7 @@ async function loadCatalogs(options = {}) {
       typeof error?.message === "string"
         ? error.message
         : "Ocurrió un error inesperado.";
+    toast.error(errorMessage.value);
 
     if (!loaded.value) {
       roles.value = [];
@@ -1647,6 +1548,16 @@ async function loadCatalogs(options = {}) {
 }
 
 onMounted(loadCatalogs);
+
+function focusOpenedDialog(dialogReference) {
+  const dialog = dialogReference?.value;
+  if (!dialog || dialog.open !== true) return;
+
+  requestAnimationFrame(() => {
+    dialog.focus({ preventScroll: true });
+  });
+}
+
 </script>
 
 <style scoped>

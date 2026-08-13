@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <main class="login-page">
     <section class="login-card" aria-labelledby="login-title">
       <div class="login-brand">
@@ -32,7 +32,7 @@
           @keydown.space.prevent
         />
 
-        <label for="password">Contrasena</label>
+        <label for="password">Contraseña</label>
         <input
           id="password"
           v-model="password"
@@ -163,7 +163,7 @@ async function submitLogin() {
       error instanceof ApiError &&
       (error.status === 401 || error.status === 404)
     ) {
-      message.value = "Nombre de usuario o contrasena incorrectos.";
+      message.value = "Nombre de usuario o contraseña incorrectos.";
     } else {
       message.value = "No fue posible iniciar sesion.";
     }

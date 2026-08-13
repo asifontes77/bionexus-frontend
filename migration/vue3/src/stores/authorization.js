@@ -1,4 +1,4 @@
-﻿import { defineStore } from "pinia";
+import { defineStore } from "pinia";
 import { getAuthorizationContext } from "@/services/authorizationService";
 
 function emptyAuthorization() {
@@ -51,7 +51,7 @@ export const useAuthorizationStore = defineStore("authorization", {
         this.error =
           typeof error?.message === "string"
             ? error.message
-            : "No fue posible cargar la autorizacion.";
+            : "No fue posible cargar la autorización.";
 
         throw error;
       } finally {

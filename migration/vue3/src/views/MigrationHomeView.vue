@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <section class="dashboard-page" aria-labelledby="dashboard-title">
     <div class="dashboard-hero">
       <div>
@@ -83,7 +83,7 @@
         <div class="dashboard-panel-heading">
           <div>
             <p class="dashboard-panel-eyebrow">Siguiente etapa</p>
-            <h3>Modulos funcionales</h3>
+            <h3>Módulos funcionales</h3>
           </div>
 
           <span class="dashboard-panel-badge dashboard-panel-badge-pending">

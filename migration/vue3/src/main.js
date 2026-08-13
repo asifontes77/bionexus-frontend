@@ -1,4 +1,5 @@
-﻿import { createApp } from 'vue'
+import "@fontsource-variable/material-symbols-rounded/wght.css";
+import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
@@ -33,3 +34,4 @@ if (sessionStore.isAuthenticated) {
 
 app.use(router)
 app.mount('#app')
+import "@/styles/security-management.css";

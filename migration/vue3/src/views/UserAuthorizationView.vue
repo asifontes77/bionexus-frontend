@@ -1,514 +1,360 @@
 <template>
-    <section class="user-security-page toro-page" aria-labelledby="user-security-title">
-        <header class="user-security-header toro-page-header">
-            <div>
-                <p class="user-security-eyebrow toro-page-eyebrow">Administración de seguridad</p>
-                <h2 id="user-security-title">Usuarios y autorización</h2>
-                <p>
-                    Consulta los roles, permisos heredados, excepciones y contexto efectivo
-                    de cada usuario.
-                </p>
-            </div>
+  <section class="user-authorization-page">
+    <div v-if="usersError" class="toro-message toro-message-error" role="alert">
+      <strong>No fue posible cargar los usuarios.</strong>
+      <span>{{ usersError }}</span>
+    </div>
 
-            <button type="button" :disabled="usersLoading || authorizationLoading" @click="loadUsers">
-                {{ usersLoading ? "Actualizando..." : "Actualizar" }}
-            </button>
+    <div v-if="usersLoading && !usersLoaded" class="toro-empty-state">
+      Cargando usuarios y catálogos de autorización...
+    </div>
+
+    <section v-else class="toro-panel user-directory-panel">
+      <header class="user-directory-toolbar">
+        <ToroFormField
+          label="Buscar usuario"
+          field-id="user-authorization-search"
+          help="Busca por nombre, usuario, correo, cargo o rol."
+        >
+          <input
+            id="user-authorization-search"
+            v-model="searchText"
+            class="toro-field"
+            type="search"
+            autocomplete="off"
+            placeholder="Nombre, usuario, correo, cargo o rol"
+          />
+        </ToroFormField>
+
+        <ToroFormField label="Estado" field-id="user-authorization-status">
+          <select id="user-authorization-status" v-model="userStatusFilter" class="toro-field">
+            <option value="all">Todos</option>
+            <option value="visible">Activos</option>
+            <option value="hidden">Inactivos</option>
+          </select>
+        </ToroFormField>
+
+        <div class="user-directory-summary" aria-live="polite">
+          <span><strong>{{ filteredUsers.length }}</strong> resultados</span>
+          <span><strong>{{ visibleUsersCount }}</strong> activos</span>
+        </div>
+
+        <div class="user-directory-actions">
+          <button
+            v-if="canCreateUsers"
+            type="button"
+            class="toro-action toro-action-primary"
+            :disabled="usersLoading || authorizationLoading || savingRoles || savingOverrides"
+            @click="openCreateUserDialog"
+          >
+            <ToroIcon name="person_add" :size="19" />
+            Nuevo usuario
+          </button>
+          <button
+            type="button"
+            class="toro-action toro-action-primary"
+            :disabled="usersLoading || authorizationLoading || savingRoles || savingOverrides"
+            @click="loadUsers"
+          >
+            <ToroIcon name="refresh" :size="19" />
+            {{ usersLoading ? "Actualizando..." : "Actualizar" }}
+          </button>
+        </div>
+      </header>
+
+      <div v-if="filteredUsers.length === 0" class="toro-empty-state user-directory-empty">
+        No existen usuarios que coincidan con los filtros.
+      </div>
+
+      <ToroDataGrid
+        v-else
+        class="users-grid"
+        :row-data="filteredUsers"
+        :column-defs="userColumnDefs"
+        :components="gridComponents"
+        :context="gridContext"
+        :get-row-id="getUserRowId"
+        :quick-filter-text="searchText"
+        :page-size="10"
+        :page-size-selector="[10, 20, 50]"
+        height="500px"
+        empty-text="No existen usuarios que coincidan con los filtros."
+        @row-context-menu="openUserContextMenu"
+      />
+
+      <ToroContextMenu
+        ref="userContextMenu"
+        :open="userContextMenuState.open"
+        :x="userContextMenuState.x"
+        :y="userContextMenuState.y"
+        :items="userContextMenuItems"
+        @close="closeUserContextMenu"
+        @select="runUserContextAction"
+      />
+    </section>
+
+    <UserIdentityDialog ref="userIdentityDialog" @saved="handleIdentitySaved" />
+
+    <dialog ref="userDetailDialog" class="toro-dialog user-detail-dialog" tabindex="-1">
+      <div class="dialog-shell">
+        <header class="dialog-header">
+          <div>
+            <p>Detalle administrativo</p>
+            <h3>{{ selectedUser?.name || "Usuario" }}</h3>
+          </div>
+          <ToroDialogCloseButton @click="closeUserDetailDialog" />
         </header>
 
-        <div v-if="usersError" class="user-security-message user-security-message-error toro-message toro-message-error" role="alert">
-            <strong>No fue posible cargar los usuarios.</strong>
-            <span>{{ usersError }}</span>
+        <div class="dialog-body">
+          <div v-if="authorizationLoading" class="toro-empty-state">Consultando autorización...</div>
+          <div v-else-if="authorizationError" class="toro-message toro-message-error" role="alert">
+            {{ authorizationError }}
+          </div>
+          <div v-else-if="authorization" class="user-detail-content">
+            <section class="user-detail-heading">
+              <div class="user-avatar-large">{{ getUserInitials(authorization.user) }}</div>
+              <div>
+                <span class="user-detail-username">@{{ authorization.user.userName || "sin-usuario" }}</span>
+                <h4>{{ authorization.user.name || "Sin nombre" }}</h4>
+                <p>{{ authorization.user.position || "Sin cargo registrado" }}</p>
+              </div>
+              <span class="toro-badge" :class="authorization.user.hidden ? 'toro-badge-warning' : 'toro-badge-success'">
+                {{ authorization.user.hidden ? "Inactivo" : "Activo" }}
+              </span>
+            </section>
+
+            <dl class="user-detail-grid">
+              <div><dt>Correo</dt><dd>{{ authorization.user.email || "Sin correo" }}</dd></div>
+              <div><dt>Teléfono</dt><dd>{{ authorization.user.telephone || "Sin teléfono" }}</dd></div>
+              <div><dt>Colegio</dt><dd>{{ authorization.user.collegeNumber || "Sin registro" }}</dd></div>
+              <div><dt>Roles asignados</dt><dd>{{ authorization.assignedRoles.length }}</dd></div>
+              <div><dt>Permisos heredados</dt><dd>{{ authorization.inheritedPermissions.length }}</dd></div>
+              <div><dt>Excepciones</dt><dd>{{ authorization.permissionOverrides.length }}</dd></div>
+            </dl>
+
+            <section class="effective-context-card">
+              <header>
+                <div>
+                  <span>Resultado efectivo</span>
+                  <h4>Contexto de autorización</h4>
+                </div>
+              </header>
+              <div v-if="authorization.context" class="effective-summary">
+                <article><span>Roles efectivos</span><strong>{{ authorization.context.roles.length }}</strong></article>
+                <article><span>Permisos efectivos</span><strong>{{ authorization.context.permissions.length }}</strong></article>
+                <article><span>Denegados</span><strong>{{ authorization.context.deniedPermissions.length }}</strong></article>
+              </div>
+              <p v-else class="toro-empty-state">El usuario no dispone de un contexto efectivo activo.</p>
+            </section>
+          </div>
         </div>
 
-        <div v-if="usersLoading && !usersLoaded" class="user-security-message toro-message" role="status">
-            Cargando usuarios...
+        <footer class="dialog-footer">
+          <button type="button" class="toro-action toro-action-secondary" @click="closeUserDetailDialog">
+  <ToroActionIcon action="close" />Cerrar</button>
+        </footer>
+      </div>
+    </dialog>
+
+    <dialog ref="userRolesDialog" class="toro-dialog user-assignment-dialog" tabindex="-1">
+      <div class="dialog-shell">
+        <header class="dialog-header">
+          <div>
+            <p>Asignación directa</p>
+            <h3>Roles de {{ selectedUser?.name || "Usuario" }}</h3>
+          </div>
+          <ToroDialogCloseButton @click="closeUserRolesDialog" />
+        </header>
+
+        <div class="dialog-toolbar">
+          <ToroFormField label="Buscar rol" field-id="user-role-search">
+            <input id="user-role-search" v-model="roleSearchText" class="toro-field" type="search" autocomplete="off" placeholder="Código, nombre o descripción" />
+          </ToroFormField>
+          <span><strong>{{ draftRoleIds.length }}</strong> seleccionados</span>
         </div>
 
-        <template v-else>
-            <div class="user-security-metrics toro-metrics">
-                <article>
-                    <span>Usuarios</span>
-                    <strong>{{ users.length }}</strong>
-                    <small>{{ visibleUsersCount }} visibles</small>
-                </article>
-
-                <article>
-                    <span>Resultados</span>
-                    <strong>{{ filteredUsers.length }}</strong>
-                    <small>Coincidencias actuales</small>
-                </article>
-
-                <article>
-                    <span>Roles asignados</span>
-                    <strong>{{ authorization?.assignedRoles.length || 0 }}</strong>
-                    <small>Usuario seleccionado</small>
-                </article>
-
-                <article>
-                    <span>Permisos efectivos</span>
-                    <strong>{{ authorization?.context?.permissions.length || 0 }}</strong>
-                    <small>Después de aplicar excepciones</small>
-                </article>
+        <div class="dialog-body assignment-dialog-body">
+          <div v-if="authorizationLoading" class="toro-empty-state">Consultando roles...</div>
+          <div v-else-if="authorizationError" class="toro-message toro-message-error" role="alert">{{ authorizationError }}</div>
+          <template v-else-if="authorization">
+            <div v-if="selectedUser?.hidden" class="toro-message toro-message-warning" role="status">
+              Los usuarios inactivos permanecen visibles para consulta, pero no pueden modificarse.
             </div>
-
-            <div class="user-security-grid">
-                <article class="user-security-panel toro-panel">
-                    <div class="user-security-panel-heading toro-panel-heading">
-                        <div>
-                            <p>Directorio seguro</p>
-                            <h3>Usuarios</h3>
-                        </div>
-
-                        <span>{{ filteredUsers.length }}</span>
-                    </div>
-
-                    <label class="user-search">
-                        <span>Buscar usuario</span>
-
-                        <input v-model="searchText" type="search" autocomplete="off"
-                            placeholder="Nombre, usuario, correo o cargo" />
-                    </label>
-
-                    <div v-if="filteredUsers.length === 0" class="user-security-empty toro-empty-state">
-                        No existen usuarios que coincidan con la búsqueda.
-                    </div>
-
-                    <div v-else class="user-list">
-                        <button v-for="user in filteredUsers" :key="user.id" type="button" class="user-list-item toro-list-item"
-                            :class="{
-                                'user-list-item-selected':
-                                    selectedUser?.id === user.id,
-                                'user-list-item-hidden':
-                                    user.hidden,
-                            }" :disabled="authorizationLoading ||
-                                savingRoles ||
-                                savingOverrides
-                                " @click="selectUser(user)">
-                            <span class="user-list-avatar">
-                                {{ getUserInitials(user) }}
-                            </span>
-
-                            <span class="user-list-copy toro-option-copy">
-                                <strong>{{ user.name || "Usuario sin nombre" }}</strong>
-                                <small>@{{ user.userName || "sin-usuario" }}</small>
-                                <small>{{ user.position || "Sin cargo registrado" }}</small>
-                            </span>
-
-                            <span class="user-status toro-badge" :class="{ 'toro-badge-warning': user.hidden }">
-                                {{ user.hidden ? "Oculto" : "Visible" }}
-                            </span>
-                        </button>
-                    </div>
-                </article>
-
-                <article class="user-security-panel toro-panel">
-                    <div class="user-security-panel-heading toro-panel-heading">
-                        <div>
-                            <p>Detalle administrativo</p>
-                            <h3>Autorización del usuario</h3>
-                        </div>
-
-                        <span v-if="selectedUser">
-                            #{{ selectedUser.id }}
-                        </span>
-                    </div>
-
-                    <div v-if="!selectedUser" class="user-security-empty toro-empty-state">
-                        Seleccione un usuario para consultar su autorización.
-                    </div>
-
-                    <div v-else-if="authorizationLoading" class="user-security-empty toro-empty-state" role="status">
-                        Consultando autorización...
-                    </div>
-
-                    <div v-else-if="authorizationError" class="user-security-message user-security-message-error toro-message toro-message-error"
-                        role="alert">
-                        {{ authorizationError }}
-                    </div>
-
-                    <template v-else-if="authorization">
-                        <dl class="user-detail toro-detail">
-                            <div>
-                                <dt>Nombre</dt>
-                                <dd>{{ authorization.user.name || "Sin nombre" }}</dd>
-                            </div>
-
-                            <div>
-                                <dt>Usuario</dt>
-                                <dd>
-                                    {{ authorization.user.userName || "Sin usuario" }}
-                                </dd>
-                            </div>
-
-                            <div>
-                                <dt>Correo</dt>
-                                <dd>{{ authorization.user.email || "Sin correo" }}</dd>
-                            </div>
-
-                            <div>
-                                <dt>Cargo</dt>
-                                <dd>{{ authorization.user.position || "Sin cargo" }}</dd>
-                            </div>
-
-                            <div>
-                                <dt>Colegio</dt>
-                                <dd>
-                                    {{ authorization.user.collegeNumber || "Sin registro" }}
-                                </dd>
-                            </div>
-
-                            <div>
-                                <dt>Estado</dt>
-                                <dd>
-                                    {{ authorization.user.hidden ? "Oculto" : "Visible" }}
-                                </dd>
-                            </div>
-                        </dl>
-
-                        <section class="authorization-section">
-                            <header>
-                                <div>
-                                    <p>Asignación directa</p>
-                                    <h4>Roles</h4>
-                                </div>
-
-                                <span>{{ authorization.assignedRoles.length }}</span>
-                            </header>
-
-                            <div v-if="inactiveAssignedRoles.length > 0" class="role-assignment-warning toro-warning">
-                                El usuario conserva roles inactivos para fines de consulta. Los roles
-                                inactivos no pueden seleccionarse nuevamente y serán retirados en el
-                                próximo guardado.
-                            </div>
-
-                            <div v-if="rolesError" class="role-assignment-message role-assignment-error toro-inline-message toro-message-error" role="alert">
-                                {{ rolesError }}
-                            </div>
-
-                            <div v-if="!canAssignRoles" class="user-security-empty user-security-empty-compact toro-empty-state">
-                                La cuenta actual puede consultar los roles asignados, pero no modificarlos.
-                            </div>
-
-                            <div v-if="roles.length === 0" class="user-security-empty user-security-empty-compact toro-empty-state">
-                                No existen roles disponibles.
-                            </div>
-
-                            <div v-else class="role-assignment-list toro-field-group">
-                                <label v-for="role in roles" :key="role.id" class="role-assignment-option toro-option" :class="{
-                                    'toro-option-selected':
-                                        isRoleSelected(role.id),
-                                    'toro-option-disabled':
-                                        !role.isActive ||
-                                        !canAssignRoles,
-                                }">
-                                    <input type="checkbox" :checked="isRoleSelected(role.id)" :disabled="!role.isActive ||
-                                        !canAssignRoles ||
-                                        savingRoles
-                                        " @change="toggleRole(role)" />
-
-                                    <span class="role-assignment-copy toro-option-copy">
-                                        <strong>{{ role.code }}</strong>
-                                        <small>{{ role.name }}</small>
-                                        <small>{{ role.description || "Sin descripción" }}</small>
-                                    </span>
-
-                                    <span class="authorization-badge toro-badge" :class="{
-                                        'toro-badge-warning': !role.isActive,
-                                    }">
-                                        {{ role.isActive ? "Activo" : "Inactivo" }}
-                                    </span>
-                                </label>
-                            </div>
-
-                            <div v-if="saveRolesError" class="role-assignment-message role-assignment-error toro-inline-message toro-message-error"
-                                role="alert">
-                                {{ saveRolesError }}
-                            </div>
-
-                            <div v-if="saveRolesMessage" class="role-assignment-message role-assignment-success toro-inline-message toro-message-success"
-                                role="status">
-                                {{ saveRolesMessage }}
-                            </div>
-
-                            <div v-if="canAssignRoles" class="role-assignment-actions toro-form-actions">
-                                <span>
-                                    {{
-                                        hasRoleChanges
-                                            ? "Existen cambios pendientes."
-                                            : "Los roles están sincronizados."
-                                    }}
-                                </span>
-
-                                <div>
-                                    <button type="button"
-                                        class="role-assignment-button role-assignment-button-secondary toro-action toro-action-secondary" :disabled="!hasRoleChanges ||
-                                            savingRoles
-                                            " @click="discardRoleChanges">
-                                        Descartar
-                                    </button>
-
-                                    <button type="button" class="role-assignment-button role-assignment-button-primary toro-action toro-action-primary"
-                                        :disabled="!hasRoleChanges ||
-                                            savingRoles
-                                            " @click="saveRoleChanges">
-                                        {{ savingRoles ? "Guardando..." : "Guardar roles" }}
-                                    </button>
-                                </div>
-                            </div>
-                        </section>
-
-                        <section class="authorization-section">
-                            <header>
-                                <div>
-                                    <p>Herencia</p>
-                                    <h4>Permisos heredados</h4>
-                                </div>
-
-                                <span>{{ authorization.inheritedPermissions.length }}</span>
-                            </header>
-
-                            <div v-if="authorization.inheritedPermissions.length === 0"
-                                class="user-security-empty user-security-empty-compact toro-empty-state">
-                                No existen permisos heredados desde roles activos.
-                            </div>
-
-                            <ul v-else class="authorization-list toro-list">
-                                <li v-for="permission in authorization.inheritedPermissions" :key="permission.id">
-                                    <span>
-                                        <strong>{{ getPermissionDisplayName(permission) }}</strong>
-                                        <small>{{ getPermissionModuleLabel(permission) }}</small>
-                                    </span>
-
-                                    <span class="authorization-badge toro-badge" :class="{
-                                        'toro-badge-warning': !permission.isActive,
-                                    }">
-                                        {{ permission.isActive ? "Activo" : "Inactivo" }}
-                                    </span>
-                                </li>
-                            </ul>
-                        </section>
-
-                        <section class="authorization-section">
-                            <header>
-                                <div>
-                                    <p>Excepciones individuales</p>
-                                    <h4>Overrides</h4>
-                                </div>
-
-                                <span>
-                                    {{ authorization.permissionOverrides.length }}
-                                </span>
-                            </header>
-
-                            <div v-if="inactivePermissionOverrides.length > 0" class="override-warning toro-warning">
-                                El usuario conserva excepciones sobre permisos inactivos para
-                                fines de consulta. Estas excepciones no pueden seleccionarse
-                                nuevamente y serán retiradas en el próximo guardado.
-                            </div>
-
-                            <div v-if="permissionsError" class="override-message override-message-error toro-inline-message toro-message-error" role="alert">
-                                {{ permissionsError }}
-                            </div>
-
-                            <div v-if="!canAssignPermissionOverrides"
-                                class="user-security-empty user-security-empty-compact toro-empty-state">
-                                La cuenta actual puede consultar las excepciones, pero no
-                                modificarlas.
-                            </div>
-
-                            <div v-if="permissions.length === 0"
-                                class="user-security-empty user-security-empty-compact toro-empty-state">
-                                No existen permisos disponibles.
-                            </div>
-
-                            <div v-else class="override-modules toro-form">
-                                <section v-for="module in permissionModules" :key="module.key" class="override-module toro-section">
-                                    <header>
-                                        <h5>{{ module.label }}</h5>
-                                        <span>{{ module.permissions.length }}</span>
-                                    </header>
-
-                                    <div v-for="permission in module.permissions" :key="permission.id"
-                                        class="override-option" :class="{
-                                            'override-option-disabled':
-                                                !permission.isActive ||
-                                                !canAssignPermissionOverrides,
-                                        }">
-                                        <span class="override-option-copy toro-list-copy-compact">
-                                            <strong>{{ permission.displayName }}</strong>
-                                            <small>{{ permission.displayDescription }}</small>
-                                        </span>
-
-                                        <select :value="getPermissionOverrideEffect(
-                                            permission.id,
-                                        )
-                                            " :disabled="!permission.isActive ||
-                                                !canAssignPermissionOverrides ||
-                                                savingOverrides
-                                                " @change="
-                                                    setPermissionOverride(
-                                                        permission,
-                                                        $event.target.value,
-                                                    )
-                                                    ">
-                                            <option value="">Sin override</option>
-                                            <option :value="PermissionEffect.Allow">
-                                                Permitir
-                                            </option>
-                                            <option :value="PermissionEffect.Deny">
-                                                Denegar
-                                            </option>
-                                        </select>
-
-                                        <span class="authorization-badge toro-badge" :class="{
-                                            'authorization-badge-deny':
-                                                getPermissionOverrideEffect(
-                                                    permission.id,
-                                                ) === PermissionEffect.Deny,
-                                        }">
-                                            {{
-                                                getPermissionOverrideEffect(
-                                                    permission.id,
-                                                ) === PermissionEffect.Allow
-                                                    ? "Permitir"
-                                                    : getPermissionOverrideEffect(
-                                                        permission.id,
-                                                    ) === PermissionEffect.Deny
-                                                        ? "Denegar"
-                                                        : "Heredado"
-                                            }}
-                                        </span>
-                                    </div>
-                                </section>
-                            </div>
-
-                            <div v-if="saveOverridesError" class="override-message override-message-error toro-inline-message toro-message-error" role="alert">
-                                {{ saveOverridesError }}
-                            </div>
-
-                            <div v-if="saveOverridesMessage" class="override-message override-message-success toro-inline-message toro-message-success"
-                                role="status">
-                                {{ saveOverridesMessage }}
-                            </div>
-
-                            <div v-if="canAssignPermissionOverrides" class="override-actions toro-form-actions">
-                                <span>
-                                    {{
-                                        hasOverrideChanges
-                                            ? "Existen cambios pendientes."
-                                            : "Las excepciones están sincronizadas."
-                                    }}
-                                </span>
-
-                                <div>
-                                    <button type="button" class="override-button override-button-secondary toro-action toro-action-secondary" :disabled="!hasOverrideChanges ||
-                                        savingOverrides
-                                        " @click="discardOverrideChanges">
-                                        Descartar
-                                    </button>
-
-                                    <button type="button" class="override-button override-button-primary toro-action toro-action-primary" :disabled="!hasOverrideChanges ||
-                                        savingOverrides
-                                        " @click="saveOverrideChanges">
-                                        {{
-                                            savingOverrides
-                                                ? "Guardando..."
-                                                : "Guardar excepciones"
-                                        }}
-                                    </button>
-                                </div>
-                            </div>
-                        </section>
-
-                        <section class="authorization-section">
-                            <header>
-                                <div>
-                                    <p>Resultado efectivo</p>
-                                    <h4>Contexto de autorización</h4>
-                                </div>
-
-                                <span>
-                                    {{ authorization.context?.permissions.length || 0 }}
-                                </span>
-                            </header>
-
-                            <div v-if="!authorization.context" class="user-security-empty user-security-empty-compact toro-empty-state">
-                                El usuario no dispone de un contexto efectivo activo.
-                            </div>
-
-                            <template v-else>
-                                <div class="effective-summary">
-                                    <article>
-                                        <span>Roles efectivos</span>
-                                        <strong>{{ authorization.context.roles.length }}</strong>
-                                    </article>
-
-                                    <article>
-                                        <span>Permisos efectivos</span>
-                                        <strong>
-                                            {{ authorization.context.permissions.length }}
-                                        </strong>
-                                    </article>
-
-                                    <article>
-                                        <span>Permisos denegados</span>
-                                        <strong>
-                                            {{ authorization.context.deniedPermissions.length }}
-                                        </strong>
-                                    </article>
-                                </div>
-
-                                <div class="effective-columns">
-                                    <section>
-                                        <h5>Permitidos</h5>
-
-                                        <ul v-if="authorization.context.permissions.length > 0">
-                                            <li v-for="permission in authorization.context.permissions"
-                                                :key="permission">
-                                                {{ formatPermissionCode(permission) }}
-                                            </li>
-                                        </ul>
-
-                                        <p v-else>Sin permisos efectivos.</p>
-                                    </section>
-
-                                    <section>
-                                        <h5>Denegados</h5>
-
-                                        <ul v-if="
-                                            authorization.context.deniedPermissions.length > 0
-                                        ">
-                                            <li v-for="permission in authorization.context
-                                                .deniedPermissions" :key="permission">
-                                                {{ formatPermissionCode(permission) }}
-                                            </li>
-                                        </ul>
-
-                                        <p v-else>Sin denegaciones explícitas.</p>
-                                    </section>
-                                </div>
-                            </template>
-                        </section>
-
-                        <p class="user-security-note">
-                            La asignación de roles y las excepciones individuales están
-                            disponibles únicamente para cuentas autorizadas. El backend
-                            continúa siendo la autoridad del contexto efectivo.
-                        </p>
-                    </template>
-                </article>
+            <div v-else-if="!canAssignRoles" class="toro-empty-state">
+              La cuenta actual puede consultar los roles, pero no modificarlos.
             </div>
-        </template>
-    </section>
+            <div v-if="inactiveAssignedRoles.length > 0" class="toro-message toro-message-warning" role="status">
+              Los roles inactivos se conservan para consulta y se retirarán al guardar.
+            </div>
+            <div v-if="filteredRolesForDialog.length === 0" class="toro-empty-state">No existen roles que coincidan con la búsqueda.</div>
+            <div v-else class="role-assignment-list">
+              <label
+                v-for="role in filteredRolesForDialog"
+                :key="role.id"
+                class="role-assignment-option"
+                :class="{
+                  'role-assignment-option-selected': isRoleSelected(role.id),
+                  'role-assignment-option-disabled': !role.isActive || selectedUser?.hidden,
+                }"
+              >
+                <input
+                  type="checkbox"
+                  :checked="isRoleSelected(role.id)"
+                  :disabled="!role.isActive || !canEditSelectedUser || !canAssignRoles || savingRoles"
+                  @change="toggleRole(role)"
+                />
+                <span class="role-assignment-copy">
+                  <strong>{{ role.name }}</strong>
+                  <small>{{ role.code }} · {{ role.description || "Sin descripción" }}</small>
+                </span>
+                <span class="toro-badge" :class="role.isActive ? 'toro-badge-success' : 'toro-badge-warning'">
+                  {{ role.isActive ? "Activo" : "Inactivo" }}
+                </span>
+              </label>
+            </div>
+            <div v-if="saveRolesError" class="toro-inline-message toro-message-error" role="alert">{{ saveRolesError }}</div>
+            <div v-if="saveRolesMessage" class="toro-inline-message toro-message-success" role="status">{{ saveRolesMessage }}</div>
+          </template>
+        </div>
+
+        <footer class="dialog-footer">
+          <span class="dialog-pending-status">{{ hasRoleChanges ? "Existen cambios pendientes." : "Los roles están sincronizados." }}</span>
+          <button type="button" class="toro-action toro-action-secondary" :disabled="savingRoles" @click="closeUserRolesDialog">
+  <ToroActionIcon action="cancel" />Cancelar</button>
+          <button
+            v-if="canAssignRoles"
+            type="button"
+            class="toro-action toro-action-primary"
+            :disabled="!canEditSelectedUser || !hasRoleChanges || savingRoles"
+            @click="submitUserRolesDialog"
+          >
+  <ToroActionIcon action="assignRoles" />
+            {{ savingRoles ? "Guardando..." : "Guardar roles" }}
+          </button>
+        </footer>
+      </div>
+    </dialog>
+
+    <dialog ref="userOverridesDialog" class="toro-dialog user-overrides-dialog" tabindex="-1">
+      <div class="dialog-shell">
+        <header class="dialog-header">
+          <div>
+            <p>Excepciones individuales</p>
+            <h3>Permisos de {{ selectedUser?.name || "Usuario" }}</h3>
+          </div>
+          <ToroDialogCloseButton @click="closeUserOverridesDialog" />
+        </header>
+
+        <div class="dialog-toolbar overrides-toolbar">
+          <ToroFormField label="Buscar permiso" field-id="user-permission-search">
+            <input id="user-permission-search" v-model="permissionSearchText" class="toro-field" type="search" autocomplete="off" placeholder="Módulo, nombre o descripción" />
+          </ToroFormField>
+          <ToroFormField label="Estado" field-id="user-override-filter">
+            <select id="user-override-filter" v-model="overrideStatusFilter" class="toro-field">
+              <option value="all">Todos</option>
+              <option value="inherited">Sin override</option>
+              <option value="allow">Permitir</option>
+              <option value="deny">Denegar</option>
+            </select>
+          </ToroFormField>
+          <span><strong>{{ draftOverrides.length }}</strong> excepciones</span>
+        </div>
+
+        <div class="dialog-body overrides-dialog-body">
+          <div v-if="authorizationLoading" class="toro-empty-state">Consultando permisos...</div>
+          <div v-else-if="authorizationError" class="toro-message toro-message-error" role="alert">{{ authorizationError }}</div>
+          <template v-else-if="authorization">
+            <details class="override-explanation">
+              <summary><span>¿Qué cambia una excepción individual?</span><small>Sin override usa los roles; Permitir concede; Denegar bloquea.</small></summary>
+              <div class="override-explanation-body">
+                <p>Cada permiso parte del resultado heredado de los roles. Una excepción cambia solamente ese permiso para este usuario.</p>
+                <dl>
+                  <div><dt>Sin override</dt><dd>Conserva el resultado heredado de los roles asignados.</dd></div>
+                  <div><dt>Permitir</dt><dd>Concede el permiso directamente, aunque ningún rol activo lo otorgue.</dd></div>
+                  <div><dt>Denegar</dt><dd>Bloquea el permiso directamente y prevalece sobre los roles.</dd></div>
+                </dl>
+              </div>
+            </details>
+            <div v-if="selectedUser?.hidden" class="toro-message toro-message-warning" role="status">
+              Los usuarios inactivos permanecen visibles para consulta, pero no pueden modificarse.
+            </div>
+            <div v-else-if="!canAssignPermissionOverrides" class="toro-empty-state">
+              La cuenta actual puede consultar las excepciones, pero no modificarlas.
+            </div>
+            <div v-if="inactivePermissionOverrides.length > 0" class="toro-message toro-message-warning" role="status">
+              Las excepciones inactivas se conservan para consulta y se retirarán al guardar.
+            </div>
+            <div v-if="filteredPermissionModules.length === 0" class="toro-empty-state">No existen permisos que coincidan con los filtros.</div>
+            <details v-for="module in filteredPermissionModules" :key="module.key" class="override-module-card" open>
+              <summary class="override-module-summary">
+                <div><span>Módulo</span><h4>{{ module.label }}</h4></div>
+                <strong>{{ module.permissions.length }}</strong>
+              </summary>
+              <div
+                v-for="permission in module.permissions"
+                :key="permission.id"
+                class="override-option"
+                :class="{ 'override-option-disabled': !permission.isActive || selectedUser?.hidden }"
+              >
+                <span class="override-option-copy">
+                  <strong>{{ permission.displayName }}</strong>
+                  <small>{{ permission.displayDescription }}</small>
+                </span>
+                <select
+                  :value="getPermissionOverrideEffect(permission.id)"
+                  :disabled="!permission.isActive || !canEditSelectedUser || !canAssignPermissionOverrides || savingOverrides"
+                  @change="setPermissionOverride(permission, $event.target.value)"
+                >
+                  <option value="">Sin override</option>
+                  <option :value="PermissionEffect.Allow">Permitir</option>
+                  <option :value="PermissionEffect.Deny">Denegar</option>
+                </select>
+                <span class="toro-badge" :class="getOverrideBadgeClass(permission.id)">
+                  {{ getOverrideLabel(permission.id) }}
+                </span>
+              </div>
+            </details>
+            <div v-if="saveOverridesError" class="toro-inline-message toro-message-error" role="alert">{{ saveOverridesError }}</div>
+            <div v-if="saveOverridesMessage" class="toro-inline-message toro-message-success" role="status">{{ saveOverridesMessage }}</div>
+          </template>
+        </div>
+
+        <footer class="dialog-footer">
+          <span class="dialog-pending-status">{{ hasOverrideChanges ? "Existen cambios pendientes." : "Las excepciones están sincronizadas." }}</span>
+          <button type="button" class="toro-action toro-action-secondary" :disabled="savingOverrides" @click="closeUserOverridesDialog">
+  <ToroActionIcon action="cancel" />Cancelar</button>
+          <button
+            v-if="canAssignPermissionOverrides"
+            type="button"
+            class="toro-action toro-action-primary"
+            :disabled="!canEditSelectedUser || !hasOverrideChanges || savingOverrides"
+            @click="submitUserOverridesDialog"
+          >
+  <ToroActionIcon action="assignPermissions" />
+            {{ savingOverrides ? "Guardando..." : "Guardar excepciones" }}
+          </button>
+        </footer>
+      </div>
+    </dialog>
+  </section>
 </template>
 
 <script setup>
 import { computed, onMounted, ref } from "vue";
+import { nextTick } from "vue";
+import ToroDataGrid from "@/components/grid/ToroDataGrid.vue";
+import ToroGridActionsCell from "@/components/grid/ToroGridActionsCell.vue";
+import ToroStatusBadgeCell from "@/components/grid/ToroStatusBadgeCell.vue";
+import ToroContextMenu from "@/components/ui/ToroContextMenu.vue";
+import ToroFormField from "@/components/ui/ToroFormField.vue";
+import ToroIcon from "@/components/ui/ToroIcon.vue";
+import UserIdentityDialog from "@/components/security/UserIdentityDialog.vue";
 import {
     formatPermissionCode,
     getPermissionDisplayName,
     getPermissionModuleLabel,
     groupPermissionsForPresentation,
+
 } from "@/presentation/permissionPresentation";
 import {
     getAuthorizationPermissions,
@@ -520,6 +366,11 @@ import {
 } from "@/services/authorizationService";
 import { PermissionEffect } from "@/models/authorization";
 import { useAuthorizationStore } from "@/stores/authorization";
+import ToroDialogCloseButton from "@/components/ui/ToroDialogCloseButton.vue";
+import { useToroToast } from "@/composables/useToroToast";
+import ToroActionIcon from "@/components/ui/ToroActionIcon.vue";
+
+const toast = useToroToast();
 
 const authorizationStore = useAuthorizationStore();
 const users = ref([]);
@@ -546,9 +397,32 @@ const draftOverrides = ref([]);
 const savingOverrides = ref(false);
 const saveOverridesError = ref("");
 const saveOverridesMessage = ref("");
+const userDetailDialog = ref(null);
+const userRolesDialog = ref(null);
+const userOverridesDialog = ref(null);
+const userIdentityDialog = ref(null);
+const userContextMenu = ref(null);
+const userStatusFilter = ref("all");
+const roleSearchText = ref("");
+const permissionSearchText = ref("");
+const overrideStatusFilter = ref("all");
+const userContextMenuState = ref({
+  open: false,
+  x: 0,
+  y: 0,
+  user: null,
+});
 
 const visibleUsersCount = computed(
     () => users.value.filter((user) => !user.hidden).length,
+);
+
+const canCreateUsers = computed(() =>
+  authorizationStore.hasPermission("security.users.create"),
+);
+
+const canUpdateUsers = computed(() =>
+  authorizationStore.hasPermission("security.users.update"),
 );
 
 const canAssignRoles = computed(() =>
@@ -596,26 +470,242 @@ const permissionModules = computed(() =>
 );
 
 const filteredUsers = computed(() => {
-    const filter = searchText.value.trim().toLowerCase();
+  const filter = searchText.value.trim().toLowerCase();
 
-    if (filter === "") {
-        return users.value;
-    }
+  return users.value.filter((user) => {
+    const matchesStatus =
+      userStatusFilter.value === "all" ||
+      (userStatusFilter.value === "visible" && !user.hidden) ||
+      (userStatusFilter.value === "hidden" && user.hidden);
 
-    return users.value.filter((user) =>
-        [
-            user.name,
-            user.userName,
-            user.email,
-            user.position,
-            user.collegeNumber,
-        ].some(
-            (value) =>
-                typeof value === "string" &&
-                value.toLowerCase().includes(filter),
-        ),
-    );
+    const matchesSearch =
+      filter === "" ||
+      [
+        user.name,
+        user.userName,
+        user.email,
+        user.position,
+        user.collegeNumber,
+        user.roles,
+      ].some(
+        (value) =>
+          typeof value === "string" &&
+          value.toLowerCase().includes(filter),
+      );
+
+    return matchesStatus && matchesSearch;
+  });
 });
+
+const canEditSelectedUser = computed(
+  () => selectedUser.value !== null && selectedUser.value.hidden !== true,
+);
+
+const filteredRolesForDialog = computed(() => {
+  const search = roleSearchText.value.trim().toLowerCase();
+  if (search === "") return roles.value;
+
+  return roles.value.filter((role) =>
+    [role.code, role.name, role.description]
+      .filter((value) => typeof value === "string")
+      .some((value) => value.toLowerCase().includes(search)),
+  );
+});
+
+const filteredPermissionModules = computed(() => {
+  const search = permissionSearchText.value.trim().toLowerCase();
+
+  return permissionModules.value
+    .map((module) => ({
+      ...module,
+      permissions: module.permissions.filter((permission) => {
+        const effect = getPermissionOverrideEffect(permission.id);
+        const matchesEffect =
+          overrideStatusFilter.value === "all" ||
+          (overrideStatusFilter.value === "inherited" && effect === "") ||
+          effect === overrideStatusFilter.value;
+        const matchesSearch =
+          search === "" ||
+          [
+            module.label,
+            permission.displayName,
+            permission.displayDescription,
+          ].some((value) => value.toLowerCase().includes(search));
+
+        return matchesEffect && matchesSearch;
+      }),
+    }))
+    .filter((module) => module.permissions.length > 0);
+});
+
+const gridComponents = {
+  ToroGridActionsCell,
+  ToroStatusBadgeCell,
+};
+
+const gridContext = {
+  source: "user-authorization",
+};
+
+const userActions = computed(() => [
+  {
+    key: "view",
+    label: "Ver",
+    icon: "visibility",
+    variant: "subtle",
+    onClick: openUserDetailDialog,
+  },
+  {
+    key: "edit",
+    label: "Editar",
+    icon: "edit",
+    variant: "subtle",
+    visible: () => canUpdateUsers.value,
+    onClick: openEditUserDialog,
+  },
+  {
+    key: "state",
+    label: "Estado",
+    icon: "manage_accounts",
+    variant: "subtle",
+    visible: () => canUpdateUsers.value,
+    onClick: openUserStateDialog,
+  },
+  {
+    key: "roles",
+    label: "Roles",
+    icon: "badge",
+    variant: "subtle",
+    visible: () => canAssignRoles.value,
+    disabled: (user) => user?.hidden === true,
+    onClick: openUserRolesDialog,
+  },
+  {
+    key: "permissions",
+    label: "Permisos",
+    icon: "shield_person",
+    variant: "accent",
+    visible: () => canAssignPermissionOverrides.value,
+    disabled: (user) => user?.hidden === true,
+    onClick: openUserOverridesDialog,
+  },
+]);
+
+const userColumnDefs = computed(() => [
+  {
+    field: "userName",
+    headerName: "Usuario",
+    sort: "asc",
+    minWidth: 170,
+    flex: 0.9,
+    cellClass: "toro-grid-code-cell",
+  },
+  {
+    field: "name",
+    headerName: "Nombre",
+    minWidth: 220,
+    flex: 1.2,
+    valueFormatter: ({ value }) => value || "Sin nombre",
+    cellClass: "toro-grid-strong-cell",
+  },
+  {
+    field: "email",
+    headerName: "Correo",
+    minWidth: 230,
+    flex: 1.2,
+    valueFormatter: ({ value }) => value || "Sin correo",
+    cellClass: "toro-grid-muted-cell",
+  },
+  {
+    field: "position",
+    headerName: "Cargo",
+    minWidth: 180,
+    flex: 0.9,
+    valueFormatter: ({ value }) => value || "Sin cargo",
+  },
+  {
+    field: "roles",
+    headerName: "Roles",
+    minWidth: 170,
+    flex: 0.8,
+    valueFormatter: ({ value }) => value || "Sin roles",
+  },
+  {
+    headerName: "Estado",
+    minWidth: 125,
+    maxWidth: 145,
+    flex: 0.6,
+    valueGetter: ({ data }) => (data?.hidden ? "Inactivo" : "Activo"),
+    filter: "agTextColumnFilter",
+    headerClass: "toro-grid-centered-header",
+    cellClass: "toro-grid-status-cell",
+    cellRenderer: "ToroStatusBadgeCell",
+  },
+  {
+    colId: "actions",
+    headerName: "Acciones",
+    width: 215,
+    minWidth: 215,
+    maxWidth: 215,
+    flex: 0,
+    sortable: false,
+    filter: false,
+    resizable: false,
+    suppressHeaderMenuButton: true,
+    headerClass: "toro-grid-actions-header",
+    cellClass: "toro-grid-actions-cell",
+    cellRenderer: "ToroGridActionsCell",
+    cellRendererParams: {
+      actions: userActions.value,
+    },
+    pinned: "right",
+    lockPinned: true,
+    suppressMovable: true,
+  },
+]);
+
+const userContextMenuItems = computed(() => {
+  const user = userContextMenuState.value.user;
+  if (!user) return [];
+
+  return [
+    {
+      key: "view",
+      label: "Ver autorización",
+      action: () => openUserDetailDialog(user),
+    },
+    {
+      key: "edit",
+      label: "Editar datos",
+      visible: canUpdateUsers.value,
+      action: () => openEditUserDialog(user),
+    },
+    {
+      key: "state",
+      label: user.hidden ? "Reactivar usuario" : "Inactivar usuario",
+      visible: canUpdateUsers.value,
+      action: () => openUserStateDialog(user),
+    },
+    {
+      key: "roles",
+      label: "Editar roles",
+      visible: canAssignRoles.value,
+      disabled: user.hidden === true,
+      action: () => openUserRolesDialog(user),
+    },
+    {
+      key: "permissions",
+      label: "Editar permisos individuales",
+      visible: canAssignPermissionOverrides.value,
+      disabled: user.hidden === true,
+      action: () => openUserOverridesDialog(user),
+    },
+  ];
+});
+
+function getUserRowId(params) {
+  return String(params.data.id);
+}
 
 function normalizeRoleIds(roleIds) {
     return Array.from(
@@ -817,6 +907,144 @@ function getUserInitials(user) {
         .join("");
 }
 
+function openCreateUserDialog() {
+  userIdentityDialog.value?.openCreate();
+}
+
+function openEditUserDialog(user) {
+  userIdentityDialog.value?.openEdit(user);
+}
+
+function openUserStateDialog(user) {
+  userIdentityDialog.value?.openState(user);
+}
+
+async function handleIdentitySaved({ user }) {
+  await loadUsers();
+  if (!user?.id) return;
+  const refreshed = users.value.find((item) => item.id === user.id);
+  if (refreshed) selectedUser.value = refreshed;
+}
+
+function showDialog(dialogReference) {
+  const dialog = dialogReference.value;
+  if (!dialog || dialog.open === true) return;
+
+  dialog.showModal();
+  requestAnimationFrame(() => {
+    dialog.focus({ preventScroll: true });
+  });
+}
+
+function closeDialog(dialogReference) {
+  if (dialogReference.value?.open === true) {
+    dialogReference.value.close();
+  }
+}
+
+async function prepareSelectedUser(user) {
+  if (!user) return false;
+
+  if (selectedUser.value?.id !== user.id || !authorization.value) {
+    selectedUser.value = user;
+    await loadSelectedUserAuthorization();
+  }
+
+  return selectedUser.value?.id === user.id;
+}
+
+async function openUserContextMenu({ event, row }) {
+  if (!event || !row) return;
+
+  userContextMenuState.value = {
+    open: true,
+    x: event.clientX,
+    y: event.clientY,
+    user: row,
+  };
+
+  await nextTick();
+  userContextMenu.value?.positionMenu?.();
+}
+
+function closeUserContextMenu() {
+  userContextMenuState.value = {
+    open: false,
+    x: 0,
+    y: 0,
+    user: null,
+  };
+}
+
+async function runUserContextAction(item) {
+  const action = item?.action;
+  closeUserContextMenu();
+  if (typeof action === "function") await action();
+}
+
+async function openUserDetailDialog(user) {
+  if (!(await prepareSelectedUser(user))) return;
+  showDialog(userDetailDialog);
+}
+
+function closeUserDetailDialog() {
+  closeDialog(userDetailDialog);
+}
+
+async function openUserRolesDialog(user) {
+  if (user?.hidden || savingRoles.value || savingOverrides.value) return;
+  if (!(await prepareSelectedUser(user))) return;
+  roleSearchText.value = "";
+  showDialog(userRolesDialog);
+}
+
+function closeUserRolesDialog() {
+  if (savingRoles.value) return;
+  discardRoleChanges();
+  roleSearchText.value = "";
+  closeDialog(userRolesDialog);
+}
+
+async function submitUserRolesDialog() {
+  await saveRoleChanges();
+  if (saveRolesError.value === "") closeDialog(userRolesDialog);
+}
+
+async function openUserOverridesDialog(user) {
+  if (user?.hidden || savingRoles.value || savingOverrides.value) return;
+  if (!(await prepareSelectedUser(user))) return;
+  permissionSearchText.value = "";
+  overrideStatusFilter.value = "all";
+  showDialog(userOverridesDialog);
+}
+
+function closeUserOverridesDialog() {
+  if (savingOverrides.value) return;
+  discardOverrideChanges();
+  permissionSearchText.value = "";
+  overrideStatusFilter.value = "all";
+  closeDialog(userOverridesDialog);
+}
+
+async function submitUserOverridesDialog() {
+  await saveOverrideChanges();
+  if (saveOverridesError.value === "") closeDialog(userOverridesDialog);
+}
+
+function getOverrideLabel(permissionId) {
+  const effect = getPermissionOverrideEffect(permissionId);
+  if (effect === PermissionEffect.Allow) return "Permitir";
+  if (effect === PermissionEffect.Deny) return "Denegar";
+  return "Según roles";
+}
+
+function getOverrideBadgeClass(permissionId) {
+  const effect = getPermissionOverrideEffect(permissionId);
+  if (effect === PermissionEffect.Allow) return "toro-badge-success";
+  if (effect === PermissionEffect.Deny) return "toro-badge-danger";
+  return "toro-badge-neutral";
+}
+
 async function selectUser(user) {
     if (
         selectedUser.value?.id === user.id ||
@@ -868,6 +1096,7 @@ async function loadSelectedUserAuthorization() {
             authorizationError.value =
                 "El backend no devolvió una autorización válida.";
 
+            toast.error(authorizationError.value);
             return;
         }
 
@@ -887,6 +1116,7 @@ async function loadSelectedUserAuthorization() {
             typeof error?.message === "string"
                 ? error.message
                 : "No fue posible consultar la autorización del usuario.";
+        toast.error(authorizationError.value);
     } finally {
         if (requestId === authorizationRequestId) {
             authorizationLoading.value = false;
@@ -899,6 +1129,7 @@ async function saveRoleChanges() {
 
     if (
         !user ||
+        user.hidden ||
         !canAssignRoles.value ||
         !hasRoleChanges.value ||
         savingRoles.value
@@ -911,10 +1142,8 @@ async function saveRoleChanges() {
     saveRolesMessage.value = "";
 
     try {
-        await replaceUserRoles(
-            user.id,
-            draftRoleIds.value,
-        );
+        const assignedRoles = await replaceUserRoles(user.id, draftRoleIds.value,);
+    applyAssignedRolesToUserRow(user.id, assignedRoles);
 
         await loadSelectedUserAuthorization();
 
@@ -928,6 +1157,8 @@ async function saveRoleChanges() {
 
         saveRolesMessage.value =
             "Los roles del usuario fueron actualizados.";
+
+        toast.success(saveRolesMessage.value);
     } catch (error) {
         const backendMessage =
             typeof error?.message === "string"
@@ -951,6 +1182,7 @@ async function saveRoleChanges() {
             messages[backendMessage] ||
             backendMessage ||
             "No fue posible guardar los roles del usuario.";
+        toast.error(saveRolesError.value);
     } finally {
         savingRoles.value = false;
     }
@@ -961,6 +1193,7 @@ async function saveOverrideChanges() {
 
     if (
         !user ||
+        user.hidden ||
         !canAssignPermissionOverrides.value ||
         !hasOverrideChanges.value ||
         savingOverrides.value
@@ -988,6 +1221,8 @@ async function saveOverrideChanges() {
 
         saveOverridesMessage.value =
             "Las excepciones del usuario fueron actualizadas.";
+
+        toast.success(saveOverridesMessage.value);
     } catch (error) {
         const backendMessage =
             typeof error?.message === "string"
@@ -1013,6 +1248,7 @@ async function saveOverrideChanges() {
             messages[backendMessage] ||
             backendMessage ||
             "No fue posible guardar las excepciones del usuario.";
+        toast.error(saveOverridesError.value);
     } finally {
         savingOverrides.value = false;
     }
@@ -1060,15 +1296,18 @@ async function loadUsers() {
             typeof error?.message === "string"
                 ? error.message
                 : "No fue posible cargar los usuarios.";
+        toast.error(usersError.value);
 
         if (!usersLoaded.value) {
             users.value = [];
             roles.value = [];
             rolesError.value =
                 "No fue posible cargar el catálogo de roles.";
+            toast.error(rolesError.value);
             permissions.value = [];
             permissionsError.value =
                 "No fue posible cargar el catálogo de permisos.";
+            toast.error(permissionsError.value);
             savedOverrides.value = [];
             draftOverrides.value = [];
             selectedUser.value = null;
@@ -1083,6 +1322,20 @@ async function loadUsers() {
 }
 
 onMounted(loadUsers);
+
+function applyAssignedRolesToUserRow(userId, assignedRoles) {
+  const normalizedRoles = Array.isArray(assignedRoles) ? assignedRoles : [];
+  const roleCodes = normalizedRoles.map((role) => role.code).join(", ");
+  users.value = users.value.map((user) =>
+    user.id === userId
+      ? { ...user, assignedRoles: normalizedRoles, roles: roleCodes }
+      : user,
+  );
+
+  if (selectedUser.value?.id === userId) {
+    selectedUser.value = users.value.find((user) => user.id === userId) ?? null;
+  }
+}
 </script>
 
 <style scoped>
@@ -1444,4 +1697,548 @@ onMounted(loadUsers);
         grid-template-columns: 1fr 1fr;
     }
 }
+
+/* TORO user authorization visual management */
+.user-authorization-page {
+  display: grid;
+  min-width: 0;
+}
+
+.user-directory-panel {
+  overflow: hidden;
+  padding: 0;
+}
+
+.user-directory-toolbar {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) 180px auto auto;
+  align-items: start;
+  gap: var(--toro-space-3);
+  padding: var(--toro-space-3) var(--toro-space-4);
+  border-bottom: 1px solid var(--toro-color-border);
+}
+
+.user-directory-summary {
+  display: flex;
+  margin-top: 7px;
+  align-items: center;
+  gap: var(--toro-space-3);
+  min-height: var(--toro-control-height);
+  color: var(--toro-color-text-muted);
+  font-size: var(--toro-font-size-sm);
+  white-space: nowrap;
+}
+
+.user-directory-summary span {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--toro-space-1);
+}
+
+.user-directory-summary strong {
+  color: var(--toro-color-text);
+}
+
+.user-directory-actions {
+  display: flex;
+  margin-top: 7px;
+  justify-content: flex-end;
+}
+
+.user-directory-empty {
+  margin: var(--toro-space-4);
+}
+
+.users-grid {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  border: 0;
+  border-radius: 0;
+}
+
+.user-authorization-page :deep(.toro-grid-code-cell) {
+  color: var(--toro-color-primary-strong);
+  font-weight: var(--toro-font-weight-bold);
+  overflow-wrap: anywhere;
+}
+
+.user-authorization-page :deep(.toro-grid-strong-cell) {
+  font-weight: var(--toro-font-weight-bold);
+}
+
+.user-authorization-page :deep(.toro-grid-muted-cell) {
+  color: var(--toro-color-text-muted);
+}
+
+.user-authorization-page :deep(.toro-grid-centered-header .ag-header-cell-label),
+.user-authorization-page :deep(.toro-grid-actions-header .ag-header-cell-label) {
+  justify-content: center;
+}
+
+.user-authorization-page :deep(.toro-grid-status-cell),
+.user-authorization-page :deep(.toro-grid-actions-cell) {
+  justify-content: center;
+}
+
+.toro-dialog {
+  width: min(720px, calc(100vw - 32px));
+  max-width: none;
+  max-height: calc(100vh - 32px);
+  padding: 0;
+  border: 1px solid var(--toro-color-border-strong);
+  border-radius: var(--toro-radius-md);
+  background: var(--toro-color-surface);
+  color: var(--toro-color-text);
+  box-shadow: var(--toro-shadow-md);
+  overflow: hidden;
+}
+
+.toro-dialog::backdrop {
+  background: color-mix(in srgb, var(--toro-color-sidebar-strong) 48%, transparent);
+  backdrop-filter: blur(2px);
+}
+
+.user-assignment-dialog,
+.user-overrides-dialog {
+  width: min(980px, calc(100vw - 32px));
+}
+
+.dialog-shell {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-height: calc(100vh - 32px);
+  overflow: hidden;
+}
+
+.user-assignment-dialog .dialog-shell,
+.user-overrides-dialog .dialog-shell {
+  height: min(760px, calc(100vh - 32px));
+}
+
+.dialog-header {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--toro-space-3);
+  padding: var(--toro-space-3) var(--toro-space-4);
+  border-bottom: 1px solid var(--toro-color-border);
+  background: var(--toro-color-surface);
+}
+
+.dialog-header p,
+.dialog-header h3 {
+  margin: 0;
+}
+
+.dialog-header p {
+  margin-bottom: var(--toro-space-1);
+  color: var(--toro-color-accent-strong);
+  font-size: var(--toro-font-size-xs);
+  font-weight: var(--toro-font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.dialog-close {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--toro-color-surface-soft);
+  color: var(--toro-color-text);
+  font: inherit;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.dialog-toolbar {
+  display: grid;
+  grid-template-columns: minmax(280px, 1fr) auto;
+  flex: 0 0 auto;
+  align-items: end;
+  gap: var(--toro-space-3);
+  padding: var(--toro-space-3) var(--toro-space-4);
+  border-bottom: 1px solid var(--toro-color-border);
+  background: var(--toro-color-surface-soft);
+}
+
+.overrides-toolbar {
+  grid-template-columns: minmax(280px, 1fr) 180px auto;
+}
+
+.dialog-toolbar > span {
+  display: inline-flex;
+  align-items: center;
+  align-self: end;
+  gap: var(--toro-space-1);
+  min-height: var(--toro-control-height);
+  color: var(--toro-color-text-muted);
+  white-space: nowrap;
+}
+
+.dialog-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: var(--toro-space-4);
+  overflow: auto;
+  scrollbar-gutter: stable;
+}
+
+.assignment-dialog-body,
+.overrides-dialog-body {
+  display: grid;
+  align-content: start;
+  gap: var(--toro-space-3);
+}
+
+.dialog-footer {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--toro-space-2);
+  padding: var(--toro-space-3) var(--toro-space-4);
+  border-top: 1px solid var(--toro-color-border);
+  background: var(--toro-color-surface-soft);
+}
+
+.dialog-pending-status {
+  margin-right: auto;
+  color: var(--toro-color-text-muted);
+  font-size: var(--toro-font-size-sm);
+}
+
+.user-detail-content {
+  display: grid;
+  gap: var(--toro-space-4);
+}
+
+.user-detail-heading {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--toro-space-3);
+  padding-bottom: var(--toro-space-3);
+  border-bottom: 1px solid var(--toro-color-border);
+}
+
+.user-avatar-large {
+  display: grid;
+  width: 56px;
+  height: 56px;
+  place-items: center;
+  border-radius: var(--toro-radius-md);
+  background: var(--toro-color-info-soft);
+  color: var(--toro-color-primary-strong);
+  font-weight: var(--toro-font-weight-heavy);
+}
+
+.user-detail-heading h4,
+.user-detail-heading p {
+  margin: 0;
+}
+
+.user-detail-heading p,
+.user-detail-username {
+  color: var(--toro-color-text-muted);
+  font-size: var(--toro-font-size-sm);
+}
+
+.user-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--toro-space-3);
+  margin: 0;
+}
+
+.user-detail-grid > div,
+.effective-context-card {
+  padding: var(--toro-space-3);
+  border: 1px solid var(--toro-color-border);
+  border-radius: var(--toro-radius-md);
+  background: var(--toro-color-surface-soft);
+}
+
+.user-detail-grid dt,
+.effective-context-card header span {
+  color: var(--toro-color-text-muted);
+  font-size: var(--toro-font-size-xs);
+  font-weight: var(--toro-font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.user-detail-grid dd {
+  margin: var(--toro-space-1) 0 0;
+  font-weight: var(--toro-font-weight-bold);
+  overflow-wrap: anywhere;
+}
+
+.effective-context-card {
+  display: grid;
+  gap: var(--toro-space-3);
+}
+
+.effective-context-card h4 {
+  margin: var(--toro-space-1) 0 0;
+}
+
+.role-assignment-list {
+  display: grid;
+  gap: var(--toro-space-2);
+}
+
+.role-assignment-option {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--toro-space-3);
+  min-height: var(--toro-table-row-height);
+  padding: var(--toro-space-3);
+  border: 1px solid var(--toro-color-border);
+  border-radius: var(--toro-radius-md);
+  background: var(--toro-color-surface);
+  cursor: pointer;
+}
+
+.role-assignment-option-selected {
+  border-color: var(--toro-color-primary);
+  background: var(--toro-color-selection-soft);
+}
+
+.role-assignment-option-disabled {
+  cursor: default;
+  opacity: 0.68;
+}
+
+.role-assignment-option input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--toro-color-primary);
+}
+
+.role-assignment-copy {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.role-assignment-copy small,
+.override-option-copy small {
+  color: var(--toro-color-text-muted);
+  font-size: var(--toro-font-size-sm);
+}
+
+.override-module-card {
+  overflow: hidden;
+  border: 1px solid var(--toro-color-border);
+  border-radius: var(--toro-radius-md);
+  background: var(--toro-color-surface);
+}
+
+.override-module-card > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--toro-space-3);
+  padding: var(--toro-space-2) var(--toro-space-3);
+  border-bottom: 1px solid var(--toro-color-border);
+  background: var(--toro-color-surface-soft);
+}
+
+.override-module-card header span {
+  color: var(--toro-color-text-muted);
+  font-size: var(--toro-font-size-xs);
+  font-weight: var(--toro-font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.override-module-card h4 {
+  margin: var(--toro-space-1) 0 0;
+}
+
+.override-option {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 160px 100px;
+  align-items: center;
+  gap: var(--toro-space-3);
+  min-height: var(--toro-table-row-height);
+  padding: var(--toro-space-2) var(--toro-space-3);
+  border-bottom: 1px solid var(--toro-color-border);
+}
+
+.override-option:last-child {
+  border-bottom: 0;
+}
+
+.override-option-disabled {
+  opacity: 0.68;
+}
+
+.override-option-copy {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.override-option select {
+  width: 100%;
+  min-height: var(--toro-control-height);
+  padding-inline: var(--toro-space-2);
+  border: 1px solid var(--toro-color-border-strong);
+  border-radius: var(--toro-radius-md);
+  background: var(--toro-color-surface);
+  color: var(--toro-color-text);
+}
+
+@media (max-width: 1050px) {
+  .user-directory-toolbar {
+    grid-template-columns: minmax(240px, 1fr) 170px;
+  }
+
+  .user-directory-summary,
+  .user-directory-actions {
+    justify-content: flex-start;
+  }
+
+  .users-grid {
+    overflow: visible;
+  }
+}
+
+@media (max-width: 720px) {
+  .user-directory-toolbar,
+  .dialog-toolbar,
+  .overrides-toolbar,
+  .user-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .user-assignment-dialog,
+  .user-overrides-dialog,
+  .user-detail-dialog {
+    width: calc(100vw - 16px);
+  }
+
+  .user-assignment-dialog .dialog-shell,
+  .user-overrides-dialog .dialog-shell {
+    height: calc(100vh - 16px);
+    max-height: calc(100vh - 16px);
+  }
+
+  .user-detail-heading {
+    grid-template-columns: 48px minmax(0, 1fr);
+  }
+
+  .user-detail-heading > .toro-badge {
+    grid-column: 2;
+    justify-self: start;
+  }
+
+  .override-option {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+
+  .role-assignment-option {
+    grid-template-columns: 24px minmax(0, 1fr);
+  }
+
+  .role-assignment-option > .toro-badge {
+    grid-column: 2;
+    justify-self: start;
+  }
+
+  .dialog-footer {
+    flex-wrap: wrap;
+  }
+
+  .dialog-pending-status {
+    flex-basis: 100%;
+  }
+}
+
+/* TORO pinned actions and override guidance */
+.users-grid :deep(.ag-pinned-right-header),
+.users-grid :deep(.ag-pinned-right-cols-container) {
+  border-left: 1px solid var(--toro-color-border-strong);
+  box-shadow: calc(var(--toro-space-1) * -1) 0 var(--toro-space-3) var(--toro-shadow-panel-soft);
+}
+
+.override-explanation {
+  display: grid;
+  gap: var(--toro-space-2);
+  padding: var(--toro-space-3);
+  border: 1px solid var(--toro-color-border);
+  border-radius: var(--toro-radius-md);
+  background: var(--toro-color-info-soft);
+}
+
+.override-explanation h4,
+.override-explanation p,
+.override-explanation dl,
+.override-explanation dd {
+  margin: 0;
+}
+
+.override-explanation p,
+.override-explanation dd {
+  color: var(--toro-color-text-secondary);
+  font-size: var(--toro-font-size-sm);
+  line-height: 1.45;
+}
+
+.override-explanation dl {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--toro-space-2);
+}
+
+.override-explanation dl > div {
+  padding: var(--toro-space-2);
+  border: 1px solid var(--toro-color-border);
+  border-radius: var(--toro-radius-sm);
+  background: var(--toro-color-surface);
+}
+
+.override-explanation dt {
+  margin-bottom: var(--toro-space-1);
+  color: var(--toro-color-primary-strong);
+  font-size: var(--toro-font-size-sm);
+  font-weight: var(--toro-font-weight-bold);
+}
+
+@media (max-width: 720px) {
+  .override-explanation dl {
+    grid-template-columns: 1fr;
+  }
+
+  .user-directory-summary,
+  .user-directory-actions {
+    margin-top: 0;
+  }
+}
+
+.dialog-close-icon { display: block; width: 18px; height: 18px; pointer-events: none; }
+.override-explanation { padding: 0; }
+.override-explanation > summary { display: flex; align-items: center; justify-content: space-between; gap: var(--toro-space-3); padding: var(--toro-space-3); color: var(--toro-color-primary-strong); font-weight: var(--toro-font-weight-bold); cursor: pointer; list-style: none; }
+.override-explanation > summary::-webkit-details-marker, .override-module-summary::-webkit-details-marker { display: none; }
+.override-explanation > summary::after, .override-module-summary::after { content: "\2304"; color: var(--toro-color-primary-strong); font-size: var(--toro-font-size-lg); transition: transform 160ms ease; }
+.override-explanation[open] > summary::after, .override-module-card[open] > .override-module-summary::after { transform: rotate(180deg); }
+.override-explanation > summary small { margin-left: auto; color: var(--toro-color-text-muted); font-size: var(--toro-font-size-sm); font-weight: var(--toro-font-weight-regular); }
+.override-explanation-body { display: grid; gap: var(--toro-space-2); padding: 0 var(--toro-space-3) var(--toro-space-3); }
+.override-module-card { overflow: visible; }
+.override-module-summary { display: grid; grid-template-columns: minmax(0, 1fr) auto 18px; align-items: center; gap: var(--toro-space-3); padding: var(--toro-space-2) var(--toro-space-3); border-bottom: 1px solid var(--toro-color-border); background: var(--toro-color-surface-soft); cursor: pointer; list-style: none; }
+.override-module-card:not([open]) > .override-module-summary { border-bottom: 0; }
+@media (max-width: 720px) { .override-explanation > summary { align-items: flex-start; flex-direction: column; } .override-explanation > summary small { margin-left: 0; } }
 </style>

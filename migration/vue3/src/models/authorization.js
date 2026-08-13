@@ -1,4 +1,4 @@
-﻿export const PermissionEffect = Object.freeze({
+export const PermissionEffect = Object.freeze({
   Allow: "allow",
   Deny: "deny",
 });
@@ -129,6 +129,37 @@ export function normalizeSafeUser(value) {
 export function normalizeSafeUsers(value) {
   return asArray(value)
     .map(normalizeSafeUser)
+    .filter((user) => user !== null)
+    .sort((left, right) => {
+      const nameComparison = left.name.localeCompare(right.name);
+
+      if (nameComparison !== 0) {
+        return nameComparison;
+      }
+
+      return left.userName.localeCompare(right.userName);
+    });
+}
+
+export function normalizeAuthorizationUser(value) {
+  if (!value || typeof value !== "object") return null;
+
+  const user = normalizeSafeUser(value.user);
+  if (user === null) return null;
+
+  const assignedRoles = normalizeSecurityRoles(value.assignedRoles);
+
+  return {
+    ...user,
+    legacyRoles: user.roles,
+    roles: assignedRoles.map((role) => role.code).join(", "),
+    assignedRoles,
+  };
+}
+
+export function normalizeAuthorizationUsers(value) {
+  return asArray(value)
+    .map(normalizeAuthorizationUser)
     .filter((user) => user !== null)
     .sort((left, right) => {
       const nameComparison = left.name.localeCompare(right.name);

@@ -1,4 +1,4 @@
-﻿import { apiRequest } from "@/api/apiClient";
+import { apiRequest } from "@/api/apiClient";
 import {
   normalizeAuthorizationContext,
   normalizeOverrideInput,
@@ -8,7 +8,8 @@ import {
   normalizeSecurityPermissions,
   normalizeSecurityRoles,
   normalizeUserAuthorization,
-  normalizeSafeUsers,
+  normalizeAuthorizationUsers,
+  normalizeSafeUser,
 } from "@/models/authorization";
 
 export async function getAuthorizationContext() {
@@ -30,9 +31,27 @@ export async function getAuthorizationPermissions() {
 }
 
 export async function getAuthorizationUsers() {
-  const response = await apiRequest("/api/users/order");
+  const response = await apiRequest("/api/authorization/users");
 
-  return normalizeSafeUsers(response);
+  return normalizeAuthorizationUsers(response);
+}
+
+export async function createUser(user) {
+  const response = await apiRequest("/api/users/insert", {
+    method: "POST",
+    body: user,
+  });
+
+  return normalizeSafeUser(response);
+}
+
+export async function updateUser(userId, changes) {
+  const response = await apiRequest(`/api/users/${userId}`, {
+    method: "PATCH",
+    body: changes,
+  });
+
+  return normalizeSafeUser(response);
 }
 
 export async function getRolePermissions(roleId) {
