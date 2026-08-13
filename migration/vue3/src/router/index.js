@@ -1,4 +1,4 @@
-﻿import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHistory } from "vue-router";
 import { useAuthorizationStore } from "@/stores/authorization";
 import { useSessionStore } from "@/stores/session";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout.vue";
@@ -49,6 +49,7 @@ const routes = [
           requiresAuth: true,
           permissions: ["security.roles.read", "security.permissions.read"],
           title: "Roles y permisos",
+          description: "Administra los roles del sistema y configura los permisos asignados a cada rol.",
         },
       },
       {
@@ -59,6 +60,7 @@ const routes = [
           requiresAuth: true,
           permissions: ["security.users.read"],
           title: "Usuarios y autorización",
+          description: "Administra los usuarios, sus roles y las excepciones individuales de permisos.",
         },
       },
       {
@@ -69,6 +71,7 @@ const routes = [
           requiresAuth: true,
           permissions: ["parasiticforms.read"],
           title: "Formas parasitarias",
+                    description: "Administra las descripciones disponibles y controla cuales permanecen activas en los flujos operativos.",
         },
       },
     ],

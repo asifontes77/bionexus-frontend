@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <header class="app-topbar">
     <div class="topbar-leading">
       <button
@@ -17,6 +17,7 @@
       <div>
         <p class="topbar-context">Area autenticada</p>
         <h1>{{ title }}</h1>
+        <p v-if="$route.meta.description" class="authenticated-page-description">{{ $route.meta.description }}</p>
       </div>
     </div>
 

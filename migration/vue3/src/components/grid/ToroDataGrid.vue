@@ -147,7 +147,7 @@ const gridTheme = themeQuartz.withParams({
   browserColorScheme: "light",
   cellHorizontalPaddingScale: 0.8,
   columnBorder: {
-    color: "var(--toro-color-border)",
+    color: "color-mix(in srgb, var(--toro-color-surface) 34%, transparent)",
     style: "solid",
     width: 1,
   },
@@ -168,11 +168,11 @@ const gridTheme = themeQuartz.withParams({
     y: 6,
   },
   foregroundColor: "var(--toro-color-text)",
-  headerBackgroundColor: "var(--toro-color-surface-soft)",
+  headerBackgroundColor: "#d8eaf4",
   headerFontSize: "var(--toro-font-size-xs)",
   headerFontWeight: "var(--toro-font-weight-bold)",
-  headerTextColor: "var(--toro-color-text-muted)",
-  oddRowBackgroundColor: "var(--toro-color-surface)",
+  headerTextColor: "#174b6b",
+  oddRowBackgroundColor: "var(--toro-color-surface-soft)",
   rowBorder: {
     color: "var(--toro-color-border)",
     style: "solid",
@@ -274,6 +274,57 @@ function handleCellContextMenu(params) {
   border: 0;
 }
 
+/* TORO DATA GRID EMPHASIZED HEADER START */
+.toro-data-grid :deep(.ag-header) {
+  border-top: 1px solid #f9fdff;
+  border-bottom: 1px solid #78abc5;
+  background: #d8eaf4;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 92%),
+    inset 0 -2px 0 rgb(59 124 158 / 16%),
+    0 2px 5px rgb(13 36 58 / 12%);
+}
+
+.toro-data-grid :deep(.ag-header-row) {
+  background: transparent;
+}
+
+.toro-data-grid :deep(.ag-header-cell),
+.toro-data-grid :deep(.ag-header-group-cell) {
+  background: linear-gradient(
+    180deg,
+    #eef8fc 0%,
+    #deeff7 48%,
+    #c9e2ef 100%
+  ) !important;
+  border-right: 1px solid #a9ccdd;
+  box-shadow:
+    inset 1px 0 0 rgb(255 255 255 / 70%),
+    inset 0 1px 0 rgb(255 255 255 / 88%),
+    inset 0 -1px 0 rgb(65 128 160 / 16%);
+}
+
+.toro-data-grid :deep(.ag-header-cell-label),
+.toro-data-grid :deep(.ag-header-cell-text),
+.toro-data-grid :deep(.ag-header-icon),
+.toro-data-grid :deep(.ag-icon) {
+  color: #174b6b !important;
+  text-shadow: 0 1px 0 rgb(255 255 255 / 90%);
+}
+
+.toro-data-grid :deep(.ag-header-cell:hover),
+.toro-data-grid :deep(.ag-header-cell.ag-header-active) {
+  background: linear-gradient(
+    180deg,
+    #e4f4fb 0%,
+    #cce7f3 52%,
+    #b7d9e9 100%
+  ) !important;
+  box-shadow:
+    inset 0 2px 0 rgb(255 255 255 / 76%),
+    inset 0 -2px 0 rgb(46 112 148 / 20%);
+}
+/* TORO DATA GRID EMPHASIZED HEADER END */
 .toro-data-grid :deep(.ag-header-cell-label) {
   text-transform: uppercase;
   letter-spacing: 0.04em;

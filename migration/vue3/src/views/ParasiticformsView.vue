@@ -1,807 +1,251 @@
 <template>
-    <section class="parasitic-page toro-page" aria-labelledby="parasitic-title">
-        <header class="parasitic-header toro-page-header">
-            <div>
-                <p class="parasitic-eyebrow toro-page-eyebrow">Configuración</p>
-                <h2 id="parasitic-title">Formas parasitarias</h2>
-                <p>
-                    Administra las descripciones disponibles y controla cuáles permanecen
-                    visibles en los flujos operativos.
-                </p>
-            </div>
+  <section class="parasitic-page">
+    <div v-if="loadError" class="toro-message toro-message-error" role="alert">
+      <strong>No fue posible cargar las formas parasitarias.</strong>
+      <span>{{ loadError }}</span>
+    </div>
 
-            <div class="parasitic-header-actions">
-                <button v-if="canCreate" type="button" class="parasitic-action parasitic-action-secondary toro-action toro-action-secondary"
-                    :disabled="loading || saving" @click="startCreation">
-                    Nueva forma
-                </button>
+    <section class="toro-administrative-directory parasitic-directory">
+      <div class="toro-administrative-toolbar parasitic-directory-toolbar">
+        <label class="toro-administrative-filter parasitic-filter parasitic-search-filter">
+          <span>Buscar descripcion</span>
+          <input
+            v-model.trim="searchText"
+            type="search"
+            placeholder="Escribe una descripcion"
+          />
+        </label>
 
-                <button type="button" class="parasitic-action parasitic-action-primary toro-action toro-action-primary" :disabled="loading || saving"
-                    @click="loadParasiticforms">
-                    {{ loading ? "Actualizando..." : "Actualizar" }}
-                </button>
-            </div>
-        </header>
+        <label class="toro-administrative-filter parasitic-filter parasitic-status-filter">
+          <span>Estado</span>
+          <select v-model="statusFilter">
+            <option value="all">Todos</option>
+            <option value="active">Activas</option>
+            <option value="inactive">Inactivas</option>
+          </select>
+        </label>
 
-        <div v-if="loadError" class="parasitic-message parasitic-message-error toro-message toro-message-error" role="alert">
-            <strong>No fue posible cargar las formas parasitarias.</strong>
-            <span>{{ loadError }}</span>
+        <div class="toro-administrative-summary parasitic-directory-summary" aria-live="polite">
+          <span><strong>{{ filteredRows.length }}</strong> resultados</span>
+          <span><strong>{{ activeCount }}</strong> activos</span>
         </div>
 
-        <div v-if="loading && !loaded" class="parasitic-message toro-message" role="status">
-            Cargando formas parasitarias...
+        <div class="toro-administrative-actions parasitic-directory-actions">
+          <button
+            v-if="canCreate"
+            type="button"
+            class="toro-action toro-action-primary"
+            :disabled="loading || saving"
+            @click="openCreate"
+          >
+            <ToroActionIcon action="create" />
+            <span>Nueva forma</span>
+          </button>
+          <button
+            type="button"
+            class="toro-action toro-action-primary"
+            :disabled="loading || saving"
+            @click="loadParasiticforms"
+          >
+            <ToroActionIcon action="refresh" />
+            <span>{{ loading ? "Actualizando..." : "Actualizar" }}</span>
+          </button>
         </div>
+      </div>
 
-        <template v-else>
-            <div class="parasitic-metrics toro-metrics">
-                <article>
-                    <span>Total</span>
-                    <strong>{{ parasiticforms.length }}</strong>
-                    <small>Registros administrativos</small>
-                </article>
-
-                <article>
-                    <span>Visibles</span>
-                    <strong>{{ visibleCount }}</strong>
-                    <small>Disponibles en operaciones</small>
-                </article>
-
-                <article>
-                    <span>Ocultas</span>
-                    <strong>{{ annulledCount }}</strong>
-                    <small>Con estado anulado</small>
-                </article>
-
-                <article>
-                    <span>Selección</span>
-                    <strong>
-                        {{ creating ? "Nueva" : selectedParasiticform?.id || "Ninguna" }}
-                    </strong>
-                    <small>
-                        {{
-                            creating
-                                ? "Registro sin guardar"
-                                : selectedParasiticform?.description || "Seleccione un registro"
-                        }}
-                    </small>
-                </article>
-            </div>
-
-            <div class="parasitic-grid">
-                <article class="parasitic-panel toro-panel">
-                    <div class="parasitic-panel-heading toro-panel-heading">
-                        <div>
-                            <p>Catálogo administrativo</p>
-                            <h3>Registros</h3>
-                        </div>
-
-                        <span>{{ filteredParasiticforms.length }}</span>
-                    </div>
-
-                    <label class="parasitic-search">
-                        <span>Buscar descripción</span>
-
-                        <input v-model="searchText" type="search" autocomplete="off"
-                            placeholder="Escriba parte de la descripción" :disabled="saving" />
-                    </label>
-
-                    <div v-if="filteredParasiticforms.length === 0" class="parasitic-empty toro-empty-state">
-                        {{
-                            parasiticforms.length === 0
-                                ? "No existen formas parasitarias registradas."
-                                : "No existen registros que coincidan con la búsqueda."
-                        }}
-                    </div>
-
-                    <div v-else class="parasitic-list">
-                        <button v-for="parasiticform in filteredParasiticforms" :key="parasiticform.id" type="button"
-                            class="parasitic-list-item toro-list-item" :class="{
-                                'parasitic-list-item-selected':
-                                    !creating &&
-                                    selectedParasiticform?.id === parasiticform.id,
-                                'parasitic-list-item-annulled':
-                                    parasiticform.annulled,
-                            }" :disabled="saving" @click="selectParasiticform(parasiticform)">
-                            <span class="parasitic-status-dot" :class="{
-                                'parasitic-status-dot-annulled':
-                                    parasiticform.annulled,
-                            }"></span>
-
-                            <span class="parasitic-list-copy toro-option-copy">
-                                <strong>{{ parasiticform.description }}</strong>
-                                <small>Identificador #{{ parasiticform.id }}</small>
-                            </span>
-
-                            <span class="parasitic-badge toro-badge" :class="{
-                                'toro-badge-warning':
-                                    parasiticform.annulled,
-                            }">
-                                {{ parasiticform.annulled ? "Oculta" : "Visible" }}
-                            </span>
-                        </button>
-                    </div>
-                </article>
-
-                <article class="parasitic-panel toro-panel">
-                    <div class="parasitic-panel-heading toro-panel-heading">
-                        <div>
-                            <p>{{ creating ? "Nuevo registro" : "Configuración" }}</p>
-                            <h3>
-                                {{
-                                    creating
-                                        ? "Crear forma parasitaria"
-                                        : "Detalle seleccionado"
-                                }}
-                            </h3>
-                        </div>
-
-                        <span v-if="creating">Nuevo</span>
-                        <span v-else-if="selectedParasiticform">
-                            #{{ selectedParasiticform.id }}
-                        </span>
-                    </div>
-
-                    <div v-if="!creating && !selectedParasiticform" class="parasitic-empty toro-empty-state">
-                        Seleccione un registro para consultar o modificar sus datos.
-                    </div>
-
-                    <form v-else class="parasitic-form toro-form" @submit.prevent="saveChanges">
-                        <label>
-                            <span>Descripción</span>
-
-                            <input v-model="draft.description" type="text" maxlength="50" autocomplete="off"
-                                placeholder="Descripción de la forma parasitaria" :disabled="descriptionDisabled"
-                                required />
-
-                            <small>
-                                {{ draft.description.length }} de 50 caracteres
-                            </small>
-                        </label>
-
-                        <label v-if="!creating" class="parasitic-state-option" :class="{
-                            'toro-option-disabled':
-                                !canChangeStatus || saving,
-                        }">
-                            <input v-model="draft.annulled" type="checkbox" :disabled="!canChangeStatus || saving" />
-
-                            <span>
-                                <strong>Ocultar en los flujos operativos</strong>
-                                <small>
-                                    {{
-                                        canChangeStatus
-                                            ? "El registro seguirá visible en esta pantalla administrativa."
-                                            : "La cuenta actual no puede cambiar el estado."
-                                    }}
-                                </small>
-                            </span>
-                        </label>
-
-                        <div v-if="!creating && !canUpdateDescription" class="parasitic-permission-note toro-warning">
-                            La cuenta actual puede consultar la descripción, pero no
-                            modificarla.
-                        </div>
-
-                        <div v-if="saveError" class="parasitic-message parasitic-message-error toro-message toro-message-error" role="alert">
-                            {{ saveError }}
-                        </div>
-
-                        <div v-if="saveMessage" class="parasitic-message parasitic-message-success toro-message toro-message-success" role="status">
-                            {{ saveMessage }}
-                        </div>
-
-                        <dl v-if="!creating" class="parasitic-detail toro-detail">
-                            <div>
-                                <dt>Identificador</dt>
-                                <dd>{{ selectedParasiticform.id }}</dd>
-                            </div>
-
-                            <div>
-                                <dt>Estado guardado</dt>
-                                <dd>
-                                    {{
-                                        selectedParasiticform.annulled
-                                            ? "Oculta"
-                                            : "Visible"
-                                    }}
-                                </dd>
-                            </div>
-                        </dl>
-
-                        <div class="parasitic-form-status">
-                            <span>
-                                {{
-                                    hasChanges
-                                        ? "Existen cambios pendientes."
-                                        : "Los datos están sincronizados."
-                                }}
-                            </span>
-                        </div>
-
-                        <div class="parasitic-form-actions toro-form-actions">
-                            <button type="button" class="parasitic-action parasitic-action-secondary toro-action toro-action-secondary"
-                                :disabled="!hasChanges || saving" @click="discardChanges">
-                                {{ creating ? "Limpiar" : "Descartar" }}
-                            </button>
-
-                            <button type="submit" class="parasitic-action parasitic-action-primary toro-action toro-action-primary"
-                                :disabled="!canSubmit">
-                                {{
-                                    saving
-                                        ? "Guardando..."
-                                        : creating
-                                            ? "Crear registro"
-                                            : "Guardar cambios"
-                                }}
-                            </button>
-                        </div>
-                    </form>
-
-                    <p class="parasitic-note toro-note">
-                        Los cambios se guardan únicamente para el registro seleccionado.
-                        No se realizan actualizaciones masivas.
-                    </p>
-                </article>
-            </div>
-        </template>
+      <div v-if="loading" class="toro-empty-state">Cargando formas parasitarias...</div>
+      <div v-else-if="parasiticforms.length === 0" class="toro-empty-state">
+        No existen formas parasitarias registradas.
+      </div>
+      <div v-else-if="filteredRows.length === 0" class="toro-empty-state">
+        No existen registros que coincidan con los filtros.
+      </div>
+      <div v-else class="parasitic-grid-host">
+        <ToroDataGrid
+          ref="dataGrid"
+          class="parasitic-grid"
+          :row-data="filteredRows"
+          :column-defs="columnDefs"
+          :default-col-def="defaultColDef"
+          :components="gridComponents"
+          :get-row-id="getRowId"
+          :quick-filter-text="searchText"
+          :page-size="10"
+          :page-size-selector="[10, 20, 50]"
+          height="430px"
+          empty-text="No existen formas parasitarias que coincidan con los filtros."
+        />
+      </div>
     </section>
+
+    <ParasiticformDialog
+      ref="formDialog"
+      :saving="saving"
+      :can-create="canCreate"
+      :can-update="canUpdateDescription"
+      @submit="saveForm"
+    />
+    <ParasiticformStateDialog
+      ref="stateDialog"
+      :saving="saving"
+      @confirm="saveState"
+    />
+  </section>
 </template>
 
 <script setup>
-import { computed, onMounted, reactive, ref } from "vue";
+import { computed, nextTick, onMounted, ref } from "vue";
+import ToroDataGrid from "@/components/grid/ToroDataGrid.vue";
+import ToroGridActionsCell from "@/components/grid/ToroGridActionsCell.vue";
+import ToroStatusBadgeCell from "@/components/grid/ToroStatusBadgeCell.vue";
+import ToroActionIcon from "@/components/ui/ToroActionIcon.vue";
+import ParasiticformDialog from "@/components/parasiticforms/ParasiticformDialog.vue";
+import ParasiticformStateDialog from "@/components/parasiticforms/ParasiticformStateDialog.vue";
+import { useToroToast } from "@/composables/useToroToast";
 import {
-    createParasiticform,
-    getParasiticformErrorMessage,
-    getParasiticforms,
-    updateParasiticform,
+  createParasiticform,
+  getParasiticformErrorMessage,
+  getParasiticforms,
+  updateParasiticform,
 } from "@/services/parasiticformsService";
 import { useAuthorizationStore } from "@/stores/authorization";
 
 const authorizationStore = useAuthorizationStore();
-
+const toast = useToroToast();
 const parasiticforms = ref([]);
-const selectedParasiticform = ref(null);
-const searchText = ref("");
 const loading = ref(false);
-const loaded = ref(false);
-const loadError = ref("");
 const saving = ref(false);
-const saveError = ref("");
-const saveMessage = ref("");
-const creating = ref(false);
+const loadError = ref("");
+const searchText = ref("");
+const statusFilter = ref("all");
+const formDialog = ref(null);
+const stateDialog = ref(null);
+const dataGrid = ref(null);
 
-const draft = reactive({
-    description: "",
-    annulled: false,
+const canCreate = computed(() => authorizationStore.hasPermission("parasiticforms.create"));
+const canUpdateDescription = computed(() => authorizationStore.hasPermission("parasiticforms.update"));
+const canChangeStatus = computed(() => authorizationStore.hasPermission("parasiticforms.change-status"));
+const activeCount = computed(() => parasiticforms.value.filter((record) => !record.annulled).length);
+const filteredRows = computed(() => {
+  const search = searchText.value.toLocaleLowerCase();
+  return parasiticforms.value
+    .filter((record) => {
+      if (statusFilter.value === "active" && record.annulled) return false;
+      if (statusFilter.value === "inactive" && !record.annulled) return false;
+      return search === "" || record.description.toLocaleLowerCase().includes(search);
+    })
+    .map((record) => ({ ...record, isActive: !record.annulled }));
 });
 
-const canCreate = computed(() =>
-    authorizationStore.hasPermission(
-        "parasiticforms.create",
-    ),
-);
-
-const canUpdateDescription = computed(() =>
-    authorizationStore.hasPermission(
-        "parasiticforms.update",
-    ),
-);
-
-const canChangeStatus = computed(() =>
-    authorizationStore.hasPermission(
-        "parasiticforms.change-status",
-    ),
-);
-
-const visibleCount = computed(
-    () =>
-        parasiticforms.value.filter(
-            (parasiticform) => !parasiticform.annulled,
-        ).length,
-);
-
-const annulledCount = computed(
-    () =>
-        parasiticforms.value.filter(
-            (parasiticform) => parasiticform.annulled,
-        ).length,
-);
-
-const filteredParasiticforms = computed(() => {
-    const filter = searchText.value
-        .trim()
-        .toLowerCase();
-
-    if (filter === "") {
-        return parasiticforms.value;
-    }
-
-    return parasiticforms.value.filter(
-        (parasiticform) =>
-            parasiticform.description
-                .toLowerCase()
-                .includes(filter),
-    );
+const defaultColDef = Object.freeze({
+  sortable: true,
+  filter: true,
+  resizable: true,
+  suppressHeaderMenuButton: true,
 });
+const gridComponents = Object.freeze({ ToroGridActionsCell, ToroStatusBadgeCell });
+const columnDefs = computed(() => [
+  {
+    field: "description",
+    headerName: "Descripcion",
+    flex: 1,
+    minWidth: 280,
+    filter: "agTextColumnFilter",
+  },
+  {
+    field: "isActive",
+    headerName: "Estado",
+    width: 160,
+    minWidth: 150,
+    maxWidth: 180,
+    filter: "agTextColumnFilter",
+    valueFormatter: ({ value }) => (value ? "Activo" : "Inactivo"),
+    cellRenderer: "ToroStatusBadgeCell",
+  },
+  {
+    headerName: "Acciones",
+    field: "actions",
+    width: 170,
+    minWidth: 160,
+    maxWidth: 190,
+    sortable: false,
+    filter: false,
+    suppressHeaderMenuButton: true,
+    cellClass: "toro-grid-actions-cell",
+    cellRenderer: "ToroGridActionsCell",
+    cellRendererParams: {
+      actions: [
+        { key: "edit", label: "Editar", visible: () => canUpdateDescription.value, disabled: () => saving.value, onClick: openEdit },
+        { key: "activate", label: "Activar", visible: (record) => canChangeStatus.value && record.annulled, disabled: () => saving.value, onClick: openState },
+        { key: "deactivate", label: "Inactivar", visible: (record) => canChangeStatus.value && !record.annulled, disabled: () => saving.value, onClick: openState },
+      ],
+    },
+  },
+]);
 
-const descriptionChanged = computed(() => {
-    if (creating.value) {
-        return draft.description.trim() !== "";
-    }
+function getRowId({ data }) { return String(data.id); }
+function openCreate() { if (canCreate.value && !saving.value) formDialog.value?.openCreate(); }
+function openEdit(record) { if (canUpdateDescription.value && !saving.value) formDialog.value?.openEdit(record); }
+function openState(record) { if (canChangeStatus.value && !saving.value) stateDialog.value?.open(record); }
+function replaceRecord(updated) {
+  const index = parasiticforms.value.findIndex((record) => record.id === updated.id);
+  const next = [...parasiticforms.value];
+  if (index < 0) next.push(updated); else next[index] = updated;
+  parasiticforms.value = next.sort((left, right) => left.description.localeCompare(right.description));
 
-    if (!selectedParasiticform.value) {
-        return false;
-    }
-
-    return (
-        draft.description.trim() !==
-        selectedParasiticform.value.description
-    );
-});
-
-const statusChanged = computed(() => {
-    if (
-        creating.value ||
-        !selectedParasiticform.value
-    ) {
-        return false;
-    }
-
-    return (
-        draft.annulled !==
-        selectedParasiticform.value.annulled
-    );
-});
-
-const hasChanges = computed(
-    () =>
-        descriptionChanged.value ||
-        statusChanged.value,
-);
-
-const descriptionDisabled = computed(() => {
-    if (saving.value) {
-        return true;
-    }
-
-    if (creating.value) {
-        return !canCreate.value;
-    }
-
-    return !canUpdateDescription.value;
-});
-
-const canSubmit = computed(() => {
-    if (saving.value || !hasChanges.value) {
-        return false;
-    }
-
-    const description =
-        draft.description.trim();
-
-    if (
-        description === "" ||
-        description.length > 50
-    ) {
-        return false;
-    }
-
-    if (creating.value) {
-        return canCreate.value;
-    }
-
-    if (
-        descriptionChanged.value &&
-        !canUpdateDescription.value
-    ) {
-        return false;
-    }
-
-    if (
-        statusChanged.value &&
-        !canChangeStatus.value
-    ) {
-        return false;
-    }
-
-    return true;
-});
-
-function clearMessages() {
-    saveError.value = "";
-    saveMessage.value = "";
+  nextTick(() => {
+    const api = dataGrid.value?.getApi?.();
+    api?.setGridOption?.('rowData', filteredRows.value);
+    api?.refreshCells?.({ force: true });
+    api?.redrawRows?.();
+  });
 }
-
-function synchronizeDraft() {
-    const selected = selectedParasiticform.value;
-
-    draft.description =
-        selected?.description ?? "";
-
-    draft.annulled =
-        selected?.annulled === true;
-
-    clearMessages();
+async function saveForm({ mode, record, description }) {
+  if (saving.value) return;
+  saving.value = true;
+  formDialog.value?.clearError();
+  try {
+    const updated = mode === "create" ? await createParasiticform(description) : await updateParasiticform(record.id, { description });
+    if (!updated) throw new Error("El backend no devolvio un registro valido.");
+    replaceRecord(updated);
+    formDialog.value?.close();
+    toast.success(mode === "create" ? "La forma parasitaria fue creada correctamente." : "La forma parasitaria fue actualizada correctamente.");
+  } catch (error) {
+    formDialog.value?.setError(getParasiticformErrorMessage(error, "No fue posible guardar la forma parasitaria."));
+  } finally { saving.value = false; }
 }
-
-function startCreation() {
-    if (!canCreate.value || saving.value) {
-        return;
-    }
-
-    creating.value = true;
-    selectedParasiticform.value = null;
-    draft.description = "";
-    draft.annulled = false;
-    clearMessages();
+async function saveState(record) {
+  if (saving.value || !canChangeStatus.value) return;
+  saving.value = true;
+  stateDialog.value?.clearError();
+  try {
+    const updated = await updateParasiticform(record.id, { annulled: !record.annulled });
+    if (!updated) throw new Error("El backend no devolvio un registro valido.");
+    replaceRecord(updated);
+    stateDialog.value?.close();
+    toast.success(updated.annulled ? "La forma parasitaria fue inactivada correctamente." : "La forma parasitaria fue activada correctamente.");
+  } catch (error) {
+    stateDialog.value?.setError(getParasiticformErrorMessage(error, "No fue posible cambiar el estado."));
+  } finally { saving.value = false; }
 }
-
-function selectParasiticform(parasiticform) {
-    if (saving.value) {
-        return;
-    }
-
-    creating.value = false;
-    selectedParasiticform.value =
-        parasiticform;
-
-    synchronizeDraft();
-}
-
-function discardChanges() {
-    if (saving.value) {
-        return;
-    }
-
-    if (creating.value) {
-        draft.description = "";
-        draft.annulled = false;
-        clearMessages();
-        return;
-    }
-
-    synchronizeDraft();
-}
-
-function sortParasiticforms(records) {
-    return [...records].sort(
-        (left, right) =>
-            left.description.localeCompare(
-                right.description,
-            ),
-    );
-}
-
-function replaceParasiticform(updated) {
-    const index = parasiticforms.value.findIndex(
-        (parasiticform) =>
-            parasiticform.id === updated.id,
-    );
-
-    if (index < 0) {
-        parasiticforms.value =
-            sortParasiticforms([
-                ...parasiticforms.value,
-                updated,
-            ]);
-
-        return;
-    }
-
-    const nextRecords = [
-        ...parasiticforms.value,
-    ];
-
-    nextRecords[index] = updated;
-
-    parasiticforms.value =
-        sortParasiticforms(nextRecords);
-}
-
-async function saveCreation() {
-    const created = await createParasiticform(
-        draft.description,
-    );
-
-    if (!created) {
-        throw new Error(
-            "El backend no devolvió un registro válido.",
-        );
-    }
-
-    replaceParasiticform(created);
-
-    creating.value = false;
-    selectedParasiticform.value = created;
-    synchronizeDraft();
-
-    saveMessage.value =
-        "La forma parasitaria fue creada correctamente.";
-}
-
-async function saveUpdate() {
-    const selected = selectedParasiticform.value;
-
-    if (!selected) {
-        return;
-    }
-
-    const changes = {};
-
-    if (descriptionChanged.value) {
-        changes.description =
-            draft.description;
-    }
-
-    if (statusChanged.value) {
-        changes.annulled =
-            draft.annulled;
-    }
-
-    const updated =
-        await updateParasiticform(
-            selected.id,
-            changes,
-        );
-
-    if (!updated) {
-        throw new Error(
-            "El backend no devolvió un registro válido.",
-        );
-    }
-
-    replaceParasiticform(updated);
-    selectedParasiticform.value = updated;
-    synchronizeDraft();
-
-    saveMessage.value =
-        "La forma parasitaria fue actualizada correctamente.";
-}
-
-async function saveChanges() {
-    if (!canSubmit.value) {
-        return;
-    }
-
-    saving.value = true;
-    clearMessages();
-
-    try {
-        if (creating.value) {
-            await saveCreation();
-        } else {
-            await saveUpdate();
-        }
-    } catch (error) {
-        saveError.value =
-            getParasiticformErrorMessage(
-                error,
-                creating.value
-                    ? "No fue posible crear la forma parasitaria."
-                    : "No fue posible actualizar la forma parasitaria.",
-            );
-    } finally {
-        saving.value = false;
-    }
-}
-
 async function loadParasiticforms() {
-    if (loading.value || saving.value) {
-        return;
-    }
-
-    const selectedId =
-        selectedParasiticform.value?.id ?? null;
-
-    loading.value = true;
-    loadError.value = "";
-
-    try {
-        const loadedParasiticforms =
-            await getParasiticforms();
-
-        parasiticforms.value =
-            loadedParasiticforms;
-
-        if (!creating.value) {
-            selectedParasiticform.value =
-                loadedParasiticforms.find(
-                    (parasiticform) =>
-                        parasiticform.id === selectedId,
-                ) ??
-                loadedParasiticforms[0] ??
-                null;
-
-            synchronizeDraft();
-        }
-
-        loaded.value = true;
-    } catch (error) {
-        loadError.value =
-            getParasiticformErrorMessage(
-                error,
-                "No fue posible cargar las formas parasitarias.",
-            );
-
-        if (!loaded.value) {
-            parasiticforms.value = [];
-            selectedParasiticform.value = null;
-        }
-    } finally {
-        loading.value = false;
-    }
+  if (loading.value || saving.value) return;
+  loading.value = true;
+  loadError.value = "";
+  try { parasiticforms.value = await getParasiticforms(); }
+  catch (error) {
+    parasiticforms.value = [];
+    loadError.value = getParasiticformErrorMessage(error, "No fue posible consultar el catalogo.");
+    toast.error(loadError.value);
+  } finally { loading.value = false; }
 }
-
 onMounted(loadParasiticforms);
 </script>
 
 <style scoped>
-
-.parasitic-header p {
-    margin: 0;
-}
-
-.parasitic-header-actions {
-    display: flex;
-    flex: 0 0 auto;
-    gap: var(--toro-space-2);
-}
-
-.parasitic-action:disabled {
-    cursor: not-allowed;
-    opacity: 0.55;
-}
-
-.parasitic-message {
-    display: grid;
-    gap: var(--toro-space-1);
-    padding: var(--toro-space-3);
-    border: 1px solid var(--toro-color-border);
-    border-radius: var(--toro-radius-md);
-    color: var(--toro-color-text-secondary);
-    background: var(--toro-color-surface);
-}
-
-.parasitic-metrics small {
-    color: var(--toro-color-text-muted);
-}
-
-.parasitic-metrics strong {
-    color: var(--toro-color-primary-strong);
-    font-size: 20px;
-}
-
-.parasitic-grid {
-    display: grid;
-    grid-template-columns: minmax(320px, 0.8fr) minmax(420px, 1.2fr);
-    gap: var(--toro-space-3);
-    align-items: start;
-}
-
-.parasitic-panel-heading h3 {
-    margin: 0;
-}
-
-.parasitic-panel-heading h3 {
-    margin-top: var(--toro-space-1);
-    color: var(--toro-color-primary-strong);
-}
-
-.parasitic-search {
-    margin-bottom: var(--toro-space-3);
-}
-
-.parasitic-list {
-    display: grid;
-    max-height: 580px;
-    gap: var(--toro-space-2);
-    overflow-y: auto;
-    padding-right: var(--toro-space-1);
-}
-
-.parasitic-list-item {
-    display: flex;
-    width: 100%;
-    min-height: 62px;
-    align-items: center;
-    gap: var(--toro-space-3);
-    padding: var(--toro-space-3);
-    border: 1px solid var(--toro-color-border);
-    border-radius: var(--toro-radius-md);
-    color: var(--toro-color-text);
-    background: var(--toro-color-surface);
-    cursor: pointer;
-    text-align: left;
-}
-
-.parasitic-status-dot {
-    width: 10px;
-    height: 10px;
-    flex: 0 0 10px;
-    border-radius: 999px;
-    background: var(--toro-color-success);
-}
-
-.parasitic-status-dot-annulled {
-    background: var(--toro-color-warning);
-}
-
-.parasitic-list-copy small {
-    color: var(--toro-color-text-muted);
-}
-
-.parasitic-state-option {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--toro-space-3);
-    padding: var(--toro-space-3);
-    border: 1px solid var(--toro-color-border);
-    border-radius: var(--toro-radius-md);
-    background: var(--toro-color-surface-soft);
-    cursor: pointer;
-}
-
-.parasitic-state-option input {
-    width: 16px;
-    height: 16px;
-    flex: 0 0 16px;
-    margin-top: 2px;
-    accent-color: var(--toro-color-primary);
-}
-
-.parasitic-state-option>span {
-    display: grid;
-    gap: 3px;
-}
-
-.parasitic-detail div {
-    padding: var(--toro-space-3);
-    border: 1px solid var(--toro-color-border);
-    border-radius: var(--toro-radius-md);
-    background: var(--toro-color-surface-soft);
-}
-
-.parasitic-detail dd {
-    margin: var(--toro-space-1) 0 0;
-    font-weight: var(--toro-font-weight-medium);
-}
-
-.parasitic-form-status {
-    padding-top: var(--toro-space-3);
-    border-top: 1px solid var(--toro-color-border);
-    color: var(--toro-color-text-muted);
-}
-
-.parasitic-form-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: var(--toro-space-2);
-}
-
-@media (max-width: 980px) {
-    .parasitic-metrics {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .parasitic-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .parasitic-list {
-        max-height: 380px;
-    }
-}
-
-@media (max-width: 620px) {
-
-    .parasitic-header-actions {
-        display: grid;
-        width: 100%;
-        grid-template-columns: 1fr;
-    }
-
-    .parasitic-metrics,
-    .parasitic-detail {
-        grid-template-columns: 1fr;
-    }
-}
+.parasitic-page { min-width: 0; }
+.parasitic-grid-host { width: 100%; min-width: 0; }
+.parasitic-grid { width: 100%; min-width: 0; }
+@media (max-width: 1050px) { .parasitic-directory-toolbar { grid-template-columns: minmax(260px, 1fr) minmax(180px, 240px); } .parasitic-directory-summary, .parasitic-directory-actions { justify-content: flex-end; } }
+@media (max-width: 720px) { .parasitic-directory-toolbar { grid-template-columns: 1fr; } .parasitic-directory-summary, .parasitic-directory-actions { justify-content: stretch; } .parasitic-directory-actions { display: grid; grid-template-columns: 1fr 1fr; } .parasitic-grid { height: 520px; min-height: 520px; } }
 </style>
