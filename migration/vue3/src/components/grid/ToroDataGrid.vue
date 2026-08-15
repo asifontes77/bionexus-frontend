@@ -4,7 +4,7 @@
     :class="{
       'toro-data-grid-fill': fill,
     }"
-    :style="gridContainerStyle"
+    :style="[gridContainerStyle, adaptiveGridHeightStyle]"
   >
         <div class="toro-grid-export-toolbar">
       <ToroGridExportMenu :disabled="!gridApi" :column-provider="getExportColumns" @export="exportGrid" />
@@ -20,7 +20,7 @@
       :get-row-id="getRowId"
       :pagination="pagination"
       :pagination-page-size="pageSize"
-      :pagination-page-size-selector="pageSizeSelector"
+      :pagination-page-size-selector="false"
       :locale-text="AG_GRID_LOCALE_ES"
       :quick-filter-text="quickFilterText"
       :animate-rows="true"
@@ -36,11 +36,25 @@
   :prevent-default-on-context-menu="true"
   @contextmenu.prevent.stop
 />
+
+    <label v-if="pagination" class="toro-grid-page-size-control">
+      <span>Tama&ntilde;o de P&aacute;gina:</span>
+      <select
+        v-model="selectedPageSize"
+        aria-label="Tamano de Pagina"
+        @change="changePageSize"
+      >
+        <option v-for="size in effectivePageSizeSelector" :key="size" :value="String(size)">
+          {{ size }}
+        </option>
+        <option value="all">Todos</option>
+      </select>
+    </label>
   </section>
 </template>
 
 <script setup>
-import { computed, shallowRef } from "vue";
+import { computed, shallowRef, ref } from "vue";
 import {
   AllCommunityModule,
   ModuleRegistry,
@@ -98,11 +112,12 @@ const props = defineProps({
       10,
       20,
       50,
+      100,
     ],
   },
   rowHeight: {
     type: Number,
-    default: 48,
+    default: 38,
   },
   headerHeight: {
     type: Number,
@@ -137,6 +152,14 @@ const props = defineProps({
   exportOptions: {
     type: [Object, Boolean],
     default: true,
+  },
+  minGridHeight: {
+    type: Number,
+    default: 300,
+  },
+  maxGridHeight: {
+    type: Number,
+    default: 520,
   },
 });
 
@@ -233,6 +256,52 @@ const gridContainerStyle = computed(() => ({
   "--toro-grid-height": props.height,
 }));
 
+const selectedPageSize = ref(String(props.pageSize));
+
+function changePageSize() {
+  const totalRows = Math.max(1, Array.isArray(props.rowData) ? props.rowData.length : 0);
+  const nextSize = selectedPageSize.value === "all"
+    ? totalRows
+    : Number(selectedPageSize.value);
+
+  gridApi.value?.paginationSetPageSize(nextSize);
+  gridApi.value?.paginationGoToFirstPage();
+}
+
+const effectivePageSizeSelector = computed(() => {
+  const values = [...props.pageSizeSelector, 100]
+    .map(Number)
+    .filter((value) => Number.isInteger(value) && value > 0);
+
+  return [...new Set(values)].sort((left, right) => left - right);
+});
+
+const adaptiveGridHeightStyle = computed(() => {
+  const totalRows = Array.isArray(props.rowData) ? props.rowData.length : 0;
+  const selectedRows = selectedPageSize.value === "all"
+    ? totalRows
+    : Number(selectedPageSize.value) || props.pageSize;
+  const visibleRows = props.pagination
+    ? Math.min(totalRows, Math.max(1, selectedRows))
+    : totalRows;
+  const exportToolbarHeight = props.exportOptions === false ? 0 : 42;
+  const paginationHeight = props.pagination ? 46 : 0;
+  const borderAllowance = 4;
+  const naturalHeight =
+    exportToolbarHeight +
+    props.headerHeight +
+    Math.max(1, visibleRows) * props.rowHeight +
+    paginationHeight +
+    borderAllowance;
+  const minimum = Math.max(240, Number(props.minGridHeight) || 300);
+  const maximum = Math.max(minimum, Number(props.maxGridHeight) || 680);
+  const resolvedHeight = Math.min(maximum, Math.max(minimum, naturalHeight));
+
+  return {
+    "--toro-grid-height": `${resolvedHeight}px`,
+  };
+});
+
 const emptyOverlay = computed(
   () =>
     `<span class="toro-grid-empty">${escapeHtml(
@@ -302,6 +371,7 @@ function handleCellContextMenu(params) {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
   min-height: 0;
+  position: relative;
 }
 
 .toro-data-grid-fill {
@@ -396,6 +466,7 @@ function handleCellContextMenu(params) {
   border-top-color: var(--toro-color-border);
   color: var(--toro-color-text-muted);
   font-size: var(--toro-font-size-sm);
+  padding-right: 235px;
 }
 
 .toro-data-grid :deep(.ag-paging-button) {
@@ -586,5 +657,31 @@ function handleCellContextMenu(params) {
   align-items: center;
   min-height: 42px;
   padding: 4px 0 4px;
+}
+
+
+
+.toro-grid-page-size-control {
+  position: absolute;
+  right: 12px;
+  bottom: 7px;
+  z-index: 8;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+  color: var(--toro-color-text-secondary);
+  font-size: var(--toro-font-size-sm);
+}
+
+.toro-grid-page-size-control select {
+  min-width: 76px;
+  min-height: 34px;
+  padding: 4px 28px 4px 10px;
+  border: 1px solid var(--toro-color-border);
+  border-radius: var(--toro-radius-sm);
+  background: var(--toro-color-surface);
+  color: var(--toro-color-text-primary);
+  font: inherit;
 }
 </style>
