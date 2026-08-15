@@ -6,7 +6,10 @@
     }"
     :style="gridContainerStyle"
   >
-    <AgGridVue
+        <div class="toro-grid-export-toolbar">
+      <ToroGridExportMenu :disabled="!gridApi" :column-provider="getExportColumns" @export="exportGrid" />
+    </div>
+<AgGridVue
       class="toro-ag-grid"
       :theme="gridTheme"
       :row-data="rowData"
@@ -45,6 +48,8 @@ import {
 } from "ag-grid-community";
 import { AgGridVue } from "ag-grid-vue3";
 import { AG_GRID_LOCALE_ES } from "@ag-grid-community/locale";
+import ToroGridExportMenu from "@/components/grid/ToroGridExportMenu.vue";
+import { exportGridToExcel, exportGridToPdf } from "@/services/gridExportService.js";
 
 ModuleRegistry.registerModules([
   AllCommunityModule,
@@ -129,6 +134,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  exportOptions: {
+    type: [Object, Boolean],
+    default: true,
+  },
 });
 
 const emit = defineEmits([
@@ -138,6 +147,36 @@ const emit = defineEmits([
 ]);
 
 const gridApi = shallowRef(null);
+
+function getExportColumns() {
+  if (!gridApi.value) return [];
+  const options = props.exportOptions === true ? {} : (props.exportOptions || {});
+  const excluded = new Set(["actions", ...(options.excludeColumns || [])]);
+  return gridApi.value.getAllDisplayedColumns()
+    .filter((column) => {
+      const definition = column.getColDef();
+      return !excluded.has(column.getColId())
+        && !excluded.has(definition.field)
+        && definition.suppressExport !== true;
+    })
+    .map((column) => ({
+      id: column.getColId(),
+      label: column.getColDef().headerName || column.getColId(),
+    }));
+}
+
+async function exportGrid(request) {
+  if (!gridApi.value || props.exportOptions === false || !request) return;
+  const options = {
+    ...(props.exportOptions === true ? {} : (props.exportOptions || {})),
+    selectedColumnIds: request.selectedColumnIds,
+  };
+  if (request.format === "excel") {
+    await exportGridToExcel(gridApi.value, options);
+    return;
+  }
+  if (request.format === "pdf") exportGridToPdf(gridApi.value, options, request.orientation);
+}
 
 const gridTheme = themeQuartz.withParams({
   accentColor: "var(--toro-color-primary)",
@@ -225,6 +264,8 @@ function handleFirstDataRendered(event) {
 
 defineExpose({
   getApi: () => gridApi.value,
+  exportExcel: () => exportGrid("excel"),
+  exportPdf: () => exportGrid("pdf"),
   refreshCells: (params) =>
     gridApi.value?.refreshCells(params),
   sizeColumnsToFit: () =>
@@ -258,6 +299,9 @@ function handleCellContextMenu(params) {
   border: 1px solid var(--toro-color-border);
   border-radius: var(--toro-radius-md);
   background: var(--toro-color-surface);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  min-height: 0;
 }
 
 .toro-data-grid-fill {
@@ -268,6 +312,8 @@ function handleCellContextMenu(params) {
 .toro-ag-grid {
   width: 100%;
   height: 100%;
+  min-height: 0;
+  min-width: 0;
 }
 
 .toro-data-grid :deep(.ag-root-wrapper) {
@@ -532,5 +578,13 @@ function handleCellContextMenu(params) {
   color: var(--toro-color-text-muted);
   pointer-events: none;
   transform: translateY(-50%);
+}
+.toro-grid-export-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0;
+  align-items: center;
+  min-height: 42px;
+  padding: 4px 0 4px;
 }
 </style>
