@@ -6,32 +6,7 @@
     </div>
 
     <section class="toro-administrative-directory type-payment-directory">
-      <div class="toro-administrative-toolbar type-payment-toolbar">
-        <label class="toro-administrative-filter">
-          <span>Buscar</span>
-          <input v-model.trim="searchText" type="search" placeholder="Buscar tipo de pago" />
-        </label>
-        <label class="toro-administrative-filter">
-          <span>Estado</span>
-          <select v-model="statusFilter">
-            <option value="all">Todos</option>
-            <option value="active">Activos</option>
-            <option value="inactive">Inactivos</option>
-          </select>
-        </label>
-        <div class="toro-administrative-summary" aria-live="polite">
-          <span><strong>{{ filteredRows.length }}</strong> resultados</span>
-          <span><strong>{{ activeCount }}</strong> activos</span>
-        </div>
-        <div class="toro-administrative-actions">
-          <button v-if="canCreate" type="button" class="toro-action toro-action-primary" :disabled="loading || saving" @click="openCreate">
-            <ToroActionIcon action="create" /><span>Nuevo tipo</span>
-          </button>
-          <button type="button" class="toro-action toro-action-primary" :disabled="loading || saving" @click="loadRows">
-            <ToroActionIcon action="refresh" /><span>{{ loading ? "Actualizando..." : "Actualizar" }}</span>
-          </button>
-        </div>
-      </div>
+
 
       <div v-if="loading" class="toro-empty-state">Cargando Formas de pago...</div>
       <div v-else-if="rows.length === 0" class="toro-empty-state">No existen Formas de pago registrados.</div>
@@ -50,7 +25,27 @@
         height="520px"
         empty-text="No existen Formas de pago para mostrar."
         @row-context-menu="openTypePaymentContextMenu"
-      />
+      :search-enabled="true"
+      v-model:search-model-value="searchText"
+      search-placeholder="Buscar tipo de pago"
+      :refresh-enabled="true"
+      :refreshing="loading"
+      :refresh-disabled="saving"
+      @refresh="loadRows"
+    >
+      <template #actions>
+        <button
+          v-if="canCreate"
+          type="button"
+          class="toro-action toro-action-primary"
+          :disabled="loading || saving"
+          @click="openCreate"
+        >
+          <ToroActionIcon action="create" />
+          <span>Nuevo tipo</span>
+        </button>
+      </template>
+    </ToroDataGrid>
 
     <ToroContextMenu
       ref="typePaymentContextMenu"
@@ -89,7 +84,6 @@ const loading = ref(false);
 const saving = ref(false);
 const loadError = ref("");
 const searchText = ref("");
-const statusFilter = ref("all");
 const formDialog = ref(null);
 const stateDialog = ref(null);
 const typePaymentContextMenu = ref(null);
@@ -106,10 +100,7 @@ const contextMenu = reactive({ visible: false, x: 0, y: 0, row: null });
 const canCreate = computed(() => authorizationStore.hasPermission("typepayment.create"));
 const canUpdate = computed(() => authorizationStore.hasPermission("typepayment.update"));
 const canChangeStatus = computed(() => authorizationStore.hasPermission("typepayment.change-status"));
-const activeCount = computed(() => rows.value.filter((item) => !item.annulled).length);
 const filteredRows = computed(() => rows.value.filter((item) => {
-  if (statusFilter.value === "active" && item.annulled) return false;
-  if (statusFilter.value === "inactive" && !item.annulled) return false;
   return true;
 }).map((item) => ({ ...item, isActive: !item.annulled })));
 

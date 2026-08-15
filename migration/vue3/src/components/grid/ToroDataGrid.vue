@@ -6,8 +6,61 @@
     }"
     :style="[gridContainerStyle, adaptiveGridHeightStyle]"
   >
-        <div class="toro-grid-export-toolbar">
-      <ToroGridExportMenu :disabled="!gridApi" :column-provider="getExportColumns" @export="exportGrid" />
+        <div v-if="toolbarVisible" class="toro-grid-toolbar">
+      <ToroFormField
+        v-if="pagination"
+        class="toro-grid-toolbar-page-size-control"
+        label="Mostrar"
+        field-id="toro-grid-page-size"
+      >
+        <select
+          id="toro-grid-page-size"
+          v-model="selectedPageSize"
+          class="toro-field toro-grid-toolbar-page-size"
+          aria-label="Mostrar registros"
+          @change="changePageSize"
+        >
+          <option v-for="size in effectivePageSizeSelector" :key="size" :value="String(size)">{{ size }}</option>
+          <option value="all">Todos</option>
+        </select>
+      </ToroFormField>
+
+      <ToroFormField v-if="searchEnabled" class="toro-grid-toolbar-search" label="Buscar" field-id="toro-grid-search">
+        <input
+          id="toro-grid-search"
+          :value="searchModelValue"
+          class="toro-field"
+          type="search"
+          :placeholder="searchPlaceholder"
+          autocomplete="off"
+          @input="emit('update:searchModelValue', $event.target.value)"
+        />
+      </ToroFormField>
+
+      <div class="toro-grid-toolbar-spacer"></div>
+      <div v-if="$slots.stats" class="toro-grid-toolbar-stats"><slot name="stats" /></div>
+      <div v-if="$slots.actions" class="toro-grid-toolbar-actions"><slot name="actions" /></div>
+
+      <button
+        v-if="refreshEnabled"
+        type="button"
+        class="toro-action toro-action-primary"
+        :disabled="refreshing || refreshDisabled"
+        @click="emit('refresh')"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M20 11a8.1 8.1 0 0 0-15.5-2M4 4v5h5" />
+          <path d="M4 13a8.1 8.1 0 0 0 15.5 2M20 20v-5h-5" />
+        </svg>
+        <span>{{ refreshing ? "Actualizando..." : "Actualizar" }}</span>
+      </button>
+
+      <ToroGridExportMenu
+        v-if="exportOptions !== false"
+        :disabled="!gridApi"
+        :column-provider="getExportColumns"
+        @export="exportGrid"
+      />
     </div>
 <AgGridVue
       class="toro-ag-grid"
@@ -35,26 +88,12 @@
           @cell-context-menu="handleCellContextMenu"
   :prevent-default-on-context-menu="true"
   @contextmenu.prevent.stop
-/>
-
-    <label v-if="pagination" class="toro-grid-page-size-control">
-      <span>Tama&ntilde;o de P&aacute;gina:</span>
-      <select
-        v-model="selectedPageSize"
-        aria-label="Tamano de Pagina"
-        @change="changePageSize"
-      >
-        <option v-for="size in effectivePageSizeSelector" :key="size" :value="String(size)">
-          {{ size }}
-        </option>
-        <option value="all">Todos</option>
-      </select>
-    </label>
+    />
   </section>
 </template>
 
 <script setup>
-import { computed, shallowRef, ref } from "vue";
+import { computed, shallowRef, ref, useSlots } from "vue";
 import {
   AllCommunityModule,
   ModuleRegistry,
@@ -63,6 +102,7 @@ import {
 import { AgGridVue } from "ag-grid-vue3";
 import { AG_GRID_LOCALE_ES } from "@ag-grid-community/locale";
 import ToroGridExportMenu from "@/components/grid/ToroGridExportMenu.vue";
+import ToroFormField from "@/components/ui/ToroFormField.vue";
 import { exportGridToExcel, exportGridToPdf } from "@/services/gridExportService.js";
 
 ModuleRegistry.registerModules([
@@ -161,12 +201,20 @@ const props = defineProps({
     type: Number,
     default: 520,
   },
+  searchEnabled: { type: Boolean, default: false },
+  searchModelValue: { type: String, default: "" },
+  searchPlaceholder: { type: String, default: "Buscar" },
+  refreshEnabled: { type: Boolean, default: false },
+  refreshing: { type: Boolean, default: false },
+  refreshDisabled: { type: Boolean, default: false },
 });
 
 const emit = defineEmits([
   "grid-ready",
   "first-data-rendered",
   "row-context-menu",
+  "update:searchModelValue",
+  "refresh"
 ]);
 
 const gridApi = shallowRef(null);
@@ -268,6 +316,7 @@ function changePageSize() {
   gridApi.value?.paginationGoToFirstPage();
 }
 
+
 const effectivePageSizeSelector = computed(() => {
   const values = [...props.pageSizeSelector, 100]
     .map(Number)
@@ -275,6 +324,16 @@ const effectivePageSizeSelector = computed(() => {
 
   return [...new Set(values)].sort((left, right) => left - right);
 });
+
+
+const slots = useSlots();
+const toolbarVisible = computed(() =>
+  props.searchEnabled ||
+  props.refreshEnabled ||
+  props.exportOptions !== false ||
+  Boolean(slots.stats) ||
+  Boolean(slots.actions),
+);
 
 const adaptiveGridHeightStyle = computed(() => {
   const totalRows = Array.isArray(props.rowData) ? props.rowData.length : 0;
@@ -284,7 +343,7 @@ const adaptiveGridHeightStyle = computed(() => {
   const visibleRows = props.pagination
     ? Math.min(totalRows, Math.max(1, selectedRows))
     : totalRows;
-  const exportToolbarHeight = props.exportOptions === false ? 0 : 42;
+  const exportToolbarHeight = toolbarVisible.value ? 58 : 0;
   const paginationHeight = props.pagination ? 46 : 0;
   const borderAllowance = 4;
   const naturalHeight =
@@ -650,13 +709,51 @@ function handleCellContextMenu(params) {
   pointer-events: none;
   transform: translateY(-50%);
 }
-.toro-grid-export-toolbar {
+.toro-grid-toolbar {
   display: flex;
-  justify-content: flex-end;
-  margin-bottom: 0;
-  align-items: center;
-  min-height: 42px;
-  padding: 4px 0 4px;
+  align-items: end;
+  gap: 12px;
+  min-height: 58px;
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--toro-color-border);
+  background: var(--toro-color-surface);
+}
+
+.toro-grid-toolbar-search {
+  flex: 1 1 420px;
+  width: auto;
+  max-width: 720px;
+  min-width: 0;
+}
+
+.toro-grid-toolbar-search input {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 38px;
+  height: 38px;
+  padding: 8px 14px 5px;
+  border: 1px solid var(--toro-color-border);
+  border-radius: var(--toro-radius-md);
+  background: var(--toro-color-surface);
+  color: var(--toro-color-text-primary);
+  font: inherit;
+  font-size: var(--toro-font-size-md);
+  font-weight: var(--toro-font-weight-regular);
+  line-height: 1.2;
+  text-transform: none;
+}
+
+.toro-grid-toolbar-spacer { flex: 1 1 auto; }
+.toro-grid-toolbar-stats,
+.toro-grid-toolbar-actions { display: inline-flex; align-items: center; gap: 14px; white-space: nowrap; }
+.toro-grid-toolbar > .toro-action,
+.toro-grid-toolbar :deep(.toro-grid-export-trigger) { min-height: 44px; }
+.toro-grid-toolbar > .toro-action svg { width: 20px; height: 20px; }
+
+@media (max-width: 980px) {
+  .toro-grid-toolbar { align-items: stretch; flex-wrap: wrap; }
+  .toro-grid-toolbar-search { flex-basis: 100%; max-width: none; }
+  .toro-grid-toolbar-spacer { display: none; }
 }
 
 
@@ -683,5 +780,105 @@ function handleCellContextMenu(params) {
   background: var(--toro-color-surface);
   color: var(--toro-color-text-primary);
   font: inherit;
+}
+
+
+.toro-grid-toolbar-page-size-control {
+  flex: 0 0 96px;
+  width: 96px;
+  min-width: 96px;
+  max-width: 96px;
+}
+
+
+.toro-grid-toolbar :deep(.toro-form-field-label) {
+  color: var(--toro-color-text-secondary);
+  font-family: inherit;
+  font-size: var(--toro-font-size-sm);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+
+.toro-grid-toolbar :deep(input.toro-field::placeholder) {
+  color: var(--toro-color-text-muted);
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 400;
+  opacity: 1;
+}
+
+
+/* Compact toolbar controls with one exact theme contract. */
+.toro-grid-toolbar :deep(.toro-form-field-control) {
+  min-height: 38px;
+  padding-block-start: 5px;
+}
+
+
+.toro-grid-toolbar :deep(input.toro-field::placeholder) {
+  color: var(--toro-color-text-muted) !important;
+  font-family: var(--toro-font-family) !important;
+  font-size: var(--toro-font-size-md) !important;
+  font-style: normal !important;
+  font-weight: var(--toro-font-weight-regular) !important;
+  opacity: 1;
+}
+
+.toro-grid-toolbar :deep(.toro-form-field-label) {
+  color: var(--toro-color-text-muted);
+  font-family: var(--toro-font-family);
+  font-size: var(--toro-font-size-xs);
+  font-weight: var(--toro-font-weight-bold);
+}
+
+
+
+.toro-grid-toolbar :deep(input.toro-field::placeholder) {
+  color: var(--toro-color-text-muted) !important;
+  font-family: var(--toro-font-family) !important;
+  font-size: var(--toro-font-size-md) !important;
+  font-style: normal !important;
+  font-weight: var(--toro-font-weight-regular) !important;
+  line-height: 1.2 !important;
+  letter-spacing: normal !important;
+  opacity: 1 !important;
+}
+
+/* Native functional page-size select, aligned with the compact shared toolbar. */
+.toro-grid-toolbar-page-size {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 38px !important;
+  height: 38px !important;
+  margin: 0 !important;
+  padding: 7px 26px 5px 12px !important;
+  color: var(--toro-color-text) !important;
+  font-family: var(--toro-font-family) !important;
+  font-size: var(--toro-font-size-md) !important;
+  font-weight: var(--toro-font-weight-regular) !important;
+  line-height: 1.2 !important;
+}
+
+
+
+/* Native Mostrar remains compact inside ToroFormField. */
+.toro-grid-toolbar :deep(#toro-grid-page-size.toro-field) {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-height: 38px !important;
+  height: 38px !important;
+  margin: 0 !important;
+  padding: 7px 26px 5px 12px !important;
+}
+
+/* DevTools measured fix: use the real parent-scoped DOM selector, not :deep(). */
+.toro-grid-toolbar .toro-grid-toolbar-search #toro-grid-search.toro-field {
+  box-sizing: border-box !important;
+  min-height: 38px !important;
+  height: 38px !important;
+  max-height: 38px !important;
+  margin: 0 !important;
+  padding: 8px 14px 5px !important;
 }
 </style>
