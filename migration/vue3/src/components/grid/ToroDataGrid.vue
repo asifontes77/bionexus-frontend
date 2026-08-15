@@ -312,8 +312,8 @@ function changePageSize() {
     ? totalRows
     : Number(selectedPageSize.value);
 
-  gridApi.value?.paginationSetPageSize(nextSize);
-  gridApi.value?.paginationGoToFirstPage();
+  gridApi.value?.setGridOption?.("paginationPageSize", nextSize);
+  gridApi.value?.paginationGoToFirstPage?.();
 }
 
 

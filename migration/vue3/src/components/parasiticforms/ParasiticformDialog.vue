@@ -9,11 +9,22 @@
         <ToroDialogCloseButton @click="close" />
       </header>
       <section class="dialog-body parasiticform-dialog-body">
-        <label class="toro-field-group">
-          <span class="toro-field-label">Descripcion</span>
-          <input ref="descriptionInput" v-model="draft.description" class="toro-field" type="text" maxlength="50" autocomplete="off" />
-          <small class="toro-field-help">{{ draft.description.length }} de 50 caracteres</small>
-        </label>
+        <ToroFormField
+          label="Descripcion"
+          field-id="parasiticform-description"
+          :help="draft.description.length + ' de 50 caracteres'"
+          required
+        >
+          <input
+            id="parasiticform-description"
+            ref="descriptionInput"
+            v-model="draft.description"
+            class="toro-field"
+            type="text"
+            maxlength="50"
+            autocomplete="off"
+          />
+        </ToroFormField>
         <div v-if="errorMessage" class="toro-message toro-message-error" role="alert">{{ errorMessage }}</div>
       </section>
       <footer class="dialog-footer">
@@ -31,6 +42,7 @@
 import { computed, nextTick, reactive, ref } from "vue";
 import ToroActionIcon from "@/components/ui/ToroActionIcon.vue";
 import ToroDialogCloseButton from "@/components/ui/ToroDialogCloseButton.vue";
+import ToroFormField from "@/components/ui/ToroFormField.vue";
 const props = defineProps({ saving: { type: Boolean, default: false }, canCreate: { type: Boolean, default: false }, canUpdate: { type: Boolean, default: false } });
 const emit = defineEmits(["submit"]);
 const dialog = ref(null);

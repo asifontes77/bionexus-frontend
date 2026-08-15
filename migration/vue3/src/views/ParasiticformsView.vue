@@ -6,31 +6,34 @@
     </div>
 
     <section class="toro-administrative-directory parasitic-directory">
-      <div class="toro-administrative-toolbar parasitic-directory-toolbar">
-        <label class="toro-administrative-filter parasitic-filter parasitic-search-filter">
-          <span>Buscar descripcion</span>
-          <input
-            v-model.trim="searchText"
-            type="search"
-            placeholder="Escribe una descripcion"
-          />
-        </label>
-
-        <label class="toro-administrative-filter parasitic-filter parasitic-status-filter">
-          <span>Estado</span>
-          <select v-model="statusFilter">
-            <option value="all">Todos</option>
-            <option value="active">Activas</option>
-            <option value="inactive">Inactivas</option>
-          </select>
-        </label>
-
-        <div class="toro-administrative-summary parasitic-directory-summary" aria-live="polite">
-          <span><strong>{{ filteredRows.length }}</strong> resultados</span>
-          <span><strong>{{ activeCount }}</strong> activos</span>
-        </div>
-
-        <div class="toro-administrative-actions parasitic-directory-actions">
+      <div v-if="loading" class="toro-empty-state">Cargando formas parasitarias...</div>
+      <div v-else-if="parasiticforms.length === 0" class="toro-empty-state">
+        No existen formas parasitarias registradas.
+      </div>
+      <ToroDataGrid
+        v-else
+        ref="dataGrid"
+        class="parasitic-grid"
+        :row-data="gridRows"
+        :column-defs="columnDefs"
+        :default-col-def="defaultColDef"
+        :components="gridComponents"
+        :get-row-id="getRowId"
+        :search-enabled="true"
+        v-model:search-model-value="searchText"
+        search-placeholder="Buscar forma parasitaria"
+        :refresh-enabled="true"
+        :refreshing="loading"
+        :refresh-disabled="saving"
+        :page-size="10"
+        :page-size-selector="[10, 20, 50, 100]"
+        :min-grid-height="300"
+        :max-grid-height="520"
+        empty-text="No existen formas parasitarias que coincidan con los filtros."
+        @refresh="loadParasiticforms"
+        @row-context-menu="openParasiticContextMenu"
+      >
+        <template #actions>
           <button
             v-if="canCreate"
             type="button"
@@ -41,52 +44,18 @@
             <ToroActionIcon action="create" />
             <span>Nueva forma</span>
           </button>
-          <button
-            type="button"
-            class="toro-action toro-action-primary"
-            :disabled="loading || saving"
-            @click="loadParasiticforms"
-          >
-            <ToroActionIcon action="refresh" />
-            <span>{{ loading ? "Actualizando..." : "Actualizar" }}</span>
-          </button>
-        </div>
-      </div>
+        </template>
+      </ToroDataGrid>
 
-      <div v-if="loading" class="toro-empty-state">Cargando formas parasitarias...</div>
-      <div v-else-if="parasiticforms.length === 0" class="toro-empty-state">
-        No existen formas parasitarias registradas.
-      </div>
-      <div v-else-if="filteredRows.length === 0" class="toro-empty-state">
-        No existen registros que coincidan con los filtros.
-      </div>
-      <div v-else class="parasitic-grid-host">
-        <ToroDataGrid
-          ref="dataGrid"
-          class="parasitic-grid"
-          :row-data="filteredRows"
-          :column-defs="columnDefs"
-          :default-col-def="defaultColDef"
-          :components="gridComponents"
-          :get-row-id="getRowId"
-          :quick-filter-text="searchText"
-          :page-size="10"
-          :page-size-selector="[10, 20, 50]"
-          height="430px"
-          empty-text="No existen formas parasitarias que coincidan con los filtros."
-          @row-context-menu="openParasiticContextMenu"
+      <ToroContextMenu
+        ref="parasiticContextMenu"
+        :open="parasiticContextMenuState.open"
+        :x="parasiticContextMenuState.x"
+        :y="parasiticContextMenuState.y"
+        :items="parasiticContextMenuItems"
+        @select="runParasiticContextAction"
+        @close="closeParasiticContextMenu"
       />
-
-    <ToroContextMenu
-      ref="parasiticContextMenu"
-      :open="parasiticContextMenuState.open"
-      :x="parasiticContextMenuState.x"
-      :y="parasiticContextMenuState.y"
-      :items="parasiticContextMenuItems"
-      @select="runParasiticContextAction"
-      @close="closeParasiticContextMenu"
-    />
-      </div>
     </section>
 
     <ParasiticformDialog
@@ -109,6 +78,7 @@ import { computed, nextTick, onMounted, ref } from "vue";
 import ToroDataGrid from "@/components/grid/ToroDataGrid.vue";
 import ToroGridToggleCell from "@/components/grid/ToroGridToggleCell.vue";
 import ToroGridActionsCell from "@/components/grid/ToroGridActionsCell.vue";
+import ToroOptionFilter from "@/components/grid/ToroOptionFilter.vue";
 import ToroActionIcon from "@/components/ui/ToroActionIcon.vue";
 import ParasiticformDialog from "@/components/parasiticforms/ParasiticformDialog.vue";
 import ParasiticformStateDialog from "@/components/parasiticforms/ParasiticformStateDialog.vue";
@@ -129,7 +99,6 @@ const loading = ref(false);
 const saving = ref(false);
 const loadError = ref("");
 const searchText = ref("");
-const statusFilter = ref("all");
 const formDialog = ref(null);
 const stateDialog = ref(null);
 const parasiticContextMenu = ref(null);
@@ -147,17 +116,8 @@ const dataGrid = ref(null);
 const canCreate = computed(() => authorizationStore.hasPermission("parasiticforms.create"));
 const canUpdateDescription = computed(() => authorizationStore.hasPermission("parasiticforms.update"));
 const canChangeStatus = computed(() => authorizationStore.hasPermission("parasiticforms.change-status"));
-const activeCount = computed(() => parasiticforms.value.filter((record) => !record.annulled).length);
-const filteredRows = computed(() => {
-  const search = searchText.value.toLocaleLowerCase();
-  return parasiticforms.value
-    .filter((record) => {
-      if (statusFilter.value === "active" && record.annulled) return false;
-      if (statusFilter.value === "inactive" && !record.annulled) return false;
-      return search === "" || record.description.toLocaleLowerCase().includes(search);
-    })
-    .map((record) => ({ ...record, isActive: !record.annulled }));
-});
+const gridRows = computed(() => parasiticforms.value.map((record) => ({ ...record, isActive: !record.annulled })));
+
 
 const defaultColDef = Object.freeze({
   sortable: true,
@@ -180,15 +140,24 @@ const columnDefs = computed(() => [
     width: 160,
     minWidth: 150,
     maxWidth: 180,
-    filter: "agTextColumnFilter",
-    valueFormatter: ({ value }) => (value ? "Activo" : "Inactivo"),
-
+    filter: ToroOptionFilter,
+    filterParams: {
+      options: [
+        { value: true, label: "Activo" },
+        { value: false, label: "Inactivo" },
+      ],
+    },
     headerClass: "toro-grid-toggle-header",
     cellClass: "toro-grid-toggle-cell",
     cellRenderer: ToroGridToggleCell,
-  cellRendererParams: { onLabel: "Activo", offLabel: "Inactivo", ariaLabel: "Estado", disabled: () => !canChangeStatus.value || saving.value, onToggle: (row) => openState(row) },
-  valueGetter: ({ data }) => Boolean(data?.isActive),
-},
+    cellRendererParams: {
+      onLabel: "Activo",
+      offLabel: "Inactivo",
+      ariaLabel: "Estado",
+      disabled: () => !canChangeStatus.value || saving.value,
+      onToggle: (row) => openState(row),
+    },
+  },
 
 
   {
@@ -242,7 +211,7 @@ function replaceRecord(updated) {
 
   nextTick(() => {
     const api = dataGrid.value?.getApi?.();
-    api?.setGridOption?.('rowData', filteredRows.value);
+    api?.setGridOption?.('rowData', gridRows.value);
     api?.refreshCells?.({ force: true });
     api?.redrawRows?.();
   });
@@ -291,8 +260,6 @@ onMounted(loadParasiticforms);
 
 <style scoped>
 .parasitic-page { min-width: 0; }
-.parasitic-grid-host { width: 100%; min-width: 0; }
+.parasitic-directory { min-width: 0; }
 .parasitic-grid { width: 100%; min-width: 0; }
-@media (max-width: 1050px) { .parasitic-directory-toolbar { grid-template-columns: minmax(260px, 1fr) minmax(180px, 240px); } .parasitic-directory-summary, .parasitic-directory-actions { justify-content: flex-end; } }
-@media (max-width: 720px) { .parasitic-directory-toolbar { grid-template-columns: 1fr; } .parasitic-directory-summary, .parasitic-directory-actions { justify-content: stretch; } .parasitic-directory-actions { display: grid; grid-template-columns: 1fr 1fr; } .parasitic-grid { height: 520px; min-height: 520px; } }
 </style>
