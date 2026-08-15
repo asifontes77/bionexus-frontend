@@ -49,3 +49,30 @@ function confirm() { if (target.value) emit("confirm", target.value); }
 
 defineExpose({ open, close, setError, clearError });
 </script>
+
+<style scoped>
+.role-state-dialog {
+  width: min(520px, calc(100vw - 32px));
+  padding: 0;
+  border: 1px solid var(--toro-color-border-strong);
+  border-radius: var(--toro-radius-md);
+  background: var(--toro-color-surface);
+  color: var(--toro-color-text);
+  font-family: var(--toro-font-family);
+  font-size: var(--toro-font-size-md);
+  font-weight: var(--toro-font-weight-regular);
+  box-shadow: var(--toro-shadow-md);
+}
+
+.role-state-dialog::backdrop {
+  background: rgb(13 36 58 / 48%);
+  backdrop-filter: blur(2px);
+}
+
+.role-state-dialog .dialog-body {
+  color: var(--toro-color-text-secondary);
+  font-family: var(--toro-font-family);
+  font-size: var(--toro-font-size-md);
+  font-weight: var(--toro-font-weight-regular);
+}
+</style>

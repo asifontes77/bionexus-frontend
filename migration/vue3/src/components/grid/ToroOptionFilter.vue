@@ -23,11 +23,15 @@ const options = computed(() => (props.params.options || []).map((option, index) 
 })));
 
 function selectedOption() { return options.value.find((option) => option.key === selectedValue.value) || null; }
+function getCellValue(data) {
+  if (typeof props.params.getValue === "function") return props.params.getValue(data);
+  return data?.[props.params.colDef.field];
+}
 function isFilterActive() { return selectedValue.value !== ""; }
 function doesFilterPass(filterParams) {
   const option = selectedOption();
   if (!option) return true;
-  return filterParams.data?.[props.params.colDef.field] === option.value;
+  return Object.is(getCellValue(filterParams.data), option.value);
 }
 function getModel() {
   const option = selectedOption();

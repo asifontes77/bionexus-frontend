@@ -11,59 +11,53 @@
 
     <template v-else>
       <section class="roles-workspace toro-panel">
-        <header class="roles-toolbar">
-          <label class="roles-search">
-            <span>Buscar rol</span>
-            <input v-model="roleSearchText" class="toro-field" type="search" autocomplete="off"
-              placeholder="Código, nombre o descripción" />
-          </label>
-
-          <label class="roles-status-filter">
-            <span>Estado</span>
-            <select v-model="roleStatusFilter" class="toro-field">
-              <option value="all">Todos</option>
-              <option value="active">Activos</option>
-              <option value="inactive">Inactivos</option>
-            </select>
-          </label>
-
-          <div class="roles-toolbar-summary" aria-label="Resumen">
-            <span><strong>{{ filteredRoles.length }}</strong> roles</span>
-            <span><strong>{{ permissions.length }}</strong> permisos</span>
-          </div>
-
-          <div class="roles-toolbar-actions">
-            <button type="button" class="toro-action toro-action-secondary" @click="openPermissionCatalogDialog">
-  <ToroActionIcon action="catalog" />
-              Ver catálogo
-            </button>
-
-            <button v-if="canCreateRoles" type="button" class="toro-action toro-action-secondary" :disabled="loading"
-              @click="openCreateRoleDialog">
-  <ToroActionIcon action="create" />
-              Nuevo rol
-            </button>
-
-            <button type="button" class="toro-action toro-action-primary"
-              :disabled="loading || creatingRole || editingRole" @click="loadCatalogs">
-  <ToroActionIcon action="refresh" />
-              {{ loading ? "Actualizando..." : "Actualizar" }}
-            </button>
-          </div>
-        </header>
-
-        <div v-if="filteredRoles.length === 0" class="roles-empty toro-empty-state">
-          No existen roles que coincidan con los filtros.
+        <div v-if="roles.length === 0" class="roles-empty toro-empty-state">
+          No existen roles registrados.
         </div>
 
-        <ToroDataGrid v-else class="roles-grid" :row-data="filteredRoles" :column-defs="roleColumnDefs"
-          :components="gridComponents" :context="gridContext" :get-row-id="getRoleRowId"
-          :quick-filter-text="roleSearchText" :page-size="10" :page-size-selector="[10, 20, 50]" height="430px"
-          empty-text="No existen roles que coincidan con los filtros."           @row-context-menu="openRoleContextMenu"
-/>
-              <RoleStateDialog ref="roleStateDialog" :saving="editingRole" @confirm="confirmRoleStatus" />
+        <ToroDataGrid
+          v-else
+          class="roles-grid"
+          :row-data="roles"
+          :column-defs="roleColumnDefs"
+          :components="gridComponents"
+          :context="gridContext"
+          :get-row-id="getRoleRowId"
+          :search-enabled="true"
+          v-model:search-model-value="roleSearchText"
+          search-placeholder="Buscar rol"
+          :refresh-enabled="true"
+          :refreshing="loading"
+          :refresh-disabled="creatingRole || editingRole"
+          :page-size="10"
+          :page-size-selector="[10, 20, 50, 100]"
+          :min-grid-height="300"
+          :max-grid-height="520"
+          empty-text="No existen roles que coincidan con los filtros."
+          @refresh="loadCatalogs"
+          @row-context-menu="openRoleContextMenu"
+        >
+          <template #actions>
+            <button type="button" class="toro-action toro-action-secondary" @click="openPermissionCatalogDialog">
+              <ToroActionIcon action="catalog" />
+              <span>Ver catalogo</span>
+            </button>
+            <button
+              v-if="canCreateRoles"
+              type="button"
+              class="toro-action toro-action-primary"
+              :disabled="loading || creatingRole"
+              @click="openCreateRoleDialog"
+            >
+              <ToroActionIcon action="create" />
+              <span>Nuevo rol</span>
+            </button>
+          </template>
+        </ToroDataGrid>
 
-    <ToroContextMenu
+        <RoleStateDialog ref="roleStateDialog" :saving="editingRole" @confirm="confirmRoleStatus" />
+
+        <ToroContextMenu
           ref="roleContextMenu"
           :open="roleContextMenuState.open"
           :x="roleContextMenuState.x"
@@ -72,7 +66,7 @@
           @close="closeRoleContextMenu"
           @select="runRoleContextAction"
         />
-</section>
+      </section>
     </template>
 
     <dialog ref="createRoleDialog" class="toro-dialog role-dialog" @close="resetCreateRoleForm" tabindex="-1">
@@ -475,6 +469,7 @@
 <script setup>
 import { computed, nextTick, onMounted, ref } from "vue";
 import ToroDataGrid from "@/components/grid/ToroDataGrid.vue";
+import ToroOptionFilter from "@/components/grid/ToroOptionFilter.vue";
 import ToroGridToggleCell from "@/components/grid/ToroGridToggleCell.vue";
 import ToroGridActionsCell from "@/components/grid/ToroGridActionsCell.vue";
 import ToroPermissionTree from "@/components/tree/ToroPermissionTree.vue";
@@ -513,7 +508,6 @@ const editRoleDialog = ref(null);
 const rolePermissionsDialog = ref(null);
 const permissionCatalogDialog = ref(null);
 const roleSearchText = ref("");
-const roleStatusFilter = ref("all");
 const permissionSearchText = ref("");
 const catalogSearchText = ref("");
 const roleContextMenu = ref(null);
@@ -556,24 +550,7 @@ const updateRoleForm = ref({
   isActive: true,
 });
 
-const filteredRoles = computed(() => {
-  const search = roleSearchText.value.trim().toLowerCase();
 
-  return roles.value.filter((role) => {
-    const matchesSearch =
-      search === "" ||
-      [role.code, role.name, role.description]
-        .filter((value) => typeof value === "string")
-        .some((value) => value.toLowerCase().includes(search));
-
-    const matchesStatus =
-      roleStatusFilter.value === "all" ||
-      (roleStatusFilter.value === "active" && role.isActive) ||
-      (roleStatusFilter.value === "inactive" && !role.isActive);
-
-    return matchesSearch && matchesStatus;
-  });
-});
 
 const presentedPermissions = computed(() =>
   permissions.value.map((permission) => presentPermission(permission)),
@@ -702,6 +679,14 @@ const roleColumnDefs = computed(() => [
   },
   {
     headerName: "Origen",
+    filter: ToroOptionFilter,
+    filterParams: {
+      getValue: (data) => data?.isSystem ? "Sistema" : "Configurable",
+      options: [
+        { value: "Sistema", label: "Sistema" },
+        { value: "Configurable", label: "Configurable" },
+      ],
+    },
     minWidth: 125,
     maxWidth: 150,
     flex: 0.7,
@@ -709,15 +694,21 @@ const roleColumnDefs = computed(() => [
     headerClass: "toro-grid-centered-header",
     cellClass: "toro-grid-centered-cell",
     headerTooltip: "Sistema: administrado internamente por TORO. Configurable: creado y administrado desde esta pantalla.",
-    filter: "agTextColumnFilter",
   },
   {
     headerName: "Estado",
+    filter: ToroOptionFilter,
+    filterParams: {
+      getValue: (data) => Boolean(data?.isActive),
+      options: [
+        { value: true, label: "Activo" },
+        { value: false, label: "Inactivo" },
+      ],
+    },
     minWidth: 135,
     maxWidth: 155,
     flex: 0.65,
     valueGetter: ({ data }) => Boolean(data?.isActive),
-    filter: "agTextColumnFilter",
     cellClass: "toro-grid-status-cell",
     cellStyle: {
       display: "flex",
@@ -1595,56 +1586,6 @@ function focusOpenedDialog(dialogReference) {
 .roles-workspace {
   overflow: hidden;
   padding: 0;
-}
-
-.roles-toolbar {
-  display: grid;
-  grid-template-columns: minmax(260px, 1fr) 180px auto auto;
-  align-items: end;
-  gap: var(--toro-space-3);
-  padding: var(--toro-space-3) var(--toro-space-4);
-  border-bottom: 1px solid var(--toro-color-border);
-}
-
-.roles-search,
-.roles-status-filter,
-.permissions-dialog-toolbar label {
-  display: grid;
-  gap: var(--toro-space-1);
-  min-width: 0;
-  color: var(--toro-color-text-muted);
-  font-size: var(--toro-font-size-xs);
-  font-weight: var(--toro-font-weight-bold);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.roles-toolbar-summary {
-  display: flex;
-  align-items: center;
-  gap: var(--toro-space-3);
-  min-height: var(--toro-control-height);
-  color: var(--toro-color-text-muted);
-  font-size: var(--toro-font-size-sm);
-  white-space: nowrap;
-}
-
-.roles-toolbar-summary span {
-  display: inline-flex;
-  align-items: baseline;
-  gap: var(--toro-space-1);
-}
-
-.roles-toolbar-summary strong {
-  color: var(--toro-color-text);
-}
-
-.roles-toolbar-actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: var(--toro-space-2);
-  white-space: nowrap;
 }
 
 .roles-empty {
