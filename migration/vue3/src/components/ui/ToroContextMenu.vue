@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <Teleport to="body">
     <div
       v-if="open"
@@ -20,7 +20,55 @@
         role="menuitem"
         @click="selectItem(item)"
       >
-        {{ item.label }}
+        <svg
+          v-if="resolveIcon(item)"
+          class="toro-context-menu-icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <template v-if="resolveIcon(item) === 'edit'">
+            <path d="M12 20h9" />
+            <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z" />
+          </template>
+          <template v-else-if="resolveIcon(item) === 'activate'">
+            <path d="M12 3v4" />
+            <path d="M7.5 5.8a8 8 0 1 0 9 0" />
+            <path d="m9 13 2 2 4-4" />
+          </template>
+          <template v-else-if="resolveIcon(item) === 'deactivate'">
+            <path d="M12 3v4" />
+            <path d="M7.5 5.8a8 8 0 1 0 9 0" />
+            <path d="m9 12 6 6" />
+            <path d="m15 12-6 6" />
+          </template>
+          <template v-else-if="resolveIcon(item) === 'view'">
+            <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" />
+            <circle cx="12" cy="12" r="2.5" />
+          </template>
+          <template v-else-if="resolveIcon(item) === 'roles'">
+            <circle cx="9" cy="8" r="3" />
+            <path d="M3.5 19c.6-3.2 2.4-5 5.5-5s4.9 1.8 5.5 5" />
+            <path d="M16 8h5" />
+            <path d="M18.5 5.5v5" />
+          </template>
+          <template v-else-if="resolveIcon(item) === 'permissions'">
+            <circle cx="8" cy="12" r="3" />
+            <path d="M11 12h10" />
+            <path d="M17 12v3" />
+            <path d="M20 12v2" />
+          </template>
+          <template v-else>
+            <circle cx="12" cy="12" r="8" />
+            <path d="M12 8v4" />
+            <path d="M12 16h.01" />
+          </template>
+        </svg>
+        <span class="toro-context-menu-label">{{ item.label }}</span>
       </button>
     </div>
   </Teleport>
@@ -74,6 +122,21 @@ const menuStyle = computed(() => ({
   left: `${adjustedX.value}px`,
   top: `${adjustedY.value}px`,
 }));
+
+function resolveIcon(item) {
+  const explicitIcon = String(item?.icon ?? "").trim().toLowerCase();
+
+  if (explicitIcon) return explicitIcon;
+
+  const key = String(item?.key ?? "").trim().toLowerCase();
+  const label = String(item?.label ?? "").trim().toLowerCase();
+
+  if (key === "edit" || label === "editar") return "edit";
+  if (key === "activate" || label === "activar") return "activate";
+  if (key === "deactivate" || label === "inactivar") return "deactivate";
+
+  return "";
+}
 
 async function positionMenu() {
   adjustedX.value = props.x;
@@ -206,6 +269,7 @@ defineExpose({
 .toro-context-menu-item {
   display: flex;
   align-items: center;
+  gap: 9px;
   width: 100%;
   min-height: 36px;
   padding: 7px 10px;
@@ -215,9 +279,22 @@ defineExpose({
   background: transparent;
   font: inherit;
   font-size: var(--toro-font-size-sm);
-  font-weight: var(--toro-font-weight-bold);
+  font-weight: 500;
+  letter-spacing: 0;
   text-align: start;
   cursor: pointer;
+}
+
+.toro-context-menu-icon {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  color: currentColor;
+}
+
+.toro-context-menu-label {
+  min-width: 0;
+  line-height: 1.25;
 }
 
 .toro-context-menu-item:not(:disabled):hover,

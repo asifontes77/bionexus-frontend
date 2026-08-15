@@ -61,7 +61,9 @@
           :quick-filter-text="roleSearchText" :page-size="10" :page-size-selector="[10, 20, 50]" height="430px"
           empty-text="No existen roles que coincidan con los filtros."           @row-context-menu="openRoleContextMenu"
 />
-              <ToroContextMenu
+              <RoleStateDialog ref="roleStateDialog" :saving="editingRole" @confirm="confirmRoleStatus" />
+
+    <ToroContextMenu
           ref="roleContextMenu"
           :open="roleContextMenuState.open"
           :x="roleContextMenuState.x"
@@ -473,8 +475,8 @@
 <script setup>
 import { computed, nextTick, onMounted, ref } from "vue";
 import ToroDataGrid from "@/components/grid/ToroDataGrid.vue";
+import ToroGridToggleCell from "@/components/grid/ToroGridToggleCell.vue";
 import ToroGridActionsCell from "@/components/grid/ToroGridActionsCell.vue";
-import ToroStatusBadgeCell from "@/components/grid/ToroStatusBadgeCell.vue";
 import ToroPermissionTree from "@/components/tree/ToroPermissionTree.vue";
 import ToroActionButton from "@/components/ui/ToroActionButton.vue";
 import ToroContextMenu from "@/components/ui/ToroContextMenu.vue";
@@ -497,6 +499,7 @@ import { useAuthorizationStore } from "@/stores/authorization";
 import ToroDialogCloseButton from "@/components/ui/ToroDialogCloseButton.vue";
 import { useToroToast } from "@/composables/useToroToast";
 import ToroActionIcon from "@/components/ui/ToroActionIcon.vue";
+import RoleStateDialog from "@/components/security/RoleStateDialog.vue";
 
 const toast = useToroToast();
 
@@ -514,6 +517,7 @@ const roleStatusFilter = ref("all");
 const permissionSearchText = ref("");
 const catalogSearchText = ref("");
 const roleContextMenu = ref(null);
+const roleStateDialog = ref(null);
 const roleContextMenuState = ref({
   open: false,
   x: 0,
@@ -593,7 +597,7 @@ const filteredCatalogPermissions = computed(() => {
 
 const gridComponents = {
   ToroGridActionsCell,
-  ToroStatusBadgeCell,
+
 };
 
 const roleActionsCellStyle = {
@@ -616,24 +620,24 @@ const roleContextMenuItems = computed(() => {
 
   return [
     {
-      key: "view",
+      key: "view", icon: "view",
       label: "Ver rol",
       action: () => openRoleDetailDialog(role),
     },
     {
-      key: "edit",
+      key: "edit", icon: "edit",
       label: "Editar rol",
       visible: canUpdateRoles.value,
       action: () => openEditRoleDialog(role),
     },
     {
-      key: "permissions",
+      key: "permissions", icon: "permissions",
       label: "Asignar permisos",
       visible: canAssignPermissions.value,
       action: () => openRolePermissionsDialog(role),
     },
     {
-      key: "toggle-status",
+      key: "toggle-status", icon: role.isActive ? "deactivate" : "activate",
       label: role.isActive
         ? "Desactivar rol"
         : "Activar rol",
@@ -645,7 +649,7 @@ const roleContextMenuItems = computed(() => {
         role.isActive
           ? "danger"
           : "default",
-      action: () => toggleRoleStatus(role),
+      action: () => openRoleStateDialog(role),
     },
   ];
 });
@@ -712,7 +716,7 @@ const roleColumnDefs = computed(() => [
     minWidth: 135,
     maxWidth: 155,
     flex: 0.65,
-    valueGetter: ({ data }) => data?.isActive ? "Activo" : "Inactivo",
+    valueGetter: ({ data }) => Boolean(data?.isActive),
     filter: "agTextColumnFilter",
     cellClass: "toro-grid-status-cell",
     cellStyle: {
@@ -723,8 +727,10 @@ const roleColumnDefs = computed(() => [
       paddingRight: "6px",
     },
     headerClass: "toro-grid-centered-header",
-    cellRenderer: "ToroStatusBadgeCell",
-  },
+    cellRenderer: ToroGridToggleCell,
+
+  cellRendererParams: { onLabel: "Activo", offLabel: "Inactivo", ariaLabel: "Estado", disabled: false, onToggle: (row) => openRoleStateDialog(row) },
+},
   {
     colId: "actions",
     headerName: "Acciones",
@@ -1092,6 +1098,26 @@ async function runRoleContextAction(item) {
   if (typeof action === "function") {
     await action();
   }
+}
+
+function openRoleStateDialog(role) {
+  if (!role || !canUpdateRoles.value || editingRole.value) return;
+  if (role.code === "admin" && role.isActive === true) {
+    errorMessage.value = "El rol administrador debe permanecer activo.";
+    toast.error(errorMessage.value);
+    return;
+  }
+  roleStateDialog.value?.open(role);
+}
+
+async function confirmRoleStatus(role) {
+  roleStateDialog.value?.clearError();
+  await toggleRoleStatus(role);
+  if (updateRoleError.value !== "") {
+    roleStateDialog.value?.setError(updateRoleError.value);
+    return;
+  }
+  roleStateDialog.value?.close();
 }
 
 async function toggleRoleStatus(role) {

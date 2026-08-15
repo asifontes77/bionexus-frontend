@@ -1,4 +1,4 @@
-﻿export const navigationItems = [
+export const navigationItems = [
   {
     key: "dashboard",
     label: "Inicio",
@@ -211,11 +211,10 @@
         key: "payment-types",
         label: "Formas de pago",
         abbreviation: "PG",
-        legacyRouteName: "TypePayment",
-        legacyPath: "/setting/typepayment",
-        roles: ["admin"],
-        migrated: false,
-      },
+        routeName: "type-payments",
+        permission: "typepayment.read",
+        migrated: true,
+},
       {
         key: "users",
         label: "Usuarios",
@@ -273,4 +272,4 @@
     roles: ["user", "admin"],
     migrated: false,
   },
-];
+  ];

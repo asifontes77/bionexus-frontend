@@ -74,7 +74,18 @@
           :page-size-selector="[10, 20, 50]"
           height="430px"
           empty-text="No existen formas parasitarias que coincidan con los filtros."
-        />
+          @row-context-menu="openParasiticContextMenu"
+      />
+
+    <ToroContextMenu
+      ref="parasiticContextMenu"
+      :open="parasiticContextMenuState.open"
+      :x="parasiticContextMenuState.x"
+      :y="parasiticContextMenuState.y"
+      :items="parasiticContextMenuItems"
+      @select="runParasiticContextAction"
+      @close="closeParasiticContextMenu"
+    />
       </div>
     </section>
 
@@ -96,8 +107,8 @@
 <script setup>
 import { computed, nextTick, onMounted, ref } from "vue";
 import ToroDataGrid from "@/components/grid/ToroDataGrid.vue";
+import ToroGridToggleCell from "@/components/grid/ToroGridToggleCell.vue";
 import ToroGridActionsCell from "@/components/grid/ToroGridActionsCell.vue";
-import ToroStatusBadgeCell from "@/components/grid/ToroStatusBadgeCell.vue";
 import ToroActionIcon from "@/components/ui/ToroActionIcon.vue";
 import ParasiticformDialog from "@/components/parasiticforms/ParasiticformDialog.vue";
 import ParasiticformStateDialog from "@/components/parasiticforms/ParasiticformStateDialog.vue";
@@ -109,6 +120,7 @@ import {
   updateParasiticform,
 } from "@/services/parasiticformsService";
 import { useAuthorizationStore } from "@/stores/authorization";
+import ToroContextMenu from "@/components/ui/ToroContextMenu.vue";
 
 const authorizationStore = useAuthorizationStore();
 const toast = useToroToast();
@@ -120,6 +132,16 @@ const searchText = ref("");
 const statusFilter = ref("all");
 const formDialog = ref(null);
 const stateDialog = ref(null);
+const parasiticContextMenu = ref(null);
+const parasiticContextMenuState = ref({ open: false, x: 0, y: 0, record: null });
+const parasiticContextMenuItems = computed(() => {
+  const record = parasiticContextMenuState.value.record;
+  if (!record) return [];
+  return [
+    { key: "edit", icon: "edit", label: "Editar", visible: canUpdateDescription.value, disabled: saving.value, action: () => openEdit(record) },
+    { key: "toggle-status", icon: record.annulled ? "activate" : "deactivate", label: record.annulled ? "Activar" : "Inactivar", visible: canChangeStatus.value, disabled: saving.value, action: () => openState(record) },
+  ];
+});
 const dataGrid = ref(null);
 
 const canCreate = computed(() => authorizationStore.hasPermission("parasiticforms.create"));
@@ -143,7 +165,7 @@ const defaultColDef = Object.freeze({
   resizable: true,
   suppressHeaderMenuButton: true,
 });
-const gridComponents = Object.freeze({ ToroGridActionsCell, ToroStatusBadgeCell });
+const gridComponents = Object.freeze({ ToroGridActionsCell, ToroGridToggleCell });
 const columnDefs = computed(() => [
   {
     field: "description",
@@ -160,31 +182,56 @@ const columnDefs = computed(() => [
     maxWidth: 180,
     filter: "agTextColumnFilter",
     valueFormatter: ({ value }) => (value ? "Activo" : "Inactivo"),
-    cellRenderer: "ToroStatusBadgeCell",
-  },
+
+    headerClass: "toro-grid-toggle-header",
+    cellClass: "toro-grid-toggle-cell",
+    cellRenderer: ToroGridToggleCell,
+  cellRendererParams: { onLabel: "Activo", offLabel: "Inactivo", ariaLabel: "Estado", disabled: () => !canChangeStatus.value || saving.value, onToggle: (row) => openState(row) },
+  valueGetter: ({ data }) => Boolean(data?.isActive),
+},
+
+
   {
     headerName: "Acciones",
     field: "actions",
-    width: 170,
-    minWidth: 160,
-    maxWidth: 190,
+    width: 110,
     sortable: false,
     filter: false,
-    suppressHeaderMenuButton: true,
     cellClass: "toro-grid-actions-cell",
-    cellRenderer: "ToroGridActionsCell",
+    cellRenderer: ToroGridActionsCell,
     cellRendererParams: {
       actions: [
-        { key: "edit", label: "Editar", visible: () => canUpdateDescription.value, disabled: () => saving.value, onClick: openEdit },
-        { key: "activate", label: "Activar", visible: (record) => canChangeStatus.value && record.annulled, disabled: () => saving.value, onClick: openState },
-        { key: "deactivate", label: "Inactivar", visible: (record) => canChangeStatus.value && !record.annulled, disabled: () => saving.value, onClick: openState },
+        {
+          key: "edit",
+          label: "Editar",
+          visible: () => canUpdateDescription.value,
+          disabled: () => saving.value,
+          onClick: openEdit,
+        },
       ],
     },
-  },
-]);
+  }]);
 
 function getRowId({ data }) { return String(data.id); }
 function openCreate() { if (canCreate.value && !saving.value) formDialog.value?.openCreate(); }
+async function openParasiticContextMenu({ event, row }) {
+  if (!event || !row) return;
+  event.preventDefault();
+  parasiticContextMenuState.value = { open: true, x: event.clientX, y: event.clientY, record: row };
+  await nextTick();
+  parasiticContextMenu.value?.positionMenu?.();
+}
+
+function closeParasiticContextMenu() {
+  parasiticContextMenuState.value = { open: false, x: 0, y: 0, record: null };
+}
+
+async function runParasiticContextAction(item) {
+  const action = item?.action;
+  closeParasiticContextMenu();
+  if (typeof action === "function") await action();
+}
+
 function openEdit(record) { if (canUpdateDescription.value && !saving.value) formDialog.value?.openEdit(record); }
 function openState(record) { if (canChangeStatus.value && !saving.value) stateDialog.value?.open(record); }
 function replaceRecord(updated) {

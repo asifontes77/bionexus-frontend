@@ -287,7 +287,7 @@
             <div v-if="filteredPermissionModules.length === 0" class="toro-empty-state">No existen permisos que coincidan con los filtros.</div>
             <details v-for="module in filteredPermissionModules" :key="module.key" class="override-module-card" open>
               <summary class="override-module-summary">
-                <div><span>Módulo</span><h4>{{ module.label }}</h4></div>
+                <div><span>Módulo</span><h4>{{ String(module?.name ?? module?.label ?? module).trim().toLowerCase() === "typepayment" ? "Formas de pago" : getPermissionModuleLabel(module?.name ?? module?.label ?? module) }}</h4></div>
                 <strong>{{ module.permissions.length }}</strong>
               </summary>
               <div
@@ -343,8 +343,8 @@
 import { computed, onMounted, ref } from "vue";
 import { nextTick } from "vue";
 import ToroDataGrid from "@/components/grid/ToroDataGrid.vue";
+import ToroGridToggleCell from "@/components/grid/ToroGridToggleCell.vue";
 import ToroGridActionsCell from "@/components/grid/ToroGridActionsCell.vue";
-import ToroStatusBadgeCell from "@/components/grid/ToroStatusBadgeCell.vue";
 import ToroContextMenu from "@/components/ui/ToroContextMenu.vue";
 import ToroFormField from "@/components/ui/ToroFormField.vue";
 import ToroIcon from "@/components/ui/ToroIcon.vue";
@@ -540,7 +540,7 @@ const filteredPermissionModules = computed(() => {
 
 const gridComponents = {
   ToroGridActionsCell,
-  ToroStatusBadgeCell,
+
 };
 
 const gridContext = {
@@ -635,12 +635,14 @@ const userColumnDefs = computed(() => [
     minWidth: 125,
     maxWidth: 145,
     flex: 0.6,
-    valueGetter: ({ data }) => (data?.hidden ? "Inactivo" : "Activo"),
+    valueGetter: ({ data }) => !Boolean(data?.hidden),
     filter: "agTextColumnFilter",
     headerClass: "toro-grid-centered-header",
     cellClass: "toro-grid-status-cell",
-    cellRenderer: "ToroStatusBadgeCell",
-  },
+    cellRenderer: ToroGridToggleCell,
+
+  cellRendererParams: { onLabel: "Activo", offLabel: "Inactivo", ariaLabel: "Estado", disabled: false, onToggle: (row) => openUserStateDialog(row) },
+},
   {
     colId: "actions",
     headerName: "Acciones",
@@ -1336,6 +1338,7 @@ function applyAssignedRolesToUserRow(userId, assignedRoles) {
     selectedUser.value = users.value.find((user) => user.id === userId) ?? null;
   }
 }
+
 </script>
 
 <style scoped>

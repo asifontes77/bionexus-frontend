@@ -8,6 +8,7 @@ import NotFoundView from "@/views/NotFoundView.vue";
 import RolesPermissionsView from "@/views/RolesPermissionsView.vue";
 import UserAuthorizationView from "@/views/UserAuthorizationView.vue";
 import ParasiticformsView from "@/views/ParasiticformsView.vue";
+import TypePaymentView from "@/views/TypePaymentView.vue";
 
 const routes = [
   {
@@ -72,6 +73,17 @@ const routes = [
           permissions: ["parasiticforms.read"],
           title: "Formas parasitarias",
                     description: "Administra las descripciones disponibles y controla cuales permanecen activas en los flujos operativos.",
+        },
+            },
+      {
+        path: "configuration/type-payments",
+        name: "type-payments",
+        component: TypePaymentView,
+        meta: {
+          requiresAuth: true,
+          permission: "typepayment.read",
+          title: "Formas de pago",
+          description: "Administra las descripciones, disponibilidad por moneda y estado de los formas de pago.",
         },
       },
     ],
