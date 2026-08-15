@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <dialog ref="dialog" class="toro-dialog type-payment-state-dialog" @cancel.prevent="close">
     <form class="dialog-shell" @submit.prevent="confirm">
       <header class="dialog-header"><div><p>Estado del registro</p><h3>{{ target?.annulled ? "Activar tipo de pago" : "Inactivar tipo de pago" }}</h3></div><ToroDialogCloseButton @click="close" /></header>
@@ -20,8 +20,9 @@ function confirm() { if (target.value) emit("confirm", target.value); }
 defineExpose({ open, close, clearError, setError });
 </script>
 <style scoped>
-.type-payment-state-dialog { width: min(520px, calc(100vw - 32px)); padding: 0; border: 1px solid var(--toro-color-border-strong); border-radius: var(--toro-radius-md); background: var(--toro-color-surface); color: var(--toro-color-text); box-shadow: var(--toro-shadow-md); }
+.type-payment-state-dialog { width: min(520px, calc(100vw - 32px)); padding: 0; border: 1px solid var(--toro-color-border-strong); border-radius: var(--toro-radius-md); background: var(--toro-color-surface); color: var(--toro-color-text); font-family: var(--toro-font-family); font-size: var(--toro-font-size-md); font-weight: var(--toro-font-weight-regular); box-shadow: var(--toro-shadow-md); }
 .type-payment-state-dialog::backdrop { background: rgb(13 36 58 / 48%); backdrop-filter: blur(2px); }
-.type-payment-state-body { display: grid; gap: var(--toro-space-3); }
+.type-payment-state-body { display: grid; gap: var(--toro-space-3); color: var(--toro-color-text-secondary); font-family: var(--toro-font-family); font-size: var(--toro-font-size-md); font-weight: var(--toro-font-weight-regular); }
 .type-payment-state-body p { margin: 0; line-height: 1.55; }
+.type-payment-state-body strong { color: var(--toro-color-text); font-weight: var(--toro-font-weight-medium); }
 </style>

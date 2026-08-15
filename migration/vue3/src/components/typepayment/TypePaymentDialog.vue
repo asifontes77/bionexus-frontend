@@ -6,9 +6,15 @@
         <ToroDialogCloseButton @click="close" />
       </header>
       <section class="dialog-body type-payment-dialog-body">
-        <label class="toro-field-group"><span class="toro-field-label">Descripcion</span><input ref="firstInput" v-model="draft.description" class="toro-field" maxlength="50" /></label>
-        <label class="toro-field-group"><span class="toro-field-label">Descripcion auxiliar 1</span><input v-model="draft.description_1" class="toro-field" maxlength="50" /></label>
-        <label class="toro-field-group"><span class="toro-field-label">Descripcion auxiliar 2</span><input v-model="draft.description_2" class="toro-field" maxlength="50" /></label>
+        <ToroFormField label="Descripcion" field-id="type-payment-description" required>
+          <input id="type-payment-description" ref="firstInput" v-model="draft.description" class="toro-field" type="text" maxlength="50" autocomplete="off" />
+        </ToroFormField>
+        <ToroFormField label="Descripcion auxiliar 1" field-id="type-payment-description-1">
+          <input id="type-payment-description-1" v-model="draft.description_1" class="toro-field" type="text" maxlength="50" autocomplete="off" />
+        </ToroFormField>
+        <ToroFormField label="Descripcion auxiliar 2" field-id="type-payment-description-2">
+          <input id="type-payment-description-2" v-model="draft.description_2" class="toro-field" type="text" maxlength="50" autocomplete="off" />
+        </ToroFormField>
         <label class="type-payment-check"><input v-model="draft.only_dollars" type="checkbox" /><span>Disponible solo para pagos en dolares</span></label>
         <div v-if="errorMessage" class="toro-message toro-message-error" role="alert">{{ errorMessage }}</div>
       </section>
@@ -23,6 +29,7 @@
 import { computed, nextTick, reactive, ref } from "vue";
 import ToroActionIcon from "@/components/ui/ToroActionIcon.vue";
 import ToroDialogCloseButton from "@/components/ui/ToroDialogCloseButton.vue";
+import ToroFormField from "@/components/ui/ToroFormField.vue";
 const props = defineProps({ saving: { type: Boolean, default: false }, canCreate: { type: Boolean, default: false }, canUpdate: { type: Boolean, default: false } });
 const emit = defineEmits(["submit"]);
 const dialog = ref(null); const firstInput = ref(null); const mode = ref("create"); const current = ref(null); const errorMessage = ref("");
@@ -45,5 +52,6 @@ defineExpose({ openCreate, openEdit, close, clearError, setError });
 .type-payment-dialog { width: min(680px, calc(100vw - 32px)); padding: 0; border: 1px solid var(--toro-color-border-strong); border-radius: var(--toro-radius-md); background: var(--toro-color-surface); color: var(--toro-color-text); box-shadow: var(--toro-shadow-md); }
 .type-payment-dialog::backdrop { background: rgb(13 36 58 / 48%); backdrop-filter: blur(2px); }
 .type-payment-dialog-body { display: grid; gap: var(--toro-space-3); }
-.type-payment-check { display: flex; align-items: center; gap: var(--toro-space-2); }
+.type-payment-check { display: flex; align-items: center; gap: var(--toro-space-2); color: var(--toro-color-text-secondary); font-family: var(--toro-font-family); font-size: var(--toro-font-size-md); font-weight: var(--toro-font-weight-regular); }
+.type-payment-check input { width: 16px; height: 16px; margin: 0; accent-color: var(--toro-color-primary); }
 </style>

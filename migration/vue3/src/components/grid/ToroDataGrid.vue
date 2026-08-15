@@ -881,4 +881,49 @@ function handleCellContextMenu(params) {
   margin: 0 !important;
   padding: 8px 14px 5px !important;
 }
+
+/* Shared visual contract for the native page-size select and search field. */
+.toro-grid-toolbar #toro-grid-page-size.toro-field,
+.toro-grid-toolbar #toro-grid-search.toro-field {
+  color: var(--toro-color-text-secondary) !important;
+  font-family: var(--toro-font-family) !important;
+  font-size: var(--toro-font-size-md) !important;
+  font-style: normal !important;
+  font-weight: var(--toro-font-weight-regular) !important;
+  line-height: 1.2 !important;
+  letter-spacing: normal !important;
+  text-transform: none !important;
+}
+
+.toro-grid-toolbar #toro-grid-search.toro-field::placeholder {
+  color: var(--toro-color-text-secondary) !important;
+  font-family: var(--toro-font-family) !important;
+  font-size: var(--toro-font-size-md) !important;
+  font-style: normal !important;
+  font-weight: var(--toro-font-weight-regular) !important;
+  line-height: 1.2 !important;
+  letter-spacing: normal !important;
+  opacity: 1 !important;
+}
+
+.toro-grid-toolbar :deep(.toro-form-field-label) {
+  color: var(--toro-color-text-muted);
+  font-family: var(--toro-font-family);
+  font-size: var(--toro-font-size-xs);
+  font-weight: var(--toro-font-weight-bold);
+  line-height: 1;
+}
+
+/* TORO AG Grid page number width */
+.ag-paging-page-summary-panel .ag-input-field-input,
+.ag-paging-page-summary-panel .ag-number-field-input,
+.ag-paging-page-summary-panel input {
+  box-sizing: border-box;
+  width: 52px !important;
+  min-width: 52px !important;
+  max-width: 52px !important;
+  padding-inline: 7px !important;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
 </style>
