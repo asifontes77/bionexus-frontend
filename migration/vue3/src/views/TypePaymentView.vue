@@ -68,6 +68,7 @@ import { computed, onBeforeUnmount, onMounted, reactive, ref, shallowRef, nextTi
 import ToroDataGrid from "@/components/grid/ToroDataGrid.vue";
 import ToroGridActionsCell from "@/components/grid/ToroGridActionsCell.vue";
 import ToroGridToggleCell from "@/components/grid/ToroGridToggleCell.vue";
+import ToroOptionFilter from "@/components/grid/ToroOptionFilter.vue";
 import ToroStatusBadgeCell from "@/components/grid/ToroStatusBadgeCell.vue";
 import ToroActionIcon from "@/components/ui/ToroActionIcon.vue";
 import TypePaymentDialog from "@/components/typepayment/TypePaymentDialog.vue";
@@ -112,6 +113,10 @@ const columnDefs = computed(() => [
   { field: "description_2", headerName: "Descripcion auxiliar 2", minWidth: 190, flex: 1 },
   {
     field: "only_dollars",
+    filter: ToroOptionFilter,
+    filterParams: {
+      options: [{"value":true,"label":"Si"},{"value":false,"label":"No"}],
+    },
     headerName: "Solo dolares",
     width: 170,
     headerClass: "type-payment-center-header",
@@ -121,6 +126,10 @@ const columnDefs = computed(() => [
   },
   {
     field: "isActive",
+    filter: ToroOptionFilter,
+    filterParams: {
+      options: [{"value":true,"label":"Activo"},{"value":false,"label":"Inactivo"}],
+    },
     headerName: "Estado",
     width: 170,
     headerClass: "type-payment-center-header",
