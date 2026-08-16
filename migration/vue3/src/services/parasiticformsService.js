@@ -44,6 +44,8 @@ export function getParasiticformErrorMessage(error, fallbackMessage) {
     PARASITICFORM_ID_INVALID:
       "El identificador de la forma parasitaria no es válido.",
     PARASITICFORM_NOT_FOUND: "La forma parasitaria seleccionada ya no existe.",
+    PARASITICFORM_DESCRIPTION_ALREADY_EXISTS:
+      "Ya existe una forma parasitaria con esta descripci\u00f3n.",
     PARASITICFORM_DESCRIPTION_REQUIRED: "La descripción es obligatoria.",
     PARASITICFORM_DESCRIPTION_TOO_LONG:
       "La descripción no puede superar los 50 caracteres.",
