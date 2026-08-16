@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <section class="user-authorization-page">
     <div v-if="usersError" class="toro-message toro-message-error" role="alert">
       <strong>No fue posible cargar los usuarios.</strong>
@@ -10,63 +10,11 @@
     </div>
 
     <section v-else class="toro-panel user-directory-panel">
-      <header class="user-directory-toolbar">
-        <ToroFormField
-          label="Buscar usuario"
-          field-id="user-authorization-search"
-          help="Busca por nombre, usuario, correo, cargo o rol."
-        >
-          <input
-            id="user-authorization-search"
-            v-model="searchText"
-            class="toro-field"
-            type="search"
-            autocomplete="off"
-            placeholder="Nombre, usuario, correo, cargo o rol"
-          />
-        </ToroFormField>
-
-        <ToroFormField label="Estado" field-id="user-authorization-status">
-          <select id="user-authorization-status" v-model="userStatusFilter" class="toro-field">
-            <option value="all">Todos</option>
-            <option value="visible">Activos</option>
-            <option value="hidden">Inactivos</option>
-          </select>
-        </ToroFormField>
-
-        <div class="user-directory-summary" aria-live="polite">
-          <span><strong>{{ filteredUsers.length }}</strong> resultados</span>
-          <span><strong>{{ visibleUsersCount }}</strong> activos</span>
-        </div>
-
-        <div class="user-directory-actions">
-          <button
-            v-if="canCreateUsers"
-            type="button"
-            class="toro-action toro-action-primary"
-            :disabled="usersLoading || authorizationLoading || savingRoles || savingOverrides"
-            @click="openCreateUserDialog"
-          >
-            <ToroIcon name="person_add" :size="19" />
-            Nuevo usuario
-          </button>
-          <button
-            type="button"
-            class="toro-action toro-action-primary"
-            :disabled="usersLoading || authorizationLoading || savingRoles || savingOverrides"
-            @click="loadUsers"
-          >
-            <ToroIcon name="refresh" :size="19" />
-            {{ usersLoading ? "Actualizando..." : "Actualizar" }}
-          </button>
-        </div>
-      </header>
-
-      <div v-if="filteredUsers.length === 0" class="toro-empty-state user-directory-empty">
+            <div v-if="filteredUsers.length === 0" class="toro-empty-state user-directory-empty">
         No existen usuarios que coincidan con los filtros.
       </div>
 
-      <ToroDataGrid
+            <ToroDataGrid
         v-else
         class="users-grid"
         :row-data="filteredUsers"
@@ -80,7 +28,27 @@
         height="500px"
         empty-text="No existen usuarios que coincidan con los filtros."
         @row-context-menu="openUserContextMenu"
-      />
+        :search-enabled="true"
+        v-model:search-model-value="searchText"
+        search-placeholder="Buscar usuario"
+        :refresh-enabled="true"
+        :refreshing="usersLoading"
+        :refresh-disabled="authorizationLoading || savingRoles || savingOverrides"
+        @refresh="loadUsers"
+      >
+        <template #actions>
+          <button
+            v-if="canCreateUsers"
+            type="button"
+            class="toro-action toro-action-primary"
+            :disabled="usersLoading || authorizationLoading || savingRoles || savingOverrides"
+            @click="openCreateUserDialog"
+          >
+            <ToroIcon name="person_add" :size="19" />
+            <span>Nuevo usuario</span>
+          </button>
+        </template>
+      </ToroDataGrid>
 
       <ToroContextMenu
         ref="userContextMenu"
@@ -345,6 +313,7 @@ import { nextTick } from "vue";
 import ToroDataGrid from "@/components/grid/ToroDataGrid.vue";
 import ToroGridToggleCell from "@/components/grid/ToroGridToggleCell.vue";
 import ToroGridActionsCell from "@/components/grid/ToroGridActionsCell.vue";
+import ToroOptionFilter from "@/components/grid/ToroOptionFilter.vue";
 import ToroContextMenu from "@/components/ui/ToroContextMenu.vue";
 import ToroFormField from "@/components/ui/ToroFormField.vue";
 import ToroIcon from "@/components/ui/ToroIcon.vue";
@@ -402,7 +371,6 @@ const userRolesDialog = ref(null);
 const userOverridesDialog = ref(null);
 const userIdentityDialog = ref(null);
 const userContextMenu = ref(null);
-const userStatusFilter = ref("all");
 const roleSearchText = ref("");
 const permissionSearchText = ref("");
 const overrideStatusFilter = ref("all");
@@ -412,10 +380,6 @@ const userContextMenuState = ref({
   y: 0,
   user: null,
 });
-
-const visibleUsersCount = computed(
-    () => users.value.filter((user) => !user.hidden).length,
-);
 
 const canCreateUsers = computed(() =>
   authorizationStore.hasPermission("security.users.create"),
@@ -472,29 +436,11 @@ const permissionModules = computed(() =>
 const filteredUsers = computed(() => {
   const filter = searchText.value.trim().toLowerCase();
 
-  return users.value.filter((user) => {
-    const matchesStatus =
-      userStatusFilter.value === "all" ||
-      (userStatusFilter.value === "visible" && !user.hidden) ||
-      (userStatusFilter.value === "hidden" && user.hidden);
-
-    const matchesSearch =
-      filter === "" ||
-      [
-        user.name,
-        user.userName,
-        user.email,
-        user.position,
-        user.collegeNumber,
-        user.roles,
-      ].some(
-        (value) =>
-          typeof value === "string" &&
-          value.toLowerCase().includes(filter),
-      );
-
-    return matchesStatus && matchesSearch;
-  });
+  return users.value.filter((user) =>
+    filter === "" ||
+    [user.name, user.userName, user.email, user.position, user.collegeNumber, user.roles]
+      .some((value) => typeof value === "string" && value.toLowerCase().includes(filter)),
+  );
 });
 
 const canEditSelectedUser = computed(
@@ -540,7 +486,7 @@ const filteredPermissionModules = computed(() => {
 
 const gridComponents = {
   ToroGridActionsCell,
-
+  ToroOptionFilter,
 };
 
 const gridContext = {
@@ -591,6 +537,19 @@ const userActions = computed(() => [
   },
 ]);
 
+
+const cargoFilterOptions = computed(() =>
+  Array.from(new Set(users.value.map((user) => user.position || "Sin cargo")))
+    .sort((left, right) => left.localeCompare(right, "es"))
+    .map((value) => ({ value, label: value })),
+);
+
+const roleFilterOptions = computed(() =>
+  Array.from(new Set(users.value.map((user) => user.roles || "Sin roles")))
+    .sort((left, right) => left.localeCompare(right, "es"))
+    .map((value) => ({ value, label: value })),
+);
+
 const userColumnDefs = computed(() => [
   {
     field: "userName",
@@ -621,22 +580,34 @@ const userColumnDefs = computed(() => [
     headerName: "Cargo",
     minWidth: 180,
     flex: 0.9,
-    valueFormatter: ({ value }) => value || "Sin cargo",
+    valueGetter: ({ data }) => data?.position || "Sin cargo",
+    filterValueGetter: ({ data }) => data?.position || "Sin cargo",
+    filter: "ToroOptionFilter",
+    filterParams: { options: cargoFilterOptions.value },
   },
   {
     field: "roles",
     headerName: "Roles",
     minWidth: 170,
     flex: 0.8,
-    valueFormatter: ({ value }) => value || "Sin roles",
+    valueGetter: ({ data }) => data?.roles || "Sin roles",
+    filterValueGetter: ({ data }) => data?.roles || "Sin roles",
+    filter: "ToroOptionFilter",
+    filterParams: { options: roleFilterOptions.value },
   },
   {
     headerName: "Estado",
     minWidth: 125,
     maxWidth: 145,
     flex: 0.6,
-    valueGetter: ({ data }) => !Boolean(data?.hidden),
-    filter: "agTextColumnFilter",
+    valueGetter: ({ data }) => data?.hidden ? "Inactivo" : "Activo",
+    filter: "ToroOptionFilter",
+    filterParams: {
+      options: [
+        { value: "Activo", label: "Activo" },
+        { value: "Inactivo", label: "Inactivo" },
+      ],
+    },
     headerClass: "toro-grid-centered-header",
     cellClass: "toro-grid-status-cell",
     cellRenderer: ToroGridToggleCell,
@@ -1714,38 +1685,17 @@ function applyAssignedRolesToUserRow(userId, assignedRoles) {
 
 .user-directory-toolbar {
   display: grid;
-  grid-template-columns: minmax(260px, 1fr) 180px auto auto;
+  grid-template-columns: 1fr;
   align-items: start;
   gap: var(--toro-space-3);
   padding: var(--toro-space-3) var(--toro-space-4);
   border-bottom: 1px solid var(--toro-color-border);
 }
 
-.user-directory-summary {
-  display: flex;
-  margin-top: 7px;
-  align-items: center;
-  gap: var(--toro-space-3);
-  min-height: var(--toro-control-height);
-  color: var(--toro-color-text-muted);
-  font-size: var(--toro-font-size-sm);
-  white-space: nowrap;
-}
-
-.user-directory-summary span {
-  display: inline-flex;
-  align-items: baseline;
-  gap: var(--toro-space-1);
-}
-
-.user-directory-summary strong {
-  color: var(--toro-color-text);
-}
-
 .user-directory-actions {
   display: flex;
-  margin-top: 7px;
   justify-content: flex-end;
+  gap: var(--toro-space-2);
 }
 
 .user-directory-empty {

@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="toro-option-filter">
     <div class="toro-option-filter-control">
       <select ref="select" v-model="selectedValue" class="toro-option-filter-select" aria-label="Filtrar opciones" @change="applySelection">
@@ -23,15 +23,15 @@ const options = computed(() => (props.params.options || []).map((option, index) 
 })));
 
 function selectedOption() { return options.value.find((option) => option.key === selectedValue.value) || null; }
-function getCellValue(data) {
-  if (typeof props.params.getValue === "function") return props.params.getValue(data);
-  return data?.[props.params.colDef.field];
+function getCellValue(filterParams) {
+  if (typeof props.params.getValue === "function") return props.params.getValue(filterParams.node);
+  return filterParams.data?.[props.params.colDef.field];
 }
 function isFilterActive() { return selectedValue.value !== ""; }
 function doesFilterPass(filterParams) {
   const option = selectedOption();
   if (!option) return true;
-  return Object.is(getCellValue(filterParams.data), option.value);
+  return Object.is(getCellValue(filterParams), option.value);
 }
 function getModel() {
   const option = selectedOption();
