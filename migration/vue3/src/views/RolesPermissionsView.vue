@@ -18,7 +18,7 @@
         <ToroDataGrid
           v-else
           class="roles-grid"
-          :row-data="roles"
+          :row-data="visibleRoles"
           :column-defs="roleColumnDefs"
           :components="gridComponents"
           :context="gridContext"
@@ -69,400 +69,15 @@
       </section>
     </template>
 
-    <dialog ref="createRoleDialog" class="toro-dialog role-dialog" @close="resetCreateRoleForm" tabindex="-1">
-      <form class="dialog-shell" novalidate @submit.prevent="submitCreateRoleDialog">
-        <header class="dialog-header">
-          <div>
-            <p>Nuevo registro</p>
-            <h3>Crear rol</h3>
-          </div>
+    <RoleCreateDialog ref="createRoleDialog" :creating-role="creatingRole" :can-create-roles="canCreateRoles" :create-role-form="createRoleForm" :create-role-code-error="createRoleCodeError" :create-role-name-error="createRoleNameError" :create-role-error="createRoleError" :create-role-message="createRoleMessage" @close="closeCreateRoleDialog" @submit="submitCreateRoleDialog" />
 
-          <ToroDialogCloseButton @click="closeCreateRoleDialog" />
-        </header>
+    <RoleDetailDialog ref="roleDetailDialog" :selected-role="selectedRole" @close="closeRoleDetailDialog" />
 
-        <div class="dialog-body role-dialog-form">
-                    <ToroFormField
-            label="Código"
-            field-id="create-role-code"
-            :error="createRoleCodeError"
-            help="Letras minusculas, numeros, puntos, guiones y guiones bajos."
-            required
-          >
-            <input
-              id="create-role-code"
-              v-model.trim="createRoleForm.code"
-              class="toro-field"
-              type="text"
-              maxlength="60"
-              autocomplete="off"
-              placeholder="Ejemplo: supervisor"
-              :disabled="creatingRole"
-              :aria-invalid="createRoleCodeError ? 'true' : undefined"
-              :aria-describedby="
-                createRoleCodeError
-                  ? 'create-role-code-error'
-                  : 'create-role-code-help'
-              "
-              required
-            />
-          </ToroFormField>
+    <RoleEditDialog ref="editRoleDialog" :selected-role="selectedRole" :update-role-form="updateRoleForm" :update-role-name-error="updateRoleNameError" :update-role-error="updateRoleError" :update-role-message="updateRoleMessage" :editing-role="editingRole" :can-update-roles="canUpdateRoles" :has-role-metadata-changes="hasRoleMetadataChanges" @close="closeEditRoleDialog" @submit="submitEditRoleDialog" />
 
-                    <ToroFormField
-            label="Nombre"
-            field-id="create-role-name"
-            :error="createRoleNameError"
-            required
-          >
-            <input
-              id="create-role-name"
-              v-model.trim="createRoleForm.name"
-              class="toro-field"
-              type="text"
-              maxlength="100"
-              autocomplete="off"
-              placeholder="Nombre visible del rol"
-              :disabled="creatingRole"
-              :aria-invalid="createRoleNameError ? 'true' : undefined"
-              :aria-describedby="createRoleNameError ? 'create-role-name-error' : undefined"
-              required
-            />
-          </ToroFormField>
+    <RolePermissionsDialog ref="rolePermissionsDialog" :selected-role="selectedRole" :permission-search-text="permissionSearchText" :draft-permission-ids="draftPermissionIds" :assigned-permissions-loading="assignedPermissionsLoading" :assigned-permissions-error="assignedPermissionsError" :inactive-assigned-permissions="inactiveAssignedPermissions" :filtered-permission-modules="filteredPermissionModules" :can-assign-permissions="canAssignPermissions" :saving-permissions="savingPermissions" :save-permissions-error="savePermissionsError" :save-permissions-message="savePermissionsMessage" :has-permission-changes="hasPermissionChanges" @update:permission-search-text="permissionSearchText = $event" @toggle-permission="togglePermission" @toggle-module-permissions="toggleModulePermissions" @close="closeRolePermissionsDialog" @submit="submitRolePermissionsDialog" />
 
-                    <ToroFormField
-            label="Descripción"
-            field-id="create-role-description"
-            :help="`${createRoleForm.description.length} de 250 caracteres`"
-            wide
-          >
-            <textarea
-              id="create-role-description"
-              v-model="createRoleForm.description"
-              class="toro-field"
-              maxlength="250"
-              rows="4"
-              placeholder="Descripción opcional"
-              :disabled="creatingRole"
-              aria-describedby="create-role-description-help"
-            ></textarea>
-          </ToroFormField>
-
-          <div v-if="createRoleError" class="dialog-field-wide toro-inline-message toro-message-error" role="alert">
-            {{ createRoleError }}
-          </div>
-
-          <div v-if="createRoleMessage" class="dialog-field-wide toro-inline-message toro-message-success"
-            role="status">
-            {{ createRoleMessage }}
-          </div>
-        </div>
-
-        <footer class="dialog-footer">
-          <button type="button" class="toro-action toro-action-secondary" :disabled="creatingRole"
-            @click="closeCreateRoleDialog">
-  <ToroActionIcon action="cancel" />
-            Cancelar
-          </button>
-
-          <button type="submit" class="toro-action toro-action-primary" :disabled="creatingRole || !canCreateRoles">
-  <ToroActionIcon action="create" />
-            {{ creatingRole ? "Creando..." : "Crear rol" }}
-          </button>
-        </footer>
-      </form>
-    </dialog>
-
-    <dialog ref="roleDetailDialog" class="toro-dialog role-dialog" tabindex="-1">
-      <div class="dialog-shell">
-        <header class="dialog-header">
-          <div>
-            <p>Detalle administrativo</p>
-            <h3>{{ selectedRole?.name || "Rol" }}</h3>
-          </div>
-
-          <ToroDialogCloseButton @click="closeRoleDetailDialog" />
-        </header>
-
-        <div v-if="selectedRole" class="dialog-body role-summary-card">
-          <div class="role-summary-heading">
-            <div>
-              <span class="role-summary-code">{{ selectedRole.code }}</span>
-              <h4>{{ selectedRole.name }}</h4>
-              <p>
-                {{ selectedRole.isSystem ? "Rol de sistema" : "Rol configurable" }}
-              </p>
-            </div>
-
-            <span class="toro-badge" :class="{
-              'toro-badge-warning': !selectedRole.isActive,
-            }">
-              {{ selectedRole.isActive ? "Activo" : "Inactivo" }}
-            </span>
-          </div>
-
-          <section class="role-summary-description">
-            <span>Descripción</span>
-            <p>{{ selectedRole.description || "Sin descripción" }}</p>
-          </section>
-
-          <dl class="role-summary-metadata">
-            <div>
-              <dt>Identificador</dt>
-              <dd>{{ selectedRole.id }}</dd>
-            </div>
-
-            <div>
-              <dt>Tipo</dt>
-              <dd>{{ selectedRole.isSystem ? "Sistema" : "Configurable" }}</dd>
-            </div>
-          </dl>
-        </div>
-        <footer class="dialog-footer">
-          <button type="button" class="toro-action toro-action-secondary" @click="closeRoleDetailDialog">
-  <ToroActionIcon action="close" />
-            Cerrar
-          </button>
-        </footer>
-      </div>
-    </dialog>
-
-    <dialog ref="editRoleDialog" class="toro-dialog role-dialog" tabindex="-1">
-      <form class="dialog-shell" novalidate @submit.prevent="submitEditRoleDialog">
-        <header class="dialog-header">
-          <div>
-            <p>Editar rol</p>
-            <h3>{{ selectedRole?.name || "Rol" }}</h3>
-          </div>
-
-          <ToroDialogCloseButton @click="closeEditRoleDialog" />
-        </header>
-
-        <div class="dialog-body role-dialog-form">
-                    <ToroFormField
-            label="Código"
-            field-id="edit-role-code"
-            help="El código identifica al rol y no puede modificarse."
-            disabled
-          >
-            <input
-              id="edit-role-code"
-              :value="selectedRole?.code || ''"
-              class="toro-field"
-              type="text"
-              aria-disabled="true"
-              aria-describedby="edit-role-code-help"
-              disabled
-            />
-          </ToroFormField>
-
-                    <ToroFormField
-            label="Nombre"
-            field-id="edit-role-name"
-            :error="updateRoleNameError"
-            required
-          >
-            <input
-              id="edit-role-name"
-              v-model.trim="updateRoleForm.name"
-              class="toro-field"
-              type="text"
-              maxlength="100"
-              :disabled="editingRole"
-              :aria-invalid="updateRoleNameError ? 'true' : undefined"
-              :aria-describedby="updateRoleNameError ? 'edit-role-name-error' : undefined"
-              required
-            />
-          </ToroFormField>
-
-                    <ToroFormField
-            label="Descripción"
-            field-id="edit-role-description"
-            :help="`${updateRoleForm.description.length} de 250 caracteres`"
-            wide
-          >
-            <textarea
-              id="edit-role-description"
-              v-model="updateRoleForm.description"
-              class="toro-field"
-              maxlength="250"
-              rows="4"
-              :disabled="editingRole"
-              aria-describedby="edit-role-description-help"
-            ></textarea>
-          </ToroFormField>
-
-          <label class="dialog-field-wide role-active-option toro-option">
-            <input v-model="updateRoleForm.isActive" type="checkbox"
-              :disabled="editingRole || selectedRole?.code === 'admin'" />
-            <span class="toro-option-copy">
-              <strong>Rol activo</strong>
-              <small>
-                {{
-                  selectedRole?.code === "admin"
-                    ? "El rol administrador debe permanecer activo."
-                    : "Los roles inactivos no pueden asignarse a nuevos usuarios."
-                }}
-              </small>
-            </span>
-          </label>
-
-          <div v-if="updateRoleError" class="dialog-field-wide toro-inline-message toro-message-error" role="alert">
-            {{ updateRoleError }}
-          </div>
-
-          <div v-if="updateRoleMessage" class="dialog-field-wide toro-inline-message toro-message-success"
-            role="status">
-            {{ updateRoleMessage }}
-          </div>
-        </div>
-
-        <footer class="dialog-footer">
-          <button type="button" class="toro-action toro-action-secondary" :disabled="editingRole"
-            @click="closeEditRoleDialog">
-  <ToroActionIcon action="cancel" />
-            Cancelar
-          </button>
-
-          <button type="submit" class="toro-action toro-action-primary" :disabled="editingRole || !canUpdateRoles || !hasRoleMetadataChanges">
-  <ToroActionIcon action="save" />
-            {{ editingRole ? "Guardando..." : "Guardar" }}
-          </button>
-        </footer>
-      </form>
-    </dialog>
-
-    <dialog ref="rolePermissionsDialog" class="toro-dialog permissions-dialog" tabindex="-1">
-      <div class="dialog-shell">
-        <header class="dialog-header">
-          <div>
-            <p>Asignación de permisos</p>
-            <h3>
-              {{ selectedRole?.name || "Rol" }}
-              <span v-if="selectedRole?.code" class="role-dialog-code">
-                ({{ selectedRole.code }})
-              </span>
-            </h3>
-          </div>
-
-          <ToroDialogCloseButton @click="closeRolePermissionsDialog" />
-        </header>
-
-        <div class="permissions-dialog-toolbar role-permissions-toolbar">
-          <label>
-            <span>Buscar permiso</span>
-            <input v-model="permissionSearchText" class="toro-field" type="search" autocomplete="off"
-              placeholder="Nombre, descripción o módulo" />
-          </label>
-
-          <span>
-            <strong>{{ draftPermissionIds.length }}</strong> seleccionados
-          </span>
-        </div>
-
-        <div class="dialog-body permissions-dialog-body">
-          <div v-if="assignedPermissionsLoading" class="toro-message" role="status">
-            Consultando permisos asignados...
-          </div>
-
-          <div v-else-if="assignedPermissionsError" class="toro-message toro-message-error" role="alert">
-            {{ assignedPermissionsError }}
-          </div>
-
-          <template v-else>
-            <div v-if="selectedRole?.code === 'admin'" class="toro-warning">
-              El rol administrador debe conservar los permisos esenciales.
-            </div>
-
-            <div v-if="inactiveAssignedPermissions.length > 0" class="toro-warning">
-              Los permisos inactivos se conservan para consulta y se retiraran al guardar.
-            </div>
-
-            <div v-if="filteredPermissionModules.length === 0" class="toro-empty-state">
-              No existen permisos que coincidan con la búsqueda.
-            </div>
-
-            <ToroPermissionTree
-              class="role-permission-tree"
-              :modules="filteredPermissionModules"
-              :search-text="permissionSearchText"
-              :selected-ids="draftPermissionIds"
-              selectable
-              :disabled="!canAssignPermissions || savingPermissions"
-              @toggle-permission="togglePermission"
-              @toggle-module="toggleModulePermissions"
-              empty-text="No existen permisos que coincidan con la búsqueda."
-            />
-
-            <div v-if="savePermissionsError" class="toro-inline-message toro-message-error" role="alert">
-              {{ savePermissionsError }}
-            </div>
-
-            <div v-if="savePermissionsMessage" class="toro-inline-message toro-message-success" role="status">
-              {{ savePermissionsMessage }}
-            </div>
-          </template>
-        </div>
-
-        <footer class="dialog-footer">
-          <span class="dialog-pending-status">
-            {{
-              hasPermissionChanges
-                ? "Existen cambios pendientes."
-                : "Las asignaciones están sincronizadas."
-            }}
-          </span>
-
-          <button type="button" class="toro-action toro-action-secondary" :disabled="savingPermissions"
-            @click="closeRolePermissionsDialog">
-  <ToroActionIcon action="cancel" />
-            Cancelar
-          </button>
-
-          <button v-if="canAssignPermissions" type="button" class="toro-action toro-action-primary"
-            :disabled="!hasPermissionChanges || savingPermissions" @click="submitRolePermissionsDialog">
-  <ToroActionIcon action="assignPermissions" />
-            {{ savingPermissions ? "Guardando..." : "Guardar permisos" }}
-          </button>
-        </footer>
-      </div>
-    </dialog>
-
-    <dialog ref="permissionCatalogDialog" class="toro-dialog catalog-dialog toro-catalog-layout" tabindex="-1">
-      <div class="dialog-shell">
-        <header class="dialog-header">
-          <div>
-            <p>Catálogo global</p>
-            <h3>Permisos</h3>
-          </div>
-
-          <ToroDialogCloseButton @click="closePermissionCatalogDialog" />
-        </header>
-
-        <div class="permissions-dialog-toolbar catalog-permissions-toolbar">
-          <label>
-            <span>Buscar permiso</span>
-            <input v-model="catalogSearchText" class="toro-field" type="search" autocomplete="off"
-              placeholder="Nombre, descripción o módulo" />
-          </label>
-
-          <span><strong>{{ filteredCatalogPermissions.length }}</strong> permisos</span>
-        </div>
-
-        <div class="dialog-body catalog-grid-body">
-          <ToroPermissionTree
-            class="catalog-tree"
-            :permissions="filteredCatalogPermissions"
-            :search-text="catalogSearchText"
-            empty-text="No existen permisos que coincidan con la búsqueda."
-          />
-        </div>
-        <footer class="dialog-footer">
-          <button type="button" class="toro-action toro-action-secondary" @click="closePermissionCatalogDialog">
-  <ToroActionIcon action="close" />
-            Cerrar
-          </button>
-        </footer>
-      </div>
-    </dialog>
+    <PermissionCatalogDialog ref="permissionCatalogDialog" :catalog-search-text="catalogSearchText" :filtered-catalog-permissions="filteredCatalogPermissions" @update:catalog-search-text="catalogSearchText = $event" @close="closePermissionCatalogDialog" />
   </section>
 </template>
 
@@ -472,10 +87,7 @@ import ToroDataGrid from "@/components/grid/ToroDataGrid.vue";
 import ToroOptionFilter from "@/components/grid/ToroOptionFilter.vue";
 import ToroGridToggleCell from "@/components/grid/ToroGridToggleCell.vue";
 import ToroGridActionsCell from "@/components/grid/ToroGridActionsCell.vue";
-import ToroPermissionTree from "@/components/tree/ToroPermissionTree.vue";
-import ToroActionButton from "@/components/ui/ToroActionButton.vue";
 import ToroContextMenu from "@/components/ui/ToroContextMenu.vue";
-import ToroFormField from "@/components/ui/ToroFormField.vue";
 import {
   groupPermissionsForPresentation,
   presentPermission,
@@ -491,10 +103,14 @@ import {
 } from "@/services/authorizationService";
 
 import { useAuthorizationStore } from "@/stores/authorization";
-import ToroDialogCloseButton from "@/components/ui/ToroDialogCloseButton.vue";
 import { useToroToast } from "@/composables/useToroToast";
 import ToroActionIcon from "@/components/ui/ToroActionIcon.vue";
 import RoleStateDialog from "@/components/security/RoleStateDialog.vue";
+import RoleCreateDialog from "@/components/security/RoleCreateDialog.vue";
+import RoleDetailDialog from "@/components/security/RoleDetailDialog.vue";
+import RoleEditDialog from "@/components/security/RoleEditDialog.vue";
+import RolePermissionsDialog from "@/components/security/RolePermissionsDialog.vue";
+import PermissionCatalogDialog from "@/components/security/PermissionCatalogDialog.vue";
 
 const toast = useToroToast();
 
@@ -508,6 +124,21 @@ const editRoleDialog = ref(null);
 const rolePermissionsDialog = ref(null);
 const permissionCatalogDialog = ref(null);
 const roleSearchText = ref("");
+const visibleRoles = computed(() => {
+  const search = roleSearchText.value.trim().toLocaleLowerCase();
+  if (search === "") return roles.value;
+  return roles.value.filter((role) =>
+    [
+      role.code,
+      role.name,
+      role.description,
+      role.isSystem ? "Sistema" : "Configurable",
+      role.isActive ? "Activo" : "Inactivo",
+    ]
+      .filter((value) => typeof value === "string")
+      .some((value) => value.toLocaleLowerCase().includes(search)),
+  );
+});
 const permissionSearchText = ref("");
 const catalogSearchText = ref("");
 const roleContextMenu = ref(null);
@@ -550,10 +181,20 @@ const updateRoleForm = ref({
   isActive: true,
 });
 
-
+function normalizePermissionModuleLabel(label) {
+  return String(label || "").toLocaleLowerCase() === "typepayment"
+    ? "Formas de pago"
+    : label;
+}
 
 const presentedPermissions = computed(() =>
-  permissions.value.map((permission) => presentPermission(permission)),
+  permissions.value.map((permission) => {
+    const presented = presentPermission(permission);
+    return {
+      ...presented,
+      moduleLabel: normalizePermissionModuleLabel(presented.moduleLabel),
+    };
+  }),
 );
 
 const filteredCatalogPermissions = computed(() => {
@@ -725,9 +366,12 @@ const roleColumnDefs = computed(() => [
   {
     colId: "actions",
     headerName: "Acciones",
-    minWidth: 255,
-    maxWidth: 280,
-    flex: 1,
+    width: 176,
+    minWidth: 176,
+    maxWidth: 176,
+    flex: 0,
+    pinned: "right",
+    lockPinned: true,
     sortable: false,
     filter: false,
     resizable: false,
@@ -745,14 +389,6 @@ const roleColumnDefs = computed(() => [
 function getRoleRowId(params) {
   return String(params.data.id);
 }
-
-const activeRolesCount = computed(
-  () => roles.value.filter((role) => role.isActive).length,
-);
-
-const activePermissionsCount = computed(
-  () => permissions.value.filter((permission) => permission.isActive).length,
-);
 
 const canAssignPermissions = computed(() =>
   authorizationStore.hasPermission(
@@ -858,9 +494,10 @@ const canSubmitRoleUpdate = computed(
 );
 
 const permissionModules = computed(() =>
-  groupPermissionsForPresentation(
-    permissions.value,
-  ),
+  groupPermissionsForPresentation(permissions.value).map((module) => ({
+    ...module,
+    label: normalizePermissionModuleLabel(module.label),
+  })),
 );
 
 const filteredPermissionModules = computed(() => {
@@ -1015,16 +652,15 @@ function discardPermissionChanges() {
 }
 
 function showDialog(dialogReference) {
-  if (dialogReference.value?.open !== true) {
-    dialogReference.value?.showModal();
+  const target = dialogReference.value;
+  if (!target) return;
+  if (typeof target.showModal === "function") target.showModal();
   focusOpenedDialog(dialogReference);
-  }
 }
 
 function closeDialog(dialogReference) {
-  if (dialogReference.value?.open === true) {
-    dialogReference.value.close();
-  }
+  const target = dialogReference.value;
+  if (typeof target?.close === "function") target.close();
 }
 
 function openCreateRoleDialog() {
@@ -1233,13 +869,6 @@ function areAllModulePermissionsSelected(module) {
   );
 }
 
-function isModulePartiallySelected(module) {
-  const selectedCount = getSelectedModulePermissionCount(module);
-  const activeCount = getActiveModulePermissions(module).length;
-
-  return selectedCount > 0 && selectedCount < activeCount;
-}
-
 function toggleModulePermissions(module) {
   if (!canAssignPermissions.value || savingPermissions.value) return;
 
@@ -1264,22 +893,6 @@ function toggleModulePermissions(module) {
     ...draftPermissionIds.value,
     ...activePermissionIds,
   ]);
-}
-
-async function selectRole(role) {
-  if (
-    selectedRole.value?.id === role.id ||
-    savingPermissions.value ||
-    editingRole.value
-  ) {
-    return;
-  }
-
-  selectedRole.value = role;
-  savePermissionsError.value = "";
-  savePermissionsMessage.value = "";
-  synchronizeUpdateRoleForm();
-  await loadAssignedPermissions();
 }
 
 async function loadAssignedPermissions() {
@@ -1567,12 +1180,9 @@ async function loadCatalogs(options = {}) {
 onMounted(loadCatalogs);
 
 function focusOpenedDialog(dialogReference) {
-  const dialog = dialogReference?.value;
-  if (!dialog || dialog.open !== true) return;
-
-  requestAnimationFrame(() => {
-    dialog.focus({ preventScroll: true });
-  });
+  const target = dialogReference?.value;
+  if (!target) return;
+  requestAnimationFrame(() => target.focus?.({ preventScroll: true }));
 }
 
 </script>
@@ -1584,6 +1194,7 @@ function focusOpenedDialog(dialogReference) {
 }
 
 .roles-workspace {
+  min-width: 0;
   overflow: hidden;
   padding: 0;
 }
@@ -1592,552 +1203,13 @@ function focusOpenedDialog(dialogReference) {
   margin: var(--toro-space-4);
 }
 
-.roles-table-wrapper,
-.catalog-table-wrapper {
-  overflow: auto;
-}
-
-.roles-table,
-.catalog-table {
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
-}
-
-.roles-table th,
-.roles-table td,
-.catalog-table th,
-.catalog-table td {
-  padding: var(--toro-space-2) var(--toro-space-3);
-  border-bottom: 1px solid var(--toro-color-border);
-  text-align: left;
-  vertical-align: middle;
-}
-
-.roles-table th,
-.catalog-table th {
-  position: sticky;
-  top: 0;
-  z-index: 1;
-  background: var(--toro-color-surface-soft);
-  color: var(--toro-color-text-muted);
-  font-size: var(--toro-font-size-xs);
-  font-weight: var(--toro-font-weight-bold);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.roles-table tbody tr:hover,
-.catalog-table tbody tr:hover {
-  background: var(--toro-color-info-soft);
-}
-
-.roles-table th:nth-child(1) {
-  width: 150px;
-}
-
-.roles-table th:nth-child(2) {
-  width: 22%;
-}
-
-.roles-table th:nth-child(3) {
-  width: auto;
-}
-
-.roles-table th:nth-child(4) {
-  width: 130px;
-}
-
-.roles-table th:nth-child(5) {
-  width: 110px;
-}
-
-.roles-table th:nth-child(6) {
-  width: 240px;
-}
-
-.role-code-cell {
-  display: inline-block;
-  max-width: 100%;
-  color: var(--toro-color-primary-strong);
-  font-size: var(--toro-font-size-sm);
-  font-weight: var(--toro-font-weight-bold);
-  overflow-wrap: anywhere;
-}
-
-.role-name-cell {
-  display: block;
-  line-height: 1.3;
-}
-
-.role-description-cell {
-  display: -webkit-box;
-  color: var(--toro-color-text-muted);
-  font-size: var(--toro-font-size-sm);
-  line-height: 1.35;
-  overflow: hidden;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-}
-
-.roles-row-actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: var(--toro-space-1);
-}
-
-.role-row-action {
-  min-height: 32px;
-  padding: 0 var(--toro-space-2);
-  border: 1px solid transparent;
-  border-radius: var(--toro-radius-md);
-  background: transparent;
-  color: var(--toro-color-primary-strong);
-  font: inherit;
-  font-size: var(--toro-font-size-sm);
-  font-weight: var(--toro-font-weight-bold);
-  cursor: pointer;
-}
-
-.role-row-action:hover {
-  border-color: var(--toro-color-border);
-  background: var(--toro-color-surface-soft);
-}
-
-.role-row-action-primary {
-  color: var(--toro-color-accent-strong);
-}
-
-.toro-dialog {
-  width: min(680px, calc(100vw - 32px));
-  max-width: none;
-  max-height: calc(100vh - 32px);
-  padding: 0;
-  border: 1px solid var(--toro-color-border-strong);
-  border-radius: var(--toro-radius-md);
-  background: var(--toro-color-surface);
-  color: var(--toro-color-text);
-  box-shadow: var(--toro-shadow-sm);
-  overflow: hidden;
-}
-
-.toro-dialog::backdrop {
-  background: rgb(13 36 58 / 48%);
-  backdrop-filter: blur(2px);
-}
-
-.permissions-dialog,
-.catalog-dialog {
-  width: min(1120px, calc(100vw - 32px));
-}
-
-.dialog-shell {
-  display: grid;
-  grid-template-rows: auto minmax(0, 1fr) auto;
-  max-height: calc(100vh - 32px);
-}
-
-.dialog-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--toro-space-3);
-  padding: var(--toro-space-3) var(--toro-space-4);
-  border-bottom: 1px solid var(--toro-color-border);
-}
-
-.dialog-header p {
-  margin: 0 0 var(--toro-space-1);
-  color: var(--toro-color-accent-strong);
-  font-size: var(--toro-font-size-xs);
-  font-weight: var(--toro-font-weight-bold);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-
-.dialog-header h3,
-.permission-dialog-group h4 {
-  margin: 0;
-}
-
-.dialog-close {
-  width: 36px;
-  height: 36px;
-  border: 0;
-  border-radius: 50%;
-  background: var(--toro-color-surface-soft);
-  color: var(--toro-color-text);
-  font: inherit;
-  font-size: 24px;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.dialog-body {
-  min-height: 0;
-  padding: var(--toro-space-4);
-  overflow: auto;
-}
-
-.dialog-footer {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: var(--toro-space-2);
-  padding: var(--toro-space-3) var(--toro-space-4);
-  border-top: 1px solid var(--toro-color-border);
-  background: var(--toro-color-surface-soft);
-}
-
-.role-dialog-form {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--toro-space-3);
-}
-
-.role-dialog-form label {
-  display: grid;
-  align-content: start;
-  gap: var(--toro-space-1);
-}
-
-.dialog-field-wide {
-  grid-column: 1 / -1;
-}
-
-.role-dialog-form textarea {
-  resize: vertical;
-}
-
-.role-active-option {
-  display: grid;
-  grid-template-columns: 24px minmax(0, 1fr);
-  align-items: center;
-}
-
-.role-active-option input {
-  width: 18px;
-  height: 18px;
-  accent-color: var(--toro-color-primary);
-}
-
-.role-detail-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.permissions-dialog-toolbar {
-  display: grid;
-  grid-template-columns: minmax(280px, 1fr) auto;
-  align-items: end;
-  gap: var(--toro-space-3);
-  padding: var(--toro-space-3) var(--toro-space-4);
-  border-bottom: 1px solid var(--toro-color-border);
-  background: var(--toro-color-surface-soft);
-}
-
-.permissions-dialog-toolbar>span {
-  min-height: var(--toro-control-height);
-  display: inline-flex;
-  align-items: center;
-  gap: var(--toro-space-1);
-  color: var(--toro-color-text-muted);
-  white-space: nowrap;
-}
-
-.permissions-dialog-body {
-  display: grid;
-  align-content: start;
-  gap: var(--toro-space-3);
-}
-
-.permission-dialog-group {
-  padding: 0;
-  overflow: hidden;
-}
-
-.permission-dialog-group-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--toro-space-3);
-  padding: var(--toro-space-2) var(--toro-space-3);
-  background: var(--toro-color-surface-soft);
-  border-bottom: 1px solid var(--toro-color-border);
-}
-
-.permission-dialog-group-header>div {
-  display: flex;
-  align-items: baseline;
-  gap: var(--toro-space-2);
-}
-
-.permission-dialog-group-header span {
-  color: var(--toro-color-text-muted);
-  font-size: var(--toro-font-size-xs);
-}
-
-.permission-group-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--toro-space-2);
-  color: var(--toro-color-primary-strong);
-  font-size: var(--toro-font-size-sm);
-  font-weight: var(--toro-font-weight-bold);
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.permission-group-toggle input,
-.permission-dialog-row>input {
-  width: 18px;
-  height: 18px;
-  margin: 0;
-  accent-color: var(--toro-color-primary);
-}
-
-.permission-dialog-row {
-  display: grid;
-  grid-template-columns: 24px minmax(0, 1fr) auto;
-  align-items: center;
-  gap: var(--toro-space-3);
-  min-height: var(--toro-table-row-height);
-  padding: var(--toro-space-2) var(--toro-space-3);
-  border-bottom: 1px solid var(--toro-color-border);
-  cursor: pointer;
-}
-
-.permission-dialog-row:last-child {
-  border-bottom: 0;
-}
-
-.permission-dialog-row:hover,
-.permission-dialog-row-selected {
-  background: var(--toro-color-info-soft);
-}
-
-.permission-dialog-row-disabled {
-  cursor: default;
-  opacity: 0.66;
-}
-
-.permission-dialog-copy {
-  display: grid;
-  gap: 2px;
-  min-width: 0;
-}
-
-.permission-dialog-copy small {
-  color: var(--toro-color-text-muted);
-  font-size: var(--toro-font-size-sm);
-  line-height: 1.35;
-}
-
-.dialog-pending-status {
-  margin-right: auto;
-  color: var(--toro-color-text-muted);
-  font-size: var(--toro-font-size-sm);
-}
-
-.catalog-table th:nth-child(1) {
-  width: 22%;
-}
-
-.catalog-table th:nth-child(2) {
-  width: 24%;
-}
-
-.catalog-table th:nth-child(4) {
-  width: 110px;
-}
-
-.catalog-table td:nth-child(3) {
-  color: var(--toro-color-text-muted);
-  font-size: var(--toro-font-size-sm);
-}
-
-@media (max-width: 1050px) {
-  .roles-toolbar {
-    grid-template-columns: minmax(240px, 1fr) 160px;
-  }
-
-  .roles-toolbar-summary,
-  .roles-toolbar-actions {
-    justify-content: flex-start;
-  }
-
-  .roles-toolbar-actions {
-    flex-wrap: wrap;
-  }
-
-  .roles-table {
-    min-width: 960px;
-  }
-}
-
-@media (max-width: 720px) {
-
-  .roles-toolbar,
-  .role-dialog-form,
-  .permissions-dialog-toolbar {
-    grid-template-columns: 1fr;
-  }
-
-  .roles-toolbar-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .roles-toolbar-actions .toro-action {
-    width: 100%;
-  }
-
-  .role-detail-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .permission-dialog-group-header {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .permission-dialog-row {
-    grid-template-columns: 24px minmax(0, 1fr);
-  }
-
-  .permission-dialog-row>.toro-badge {
-    grid-column: 2;
-    justify-self: start;
-  }
-
-  .dialog-footer {
-    flex-wrap: wrap;
-  }
-
-  .dialog-pending-status {
-    flex-basis: 100%;
-  }
-}
-
-/* AG Grid integration and dialog corrections */
-
 .roles-grid {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
   border: 0;
   border-radius: 0;
-}
-
-.catalog-grid-body {
-  min-height: 0;
-  padding: var(--toro-space-3) var(--toro-space-4);
-  overflow: hidden;
-}
-
-.catalog-grid {
-  height: 100%;
-  min-height: 0;
-}
-
-.catalog-dialog .dialog-shell {
-  height: min(760px, calc(100vh - 32px));
-}
-
-.permissions-dialog .dialog-shell {
-  height: min(820px, calc(100vh - 32px));
-}
-
-.permissions-dialog-body {
-  min-height: 0;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  scrollbar-gutter: stable;
-}
-
-.permissions-dialog-toolbar {
-  position: relative;
-  z-index: 2;
-}
-
-.dialog-header {
-  position: relative;
-  z-index: 3;
-  background: var(--toro-color-surface);
-}
-
-.dialog-footer {
-  position: relative;
-  z-index: 3;
-}
-
-.role-summary-card {
-  display: grid;
-  gap: var(--toro-space-4);
-  padding: var(--toro-space-4);
-}
-
-.role-summary-heading {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--toro-space-4);
-  padding-bottom: var(--toro-space-3);
-  border-bottom: 1px solid var(--toro-color-border);
-}
-
-.role-summary-heading h4 {
-  margin: var(--toro-space-1) 0 0;
-  font-size: var(--toro-font-size-lg);
-}
-
-.role-summary-heading p {
-  margin: var(--toro-space-1) 0 0;
-  color: var(--toro-color-text-muted);
-  font-size: var(--toro-font-size-sm);
-}
-
-.role-summary-code {
-  color: var(--toro-color-primary-strong);
-  font-size: var(--toro-font-size-sm);
-  font-weight: var(--toro-font-weight-bold);
-  overflow-wrap: anywhere;
-}
-
-.role-summary-description {
-  padding: var(--toro-space-3);
-  border: 1px solid var(--toro-color-border);
-  border-radius: var(--toro-radius-md);
-  background: var(--toro-color-surface-soft);
-}
-
-.role-summary-description>span,
-.role-summary-metadata dt {
-  color: var(--toro-color-text-muted);
-  font-size: var(--toro-font-size-xs);
-  font-weight: var(--toro-font-weight-bold);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.role-summary-description p {
-  margin: var(--toro-space-2) 0 0;
-  line-height: 1.5;
-}
-
-.role-summary-metadata {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--toro-space-3);
-  margin: 0;
-}
-
-.role-summary-metadata>div {
-  padding: var(--toro-space-3);
-  border: 1px solid var(--toro-color-border);
-  border-radius: var(--toro-radius-md);
-}
-
-.role-summary-metadata dd {
-  margin: var(--toro-space-1) 0 0;
-  font-weight: var(--toro-font-weight-bold);
 }
 
 .roles-admin :deep(.toro-grid-code-cell) {
@@ -2154,36 +1226,19 @@ function focusOpenedDialog(dialogReference) {
   color: var(--toro-color-text-muted);
 }
 
-.roles-admin :deep(.toro-grid-status-active),
-.roles-admin :deep(.toro-grid-status-inactive) {
+.roles-admin :deep(.toro-grid-centered-cell),
+.roles-admin :deep(.toro-grid-status-cell) {
+  display: flex;
+  align-items: center;
   justify-content: center;
-  width: fit-content;
-  height: 28px;
-  margin-top: 10px;
-  padding: 0 var(--toro-space-2);
-  border-radius: 999px;
-  font-size: var(--toro-font-size-sm);
-  font-weight: var(--toro-font-weight-bold);
+  text-align: center;
 }
 
-.roles-admin :deep(.toro-grid-status-active) {
-  background: #e5f8ef;
-  color: #237b68;
-}
-
-.roles-admin :deep(.toro-grid-status-inactive) {
-  background: var(--toro-color-accent-soft);
-  color: var(--toro-color-accent-strong);
-}
-
-@media (max-width: 720px) {
-  .role-summary-metadata {
-    grid-template-columns: 1fr;
-  }
-
-  .role-summary-heading {
-    flex-direction: column;
-  }
+.roles-admin :deep(.toro-grid-centered-header .ag-header-cell-label),
+.roles-admin :deep(.toro-grid-actions-header .ag-header-cell-label) {
+  justify-content: center;
+  width: 100%;
+  text-align: center;
 }
 
 .roles-admin :deep(.toro-grid-actions-cell) {
@@ -2192,482 +1247,11 @@ function focusOpenedDialog(dialogReference) {
 
 .roles-admin :deep(.toro-grid-actions-cell .ag-cell-wrapper),
 .roles-admin :deep(.toro-grid-actions-cell .ag-cell-value) {
-  width: 100%;
-  min-width: 0;
-}
-
-.roles-admin :deep(.toro-grid-actions-cell .ag-cell-wrapper) {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.roles-admin :deep(.toro-grid-actions-cell .ag-cell-value) {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.roles-admin :deep(.toro-grid-actions-header .ag-header-cell-label) {
-  justify-content: center;
-  width: 100%;
-}
-
-.roles-admin :deep(.toro-grid-actions-header .ag-header-cell-text) {
-  text-align: center;
-}
-
-/* TORO catalog dialog corrected layout */
-
-.toro-catalog-layout {
-  width: min(1180px, calc(100vw - 32px));
-  max-width: none;
-  height: min(820px, calc(100vh - 32px));
-  max-height: calc(100vh - 32px);
-  padding: 0;
-  overflow: hidden;
-}
-
-.toro-catalog-layout .dialog-shell {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
-  min-height: 0;
-  max-height: none;
-  margin: 0;
-  overflow: hidden;
-}
-
-.toro-catalog-layout .dialog-header {
-  position: relative;
-  z-index: 4;
-  flex: 0 0 auto;
-  margin: 0;
-}
-
-.toro-catalog-layout .permissions-dialog-toolbar {
-  position: relative;
-  z-index: 3;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: end;
-  gap: var(--toro-space-3);
-  flex: 0 0 auto;
-  width: 100%;
-  min-height: 0;
-  margin: 0;
-  padding: var(--toro-space-3) var(--toro-space-4);
-  border-bottom: 1px solid var(--toro-color-border);
-  background: var(--toro-color-surface-soft);
-}
-
-.toro-catalog-layout .permissions-dialog-toolbar > label {
-  display: grid;
-  gap: var(--toro-space-1);
-  min-width: 0;
-  margin: 0;
-}
-
-.toro-catalog-layout .permissions-dialog-toolbar > label > span {
-  color: var(--toro-color-text-muted);
-  font-size: var(--toro-font-size-xs);
-  font-weight: var(--toro-font-weight-bold);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.toro-catalog-layout .permissions-dialog-toolbar .toro-field {
-  width: 100%;
-}
-
-.toro-catalog-layout .permissions-dialog-toolbar > span {
-  align-self: end;
-  min-height: var(--toro-control-height);
-  display: inline-flex;
-  align-items: center;
-  gap: var(--toro-space-1);
-  margin: 0;
-  color: var(--toro-color-text-muted);
-  white-space: nowrap;
-}
-
-.toro-catalog-layout .catalog-grid-body {
-  display: flex;
-  flex: 1 1 auto;
   width: 100%;
   min-width: 0;
-  min-height: 0;
-  margin: 0;
-  padding: var(--toro-space-3) var(--toro-space-4);
-  overflow: hidden;
-  background: var(--toro-color-surface);
-}
-
-.toro-catalog-layout .catalog-grid {
-  flex: 1 1 auto;
-  width: 100%;
-  height: 100%;
-  min-width: 0;
-  min-height: 0;
-}
-
-.toro-catalog-layout .dialog-footer {
-  position: relative;
-  z-index: 4;
-  display: flex;
-  justify-content: flex-end;
-  flex: 0 0 auto;
-  min-height: 0;
-  margin: 0;
-  padding: var(--toro-space-3) var(--toro-space-4);
-  border-top: 1px solid var(--toro-color-border);
-  background: var(--toro-color-surface);
-}
-
-@media (max-width: 720px) {
-  .toro-catalog-layout {
-    width: calc(100vw - 16px);
-    height: calc(100vh - 16px);
-    max-height: calc(100vh - 16px);
-  }
-
-  .toro-catalog-layout .permissions-dialog-toolbar {
-    grid-template-columns: 1fr;
-    align-items: stretch;
-  }
-
-  .toro-catalog-layout .permissions-dialog-toolbar > span {
-    align-self: start;
-    min-height: 0;
-  }
-
-  .toro-catalog-layout .catalog-grid-body {
-    padding: var(--toro-space-2);
-  }
-}
-
-/* TORO permission tree integration */
-
-.role-permission-tree,
-.catalog-tree {
-  width: 100%;
-  min-width: 0;
-}
-
-.role-permission-tree {
-  padding: var(--toro-space-2);
-}
-
-.catalog-tree {
-  height: 100%;
-  min-height: 0;
-  padding: var(--toro-space-2);
-  overflow: auto;
-}
-
-.toro-catalog-layout .catalog-grid-body {
-  padding: var(--toro-space-2) var(--toro-space-3);
-}
-
-.permissions-dialog-body {
-  min-height: 0;
-  overflow: auto;
-}
-
-/* TORO final direct visual adjustments */
-
-.dialog-header :deep(.dialog-icon-close) {
-  width: 36px;
-  min-width: 36px;
-  height: 36px;
-  min-height: 36px;
-  padding: 0;
-  border-radius: 50%;
-  font-size: 22px;
-  line-height: 1;
-}
-
-.role-permissions-toolbar,
-.catalog-permissions-toolbar {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: end;
-  gap: var(--toro-space-3);
-  width: 100%;
-  margin: 0;
-  padding: var(--toro-space-3) var(--toro-space-4);
-  border-top: 0;
-  border-bottom: 1px solid var(--toro-color-border);
-  background: var(--toro-color-surface-soft);
-  box-shadow: none;
-}
-
-.role-permissions-toolbar > label,
-.catalog-permissions-toolbar > label {
-  display: grid;
-  gap: var(--toro-space-1);
-  min-width: 0;
-  margin: 0;
-}
-
-.role-permissions-toolbar .toro-field,
-.catalog-permissions-toolbar .toro-field {
-  width: 100%;
-  margin: 0;
-  border-color: var(--toro-color-border-strong);
-  background: var(--toro-color-surface);
-  box-shadow: none;
-}
-
-.role-permissions-toolbar > span,
-.catalog-permissions-toolbar > span {
-  display: inline-flex;
-  align-items: center;
-  align-self: end;
-  min-height: var(--toro-control-height);
-  margin: 0;
-  color: var(--toro-color-text-muted);
-  white-space: nowrap;
-}
-
-.toro-grid-status-cell {
-  padding-inline: 6px;
-}
-
-.toro-grid-status-cell .ag-cell-wrapper,
-.toro-grid-status-cell .ag-cell-value {
-  width: 100%;
-  min-width: 0;
-}
-
-@media (max-width: 720px) {
-  .role-permissions-toolbar,
-  .catalog-permissions-toolbar {
-    grid-template-columns: 1fr;
-  }
-
-  .role-permissions-toolbar > span,
-  .catalog-permissions-toolbar > span {
-    min-height: 0;
-  }
-}
-
-/* TORO compact permission dialog layout */
-
-.permissions-dialog,
-.toro-catalog-layout {
-  width: min(980px, calc(100vw - 32px));
-  max-width: 980px;
-}
-
-.permissions-dialog .dialog-shell,
-.toro-catalog-layout .dialog-shell {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: min(760px, calc(100vh - 32px));
-  min-height: 0;
-  max-height: calc(100vh - 32px);
-  overflow: hidden;
-}
-
-.permissions-dialog .dialog-header,
-.toro-catalog-layout .dialog-header,
-.role-permissions-toolbar,
-.catalog-permissions-toolbar,
-.permissions-dialog .dialog-footer,
-.toro-catalog-layout .dialog-footer {
-  flex: 0 0 auto;
-}
-
-.role-permissions-toolbar,
-.catalog-permissions-toolbar {
-  position: relative;
-  z-index: 3;
-  width: 100%;
-  min-height: 0;
-  margin: 0;
-  padding: var(--toro-space-3) var(--toro-space-4);
-  overflow: visible;
-  border-top: 0;
-  border-bottom: 1px solid var(--toro-color-border);
-  background: var(--toro-color-surface-soft);
-}
-
-.role-permissions-toolbar > label,
-.catalog-permissions-toolbar > label {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  min-width: 0;
-  margin: 0;
-  padding: 0;
-  background: transparent;
-}
-
-.role-permissions-toolbar .toro-field,
-.catalog-permissions-toolbar .toro-field {
-  position: relative;
-  z-index: 1;
-  display: block;
-  width: 100%;
-  margin: 0;
-  background: var(--toro-color-surface);
-}
-
-.permissions-dialog-body,
-.toro-catalog-layout .catalog-grid-body {
-  display: block;
-  flex: 1 1 auto;
-  width: 100%;
-  min-width: 0;
-  min-height: 0;
-  margin: 0;
-  padding: var(--toro-space-2) var(--toro-space-3);
-  overflow-x: hidden;
-  overflow-y: auto;
-  scrollbar-gutter: stable;
-  overscroll-behavior: contain;
-  background: var(--toro-color-surface);
-}
-
-.role-permission-tree,
-.catalog-tree {
-  display: block;
-  width: 100%;
-  max-width: none !important;
-  height: auto;
-  min-height: 0;
-  padding: var(--toro-space-1);
-  overflow: visible !important;
-}
-
-.role-permission-tree :deep(.toro-permission-tree),
-.catalog-tree :deep(.toro-permission-tree) {
-  width: 100%;
-  max-width: none !important;
-  height: auto;
-  overflow: visible !important;
-}
-
-@media (max-width: 720px) {
-  .permissions-dialog,
-  .toro-catalog-layout {
-    width: calc(100vw - 16px);
-    max-width: none;
-  }
-
-  .permissions-dialog .dialog-shell,
-  .toro-catalog-layout .dialog-shell {
-    height: calc(100vh - 16px);
-    max-height: calc(100vh - 16px);
-  }
-}
-
-/* TORO role assignment code */
-
-.permissions-dialog .dialog-header h3 {
-  display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: var(--toro-space-2);
-}
-
-.role-dialog-code {
-  color: var(--toro-color-text-muted);
-  font-size: var(--toro-font-size-sm);
-  font-weight: var(--toro-font-weight-regular);
-}
-
-/* TORO dialog close icon and field validation */
-
-.dialog-header :deep(.dialog-icon-close) {
-  width: 36px;
-  min-width: 36px;
-  height: 36px;
-  min-height: 36px;
-  padding: 0;
-  border-radius: 50%;
-}
-
-.dialog-header :deep(.dialog-icon-close .toro-action-button-label) {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 18px;
-  overflow: visible;
-}
-
-.dialog-close-icon {
-  display: block;
-  width: 18px;
-  height: 18px;
-  pointer-events: none;
-}
-
-.toro-field-invalid {
-  border-color: var(--toro-color-danger, #b42318);
-  box-shadow: 0 0 0 3px rgb(180 35 24 / 12%);
-}
-
-.toro-field-error {
-  display: block;
-  margin-block-start: var(--toro-space-1);
-  color: var(--toro-color-danger, #b42318);
-  font-size: var(--toro-font-size-xs);
-  font-weight: var(--toro-font-weight-bold);
-  line-height: 1.35;
-}
-
-/* TORO final field validation and disabled appearance */
-
-.role-dialog-form .toro-field:disabled,
-.role-dialog-form .toro-field-disabled {
-  border-color: var(--toro-color-border-strong);
-  color: var(--toro-color-text-muted);
-  background: var(--toro-color-surface-soft);
-  box-shadow: inset 0 0 0 1px var(--toro-color-border);
-  cursor: not-allowed;
-  opacity: 0.72;
-}
-
-.role-dialog-form .toro-field-invalid {
-  border-color: var(--toro-color-danger, #b42318);
-  box-shadow: 0 0 0 3px rgb(180 35 24 / 12%);
-}
-
-.role-dialog-form .toro-field-error {
-  display: block;
-  margin-block-start: var(--toro-space-1);
-  color: var(--toro-color-danger, #b42318);
-  font-size: var(--toro-font-size-xs);
-  font-weight: var(--toro-font-weight-bold);
-  line-height: 1.35;
-}
-
-/* TORO centered grid columns */
-
-.roles-grid :deep(.toro-grid-centered-cell) {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-}
-
-.roles-grid :deep(.toro-grid-centered-header .ag-header-cell-label) {
-  justify-content: center;
-  text-align: center;
-}
-
-/* TORO roles grid horizontal overflow control */
-
-.roles-grid {
-  width: 100%;
-  min-width: 0;
-  max-width: 100%;
-  overflow: hidden;
 }
 
 .roles-grid :deep(.ag-root-wrapper),
@@ -2679,27 +1263,12 @@ function focusOpenedDialog(dialogReference) {
   max-width: 100%;
 }
 
-.roles-grid :deep(.ag-body-viewport),
-.roles-grid :deep(.ag-center-cols-viewport) {
-  overflow-x: hidden;
-}
 
-.roles-grid :deep(.ag-body-horizontal-scroll) {
-  display: none;
-  min-height: 0;
-  height: 0;
-}
 
 @media (max-width: 1100px) {
-  .roles-grid {
-    overflow: visible;
-  }
-
+  .roles-grid { overflow: visible; }
   .roles-grid :deep(.ag-body-viewport),
-  .roles-grid :deep(.ag-center-cols-viewport) {
-    overflow-x: auto;
-  }
-
+  .roles-grid :deep(.ag-center-cols-viewport) { overflow-x: auto; }
   .roles-grid :deep(.ag-body-horizontal-scroll) {
     display: flex;
     min-height: var(--ag-scrollbar-size, 14px);

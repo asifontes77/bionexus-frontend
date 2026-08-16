@@ -287,7 +287,7 @@
             <div v-if="filteredPermissionModules.length === 0" class="toro-empty-state">No existen permisos que coincidan con los filtros.</div>
             <details v-for="module in filteredPermissionModules" :key="module.key" class="override-module-card" open>
               <summary class="override-module-summary">
-                <div><span>Módulo</span><h4>{{ String(module?.name ?? module?.label ?? module).trim().toLowerCase() === "typepayment" ? "Formas de pago" : getPermissionModuleLabel(module?.name ?? module?.label ?? module) }}</h4></div>
+                <h4>{{ module.label }}</h4>
                 <strong>{{ module.permissions.length }}</strong>
               </summary>
               <div
@@ -672,31 +672,31 @@ const userContextMenuItems = computed(() => {
 
   return [
     {
-      key: "view",
+      key: "view", icon: "view",
       label: "Ver autorización",
       action: () => openUserDetailDialog(user),
     },
     {
-      key: "edit",
+      key: "edit", icon: "edit",
       label: "Editar datos",
       visible: canUpdateUsers.value,
       action: () => openEditUserDialog(user),
     },
     {
-      key: "state",
+      key: "state", icon: user.hidden ? "activate" : "deactivate",
       label: user.hidden ? "Reactivar usuario" : "Inactivar usuario",
       visible: canUpdateUsers.value,
       action: () => openUserStateDialog(user),
     },
     {
-      key: "roles",
+      key: "roles", icon: "roles",
       label: "Editar roles",
       visible: canAssignRoles.value,
       disabled: user.hidden === true,
       action: () => openUserRolesDialog(user),
     },
     {
-      key: "permissions",
+      key: "permissions", icon: "permissions",
       label: "Editar permisos individuales",
       visible: canAssignPermissionOverrides.value,
       disabled: user.hidden === true,

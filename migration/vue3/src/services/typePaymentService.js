@@ -1,4 +1,4 @@
-﻿import { apiRequest } from "@/api/apiClient";
+import { apiRequest } from "@/api/apiClient";
 import {
   normalizeTypePayment,
   normalizeTypePaymentChanges,
@@ -44,6 +44,8 @@ export function getTypePaymentErrorMessage(error, fallbackMessage) {
     TYPEPAYMENT_ID_INVALID:
       "El identificador de la forma parasitaria no es vÃƒÂ¡lido.",
     TYPEPAYMENT_NOT_FOUND: "La forma parasitaria seleccionada ya no existe.",
+    TYPEPAYMENT_DESCRIPTION_ALREADY_EXISTS:
+      "Ya existe una forma de pago con la descripcion indicada.",
     TYPEPAYMENT_DESCRIPTION_REQUIRED: "La descripciÃƒÂ³n es obligatoria.",
     TYPEPAYMENT_DESCRIPTION_TOO_LONG:
       "La descripciÃƒÂ³n no puede superar los 50 caracteres.",

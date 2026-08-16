@@ -6,7 +6,8 @@
         <ToroDialogCloseButton @click="close" />
       </header>
       <section class="dialog-body type-payment-dialog-body">
-        <ToroFormField label="Descripcion" field-id="type-payment-description" required>
+        <ToroFormField label="Descripcion" field-id="type-payment-description"
+          :error="descriptionError" required>
           <input id="type-payment-description" ref="firstInput" v-model="draft.description" class="toro-field" type="text" maxlength="50" autocomplete="off" />
         </ToroFormField>
         <ToroFormField label="Descripcion auxiliar 1" field-id="type-payment-description-1">
@@ -33,19 +34,42 @@ import ToroFormField from "@/components/ui/ToroFormField.vue";
 const props = defineProps({ saving: { type: Boolean, default: false }, canCreate: { type: Boolean, default: false }, canUpdate: { type: Boolean, default: false } });
 const emit = defineEmits(["submit"]);
 const dialog = ref(null); const firstInput = ref(null); const mode = ref("create"); const current = ref(null); const errorMessage = ref("");
+const validationAttempted = ref(false);
 const draft = reactive({ description: "", description_1: "", description_2: "", only_dollars: false });
 const original = ref("");
 const values = computed(() => ({ description: draft.description.trim(), description_1: draft.description_1.trim(), description_2: draft.description_2.trim(), only_dollars: Boolean(draft.only_dollars) }));
 const signature = computed(() => JSON.stringify(values.value));
-const submitDisabled = computed(() => props.saving || values.value.description === "" || signature.value === original.value || (mode.value === "create" ? !props.canCreate : !props.canUpdate));
+const descriptionError = computed(() =>
+  validationAttempted.value && String(draft.description ?? "").trim() === ""
+    ? "El campo Descripcion es requerido."
+    : "",
+);
+const submitDisabled = computed(() =>
+  props.saving ||
+  signature.value === original.value ||
+  (mode.value === "create" ? !props.canCreate : !props.canUpdate),
+);
 function show() { dialog.value?.showModal(); nextTick(() => firstInput.value?.focus()); }
 function assign(row) { draft.description = row?.description || ""; draft.description_1 = row?.description_1 || ""; draft.description_2 = row?.description_2 || ""; draft.only_dollars = Boolean(row?.only_dollars); original.value = JSON.stringify(values.value); }
-function openCreate() { mode.value = "create"; current.value = null; assign(null); original.value = ""; errorMessage.value = ""; show(); }
-function openEdit(row) { mode.value = "edit"; current.value = row; assign(row); errorMessage.value = ""; show(); }
+function openCreate() { validationAttempted.value = false; mode.value = "create"; current.value = null; assign(null); original.value = ""; errorMessage.value = ""; show(); }
+function openEdit(row) { validationAttempted.value = false; mode.value = "edit"; current.value = row; assign(row); errorMessage.value = ""; show(); }
 function close() { if (dialog.value?.open) dialog.value.close(); }
 function clearError() { errorMessage.value = ""; }
-function setError(message) { errorMessage.value = message; }
-function submit() { if (!submitDisabled.value) emit("submit", { mode: mode.value, record: current.value, values: values.value }); }
+function setError(message) {
+  const normalizedMessage = String(message || "").toLocaleLowerCase();
+  const isRequiredDescriptionMessage =
+    normalizedMessage.includes("descripci") &&
+    (normalizedMessage.includes("obligatori") || normalizedMessage.includes("requerid"));
+  errorMessage.value = values.value.description !== "" && isRequiredDescriptionMessage
+    ? ""
+    : String(message || "");
+}
+function submit() {
+  validationAttempted.value = true;
+  if (descriptionError.value !== "" || submitDisabled.value) return;
+  errorMessage.value = "";
+  emit("submit", { mode: mode.value, record: current.value, values: values.value });
+}
 defineExpose({ openCreate, openEdit, close, clearError, setError });
 </script>
 <style scoped>

@@ -3,6 +3,7 @@ const moduleLabels = Object.freeze({
   parasiticforms: "Formas parasitarias",
   patients: "Pacientes",
   security: "Seguridad y autorizaci\u00f3n",
+  typepayment: "Formas de pago",
 });
 
 const permissionLabels = Object.freeze({
@@ -87,22 +88,16 @@ export function getPermissionCode(value) {
 }
 
 export function getPermissionModule(value) {
-  if (value && typeof value === "object") {
-    const explicitModule = normalizeText(value.module).toLowerCase();
-
-    if (explicitModule !== "") {
-      return explicitModule;
-    }
-  }
-
   const code = getPermissionCode(value);
   const separatorIndex = code.indexOf(".");
+  const codeModule = separatorIndex > 0 ? code.slice(0, separatorIndex) : "";
 
-  if (separatorIndex < 0) {
-    return "general";
+  if (value && typeof value === "object") {
+    const explicitModule = normalizeText(value.module).toLowerCase();
+    if (explicitModule !== "" && explicitModule !== "general") return explicitModule;
   }
 
-  return code.slice(0, separatorIndex) || "general";
+  return codeModule || "general";
 }
 
 export function getPermissionModuleLabel(value) {

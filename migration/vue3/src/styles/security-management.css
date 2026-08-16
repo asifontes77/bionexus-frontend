@@ -415,3 +415,96 @@ dialog.toro-dialog .dialog-close:focus-visible {
   box-shadow: var(--toro-shadow-md) !important;
 }
 /* TORO ROLES DIALOG INITIAL FOCUS END */
+
+
+/* TORO GLOBAL DIALOG CONTRACT START */
+.toro-dialog {
+  max-width: none;
+  max-height: calc(100vh - 32px);
+  padding: 0;
+  border: 1px solid var(--toro-color-border-strong);
+  border-radius: var(--toro-radius-md);
+  background: var(--toro-color-surface);
+  color: var(--toro-color-text);
+  font-family: var(--toro-font-family);
+  font-size: var(--toro-font-size-md);
+  font-weight: var(--toro-font-weight-regular);
+  box-shadow: var(--toro-shadow-md);
+  overflow: hidden;
+}
+
+.toro-dialog::backdrop {
+  background: rgb(13 36 58 / 48%);
+  backdrop-filter: blur(2px);
+}
+
+.toro-dialog .dialog-shell {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  max-height: calc(100vh - 32px);
+  overflow: hidden;
+}
+
+.toro-dialog .dialog-header {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 0 0 auto;
+  gap: var(--toro-space-3);
+  padding: var(--toro-space-3) var(--toro-space-4);
+  border-bottom: 1px solid var(--toro-color-border);
+  background: var(--toro-color-surface);
+}
+
+.toro-dialog .dialog-header p {
+  margin: 0 0 var(--toro-space-1);
+  color: var(--toro-color-accent-strong);
+  font-size: var(--toro-font-size-xs);
+  font-weight: var(--toro-font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.toro-dialog .dialog-header h3 { margin: 0; }
+
+.toro-dialog .dialog-body {
+  flex: 1 1 auto;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  padding: var(--toro-space-4);
+  overflow: auto;
+  color: var(--toro-color-text-secondary);
+  background: var(--toro-color-surface);
+}
+
+.toro-dialog .dialog-footer {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 0 0 auto;
+  gap: var(--toro-space-2);
+  padding: var(--toro-space-3) var(--toro-space-4);
+  border-top: 1px solid var(--toro-color-border);
+  background: var(--toro-color-surface-soft);
+}
+
+@media (max-width: 720px) {
+  .toro-dialog {
+    max-height: calc(100vh - 16px);
+  }
+  .toro-dialog .dialog-shell {
+    max-height: calc(100vh - 16px);
+  }
+  .toro-dialog .dialog-footer {
+    flex-wrap: wrap;
+  }
+}
+/* TORO GLOBAL DIALOG CONTRACT END */

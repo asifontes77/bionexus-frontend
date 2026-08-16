@@ -14,7 +14,7 @@
         v-else
         ref="dataGrid"
         class="parasitic-grid"
-        :row-data="gridRows"
+        :row-data="visibleGridRows"
         :column-defs="columnDefs"
         :default-col-def="defaultColDef"
         :components="gridComponents"
@@ -117,6 +117,18 @@ const canCreate = computed(() => authorizationStore.hasPermission("parasiticform
 const canUpdateDescription = computed(() => authorizationStore.hasPermission("parasiticforms.update"));
 const canChangeStatus = computed(() => authorizationStore.hasPermission("parasiticforms.change-status"));
 const gridRows = computed(() => parasiticforms.value.map((record) => ({ ...record, isActive: !record.annulled })));
+const visibleGridRows = computed(() => {
+  const search = searchText.value.trim().toLocaleLowerCase();
+  if (search === "") return gridRows.value;
+  return gridRows.value.filter((record) =>
+    [
+      record.description,
+      record.isActive ? "Activo" : "Inactivo",
+    ]
+      .filter((value) => typeof value === "string")
+      .some((value) => value.toLocaleLowerCase().includes(search)),
+  );
+});
 
 
 const defaultColDef = Object.freeze({
@@ -211,7 +223,7 @@ function replaceRecord(updated) {
 
   nextTick(() => {
     const api = dataGrid.value?.getApi?.();
-    api?.setGridOption?.('rowData', gridRows.value);
+    api?.setGridOption?.('rowData', visibleGridRows.value);
     api?.refreshCells?.({ force: true });
     api?.redrawRows?.();
   });

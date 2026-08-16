@@ -235,14 +235,38 @@ async function toggleStatus(row) {
   }
 }
 
+function normalizeTypePaymentDescriptionKey(value) {
+  return String(value || "").trim().toLocaleLowerCase();
+}
+
+function hasDuplicateTypePaymentDescription(payload) {
+  const key = normalizeTypePaymentDescriptionKey(payload?.values?.description);
+  if (key === "") return false;
+  const currentId = payload?.mode === "edit" ? payload?.record?.id : null;
+  return rows.value.some((row) =>
+    row.id !== currentId && normalizeTypePaymentDescriptionKey(row.description) === key,
+  );
+}
+
 async function saveForm(payload) {
   if (saving.value) return;
+  if (hasDuplicateTypePaymentDescription(payload)) {
+    formDialog.value?.setError("Ya existe una forma de pago con la descripcion indicada.");
+    return;
+  }
   saving.value = true;
   formDialog.value?.clearError();
   try {
-    const saved = payload.mode === "create"
-      ? await createTypePayment(payload.values)
-      : await updateTypePayment(payload.record.id, payload.values);
+    let saved;
+    if (payload.mode === "create") {
+      const created = await createTypePayment(payload.values.description);
+      if (!Number.isInteger(created?.id) || created.id <= 0) {
+        throw new Error("TYPEPAYMENT_CREATE_RESPONSE_INVALID");
+      }
+      saved = await updateTypePayment(created.id, { ...payload.values });
+    } else {
+      saved = await updateTypePayment(payload.record.id, { ...payload.values });
+    }
     replaceRow(saved);
     await reconcileRowsSilently();
     formDialog.value?.close();

@@ -12,6 +12,7 @@
         <ToroFormField
           label="Descripcion"
           field-id="parasiticform-description"
+          :error="descriptionError"
           :help="draft.description.length + ' de 50 caracteres'"
           required
         >
@@ -51,17 +52,32 @@ const mode = ref("create");
 const current = ref(null);
 const originalDescription = ref("");
 const errorMessage = ref("");
+const validationAttempted = ref(false);
 const draft = reactive({ description: "" });
 const normalizedDescription = computed(() => draft.description.trim());
+const descriptionError = computed(() =>
+  validationAttempted.value && normalizedDescription.value === ""
+    ? "El campo Descripcion es requerido."
+    : "",
+);
 const changed = computed(() => mode.value === "create" ? normalizedDescription.value !== "" : normalizedDescription.value !== originalDescription.value);
-const submitDisabled = computed(() => props.saving || normalizedDescription.value === "" || normalizedDescription.value.length > 50 || !changed.value || (mode.value === "create" ? !props.canCreate : !props.canUpdate));
+const submitDisabled = computed(() =>
+  props.saving ||
+  normalizedDescription.value.length > 50 ||
+  (mode.value === "edit" && !changed.value) ||
+  (mode.value === "create" ? !props.canCreate : !props.canUpdate),
+);
 function show() { dialog.value?.showModal(); nextTick(() => descriptionInput.value?.focus()); }
-function openCreate() { mode.value = "create"; current.value = null; originalDescription.value = ""; draft.description = ""; errorMessage.value = ""; show(); }
-function openEdit(record) { mode.value = "edit"; current.value = record; originalDescription.value = record.description; draft.description = record.description; errorMessage.value = ""; show(); }
+function openCreate() { mode.value = "create"; current.value = null; originalDescription.value = ""; draft.description = ""; errorMessage.value = ""; validationAttempted.value = false; show(); }
+function openEdit(record) { mode.value = "edit"; current.value = record; originalDescription.value = record.description; draft.description = record.description; errorMessage.value = ""; validationAttempted.value = false; show(); }
 function close() { if (dialog.value?.open) dialog.value.close(); }
 function clearError() { errorMessage.value = ""; }
 function setError(message) { errorMessage.value = message; }
-function submit() { if (submitDisabled.value) return; emit("submit", { mode: mode.value, record: current.value, description: normalizedDescription.value }); }
+function submit() {
+  validationAttempted.value = true;
+  if (descriptionError.value !== "" || submitDisabled.value) return;
+  emit("submit", { mode: mode.value, record: current.value, description: normalizedDescription.value });
+}
 defineExpose({ openCreate, openEdit, close, clearError, setError });
 </script>
 <style scoped>
