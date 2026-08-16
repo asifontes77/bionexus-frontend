@@ -32,7 +32,7 @@
           :page-size="10"
           :page-size-selector="[10, 20, 50, 100]"
           :min-grid-height="300"
-          :max-grid-height="520"
+          :max-grid-height="560"
           empty-text="No existen roles que coincidan con los filtros."
           @refresh="loadCatalogs"
           @row-context-menu="openRoleContextMenu"

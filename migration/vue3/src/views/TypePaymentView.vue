@@ -138,11 +138,20 @@ const columnDefs = computed(() => [
     cellRendererParams: { onLabel: "Activo", offLabel: "Inactivo", ariaLabel: "Estado", disabled: () => !canChangeStatus.value || saving.value, onToggle: openState },
   },
   {
+    colId: "actions",
     headerName: "Acciones",
-    field: "actions",
     width: 110,
+    minWidth: 110,
+    maxWidth: 110,
+    flex: 0,
+    pinned: "right",
+    lockPinned: true,
+    suppressMovable: true,
     sortable: false,
     filter: false,
+    resizable: false,
+    suppressHeaderMenuButton: true,
+    headerClass: "toro-grid-actions-header",
     cellClass: "toro-grid-actions-cell",
     cellRenderer: "ToroGridActionsCell",
     cellRendererParams: {
@@ -316,7 +325,13 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .type-payment-page { min-width: 0; }
+.type-payment-grid :deep(.toro-grid-actions-header .ag-header-cell-label),
 .type-payment-grid :deep(.toro-grid-actions-cell) { justify-content: center; }
+.type-payment-grid :deep(.ag-pinned-right-header),
+.type-payment-grid :deep(.ag-pinned-right-cols-container) {
+  border-left: 1px solid var(--toro-color-border-strong);
+  box-shadow: calc(var(--toro-space-1) * -1) 0 var(--toro-space-3) var(--toro-shadow-panel-soft);
+}
 .type-payment-grid :deep(.type-payment-dollar-indicator) {
   display: inline-flex;
   align-items: center;

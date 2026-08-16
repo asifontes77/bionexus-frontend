@@ -199,7 +199,7 @@ const props = defineProps({
   },
   maxGridHeight: {
     type: Number,
-    default: 520,
+    default: 560,
   },
   searchEnabled: { type: Boolean, default: false },
   searchModelValue: { type: String, default: "" },
@@ -346,14 +346,16 @@ const adaptiveGridHeightStyle = computed(() => {
   const exportToolbarHeight = toolbarVisible.value ? 58 : 0;
   const paginationHeight = props.pagination ? 46 : 0;
   const borderAllowance = 4;
+  const horizontalScrollbarAllowance = 16;
   const naturalHeight =
     exportToolbarHeight +
     props.headerHeight +
     Math.max(1, visibleRows) * props.rowHeight +
     paginationHeight +
+    horizontalScrollbarAllowance +
     borderAllowance;
   const minimum = Math.max(240, Number(props.minGridHeight) || 300);
-  const maximum = Math.max(minimum, Number(props.maxGridHeight) || 680);
+  const maximum = Math.max(minimum, Number(props.maxGridHeight) || 560);
   const resolvedHeight = Math.min(maximum, Math.max(minimum, naturalHeight));
 
   return {
