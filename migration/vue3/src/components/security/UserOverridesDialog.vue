@@ -15,7 +15,7 @@
         <ToroFormField label="Estado" field-id="user-override-filter">
           <select id="user-override-filter" v-model="statusFilter" class="toro-field">
             <option value="all">Todos</option>
-            <option value="inherited">Sin override</option>
+            <option value="inherited">Segun roles</option>
             <option value="allow">Permitir</option>
             <option value="deny">Denegar</option>
           </select>
@@ -27,11 +27,11 @@
         <div v-else-if="errorMessage" class="toro-message toro-message-error" role="alert">{{ errorMessage }}</div>
         <template v-else-if="authorization">
           <details class="override-explanation">
-            <summary><span>¿Qué cambia una excepción individual?</span><small>Sin override usa los roles; Permitir concede; Denegar bloquea.</small></summary>
+            <summary><span>¿Qué cambia una excepción individual?</span><small>Segun roles conserva la herencia; Permitir concede; Denegar bloquea.</small></summary>
             <div class="override-explanation-body">
               <p>Cada permiso parte del resultado heredado de los roles. Una excepción cambia solamente ese permiso para este usuario.</p>
               <dl>
-                <div><dt>Sin override</dt><dd>Conserva el resultado heredado de los roles asignados.</dd></div>
+                <div><dt>Segun roles</dt><dd>Conserva el resultado heredado de los roles asignados.</dd></div>
                 <div><dt>Permitir</dt><dd>Concede el permiso directamente, aunque ningún rol activo lo otorgue.</dd></div>
                 <div><dt>Denegar</dt><dd>Bloquea el permiso directamente y prevalece sobre los roles.</dd></div>
               </dl>
@@ -41,18 +41,33 @@
           <div v-else-if="!canAssign" class="toro-empty-state">La cuenta actual puede consultar las excepciones, pero no modificarlas.</div>
           <div v-if="inactiveOverrideCount > 0" class="toro-message toro-message-warning" role="status">Las excepciones inactivas se conservan para consulta y se retirarán al guardar.</div>
           <div v-if="filteredModules.length === 0" class="toro-empty-state">No existen permisos que coincidan con los filtros.</div>
-          <details v-for="module in filteredModules" :key="module.key" class="override-module-card" open>
-            <summary class="override-module-summary"><h4>{{ module.label }}</h4><strong>{{ module.permissions.length }}</strong></summary>
-            <div v-for="permission in module.permissions" :key="permission.id" class="override-option" :class="{ 'override-option-disabled': !permission.isActive || user?.hidden }">
-              <span class="override-option-copy"><strong>{{ permission.displayName }}</strong><small>{{ permission.displayDescription }}</small></span>
-              <select :value="getEffect(permission.id)" :disabled="!permission.isActive || !canEdit || !canAssign || saving" @change="emit('set-override', permission, $event.target.value)">
-                <option value="">Sin override</option>
-                <option :value="PermissionEffect.Allow">Permitir</option>
-                <option :value="PermissionEffect.Deny">Denegar</option>
-              </select>
-              <span class="toro-badge" :class="getBadgeClass(permission.id)">{{ getLabel(permission.id) }}</span>
-            </div>
-          </details>
+          <ToroPermissionTree
+            class="user-override-tree"
+            :modules="filteredModules"
+            :search-text="searchText"
+            empty-text="No existen permisos que coincidan con los filtros."
+          >
+            <template #permission-action="{ permission }">
+              <div
+                class="override-tree-action"
+                :class="{ 'override-tree-action-disabled': !permission.isActive || user?.hidden }"
+              >
+                <select
+                  :value="getEffect(permission.id)"
+                  :aria-label="`Excepcion para ${permission.displayName}`"
+                  :disabled="!permission.isActive || !canEdit || !canAssign || saving"
+                  @change="emit('set-override', permission, $event.target.value)"
+                >
+                  <option value="">Segun roles</option>
+                  <option :value="PermissionEffect.Allow">Permitir</option>
+                  <option :value="PermissionEffect.Deny">Denegar</option>
+                </select>
+                <span class="toro-badge" :class="getBadgeClass(permission.id)">
+                  {{ getLabel(permission.id) }}
+                </span>
+              </div>
+            </template>
+          </ToroPermissionTree>
           <div v-if="saveError" class="toro-inline-message toro-message-error" role="alert">{{ saveError }}</div>
           <div v-if="saveMessage" class="toro-inline-message toro-message-success" role="status">{{ saveMessage }}</div>
         </template>
@@ -72,6 +87,7 @@ import { groupPermissionsForPresentation } from "@/presentation/permissionPresen
 import ToroActionIcon from "@/components/ui/ToroActionIcon.vue";
 import ToroDialogCloseButton from "@/components/ui/ToroDialogCloseButton.vue";
 import ToroFormField from "@/components/ui/ToroFormField.vue";
+import ToroPermissionTree from "@/components/tree/ToroPermissionTree.vue";
 const props = defineProps({
   user: { type: Object, default: null }, authorization: { type: Object, default: null }, permissions: { type: Array, default: () => [] },
   draftOverrides: { type: Array, default: () => [] }, loading: { type: Boolean, default: false }, errorMessage: { type: String, default: "" },
@@ -123,17 +139,9 @@ defineExpose({ open, close });
 .override-explanation-body dl { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--toro-space-2); }
 .override-explanation-body dl > div { padding: var(--toro-space-2); border: 1px solid var(--toro-color-border); border-radius: var(--toro-radius-sm); background: var(--toro-color-surface); }
 .override-explanation-body dt { margin-bottom: var(--toro-space-1); color: var(--toro-color-primary-strong); font-size: var(--toro-font-size-sm); font-weight: var(--toro-font-weight-bold); }
-.override-module-card { overflow: visible; border: 1px solid var(--toro-color-border); border-radius: var(--toro-radius-md); background: var(--toro-color-surface); }
-.override-module-summary { display: grid; grid-template-columns: minmax(0, 1fr) auto 18px; align-items: center; gap: var(--toro-space-3); padding: var(--toro-space-2) var(--toro-space-3); border-bottom: 1px solid var(--toro-color-border); background: var(--toro-color-surface-soft); cursor: pointer; list-style: none; }
-.override-module-card:not([open]) > .override-module-summary { border-bottom: 0; }
-.override-explanation > summary::-webkit-details-marker, .override-module-summary::-webkit-details-marker { display: none; }
-.override-explanation > summary::after, .override-module-summary::after { content: "⌄"; color: var(--toro-color-primary-strong); font-size: var(--toro-font-size-lg); transition: transform 160ms ease; }
-.override-explanation[open] > summary::after, .override-module-card[open] > .override-module-summary::after { transform: rotate(180deg); }
-.override-option { display: grid; grid-template-columns: minmax(0, 1fr) 160px 100px; align-items: center; gap: var(--toro-space-3); min-height: var(--toro-table-row-height); padding: var(--toro-space-2) var(--toro-space-3); border-bottom: 1px solid var(--toro-color-border); }
-.override-option:last-child { border-bottom: 0; }
-.override-option-disabled { opacity: 0.68; }
-.override-option-copy { display: grid; gap: 2px; min-width: 0; }
-.override-option-copy small { color: var(--toro-color-text-muted); font-size: var(--toro-font-size-sm); }
-.override-option select { width: 100%; min-height: var(--toro-control-height); padding-inline: var(--toro-space-2); border: 1px solid var(--toro-color-border-strong); border-radius: var(--toro-radius-md); background: var(--toro-color-surface); color: var(--toro-color-text); }
-@media (max-width: 720px) { .toro-dialog { width: calc(100vw - 16px); } .dialog-shell { height: calc(100vh - 16px); max-height: calc(100vh - 16px); } .dialog-toolbar, .override-explanation-body dl, .override-option { grid-template-columns: 1fr; } .override-explanation > summary { align-items: flex-start; flex-direction: column; } .override-explanation > summary small { margin-left: 0; } .dialog-footer { flex-wrap: wrap; } .dialog-pending-status { flex-basis: 100%; } }
+.user-override-tree { width: 100%; min-width: 0; max-width: none; }
+.override-tree-action { display: grid; grid-template-columns: 170px 100px; align-items: center; gap: var(--toro-space-2); min-width: 282px; }
+.override-tree-action-disabled { opacity: 0.68; }
+.override-tree-action select { width: 100%; min-height: 34px; padding-inline: var(--toro-space-2); border: 1px solid var(--toro-color-border-strong); border-radius: var(--toro-radius-md); background: var(--toro-color-surface); color: var(--toro-color-text); }
+@media (max-width: 720px) { .toro-dialog { width: calc(100vw - 16px); } .dialog-shell { height: calc(100vh - 16px); max-height: calc(100vh - 16px); } .dialog-toolbar, .override-explanation-body dl { grid-template-columns: 1fr; } .override-tree-action { grid-template-columns: 1fr; min-width: 0; width: 100%; } .override-explanation > summary { align-items: flex-start; flex-direction: column; } .override-explanation > summary small { margin-left: 0; } .dialog-footer { flex-wrap: wrap; } .dialog-pending-status { flex-basis: 100%; } }
 </style>

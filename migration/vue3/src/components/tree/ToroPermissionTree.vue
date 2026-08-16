@@ -52,9 +52,21 @@
           <div
             v-else
             class="permission-tree-permission-heading"
+            :class="{
+              'permission-tree-permission-heading-action':
+                hasPermissionActionSlot,
+            }"
           >
-            <strong>{{ getItemName(slotValue) }}</strong>
-            <small>{{ getDescription(slotValue) }}</small>
+            <span class="permission-tree-permission-copy">
+              <strong>{{ getItemName(slotValue) }}</strong>
+              <small>{{ getDescription(slotValue) }}</small>
+            </span>
+            <slot
+              v-if="hasPermissionActionSlot"
+              name="permission-action"
+              :permission="getPermission(slotValue)"
+              :active="getPermissionActive(slotValue)"
+            />
           </div>
         </div>
       </template>
@@ -90,29 +102,30 @@
           </label>
         </div>
 
-        <span
-          v-else
-          class="permission-tree-badge"
-          :title="
-            getPermissionActive(slotValue)
-              ? selectable
-                ? 'Permiso activo y disponible para asignar'
-                : 'Permiso activo'
-              : 'Permiso inactivo'
-          "
-          :class="{
-            'permission-tree-badge-inactive':
-              !getPermissionActive(slotValue),
-          }"
-        >
-          {{
-            getPermissionActive(slotValue)
-              ? selectable
-                ? "Disponible"
-                : "Activo"
-              : "Inactivo"
-          }}
-        </span>
+        <template v-else-if="!hasPermissionActionSlot">
+            <span
+              class="permission-tree-badge"
+            :title="
+              getPermissionActive(slotValue)
+                ? selectable
+                  ? 'Permiso activo y disponible para asignar'
+                  : 'Permiso activo'
+                : 'Permiso inactivo'
+            "
+            :class="{
+              'permission-tree-badge-inactive':
+                !getPermissionActive(slotValue),
+            }"
+          >
+            {{
+              getPermissionActive(slotValue)
+                ? selectable
+                  ? "Disponible"
+                  : "Activo"
+                : "Inactivo"
+            }}
+            </span>
+        </template>
       </template>
 
       <template
@@ -143,7 +156,7 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed, useSlots } from "vue";
 import Vue3TreeVue from "vue3-tree-vue";
 import "vue3-tree-vue/dist/style.css";
 
@@ -179,6 +192,10 @@ const props = defineProps({
   },
 });
 
+const slots = useSlots();
+const hasPermissionActionSlot = computed(
+  () => typeof slots["permission-action"] === "function",
+);
 const emit = defineEmits([
   "toggle-permission",
   "toggle-module",
@@ -698,6 +715,14 @@ function toggleModule(slotValue) {
   .permission-tree-copy small {
     white-space: normal;
   }
+  .permission-tree-permission-heading-action {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+  .permission-tree-permission-copy strong,
+  .permission-tree-permission-copy small {
+    white-space: normal;
+  }
 }
 
 /* TORO compact module heading */
@@ -737,7 +762,24 @@ function toggleModule(slotValue) {
 .permission-tree-permission-heading {
   display: grid;
   gap: 1px;
+  width: 100%;
   min-width: 0;
+}
+.permission-tree-permission-heading-action {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--toro-space-3);
+}
+.permission-tree-permission-copy {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+.permission-tree-permission-copy strong,
+.permission-tree-permission-copy small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .permission-tree-module-actions {
