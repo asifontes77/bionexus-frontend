@@ -69,36 +69,7 @@
     </form>
   </dialog>
 
-  <dialog ref="stateDialog" class="toro-dialog user-state-dialog" tabindex="-1">
-    <form class="dialog-shell" @submit.prevent="submitStateChange">
-      <header class="dialog-header">
-        <div>
-          <p>Estado de la cuenta</p>
-          <h3>{{ stateTarget?.hidden ? "Reactivar usuario" : "Inactivar usuario" }}</h3>
-        </div>
-        <ToroDialogCloseButton @click="closeStateDialog" />
-      </header>
-      <div class="dialog-body state-dialog-body">
-        <div v-if="stateError" class="toro-message toro-message-error" role="alert">{{ stateError }}</div>
-        <p>
-          {{ stateTarget?.hidden
-            ? `El usuario ${stateTarget?.name || "seleccionado"} recuperara el acceso efectivo según sus roles y permisos.`
-            : `El usuario ${stateTarget?.name || "seleccionado"} quedara visible para consulta, pero no podra iniciar operaciones.` }}
-        </p>
-        <div v-if="!stateTarget?.hidden" class="toro-message toro-message-warning" role="status">
-          El sistema impedira inactivar al ultimo administrador visible.
-        </div>
-      </div>
-      <footer class="dialog-footer">
-        <button type="button" class="toro-action toro-action-secondary" :disabled="savingState" @click="closeStateDialog">
-  <ToroActionIcon action="cancel" />Cancelar</button>
-        <button type="submit" class="toro-action" :class="stateTarget?.hidden ? 'toro-action-primary' : 'toro-action-danger'" :disabled="savingState">
-          <ToroIcon :name="stateTarget?.hidden ? 'person_check' : 'person_off'" :size="19" />
-          {{ savingState ? "Guardando..." : stateTarget?.hidden ? "Reactivar" : "Inactivar" }}
-        </button>
-      </footer>
-    </form>
-  </dialog>
+  <UserStateDialog ref="stateDialog" :saving="savingState" @confirm="submitStateChange" />
 </template>
 
 <script setup>
@@ -109,6 +80,7 @@ import { createUser, updateUser } from "@/services/authorizationService";
 import ToroDialogCloseButton from "@/components/ui/ToroDialogCloseButton.vue";
 import { useToroToast } from "@/composables/useToroToast";
 import ToroActionIcon from "@/components/ui/ToroActionIcon.vue";
+import UserStateDialog from "@/components/security/UserStateDialog.vue";
 
 const toast = useToroToast();
 
@@ -151,9 +123,8 @@ function openEdit(user) {
   assignForm({ name: user.name || "", userName: user.userName || "", email: user.email || "", telephone: user.telephone || "", direction: user.direction || "", position: user.position || "", collegeNumber: user.collegeNumber || "" });
   show(identityDialog);
 }
-function openState(user) { if (!user) return; stateTarget.value = user; stateError.value = ""; show(stateDialog); }
+function openState(user) { if (!user) return; stateTarget.value = user; stateError.value = ""; stateDialog.value?.open(user); }
 function closeIdentityDialog() { if (saving.value) return; close(identityDialog); }
-function closeStateDialog() { if (savingState.value) return; close(stateDialog); }
 
 function validate() {
   resetErrors();
@@ -204,7 +175,8 @@ async function submitIdentity() {
   }
   finally { saving.value = false; }
 }
-async function submitStateChange() {
+async function submitStateChange(user) {
+  if (user) stateTarget.value = user;
   if (!stateTarget.value || savingState.value) return;
   savingState.value = true; stateError.value = "";
   try {
@@ -215,9 +187,10 @@ async function submitStateChange() {
     } else {
       toast.info("Usuario reactivado correctamente.");
     }
-    close(stateDialog); emit("saved", { user: saved, action });
+    stateDialog.value?.close(); emit("saved", { user: saved, action });
   } catch (error) {
     stateError.value = userMessage(error, "No fue posible cambiar el estado del usuario.");
+    stateDialog.value?.setError(stateError.value);
     toast.error(stateError.value);
   }
   finally { savingState.value = false; }
@@ -257,7 +230,5 @@ defineExpose({ openCreate, openEdit, openState });
 .identity-password-section h4, .identity-password-section p { margin: 0; }
 .identity-password-section header span { color: var(--toro-color-text-muted); font-size: var(--toro-font-size-xs); font-weight: var(--toro-font-weight-bold); text-transform: uppercase; }
 .identity-password-section header p { color: var(--toro-color-text-muted); font-size: var(--toro-font-size-sm); }
-.state-dialog-body { display: grid; gap: var(--toro-space-3); }
-.state-dialog-body > p { margin: 0; line-height: 1.55; }
 @media (max-width: 720px) { .toro-dialog { width: calc(100vw - 16px); } .identity-form-grid { grid-template-columns: 1fr; } .identity-address-field { grid-column: auto; } .identity-password-section header { flex-direction: column; } }
 </style>
