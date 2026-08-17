@@ -451,7 +451,7 @@ function handleCellContextMenu(params) {
   border: 0;
 }
 
-/* TORO DATA GRID EMPHASIZED HEADER START */
+/* Bio Nexus DATA GRID EMPHASIZED HEADER START */
 .bio-nexus-data-grid :deep(.ag-header) {
   border-top: 1px solid #f9fdff;
   border-bottom: 1px solid #78abc5;
@@ -501,7 +501,7 @@ function handleCellContextMenu(params) {
     inset 0 2px 0 rgb(255 255 255 / 76%),
     inset 0 -2px 0 rgb(46 112 148 / 20%);
 }
-/* TORO DATA GRID EMPHASIZED HEADER END */
+/* Bio Nexus DATA GRID EMPHASIZED HEADER END */
 .bio-nexus-data-grid :deep(.ag-header-cell-label) {
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -550,7 +550,7 @@ function handleCellContextMenu(params) {
 </style>
 
 <style>
-/* TORO AG Grid popup theme */
+/* Bio Nexus AG Grid popup theme */
 
 .ag-popup,
 .ag-popup-child,
@@ -681,7 +681,7 @@ function handleCellContextMenu(params) {
   color: var(--bio-nexus-color-primary-strong);
 }
 
-/* TORO AG Grid filter icon spacing */
+/* Bio Nexus AG Grid filter icon spacing */
 
 .ag-filter-body-wrapper .ag-input-field,
 .ag-filter-wrapper .ag-input-field {
@@ -916,7 +916,7 @@ function handleCellContextMenu(params) {
   line-height: 1;
 }
 
-/* TORO AG Grid page number width */
+/* Bio Nexus AG Grid page number width */
 .ag-paging-page-summary-panel .ag-input-field-input,
 .ag-paging-page-summary-panel .ag-number-field-input,
 .ag-paging-page-summary-panel input {

@@ -1,6 +1,6 @@
 ﻿<template>
   <nav class="app-breadcrumb" aria-label="Ruta de navegacion">
-    <router-link :to="{ name: 'dashboard' }">TORO</router-link>
+    <router-link :to="{ name: 'dashboard' }">Bio Nexus</router-link>
     <span aria-hidden="true">/</span>
     <span aria-current="page">{{ currentTitle }}</span>
   </nav>

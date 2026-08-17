@@ -1,4 +1,4 @@
-/* TORO security management shared visual pattern */
+/* Bio Nexus security management shared visual pattern */
 
 .user-authorization-page .user-directory-actions {
   display: flex;
@@ -233,7 +233,7 @@ dialog.user-state-dialog .state-dialog-body > p {
   }
 }
 
-/* TORO GRID ICON ONLY OVERRIDES START */
+/* Bio Nexus GRID ICON ONLY OVERRIDES START */
 .user-authorization-page .users-grid button.bio-nexus-grid-icon-action,
 .user-authorization-page .users-grid button.bio-nexus-grid-icon-action:hover,
 .user-authorization-page .users-grid button.bio-nexus-grid-icon-action:focus,
@@ -276,9 +276,9 @@ dialog.user-state-dialog .state-dialog-body > p {
   background: transparent !important;
   opacity: 0.36 !important;
 }
-/* TORO GRID ICON ONLY OVERRIDES END */
+/* Bio Nexus GRID ICON ONLY OVERRIDES END */
 
-/* TORO GRID MOUSE FOCUS OVERRIDES START */
+/* Bio Nexus GRID MOUSE FOCUS OVERRIDES START */
 .user-authorization-page .users-grid .bio-nexus-grid-actions-cell.ag-cell-focus,
 .user-authorization-page .users-grid .bio-nexus-grid-actions-cell.ag-cell-range-selected,
 .user-authorization-page .users-grid .bio-nexus-grid-actions-cell:focus,
@@ -300,9 +300,9 @@ dialog.user-state-dialog .state-dialog-body > p {
   outline: 2px solid var(--bio-nexus-color-primary) !important;
   outline-offset: 2px !important;
 }
-/* TORO GRID MOUSE FOCUS OVERRIDES END */
+/* Bio Nexus GRID MOUSE FOCUS OVERRIDES END */
 
-/* TORO DIALOG INITIAL FOCUS OVERRIDES START */
+/* Bio Nexus DIALOG INITIAL FOCUS OVERRIDES START */
 dialog.bio-nexus-dialog:focus,
 dialog.bio-nexus-dialog:focus-visible {
   outline: 0 !important;
@@ -318,9 +318,9 @@ dialog.bio-nexus-dialog .dialog-close:focus-visible {
   outline: 2px solid var(--bio-nexus-color-primary) !important;
   outline-offset: 2px !important;
 }
-/* TORO DIALOG INITIAL FOCUS OVERRIDES END */
+/* Bio Nexus DIALOG INITIAL FOCUS OVERRIDES END */
 
-/* TORO UNIFORM SECURITY COMPONENTS START */
+/* Bio Nexus UNIFORM SECURITY COMPONENTS START */
 .bio-nexus-dialog-close-button.dialog-close {
   appearance: none !important;
   display: inline-grid !important;
@@ -355,9 +355,9 @@ dialog.bio-nexus-dialog .dialog-close:focus-visible {
   outline: 2px solid var(--bio-nexus-color-primary) !important;
   outline-offset: 2px !important;
 }
-/* TORO UNIFORM SECURITY COMPONENTS END */
+/* Bio Nexus UNIFORM SECURITY COMPONENTS END */
 
-/* TORO GLOBAL GRID ACTIONS UNIFORMITY START */
+/* Bio Nexus GLOBAL GRID ACTIONS UNIFORMITY START */
 .bio-nexus-grid-action-list {
   display: flex !important;
   width: 100% !important;
@@ -406,18 +406,18 @@ dialog.bio-nexus-dialog .dialog-close:focus-visible {
   outline: 2px solid var(--bio-nexus-color-primary) !important;
   outline-offset: 2px !important;
 }
-/* TORO GLOBAL GRID ACTIONS UNIFORMITY END */
+/* Bio Nexus GLOBAL GRID ACTIONS UNIFORMITY END */
 
-/* TORO ROLES DIALOG INITIAL FOCUS START */
+/* Bio Nexus ROLES DIALOG INITIAL FOCUS START */
 .roles-permissions-page dialog.bio-nexus-dialog:focus,
 .roles-permissions-page dialog.bio-nexus-dialog:focus-visible {
   outline: 0 !important;
   box-shadow: var(--bio-nexus-shadow-md) !important;
 }
-/* TORO ROLES DIALOG INITIAL FOCUS END */
+/* Bio Nexus ROLES DIALOG INITIAL FOCUS END */
 
 
-/* TORO GLOBAL DIALOG CONTRACT START */
+/* Bio Nexus GLOBAL DIALOG CONTRACT START */
 .bio-nexus-dialog {
   max-width: none;
   max-height: calc(100vh - 32px);
@@ -507,4 +507,4 @@ dialog.bio-nexus-dialog .dialog-close:focus-visible {
     flex-wrap: wrap;
   }
 }
-/* TORO GLOBAL DIALOG CONTRACT END */
+/* Bio Nexus GLOBAL DIALOG CONTRACT END */

@@ -1,4 +1,4 @@
-/* TORO document foundation
+/* Bio Nexus document foundation
  * Reset, document defaults, native elements and accessibility.
  */
 :root {
@@ -40,7 +40,7 @@ a {
   color: var(--bio-nexus-color-primary);
 }
 
-/* TORO_COMPACT_THEME_START
+/* BIO_NEXUS_COMPACT_THEME_START
    Structural theme foundation for dense authenticated work areas. */
 
 :root {
@@ -55,9 +55,9 @@ body {
   font-size: var(--bio-nexus-font-size-md);
 }
 
-/* TORO_COMPACT_THEME_END */
+/* BIO_NEXUS_COMPACT_THEME_END */
 
-/* TORO_LABORATORY_ACCENT_START
+/* BIO_NEXUS_LABORATORY_ACCENT_START
    Restrained orange accents from the laboratory identity. */
 
-/* TORO_LABORATORY_ACCENT_END */
+/* BIO_NEXUS_LABORATORY_ACCENT_END */

@@ -637,7 +637,7 @@ function toggleModule(slotValue) {
   font-size: var(--bio-nexus-font-size-sm);
 }
 
-/* TORO final direct aligned tree rows */
+/* Bio Nexus final direct aligned tree rows */
 
 .bio-nexus-permission-tree {
   width: 100%;
@@ -725,7 +725,7 @@ function toggleModule(slotValue) {
   }
 }
 
-/* TORO compact module heading */
+/* Bio Nexus compact module heading */
 
 .permission-tree-module-heading {
   display: inline-flex;

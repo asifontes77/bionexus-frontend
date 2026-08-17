@@ -334,7 +334,7 @@ const roleColumnDefs = computed(() => [
     valueGetter: ({ data }) => data?.isSystem ? "Sistema" : "Configurable",
     headerClass: "bio-nexus-grid-centered-header",
     cellClass: "bio-nexus-grid-centered-cell",
-    headerTooltip: "Sistema: administrado internamente por TORO. Configurable: creado y administrado desde esta pantalla.",
+    headerTooltip: "Sistema: administrado internamente por Bio Nexus. Configurable: creado y administrado desde esta pantalla.",
   },
   {
     headerName: "Estado",

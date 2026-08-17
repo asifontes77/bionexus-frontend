@@ -1,4 +1,4 @@
-/* TORO shared components
+/* Bio Nexus shared components
  * Reusable visual primitives shared by Vue 3 views.
  */
 
@@ -247,7 +247,7 @@
   box-shadow: inset 3px 0 0 var(--bio-nexus-color-accent);
 }
 
-/* TORO_ADMINISTRATIVE_COMPONENTS_START
+/* BIO_NEXUS_ADMINISTRATIVE_COMPONENTS_START
  * Shared messages, fields, forms, options, lists and internal sections.
  */
 
@@ -485,10 +485,10 @@
   color: var(--bio-nexus-color-text-muted);
 }
 
-/* TORO_ADMINISTRATIVE_COMPONENTS_END */
+/* BIO_NEXUS_ADMINISTRATIVE_COMPONENTS_END */
 
-/* TORO_SHARED_RESPONSIVE_START
- * Shared mobile behavior for reusable TORO visual primitives.
+/* BIO_NEXUS_SHARED_RESPONSIVE_START
+ * Shared mobile behavior for reusable Bio Nexus visual primitives.
  */
 
 @media (max-width: 620px) {
@@ -517,9 +517,9 @@
   }
 }
 
-/* TORO_SHARED_RESPONSIVE_END */
+/* BIO_NEXUS_SHARED_RESPONSIVE_END */
 
-/* TORO TOAST SYSTEM START */
+/* Bio Nexus TOAST SYSTEM START */
 .bio-nexus-toast-region {
   position: fixed;
   z-index: 5000;
@@ -566,11 +566,11 @@
 @media (max-width: 640px) {
   .bio-nexus-toast-region { inset-inline: 8px; width: auto; }
 }
-/* TORO TOAST SYSTEM END */
+/* Bio Nexus TOAST SYSTEM END */
 
 
 
-/* TORO TOAST SEMANTIC BACKGROUNDS START */
+/* Bio Nexus TOAST SEMANTIC BACKGROUNDS START */
 .bio-nexus-toast-success {
   background: color-mix(
     in srgb,
@@ -609,9 +609,9 @@
   .bio-nexus-toast-warning { background: var(--bio-nexus-color-warning-soft); }
   .bio-nexus-toast-error { background: var(--bio-nexus-color-danger-soft); }
 }
-/* TORO TOAST SEMANTIC BACKGROUNDS END */
+/* Bio Nexus TOAST SEMANTIC BACKGROUNDS END */
 
-/* TORO TOAST PROGRESS START */
+/* Bio Nexus TOAST PROGRESS START */
 .bio-nexus-toast {
   position: relative;
   overflow: hidden;
@@ -677,8 +677,8 @@
 }
 .bio-nexus-action > .bio-nexus-icon,
 .bio-nexus-action > .material-symbols-rounded { flex: 0 0 auto; }
-/* TORO TOAST PROGRESS END */
-/* TORO AUTHENTICATED PAGE DESCRIPTION START */
+/* Bio Nexus TOAST PROGRESS END */
+/* Bio Nexus AUTHENTICATED PAGE DESCRIPTION START */
 .authenticated-page-description {
   max-width: 760px;
   margin: 4px 0 0;
@@ -686,8 +686,8 @@
   font-size: var(--bio-nexus-font-size-sm);
   line-height: 1.35;
 }
-/* TORO AUTHENTICATED PAGE DESCRIPTION END */
-/* TORO ADMINISTRATIVE DIRECTORY TOOLBAR START */
+/* Bio Nexus AUTHENTICATED PAGE DESCRIPTION END */
+/* Bio Nexus ADMINISTRATIVE DIRECTORY TOOLBAR START */
 .bio-nexus-administrative-directory,
 .parasitic-directory {
   overflow: hidden;
@@ -780,9 +780,9 @@
     grid-template-columns: 1fr 1fr;
   }
 }
-/* TORO ADMINISTRATIVE DIRECTORY TOOLBAR END */
+/* Bio Nexus ADMINISTRATIVE DIRECTORY TOOLBAR END */
 
-/* TORO PARASITIC STATUS ACTION COLORS START */
+/* Bio Nexus PARASITIC STATUS ACTION COLORS START */
 .bio-nexus-grid-action-list button[title="Activar"],
 .bio-nexus-grid-action-list button[aria-label="Activar"] {
   color: var(--bio-nexus-color-success-strong);
@@ -794,4 +794,4 @@
   color: var(--bio-nexus-color-warning-strong);
   background: var(--bio-nexus-color-warning-soft);
 }
-/* TORO PARASITIC STATUS ACTION COLORS END */
+/* Bio Nexus PARASITIC STATUS ACTION COLORS END */
