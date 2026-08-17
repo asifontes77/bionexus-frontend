@@ -3,8 +3,8 @@
  */
 :root {
   font-family: Inter, Roboto, Arial, sans-serif;
-  color: var(--toro-color-text);
-  background: var(--toro-color-background);
+  color: var(--bio-nexus-color-text);
+  background: var(--bio-nexus-color-background);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
 }
@@ -37,22 +37,22 @@ button {
 }
 
 a {
-  color: var(--toro-color-primary);
+  color: var(--bio-nexus-color-primary);
 }
 
 /* TORO_COMPACT_THEME_START
    Structural theme foundation for dense authenticated work areas. */
 
 :root {
-  font-family: var(--toro-font-family);
-  color: var(--toro-color-text);
-  background: var(--toro-color-background);
+  font-family: var(--bio-nexus-font-family);
+  color: var(--bio-nexus-color-text);
+  background: var(--bio-nexus-color-background);
 }
 
 body {
-  color: var(--toro-color-text);
-  background: var(--toro-color-background);
-  font-size: var(--toro-font-size-md);
+  color: var(--bio-nexus-color-text);
+  background: var(--bio-nexus-color-background);
+  font-size: var(--bio-nexus-font-size-md);
 }
 
 /* TORO_COMPACT_THEME_END */

@@ -150,7 +150,7 @@ function confirmExport() {
   min-height: 34px;
   gap: 7px;
   padding: 6px 10px;
-  font-size: var(--toro-font-size-sm);
+  font-size: var(--bio-nexus-font-size-sm);
   font-weight: 600;
 }
 
@@ -163,11 +163,11 @@ function confirmExport() {
   width: min(620px, calc(100vw - 32px));
   max-width: 620px;
   padding: 0;
-  border: 1px solid var(--toro-color-border-strong);
-  border-radius: var(--toro-radius-md);
-  background: var(--toro-color-surface);
-  color: var(--toro-color-text);
-  box-shadow: var(--toro-shadow-md);
+  border: 1px solid var(--bio-nexus-color-border-strong);
+  border-radius: var(--bio-nexus-radius-md);
+  background: var(--bio-nexus-color-surface);
+  color: var(--bio-nexus-color-text);
+  box-shadow: var(--bio-nexus-shadow-md);
 }
 
 .bio-nexus-grid-export-dialog::backdrop {
@@ -180,37 +180,37 @@ function confirmExport() {
 
 .bio-nexus-grid-export-dialog-body {
   display: grid;
-  gap: var(--toro-space-3);
+  gap: var(--bio-nexus-space-3);
   overflow: visible;
 }
 
 .bio-nexus-grid-export-section {
   display: grid;
-  gap: var(--toro-space-2);
-  padding: var(--toro-space-3);
-  border: 1px solid var(--toro-color-border);
-  border-radius: var(--toro-radius-md);
-  background: var(--toro-color-surface-soft);
+  gap: var(--bio-nexus-space-2);
+  padding: var(--bio-nexus-space-3);
+  border: 1px solid var(--bio-nexus-color-border);
+  border-radius: var(--bio-nexus-radius-md);
+  background: var(--bio-nexus-color-surface-soft);
 }
 
 .bio-nexus-grid-export-section h4 {
   margin: 0;
-  color: var(--toro-color-text);
-  font-size: var(--toro-font-size-sm);
+  color: var(--bio-nexus-color-text);
+  font-size: var(--bio-nexus-font-size-sm);
   font-weight: 700;
 }
 
 .bio-nexus-grid-export-choice-row {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--toro-space-2);
+  gap: var(--bio-nexus-space-2);
 }
 
 .bio-nexus-grid-export-choice,
 .bio-nexus-grid-export-column {
   display: flex;
   align-items: center;
-  gap: var(--toro-space-2);
+  gap: var(--bio-nexus-space-2);
   min-width: 0;
   cursor: pointer;
 }
@@ -218,38 +218,38 @@ function confirmExport() {
 .bio-nexus-grid-export-choice {
   min-height: 38px;
   padding: 7px 10px;
-  border: 1px solid var(--toro-color-border);
-  border-radius: var(--toro-radius-sm);
-  background: var(--toro-color-surface);
+  border: 1px solid var(--bio-nexus-color-border);
+  border-radius: var(--bio-nexus-radius-sm);
+  background: var(--bio-nexus-color-surface);
 }
 
 .bio-nexus-grid-export-choice:has(input:checked) {
-  border-color: var(--toro-color-primary);
-  background: var(--toro-color-info-soft);
+  border-color: var(--bio-nexus-color-primary);
+  background: var(--bio-nexus-color-info-soft);
 }
 
 .bio-nexus-grid-export-choice input,
 .bio-nexus-grid-export-column input {
-  accent-color: var(--toro-color-primary);
+  accent-color: var(--bio-nexus-color-primary);
 }
 
 .bio-nexus-grid-export-columns-heading {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--toro-space-3);
+  gap: var(--bio-nexus-space-3);
 }
 
 .bio-nexus-grid-export-column-actions {
   display: flex;
   align-items: center;
-  gap: var(--toro-space-2);
+  gap: var(--bio-nexus-space-2);
 }
 
 .bio-nexus-grid-export-column-actions button {
   padding: 2px 4px;
   border: 0;
-  color: var(--toro-color-primary-strong);
+  color: var(--bio-nexus-color-primary-strong);
   background: transparent;
   font: inherit;
   font-size: .76rem;
@@ -265,14 +265,14 @@ function confirmExport() {
 
 .bio-nexus-grid-export-help {
   margin: 0;
-  color: var(--toro-color-text-muted);
+  color: var(--bio-nexus-color-text-muted);
   font-size: .78rem;
 }
 
 .bio-nexus-grid-export-columns {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--toro-space-2);
+  gap: var(--bio-nexus-space-2);
   max-height: min(30vh, 280px);
   padding-right: 4px;
   overflow-x: hidden;
@@ -283,12 +283,12 @@ function confirmExport() {
 .bio-nexus-grid-export-column {
   min-height: 34px;
   padding: 6px 8px;
-  border-radius: var(--toro-radius-sm);
-  background: var(--toro-color-surface);
+  border-radius: var(--bio-nexus-radius-sm);
+  background: var(--bio-nexus-color-surface);
 }
 
 .bio-nexus-grid-export-column:hover {
-  background: var(--toro-color-info-soft);
+  background: var(--bio-nexus-color-info-soft);
 }
 
 .bio-nexus-grid-export-column span {

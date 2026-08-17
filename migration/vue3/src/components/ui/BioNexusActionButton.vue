@@ -90,12 +90,12 @@ defineProps({
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: var(--toro-space-2);
+  gap: var(--bio-nexus-space-2);
   min-width: 0;
   border: 1px solid transparent;
-  border-radius: var(--toro-radius-md);
+  border-radius: var(--bio-nexus-radius-md);
   font: inherit;
-  font-weight: var(--toro-font-weight-bold);
+  font-weight: var(--bio-nexus-font-weight-bold);
   line-height: 1;
   white-space: nowrap;
   cursor: pointer;
@@ -107,7 +107,7 @@ defineProps({
 }
 
 .bio-nexus-action-button:focus-visible {
-  outline: 3px solid var(--toro-color-accent-soft);
+  outline: 3px solid var(--bio-nexus-color-accent-soft);
   outline-offset: 2px;
 }
 
@@ -118,14 +118,14 @@ defineProps({
 
 .bio-nexus-action-button-sm {
   min-height: 32px;
-  padding: 0 var(--toro-space-2);
-  font-size: var(--toro-font-size-sm);
+  padding: 0 var(--bio-nexus-space-2);
+  font-size: var(--bio-nexus-font-size-sm);
 }
 
 .bio-nexus-action-button-md {
-  min-height: var(--toro-control-height);
-  padding: 0 var(--toro-space-3);
-  font-size: var(--toro-font-size-sm);
+  min-height: var(--bio-nexus-control-height);
+  padding: 0 var(--bio-nexus-space-3);
+  font-size: var(--bio-nexus-font-size-sm);
 }
 
 .bio-nexus-action-button-block {
@@ -133,59 +133,59 @@ defineProps({
 }
 
 .bio-nexus-action-button-primary {
-  border-color: var(--toro-color-primary);
-  background: var(--toro-color-primary);
-  color: var(--toro-color-text-inverse);
+  border-color: var(--bio-nexus-color-primary);
+  background: var(--bio-nexus-color-primary);
+  color: var(--bio-nexus-color-text-inverse);
 }
 
 .bio-nexus-action-button-primary:not(:disabled):hover {
-  border-color: var(--toro-color-primary-strong);
-  background: var(--toro-color-primary-strong);
+  border-color: var(--bio-nexus-color-primary-strong);
+  background: var(--bio-nexus-color-primary-strong);
 }
 
 .bio-nexus-action-button-secondary {
-  border-color: var(--toro-color-border-strong);
-  background: var(--toro-color-surface);
-  color: var(--toro-color-primary-strong);
+  border-color: var(--bio-nexus-color-border-strong);
+  background: var(--bio-nexus-color-surface);
+  color: var(--bio-nexus-color-primary-strong);
 }
 
 .bio-nexus-action-button-secondary:not(:disabled):hover {
-  border-color: var(--toro-color-primary);
-  background: var(--toro-color-info-soft);
+  border-color: var(--bio-nexus-color-primary);
+  background: var(--bio-nexus-color-info-soft);
 }
 
 .bio-nexus-action-button-subtle {
-  border-color: var(--toro-color-border);
-  background: var(--toro-color-surface-soft);
-  color: var(--toro-color-primary-strong);
+  border-color: var(--bio-nexus-color-border);
+  background: var(--bio-nexus-color-surface-soft);
+  color: var(--bio-nexus-color-primary-strong);
 }
 
 .bio-nexus-action-button-subtle:not(:disabled):hover {
-  border-color: var(--toro-color-primary);
-  background: var(--toro-color-info-soft);
+  border-color: var(--bio-nexus-color-primary);
+  background: var(--bio-nexus-color-info-soft);
 }
 
 .bio-nexus-action-button-accent {
-  border-color: var(--toro-color-accent-border);
-  background: var(--toro-color-accent-soft);
-  color: var(--toro-color-accent-strong);
+  border-color: var(--bio-nexus-color-accent-border);
+  background: var(--bio-nexus-color-accent-soft);
+  color: var(--bio-nexus-color-accent-strong);
 }
 
 .bio-nexus-action-button-accent:not(:disabled):hover {
-  border-color: var(--toro-color-accent);
-  background: var(--toro-color-accent);
-  color: var(--toro-color-text-inverse);
+  border-color: var(--bio-nexus-color-accent);
+  background: var(--bio-nexus-color-accent);
+  color: var(--bio-nexus-color-text-inverse);
 }
 
 .bio-nexus-action-button-danger {
-  border-color: var(--toro-color-border);
-  background: var(--toro-color-surface);
-  color: var(--toro-color-accent-strong);
+  border-color: var(--bio-nexus-color-border);
+  background: var(--bio-nexus-color-surface);
+  color: var(--bio-nexus-color-accent-strong);
 }
 
 .bio-nexus-action-button-danger:not(:disabled):hover {
-  border-color: var(--toro-color-accent);
-  background: var(--toro-color-accent-soft);
+  border-color: var(--bio-nexus-color-accent);
+  background: var(--bio-nexus-color-accent-soft);
 }
 
 .bio-nexus-action-button-icon {

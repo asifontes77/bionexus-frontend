@@ -260,9 +260,9 @@ defineExpose({
   display: grid;
   min-width: 195px;
   padding: 6px;
-  border: 1px solid var(--toro-color-border);
-  border-radius: var(--toro-radius-md);
-  background: var(--toro-color-surface);
+  border: 1px solid var(--bio-nexus-color-border);
+  border-radius: var(--bio-nexus-radius-md);
+  background: var(--bio-nexus-color-surface);
   box-shadow: 0 14px 36px rgb(15 23 42 / 20%);
 }
 
@@ -274,11 +274,11 @@ defineExpose({
   min-height: 36px;
   padding: 7px 10px;
   border: 0;
-  border-radius: var(--toro-radius-sm);
-  color: var(--toro-color-text);
+  border-radius: var(--bio-nexus-radius-sm);
+  color: var(--bio-nexus-color-text);
   background: transparent;
   font: inherit;
-  font-size: var(--toro-font-size-sm);
+  font-size: var(--bio-nexus-font-size-sm);
   font-weight: 500;
   letter-spacing: 0;
   text-align: start;
@@ -299,8 +299,8 @@ defineExpose({
 
 .bio-nexus-context-menu-item:not(:disabled):hover,
 .bio-nexus-context-menu-item:not(:disabled):focus-visible {
-  color: var(--toro-color-primary-strong);
-  background: var(--toro-color-info-soft);
+  color: var(--bio-nexus-color-primary-strong);
+  background: var(--bio-nexus-color-info-soft);
   outline: none;
 }
 
@@ -310,6 +310,6 @@ defineExpose({
 }
 
 .bio-nexus-context-menu-danger {
-  color: var(--toro-color-danger, #b42318);
+  color: var(--bio-nexus-color-danger, #b42318);
 }
 </style>

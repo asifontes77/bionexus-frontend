@@ -73,9 +73,9 @@ function submit() {
 defineExpose({ openCreate, openEdit, close, clearError, setError });
 </script>
 <style scoped>
-.type-payment-dialog { width: min(680px, calc(100vw - 32px)); padding: 0; border: 1px solid var(--toro-color-border-strong); border-radius: var(--toro-radius-md); background: var(--toro-color-surface); color: var(--toro-color-text); box-shadow: var(--toro-shadow-md); }
+.type-payment-dialog { width: min(680px, calc(100vw - 32px)); padding: 0; border: 1px solid var(--bio-nexus-color-border-strong); border-radius: var(--bio-nexus-radius-md); background: var(--bio-nexus-color-surface); color: var(--bio-nexus-color-text); box-shadow: var(--bio-nexus-shadow-md); }
 .type-payment-dialog::backdrop { background: rgb(13 36 58 / 48%); backdrop-filter: blur(2px); }
-.type-payment-dialog-body { display: grid; gap: var(--toro-space-3); }
-.type-payment-check { display: flex; align-items: center; gap: var(--toro-space-2); color: var(--toro-color-text-secondary); font-family: var(--toro-font-family); font-size: var(--toro-font-size-md); font-weight: var(--toro-font-weight-regular); }
-.type-payment-check input { width: 16px; height: 16px; margin: 0; accent-color: var(--toro-color-primary); }
+.type-payment-dialog-body { display: grid; gap: var(--bio-nexus-space-3); }
+.type-payment-check { display: flex; align-items: center; gap: var(--bio-nexus-space-2); color: var(--bio-nexus-color-text-secondary); font-family: var(--bio-nexus-font-family); font-size: var(--bio-nexus-font-size-md); font-weight: var(--bio-nexus-font-weight-regular); }
+.type-payment-check input { width: 16px; height: 16px; margin: 0; accent-color: var(--bio-nexus-color-primary); }
 </style>

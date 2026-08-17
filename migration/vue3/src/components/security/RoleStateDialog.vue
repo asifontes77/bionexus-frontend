@@ -54,14 +54,14 @@ defineExpose({ open, close, setError, clearError });
 .role-state-dialog {
   width: min(520px, calc(100vw - 32px));
   padding: 0;
-  border: 1px solid var(--toro-color-border-strong);
-  border-radius: var(--toro-radius-md);
-  background: var(--toro-color-surface);
-  color: var(--toro-color-text);
-  font-family: var(--toro-font-family);
-  font-size: var(--toro-font-size-md);
-  font-weight: var(--toro-font-weight-regular);
-  box-shadow: var(--toro-shadow-md);
+  border: 1px solid var(--bio-nexus-color-border-strong);
+  border-radius: var(--bio-nexus-radius-md);
+  background: var(--bio-nexus-color-surface);
+  color: var(--bio-nexus-color-text);
+  font-family: var(--bio-nexus-font-family);
+  font-size: var(--bio-nexus-font-size-md);
+  font-weight: var(--bio-nexus-font-weight-regular);
+  box-shadow: var(--bio-nexus-shadow-md);
 }
 
 .role-state-dialog::backdrop {
@@ -70,9 +70,9 @@ defineExpose({ open, close, setError, clearError });
 }
 
 .role-state-dialog .dialog-body {
-  color: var(--toro-color-text-secondary);
-  font-family: var(--toro-font-family);
-  font-size: var(--toro-font-size-md);
-  font-weight: var(--toro-font-weight-regular);
+  color: var(--bio-nexus-color-text-secondary);
+  font-family: var(--bio-nexus-font-family);
+  font-size: var(--bio-nexus-font-size-md);
+  font-weight: var(--bio-nexus-font-weight-regular);
 }
 </style>

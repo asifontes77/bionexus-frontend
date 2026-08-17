@@ -529,9 +529,9 @@ function toggleModule(slotValue) {
 .bio-nexus-permission-tree {
   width: 100%;
   min-width: 0;
-  color: var(--toro-color-text);
+  color: var(--bio-nexus-color-text);
   font-family: inherit;
-  font-size: var(--toro-font-size-sm);
+  font-size: var(--bio-nexus-font-size-sm);
 }
 
 .bio-nexus-permission-tree :deep(.tree-item),
@@ -552,7 +552,7 @@ function toggleModule(slotValue) {
 
 .permission-tree-copy strong {
   overflow: hidden;
-  font-size: var(--toro-font-size-sm);
+  font-size: var(--bio-nexus-font-size-sm);
   line-height: 1.2;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -560,23 +560,23 @@ function toggleModule(slotValue) {
 
 .permission-tree-copy small {
   overflow: hidden;
-  color: var(--toro-color-text-muted);
-  font-size: var(--toro-font-size-xs);
+  color: var(--bio-nexus-color-text-muted);
+  font-size: var(--bio-nexus-font-size-xs);
   line-height: 1.2;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .permission-tree-copy-module strong {
-  color: var(--toro-color-primary-strong);
-  font-weight: var(--toro-font-weight-bold);
+  color: var(--bio-nexus-color-primary-strong);
+  font-weight: var(--bio-nexus-font-weight-bold);
 }
 
 .permission-tree-module-actions {
   display: inline-flex;
   align-items: center;
-  gap: var(--toro-space-2);
-  padding-inline-end: var(--toro-space-2);
+  gap: var(--bio-nexus-space-2);
+  padding-inline-end: var(--bio-nexus-space-2);
 }
 
 .permission-tree-count {
@@ -585,10 +585,10 @@ function toggleModule(slotValue) {
   min-height: 20px;
   padding-inline: 8px;
   border-radius: 999px;
-  color: var(--toro-color-primary-strong);
-  background: var(--toro-color-info-soft);
-  font-size: var(--toro-font-size-xs);
-  font-weight: var(--toro-font-weight-bold);
+  color: var(--bio-nexus-color-primary-strong);
+  background: var(--bio-nexus-color-info-soft);
+  font-size: var(--bio-nexus-font-size-xs);
+  font-weight: var(--bio-nexus-font-weight-bold);
   white-space: nowrap;
 }
 
@@ -596,16 +596,16 @@ function toggleModule(slotValue) {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: var(--toro-color-text-muted);
-  font-size: var(--toro-font-size-xs);
-  font-weight: var(--toro-font-weight-bold);
+  color: var(--bio-nexus-color-text-muted);
+  font-size: var(--bio-nexus-font-size-xs);
+  font-weight: var(--bio-nexus-font-weight-bold);
   white-space: nowrap;
 }
 
 .permission-tree-checkbox {
   width: 16px;
   height: 16px;
-  accent-color: var(--toro-color-primary);
+  accent-color: var(--bio-nexus-color-primary);
 }
 
 .permission-tree-badge {
@@ -617,24 +617,24 @@ function toggleModule(slotValue) {
   margin-inline: 8px;
   padding-inline: 9px;
   border-radius: 999px;
-  color: var(--toro-color-success-strong);
-  background: var(--toro-color-success-soft);
-  font-size: var(--toro-font-size-xs);
-  font-weight: var(--toro-font-weight-bold);
+  color: var(--bio-nexus-color-success-strong);
+  background: var(--bio-nexus-color-success-soft);
+  font-size: var(--bio-nexus-font-size-xs);
+  font-weight: var(--bio-nexus-font-weight-bold);
   white-space: nowrap;
 }
 
 .permission-tree-badge-inactive {
-  color: var(--toro-color-warning-strong);
-  background: var(--toro-color-warning-soft);
+  color: var(--bio-nexus-color-warning-strong);
+  background: var(--bio-nexus-color-warning-soft);
 }
 
 .permission-tree-empty {
   display: grid;
   place-items: center;
   min-height: 180px;
-  color: var(--toro-color-text-muted);
-  font-size: var(--toro-font-size-sm);
+  color: var(--bio-nexus-color-text-muted);
+  font-size: var(--bio-nexus-font-size-sm);
 }
 
 /* TORO final direct aligned tree rows */
@@ -730,7 +730,7 @@ function toggleModule(slotValue) {
 .permission-tree-module-heading {
   display: inline-flex;
   align-items: center;
-  gap: var(--toro-space-2);
+  gap: var(--bio-nexus-space-2);
   width: fit-content;
   max-width: 100%;
   min-height: 28px;
@@ -743,7 +743,7 @@ function toggleModule(slotValue) {
 
 .permission-tree-module-heading .permission-tree-count {
   flex: 0 0 auto;
-  margin-inline-start: var(--toro-space-1);
+  margin-inline-start: var(--bio-nexus-space-1);
 }
 
 .permission-tree-module-checkbox {
@@ -751,7 +751,7 @@ function toggleModule(slotValue) {
   width: 16px;
   height: 16px;
   margin: 0;
-  accent-color: var(--toro-color-primary);
+  accent-color: var(--bio-nexus-color-primary);
   cursor: pointer;
 }
 
@@ -768,7 +768,7 @@ function toggleModule(slotValue) {
 .permission-tree-permission-heading-action {
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  gap: var(--toro-space-3);
+  gap: var(--bio-nexus-space-3);
 }
 .permission-tree-permission-copy {
   display: grid;

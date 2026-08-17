@@ -122,24 +122,24 @@ defineExpose({ open, close });
 </script>
 
 <style scoped>
-.bio-nexus-dialog { width: min(700px, calc(100vw - 32px)); max-width: none; max-height: calc(100vh - 32px); padding: 0; border: 1px solid var(--toro-color-border-strong); border-radius: var(--toro-radius-md); background: var(--toro-color-surface); color: var(--toro-color-text); box-shadow: var(--toro-shadow-md); overflow: hidden; }
-.bio-nexus-dialog::backdrop { background: color-mix(in srgb, var(--toro-color-sidebar-strong) 48%, transparent); backdrop-filter: blur(2px); }
+.bio-nexus-dialog { width: min(700px, calc(100vw - 32px)); max-width: none; max-height: calc(100vh - 32px); padding: 0; border: 1px solid var(--bio-nexus-color-border-strong); border-radius: var(--bio-nexus-radius-md); background: var(--bio-nexus-color-surface); color: var(--bio-nexus-color-text); box-shadow: var(--bio-nexus-shadow-md); overflow: hidden; }
+.bio-nexus-dialog::backdrop { background: color-mix(in srgb, var(--bio-nexus-color-sidebar-strong) 48%, transparent); backdrop-filter: blur(2px); }
 .dialog-shell { display: flex; flex-direction: column; width: 100%; height: min(760px, calc(100vh - 32px)); max-height: calc(100vh - 32px); overflow: hidden; }
-.dialog-header { display: flex; flex: 0 0 auto; align-items: center; justify-content: space-between; gap: var(--toro-space-3); padding: var(--toro-space-3) var(--toro-space-4); border-bottom: 1px solid var(--toro-color-border); background: var(--toro-color-surface); }
+.dialog-header { display: flex; flex: 0 0 auto; align-items: center; justify-content: space-between; gap: var(--bio-nexus-space-3); padding: var(--bio-nexus-space-3) var(--bio-nexus-space-4); border-bottom: 1px solid var(--bio-nexus-color-border); background: var(--bio-nexus-color-surface); }
 .dialog-header p, .dialog-header h3 { margin: 0; }
-.dialog-header p { margin-bottom: var(--toro-space-1); color: var(--toro-color-accent-strong); font-size: var(--toro-font-size-xs); font-weight: var(--toro-font-weight-bold); text-transform: uppercase; letter-spacing: 0.06em; }
-.dialog-toolbar { display: grid; grid-template-columns: minmax(280px, 1fr) auto; flex: 0 0 auto; align-items: end; gap: var(--toro-space-3); padding: var(--toro-space-3) var(--toro-space-4); border-bottom: 1px solid var(--toro-color-border); background: var(--toro-color-surface-soft); }
-.dialog-toolbar > span { display: inline-flex; align-items: center; align-self: end; gap: var(--toro-space-1); min-height: var(--toro-control-height); color: var(--toro-color-text-muted); white-space: nowrap; }
-.dialog-body { flex: 1 1 auto; min-height: 0; padding: var(--toro-space-4); overflow: auto; scrollbar-gutter: stable; }
-.assignment-dialog-body { display: grid; align-content: start; gap: var(--toro-space-3); }
-.dialog-footer { display: flex; flex: 0 0 auto; align-items: center; justify-content: flex-end; gap: var(--toro-space-2); padding: var(--toro-space-3) var(--toro-space-4); border-top: 1px solid var(--toro-color-border); background: var(--toro-color-surface-soft); }
-.dialog-pending-status { margin-right: auto; color: var(--toro-color-text-muted); font-size: var(--toro-font-size-sm); }
-.role-assignment-list { display: grid; gap: var(--toro-space-2); }
-.role-assignment-option { display: grid; grid-template-columns: 24px minmax(0, 1fr) auto; align-items: center; gap: var(--toro-space-3); min-height: var(--toro-table-row-height); padding: var(--toro-space-3); border: 1px solid var(--toro-color-border); border-radius: var(--toro-radius-md); background: var(--toro-color-surface); cursor: pointer; }
-.role-assignment-option-selected { border-color: var(--toro-color-primary); background: var(--toro-color-selection-soft); }
+.dialog-header p { margin-bottom: var(--bio-nexus-space-1); color: var(--bio-nexus-color-accent-strong); font-size: var(--bio-nexus-font-size-xs); font-weight: var(--bio-nexus-font-weight-bold); text-transform: uppercase; letter-spacing: 0.06em; }
+.dialog-toolbar { display: grid; grid-template-columns: minmax(280px, 1fr) auto; flex: 0 0 auto; align-items: end; gap: var(--bio-nexus-space-3); padding: var(--bio-nexus-space-3) var(--bio-nexus-space-4); border-bottom: 1px solid var(--bio-nexus-color-border); background: var(--bio-nexus-color-surface-soft); }
+.dialog-toolbar > span { display: inline-flex; align-items: center; align-self: end; gap: var(--bio-nexus-space-1); min-height: var(--bio-nexus-control-height); color: var(--bio-nexus-color-text-muted); white-space: nowrap; }
+.dialog-body { flex: 1 1 auto; min-height: 0; padding: var(--bio-nexus-space-4); overflow: auto; scrollbar-gutter: stable; }
+.assignment-dialog-body { display: grid; align-content: start; gap: var(--bio-nexus-space-3); }
+.dialog-footer { display: flex; flex: 0 0 auto; align-items: center; justify-content: flex-end; gap: var(--bio-nexus-space-2); padding: var(--bio-nexus-space-3) var(--bio-nexus-space-4); border-top: 1px solid var(--bio-nexus-color-border); background: var(--bio-nexus-color-surface-soft); }
+.dialog-pending-status { margin-right: auto; color: var(--bio-nexus-color-text-muted); font-size: var(--bio-nexus-font-size-sm); }
+.role-assignment-list { display: grid; gap: var(--bio-nexus-space-2); }
+.role-assignment-option { display: grid; grid-template-columns: 24px minmax(0, 1fr) auto; align-items: center; gap: var(--bio-nexus-space-3); min-height: var(--bio-nexus-table-row-height); padding: var(--bio-nexus-space-3); border: 1px solid var(--bio-nexus-color-border); border-radius: var(--bio-nexus-radius-md); background: var(--bio-nexus-color-surface); cursor: pointer; }
+.role-assignment-option-selected { border-color: var(--bio-nexus-color-primary); background: var(--bio-nexus-color-selection-soft); }
 .role-assignment-option-disabled { cursor: default; opacity: 0.68; }
-.role-assignment-option input { width: 18px; height: 18px; margin: 0; accent-color: var(--toro-color-primary); }
+.role-assignment-option input { width: 18px; height: 18px; margin: 0; accent-color: var(--bio-nexus-color-primary); }
 .role-assignment-copy { display: grid; gap: 2px; min-width: 0; }
-.role-assignment-copy small { color: var(--toro-color-text-muted); font-size: var(--toro-font-size-sm); }
+.role-assignment-copy small { color: var(--bio-nexus-color-text-muted); font-size: var(--bio-nexus-font-size-sm); }
 @media (max-width: 720px) { .bio-nexus-dialog { width: calc(100vw - 16px); } .dialog-shell { height: calc(100vh - 16px); max-height: calc(100vh - 16px); } .dialog-toolbar { grid-template-columns: 1fr; } .role-assignment-option { grid-template-columns: 24px minmax(0, 1fr); } .role-assignment-option > .bio-nexus-badge { grid-column: 2; justify-self: start; } .dialog-footer { flex-wrap: wrap; } .dialog-pending-status { flex-basis: 100%; } }
 </style>

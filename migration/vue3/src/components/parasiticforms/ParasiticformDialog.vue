@@ -81,7 +81,7 @@ function submit() {
 defineExpose({ openCreate, openEdit, close, clearError, setError });
 </script>
 <style scoped>
-.parasiticform-dialog { width: min(620px, calc(100vw - 32px)); padding: 0; border: 1px solid var(--toro-color-border-strong); border-radius: var(--toro-radius-md); background: var(--toro-color-surface); color: var(--toro-color-text); box-shadow: var(--toro-shadow-md); }
-.parasiticform-dialog::backdrop { background: color-mix(in srgb, var(--toro-color-sidebar-strong) 48%, transparent); backdrop-filter: blur(2px); }
-.parasiticform-dialog-body { display: grid; gap: var(--toro-space-3); }
+.parasiticform-dialog { width: min(620px, calc(100vw - 32px)); padding: 0; border: 1px solid var(--bio-nexus-color-border-strong); border-radius: var(--bio-nexus-radius-md); background: var(--bio-nexus-color-surface); color: var(--bio-nexus-color-text); box-shadow: var(--bio-nexus-shadow-md); }
+.parasiticform-dialog::backdrop { background: color-mix(in srgb, var(--bio-nexus-color-sidebar-strong) 48%, transparent); backdrop-filter: blur(2px); }
+.parasiticform-dialog-body { display: grid; gap: var(--bio-nexus-space-3); }
 </style>

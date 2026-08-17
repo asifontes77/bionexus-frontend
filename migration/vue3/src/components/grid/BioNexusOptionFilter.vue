@@ -62,9 +62,9 @@ defineExpose({ isFilterActive, doesFilterPass, getModel, setModel, afterGuiAttac
   width: 176px;
   min-width: 176px;
   padding: 6px;
-  background: var(--toro-color-surface);
-  color: var(--toro-color-text-secondary);
-  font-family: var(--toro-font-family);
+  background: var(--bio-nexus-color-surface);
+  color: var(--bio-nexus-color-text-secondary);
+  font-family: var(--bio-nexus-font-family);
 }
 
 .bio-nexus-option-filter-control {
@@ -79,7 +79,7 @@ defineExpose({ isFilterActive, doesFilterPass, getModel, setModel, afterGuiAttac
   width: 0;
   height: 0;
   border-inline: 5px solid transparent;
-  border-top: 6px solid var(--toro-color-primary-strong);
+  border-top: 6px solid var(--bio-nexus-color-primary-strong);
   content: "";
   pointer-events: none;
   transform: translateY(-20%);
@@ -93,35 +93,35 @@ defineExpose({ isFilterActive, doesFilterPass, getModel, setModel, afterGuiAttac
   margin: 0;
   padding: 6px 52px 6px 10px;
   appearance: none;
-  border: 1px solid var(--toro-color-border-strong);
-  border-radius: var(--toro-radius-md);
-  background: var(--toro-color-surface);
-  color: var(--toro-color-text-secondary);
-  font-family: var(--toro-font-family);
-  font-size: var(--toro-font-size-md);
+  border: 1px solid var(--bio-nexus-color-border-strong);
+  border-radius: var(--bio-nexus-radius-md);
+  background: var(--bio-nexus-color-surface);
+  color: var(--bio-nexus-color-text-secondary);
+  font-family: var(--bio-nexus-font-family);
+  font-size: var(--bio-nexus-font-size-md);
   font-style: normal;
-  font-weight: var(--toro-font-weight-regular);
+  font-weight: var(--bio-nexus-font-weight-regular);
   line-height: 1.2;
   cursor: pointer;
 }
 
 .bio-nexus-option-filter-select:hover {
-  border-color: var(--toro-color-primary);
-  background: var(--toro-color-surface-soft);
+  border-color: var(--bio-nexus-color-primary);
+  background: var(--bio-nexus-color-surface-soft);
 }
 
 .bio-nexus-option-filter-select:focus {
-  border-color: var(--toro-color-primary);
-  box-shadow: 0 0 0 3px var(--toro-color-info-soft);
+  border-color: var(--bio-nexus-color-primary);
+  box-shadow: 0 0 0 3px var(--bio-nexus-color-info-soft);
   outline: 0;
 }
 
 .bio-nexus-option-filter-select option {
-  color: var(--toro-color-text-secondary);
-  background: var(--toro-color-surface);
-  font-family: var(--toro-font-family);
-  font-size: var(--toro-font-size-md);
-  font-weight: var(--toro-font-weight-regular);
+  color: var(--bio-nexus-color-text-secondary);
+  background: var(--bio-nexus-color-surface);
+  font-family: var(--bio-nexus-font-family);
+  font-size: var(--bio-nexus-font-size-md);
+  font-weight: var(--bio-nexus-font-weight-regular);
 }
 
 .bio-nexus-option-filter-clear {
@@ -138,10 +138,10 @@ defineExpose({ isFilterActive, doesFilterPass, getModel, setModel, afterGuiAttac
   border: 0;
   border-radius: 50%;
   background: transparent;
-  color: var(--toro-color-text-muted);
-  font-family: var(--toro-font-family);
+  color: var(--bio-nexus-color-text-muted);
+  font-family: var(--bio-nexus-font-family);
   font-size: 0;
-  font-weight: var(--toro-font-weight-medium);
+  font-weight: var(--bio-nexus-font-weight-medium);
   line-height: 1;
   cursor: pointer;
   transform: translateY(-50%);
@@ -154,8 +154,8 @@ defineExpose({ isFilterActive, doesFilterPass, getModel, setModel, afterGuiAttac
 
 .bio-nexus-option-filter-clear:hover,
 .bio-nexus-option-filter-clear:focus-visible {
-  background: var(--toro-color-info-soft);
-  color: var(--toro-color-primary-strong);
+  background: var(--bio-nexus-color-info-soft);
+  color: var(--bio-nexus-color-primary-strong);
   outline: 0;
 }
 

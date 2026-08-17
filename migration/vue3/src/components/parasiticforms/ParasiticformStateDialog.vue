@@ -34,9 +34,9 @@ function confirm() { if (target.value) emit("confirm", target.value); }
 defineExpose({ open, close, clearError, setError });
 </script>
 <style scoped>
-.parasiticform-state-dialog { width: min(520px, calc(100vw - 32px)); padding: 0; border: 1px solid var(--toro-color-border-strong); border-radius: var(--toro-radius-md); background: var(--toro-color-surface); color: var(--toro-color-text); font-family: var(--toro-font-family); font-size: var(--toro-font-size-md); font-weight: var(--toro-font-weight-regular); box-shadow: var(--toro-shadow-md); }
-.parasiticform-state-dialog::backdrop { background: color-mix(in srgb, var(--toro-color-sidebar-strong) 48%, transparent); backdrop-filter: blur(2px); }
-.parasiticform-state-body { display: grid; gap: var(--toro-space-3); color: var(--toro-color-text-secondary); font-family: var(--toro-font-family); font-size: var(--toro-font-size-md); font-weight: var(--toro-font-weight-regular); }
+.parasiticform-state-dialog { width: min(520px, calc(100vw - 32px)); padding: 0; border: 1px solid var(--bio-nexus-color-border-strong); border-radius: var(--bio-nexus-radius-md); background: var(--bio-nexus-color-surface); color: var(--bio-nexus-color-text); font-family: var(--bio-nexus-font-family); font-size: var(--bio-nexus-font-size-md); font-weight: var(--bio-nexus-font-weight-regular); box-shadow: var(--bio-nexus-shadow-md); }
+.parasiticform-state-dialog::backdrop { background: color-mix(in srgb, var(--bio-nexus-color-sidebar-strong) 48%, transparent); backdrop-filter: blur(2px); }
+.parasiticform-state-body { display: grid; gap: var(--bio-nexus-space-3); color: var(--bio-nexus-color-text-secondary); font-family: var(--bio-nexus-font-family); font-size: var(--bio-nexus-font-size-md); font-weight: var(--bio-nexus-font-weight-regular); }
 .parasiticform-state-body p { margin: 0; line-height: 1.55; }
-.parasiticform-state-body strong { color: var(--toro-color-text); font-weight: var(--toro-font-weight-medium); }
+.parasiticform-state-body strong { color: var(--bio-nexus-color-text); font-weight: var(--bio-nexus-font-weight-medium); }
 </style>

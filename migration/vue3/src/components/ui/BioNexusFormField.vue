@@ -92,7 +92,7 @@ const helpId = computed(
 .bio-nexus-form-field {
   display: grid;
   align-content: start;
-  gap: var(--toro-space-1);
+  gap: var(--bio-nexus-space-1);
   min-width: 0;
 }
 
@@ -117,10 +117,10 @@ const helpId = computed(
   max-width: calc(100% - 24px);
   padding-inline: 5px;
   overflow: hidden;
-  color: var(--toro-color-text-muted);
-  background: var(--toro-color-surface);
-  font-size: var(--toro-font-size-xs);
-  font-weight: var(--toro-font-weight-bold);
+  color: var(--bio-nexus-color-text-muted);
+  background: var(--bio-nexus-color-surface);
+  font-size: var(--bio-nexus-font-size-xs);
+  font-weight: var(--bio-nexus-font-weight-bold);
   line-height: 1;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -128,7 +128,7 @@ const helpId = computed(
 }
 
 .bio-nexus-form-field-required {
-  color: var(--toro-color-danger, #b42318);
+  color: var(--bio-nexus-color-danger, #b42318);
 }
 
 .bio-nexus-form-field-control :deep(input.bio-nexus-field),
@@ -150,27 +150,27 @@ const helpId = computed(
 }
 
 .bio-nexus-form-field-error .bio-nexus-form-field-label {
-  color: var(--toro-color-danger, #b42318);
+  color: var(--bio-nexus-color-danger, #b42318);
 }
 
 .bio-nexus-form-field-error
   .bio-nexus-form-field-control
   :deep(.bio-nexus-field) {
-  border-color: var(--toro-color-danger, #b42318);
+  border-color: var(--bio-nexus-color-danger, #b42318);
   box-shadow: 0 0 0 3px rgb(180 35 24 / 12%);
 }
 
 .bio-nexus-form-field-disabled .bio-nexus-form-field-label {
-  color: var(--toro-color-text-muted);
-  background: var(--toro-color-surface-soft);
+  color: var(--bio-nexus-color-text-muted);
+  background: var(--bio-nexus-color-surface-soft);
 }
 
 .bio-nexus-form-field-disabled
   .bio-nexus-form-field-control
   :deep(.bio-nexus-field) {
-  border-color: var(--toro-color-border-strong);
-  color: var(--toro-color-text-muted);
-  background: var(--toro-color-surface-soft);
+  border-color: var(--bio-nexus-color-border-strong);
+  color: var(--bio-nexus-color-text-muted);
+  background: var(--bio-nexus-color-surface-soft);
   cursor: not-allowed;
   opacity: 0.72;
 }
@@ -178,13 +178,13 @@ const helpId = computed(
 .bio-nexus-form-field-message {
   display: block;
   padding-inline: 4px;
-  color: var(--toro-color-text-muted);
-  font-size: var(--toro-font-size-xs);
+  color: var(--bio-nexus-color-text-muted);
+  font-size: var(--bio-nexus-font-size-xs);
   line-height: 1.35;
 }
 
 .bio-nexus-form-field-message-error {
-  color: var(--toro-color-danger, #b42318);
-  font-weight: var(--toro-font-weight-bold);
+  color: var(--bio-nexus-color-danger, #b42318);
+  font-weight: var(--bio-nexus-font-weight-bold);
 }
 </style>

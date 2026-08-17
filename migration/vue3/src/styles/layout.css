@@ -6,7 +6,7 @@
 .authenticated-layout {
   display: flex;
   min-height: 100vh;
-  background: var(--toro-color-background);
+  background: var(--bio-nexus-color-background);
 }
 
 .app-sidebar {
@@ -19,7 +19,7 @@
   width: 272px;
   flex-direction: column;
   color: #ffffff;
-  background: linear-gradient(180deg, var(--toro-color-sidebar) 0%, var(--toro-color-sidebar-strong) 100%);
+  background: linear-gradient(180deg, var(--bio-nexus-color-sidebar) 0%, var(--bio-nexus-color-sidebar-strong) 100%);
   box-shadow: 8px 0 24px rgba(13, 34, 57, 0.12);
 }
 
@@ -29,7 +29,7 @@
   align-items: center;
   gap: 12px;
   padding: 18px 20px;
-  border-bottom: 1px solid var(--toro-color-sidebar-divider);
+  border-bottom: 1px solid var(--bio-nexus-color-sidebar-divider);
 }
 
 .sidebar-brand-mark {
@@ -70,7 +70,7 @@
   border: 0;
   border-radius: 9px;
   color: #ffffff;
-  background: var(--toro-color-sidebar-divider);
+  background: var(--bio-nexus-color-sidebar-divider);
   cursor: pointer;
   font-size: 25px;
 }
@@ -102,18 +102,18 @@
   margin-bottom: 5px;
   padding: 8px 12px;
   border-radius: 10px;
-  color: var(--toro-color-sidebar-text);
+  color: var(--bio-nexus-color-sidebar-text);
   text-decoration: none;
 }
 
 .sidebar-link:hover {
   color: #ffffff;
-  background: var(--toro-color-sidebar-interaction);
+  background: var(--bio-nexus-color-sidebar-interaction);
 }
 
 .sidebar-link.router-link-active {
   color: #ffffff;
-  background: var(--toro-color-primary);
+  background: var(--bio-nexus-color-primary);
   box-shadow: 0 8px 18px rgba(3, 25, 48, 0.24);
 }
 
@@ -131,12 +131,12 @@
 }
 
 .sidebar-link-disabled {
-  color: var(--toro-color-sidebar-link-disabled);
+  color: var(--bio-nexus-color-sidebar-link-disabled);
   cursor: not-allowed;
 }
 
 .sidebar-link-disabled:hover {
-  color: var(--toro-color-sidebar-link-disabled);
+  color: var(--bio-nexus-color-sidebar-link-disabled);
   background: transparent;
 }
 
@@ -155,7 +155,7 @@
   align-items: center;
   gap: 10px;
   padding: 18px 22px;
-  border-top: 1px solid var(--toro-color-sidebar-divider);
+  border-top: 1px solid var(--bio-nexus-color-sidebar-divider);
 }
 
 .sidebar-footer div {
@@ -196,7 +196,7 @@
   justify-content: space-between;
   gap: 24px;
   padding: 14px 32px;
-  border-bottom: 1px solid var(--toro-color-border-subtle);
+  border-bottom: 1px solid var(--bio-nexus-color-border-subtle);
   background: rgba(255, 255, 255, 0.96);
   box-shadow: 0 4px 16px rgba(31, 55, 82, 0.04);
   backdrop-filter: blur(12px);
@@ -218,7 +218,7 @@
 }
 
 .topbar-context {
-  color: var(--toro-color-text-muted-strong);
+  color: var(--bio-nexus-color-text-muted-strong);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -227,7 +227,7 @@
 
 .topbar-leading h1 {
   margin-top: 3px;
-  color: var(--toro-color-text);
+  color: var(--bio-nexus-color-text);
   font-size: 23px;
 }
 
@@ -261,7 +261,7 @@
   place-items: center;
   border-radius: 12px;
   color: #ffffff;
-  background: var(--toro-color-primary);
+  background: var(--bio-nexus-color-primary);
   font-size: 13px;
   font-weight: 800;
 }
@@ -282,7 +282,7 @@
 }
 
 .topbar-user-details span {
-  color: var(--toro-color-text-muted-strong);
+  color: var(--bio-nexus-color-text-muted-strong);
   font-size: 11px;
 }
 
@@ -299,8 +299,8 @@
 }
 
 .topbar-logout:hover {
-  border-color: var(--toro-color-primary);
-  color: var(--toro-color-primary);
+  border-color: var(--bio-nexus-color-primary);
+  color: var(--bio-nexus-color-primary);
   background: #f5f9ff;
 }
 
@@ -315,12 +315,12 @@
   align-items: center;
   gap: 8px;
   margin-bottom: 18px;
-  color: var(--toro-color-text-muted-strong);
+  color: var(--bio-nexus-color-text-muted-strong);
   font-size: 13px;
 }
 
 .app-breadcrumb a {
-  color: var(--toro-color-primary);
+  color: var(--bio-nexus-color-primary);
   font-weight: 700;
   text-decoration: none;
 }
@@ -414,7 +414,7 @@
   padding: 8px 12px;
   border: 0;
   border-radius: 10px;
-  color: var(--toro-color-sidebar-text);
+  color: var(--bio-nexus-color-sidebar-text);
   background: transparent;
   cursor: pointer;
   text-align: left;
@@ -422,7 +422,7 @@
 
 .sidebar-group-toggle:hover {
   color: #ffffff;
-  background: var(--toro-color-sidebar-interaction);
+  background: var(--bio-nexus-color-sidebar-interaction);
 }
 
 .sidebar-link-label {
@@ -436,15 +436,15 @@
   height: 22px;
   place-items: center;
   border-radius: 999px;
-  color: var(--toro-color-sidebar-meta);
-  background: var(--toro-color-sidebar-interaction);
+  color: var(--bio-nexus-color-sidebar-meta);
+  background: var(--bio-nexus-color-sidebar-interaction);
   font-size: 10px;
   font-weight: 800;
 }
 
 .sidebar-group-chevron {
   display: inline-block;
-  color: var(--toro-color-sidebar-meta);
+  color: var(--bio-nexus-color-sidebar-meta);
   font-size: 22px;
   line-height: 1;
   transform: rotate(0deg);
@@ -496,12 +496,12 @@
 }
 
 .sidebar-child-link-disabled {
-  color: var(--toro-color-sidebar-child-disabled);
+  color: var(--bio-nexus-color-sidebar-child-disabled);
   cursor: not-allowed;
 }
 
 .sidebar-child-link-disabled:hover {
-  color: var(--toro-color-sidebar-child-disabled);
+  color: var(--bio-nexus-color-sidebar-child-disabled);
   background: transparent;
 }
 
@@ -512,7 +512,7 @@
 }
 
 .sidebar-navigation {
-  scrollbar-color: var(--toro-color-sidebar-scrollbar) transparent;
+  scrollbar-color: var(--bio-nexus-color-sidebar-scrollbar) transparent;
   scrollbar-width: thin;
 }
 
@@ -526,7 +526,7 @@
 
 .sidebar-navigation::-webkit-scrollbar-thumb {
   border-radius: 999px;
-  background: var(--toro-color-sidebar-scrollbar);
+  background: var(--bio-nexus-color-sidebar-scrollbar);
 }
 
 @media (min-width: 821px) {
@@ -649,7 +649,7 @@
     border: 1px solid rgba(255, 255, 255, 0.17);
     border-radius: 9px;
     color: #bcd0e4;
-    background: var(--toro-color-sidebar-interaction);
+    background: var(--bio-nexus-color-sidebar-interaction);
     cursor: pointer;
     font-size: 9px;
     font-weight: 800;
@@ -659,7 +659,7 @@
   .sidebar-pin-active {
     border-color: rgba(255, 255, 255, 0.42);
     color: #ffffff;
-    background: var(--toro-color-primary);
+    background: var(--bio-nexus-color-primary);
   }
 }
 
@@ -694,40 +694,40 @@
 }
 
 .authenticated-layout {
-  background: var(--toro-color-background);
+  background: var(--bio-nexus-color-background);
 }
 
 .app-sidebar {
-  color: var(--toro-color-text-inverse);
+  color: var(--bio-nexus-color-text-inverse);
   background:
     linear-gradient(
       180deg,
-      var(--toro-color-sidebar) 0%,
-      var(--toro-color-sidebar-strong) 100%
+      var(--bio-nexus-color-sidebar) 0%,
+      var(--bio-nexus-color-sidebar-strong) 100%
     );
 }
 
 .app-topbar {
-  min-height: var(--toro-topbar-height);
-  padding: 10px var(--toro-content-padding-x);
-  border-bottom-color: var(--toro-color-border);
+  min-height: var(--bio-nexus-topbar-height);
+  padding: 10px var(--bio-nexus-content-padding-x);
+  border-bottom-color: var(--bio-nexus-color-border);
 }
 
 .topbar-context {
-  font-size: var(--toro-font-size-xs);
+  font-size: var(--bio-nexus-font-size-xs);
 }
 
 .topbar-leading h1 {
-  font-size: var(--toro-font-size-title);
+  font-size: var(--bio-nexus-font-size-title);
 }
 
 .topbar-user-details strong {
-  font-size: var(--toro-font-size-sm);
+  font-size: var(--bio-nexus-font-size-sm);
 }
 
 .topbar-user-details span,
 .topbar-logout {
-  font-size: var(--toro-font-size-xs);
+  font-size: var(--bio-nexus-font-size-xs);
 }
 
 .authenticated-content {
@@ -735,40 +735,40 @@
   max-width: none;
   margin: 0;
   padding:
-    var(--toro-content-padding-y)
-    var(--toro-content-padding-x)
-    var(--toro-space-5);
+    var(--bio-nexus-content-padding-y)
+    var(--bio-nexus-content-padding-x)
+    var(--bio-nexus-space-5);
 }
 
 .app-breadcrumb {
   gap: 6px;
-  margin-bottom: var(--toro-space-3);
-  font-size: var(--toro-font-size-sm);
+  margin-bottom: var(--bio-nexus-space-3);
+  font-size: var(--bio-nexus-font-size-sm);
 }
 
 @media (min-width: 821px) {
   .app-sidebar {
-    width: var(--toro-sidebar-collapsed-width);
+    width: var(--bio-nexus-sidebar-collapsed-width);
   }
 
   .app-sidebar:hover,
   .app-sidebar-pinned {
-    width: var(--toro-sidebar-expanded-width);
-    box-shadow: var(--toro-shadow-sidebar);
+    width: var(--bio-nexus-sidebar-expanded-width);
+    box-shadow: var(--bio-nexus-shadow-sidebar);
   }
 
   .authenticated-main {
-    width: calc(100% - var(--toro-sidebar-collapsed-width));
-    margin-left: var(--toro-sidebar-collapsed-width);
+    width: calc(100% - var(--bio-nexus-sidebar-collapsed-width));
+    margin-left: var(--bio-nexus-sidebar-collapsed-width);
   }
 
   .authenticated-layout-pinned .authenticated-main {
-    width: calc(100% - var(--toro-sidebar-expanded-width));
-    margin-left: var(--toro-sidebar-expanded-width);
+    width: calc(100% - var(--bio-nexus-sidebar-expanded-width));
+    margin-left: var(--bio-nexus-sidebar-expanded-width);
   }
 
   .sidebar-brand {
-    min-height: var(--toro-topbar-height);
+    min-height: var(--bio-nexus-topbar-height);
     gap: 10px;
     padding: 10px;
   }
@@ -777,7 +777,7 @@
     width: 44px;
     height: 44px;
     flex-basis: 44px;
-    border-radius: var(--toro-radius-md);
+    border-radius: var(--bio-nexus-radius-md);
     font-size: 20px;
   }
 
@@ -787,21 +787,21 @@
 
   .sidebar-link,
   .sidebar-group-toggle {
-    width: calc(var(--toro-sidebar-expanded-width) - 20px);
+    width: calc(var(--bio-nexus-sidebar-expanded-width) - 20px);
     min-height: 40px;
     gap: 9px;
     margin-bottom: 3px;
     padding: 5px;
-    border-radius: var(--toro-radius-md);
-    font-size: var(--toro-font-size-md);
+    border-radius: var(--bio-nexus-radius-md);
+    font-size: var(--bio-nexus-font-size-md);
   }
 
   .sidebar-link-icon {
     width: 34px;
     height: 34px;
     flex-basis: 34px;
-    border-radius: var(--toro-radius-md);
-    font-size: var(--toro-font-size-xs);
+    border-radius: var(--bio-nexus-radius-md);
+    font-size: var(--bio-nexus-font-size-xs);
   }
 
   .sidebar-group-items {
@@ -816,7 +816,7 @@
   .sidebar-child-link {
     min-height: 32px;
     padding: 5px 7px;
-    font-size: var(--toro-font-size-sm);
+    font-size: var(--bio-nexus-font-size-sm);
   }
 
   .sidebar-child-pending,
@@ -830,7 +830,7 @@
   }
 
   .sidebar-footer {
-    width: var(--toro-sidebar-expanded-width);
+    width: var(--bio-nexus-sidebar-expanded-width);
     min-height: 58px;
     padding: 11px 22px;
   }
@@ -842,7 +842,7 @@
 
 @media (max-width: 820px) {
   .app-topbar {
-    min-height: var(--toro-topbar-height);
+    min-height: var(--bio-nexus-topbar-height);
   }
 
   .authenticated-content {
@@ -856,7 +856,7 @@
 
 .sidebar-link.router-link-active {
   position: relative;
-  background: var(--toro-color-primary);
+  background: var(--bio-nexus-color-primary);
 }
 
 .sidebar-link.router-link-active::before {
@@ -866,28 +866,28 @@
   left: -5px;
   width: 3px;
   border-radius: 999px;
-  background: var(--toro-color-accent);
+  background: var(--bio-nexus-color-accent);
   content: "";
 }
 
 .sidebar-group-chevron-open {
-  color: var(--toro-color-accent);
+  color: var(--bio-nexus-color-accent);
 }
 
 .sidebar-pin-active {
-  border-color: var(--toro-color-accent-border);
-  color: var(--toro-color-text-inverse);
-  background: var(--toro-color-accent);
+  border-color: var(--bio-nexus-color-accent-border);
+  color: var(--bio-nexus-color-text-inverse);
+  background: var(--bio-nexus-color-accent);
 }
 
 .sidebar-pin-active:hover {
-  border-color: var(--toro-color-accent);
-  background: var(--toro-color-accent-strong);
+  border-color: var(--bio-nexus-color-accent);
+  background: var(--bio-nexus-color-accent-strong);
 }
 
 .app-breadcrumb > span[aria-hidden="true"] {
-  color: var(--toro-color-accent);
-  font-weight: var(--toro-font-weight-heavy);
+  color: var(--bio-nexus-color-accent);
+  font-weight: var(--bio-nexus-font-weight-heavy);
 }
 
 /* Bio Nexus official sidebar brand */
@@ -900,7 +900,7 @@
   place-items: center;
   padding: 5px;
   border: 1px solid rgb(255 255 255 / 32%);
-  border-radius: var(--toro-radius-md);
+  border-radius: var(--bio-nexus-radius-md);
   background: #ffffff;
 }
 .sidebar-brand-mark img {
@@ -937,8 +937,8 @@
   .app-sidebar:not(:hover):not(.app-sidebar-pinned) .sidebar-brand {
     position: relative;
     display: block;
-    width: var(--toro-sidebar-collapsed-width);
-    min-height: var(--toro-topbar-height);
+    width: var(--bio-nexus-sidebar-collapsed-width);
+    min-height: var(--bio-nexus-topbar-height);
     padding: 0;
     background: transparent;
   }

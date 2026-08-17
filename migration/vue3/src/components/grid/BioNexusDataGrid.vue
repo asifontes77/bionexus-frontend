@@ -250,23 +250,23 @@ async function exportGrid(request) {
 }
 
 const gridTheme = themeQuartz.withParams({
-  accentColor: "var(--toro-color-primary)",
-  backgroundColor: "var(--toro-color-surface)",
-  borderColor: "var(--toro-color-border)",
-  borderRadius: "var(--toro-radius-md)",
+  accentColor: "var(--bio-nexus-color-primary)",
+  backgroundColor: "var(--bio-nexus-color-surface)",
+  borderColor: "var(--bio-nexus-color-border)",
+  borderRadius: "var(--bio-nexus-radius-md)",
   browserColorScheme: "light",
   cellHorizontalPaddingScale: 0.8,
   columnBorder: {
-    color: "color-mix(in srgb, var(--toro-color-surface) 34%, transparent)",
+    color: "color-mix(in srgb, var(--bio-nexus-color-surface) 34%, transparent)",
     style: "solid",
     width: 1,
   },
   fontFamily: "inherit",
-  fontSize: "var(--toro-font-size-sm)",
-  menuTextColor: "var(--toro-color-text)",
-  menuBackgroundColor: "var(--toro-color-surface)",
+  fontSize: "var(--bio-nexus-font-size-sm)",
+  menuTextColor: "var(--bio-nexus-color-text)",
+  menuBackgroundColor: "var(--bio-nexus-color-surface)",
   menuBorder: {
-    color: "var(--toro-color-border)",
+    color: "var(--bio-nexus-color-border)",
     style: "solid",
     width: 1,
   },
@@ -277,14 +277,14 @@ const gridTheme = themeQuartz.withParams({
     x: 0,
     y: 6,
   },
-  foregroundColor: "var(--toro-color-text)",
+  foregroundColor: "var(--bio-nexus-color-text)",
   headerBackgroundColor: "#d8eaf4",
-  headerFontSize: "var(--toro-font-size-xs)",
-  headerFontWeight: "var(--toro-font-weight-bold)",
+  headerFontSize: "var(--bio-nexus-font-size-xs)",
+  headerFontWeight: "var(--bio-nexus-font-weight-bold)",
   headerTextColor: "#174b6b",
-  oddRowBackgroundColor: "var(--toro-color-surface-soft)",
+  oddRowBackgroundColor: "var(--bio-nexus-color-surface-soft)",
   rowBorder: {
-    color: "var(--toro-color-border)",
+    color: "var(--bio-nexus-color-border)",
     style: "solid",
     width: 1,
   },
@@ -301,7 +301,7 @@ const resolvedDefaultColDef = computed(() => ({
 }));
 
 const gridContainerStyle = computed(() => ({
-  "--toro-grid-height": props.height,
+  "--bio-nexus-grid-height": props.height,
 }));
 
 const selectedPageSize = ref(String(props.pageSize));
@@ -359,7 +359,7 @@ const adaptiveGridHeightStyle = computed(() => {
   const resolvedHeight = Math.min(maximum, Math.max(minimum, naturalHeight));
 
   return {
-    "--toro-grid-height": `${resolvedHeight}px`,
+    "--bio-nexus-grid-height": `${resolvedHeight}px`,
   };
 });
 
@@ -424,11 +424,11 @@ function handleCellContextMenu(params) {
 .bio-nexus-data-grid {
   width: 100%;
   min-width: 0;
-  height: var(--toro-grid-height);
+  height: var(--bio-nexus-grid-height);
   overflow: hidden;
-  border: 1px solid var(--toro-color-border);
-  border-radius: var(--toro-radius-md);
-  background: var(--toro-color-surface);
+  border: 1px solid var(--bio-nexus-color-border);
+  border-radius: var(--bio-nexus-radius-md);
+  background: var(--bio-nexus-color-surface);
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
   min-height: 0;
@@ -519,33 +519,33 @@ function handleCellContextMenu(params) {
 }
 
 .bio-nexus-data-grid :deep(.ag-row-hover) {
-  background: var(--toro-color-info-soft);
+  background: var(--bio-nexus-color-info-soft);
 }
 
 .bio-nexus-data-grid :deep(.ag-paging-panel) {
   min-height: 44px;
-  border-top-color: var(--toro-color-border);
-  color: var(--toro-color-text-muted);
-  font-size: var(--toro-font-size-sm);
+  border-top-color: var(--bio-nexus-color-border);
+  color: var(--bio-nexus-color-text-muted);
+  font-size: var(--bio-nexus-font-size-sm);
   padding-right: 235px;
 }
 
 .bio-nexus-data-grid :deep(.ag-paging-button) {
-  color: var(--toro-color-primary-strong);
+  color: var(--bio-nexus-color-primary-strong);
 }
 
 .bio-nexus-data-grid :deep(.ag-overlay-no-rows-center) {
-  padding: var(--toro-space-4);
-  color: var(--toro-color-text-muted);
+  padding: var(--bio-nexus-space-4);
+  color: var(--bio-nexus-color-text-muted);
 }
 
 .bio-nexus-grid-empty {
-  color: var(--toro-color-text-muted);
+  color: var(--bio-nexus-color-text-muted);
 }
 
 .bio-nexus-data-grid :deep(.ag-header-cell:not(:last-child)),
 .bio-nexus-data-grid :deep(.ag-cell:not(:last-child)) {
-  border-right: 1px solid var(--toro-color-border);
+  border-right: 1px solid var(--bio-nexus-color-border);
 }
 </style>
 
@@ -557,16 +557,16 @@ function handleCellContextMenu(params) {
 .ag-menu,
 .ag-select-list {
   font-family: inherit;
-  font-size: var(--toro-font-size-sm);
-  color: var(--toro-color-text);
+  font-size: var(--bio-nexus-font-size-sm);
+  color: var(--bio-nexus-color-text);
 }
 
 .ag-popup-child,
 .ag-menu,
 .ag-select-list {
-  border: 1px solid var(--toro-color-border);
-  border-radius: var(--toro-radius-md);
-  background: var(--toro-color-surface);
+  border: 1px solid var(--bio-nexus-color-border);
+  border-radius: var(--bio-nexus-radius-md);
+  background: var(--bio-nexus-color-surface);
   box-shadow: 0 6px 14px rgb(13 36 58 / 16%);
   overflow: hidden;
 }
@@ -574,41 +574,41 @@ function handleCellContextMenu(params) {
 .ag-picker-field-wrapper,
 .ag-input-field-input,
 .ag-text-field-input {
-  border-color: var(--toro-color-border-strong);
-  border-radius: var(--toro-radius-md);
-  background: var(--toro-color-surface);
-  color: var(--toro-color-text);
+  border-color: var(--bio-nexus-color-border-strong);
+  border-radius: var(--bio-nexus-radius-md);
+  background: var(--bio-nexus-color-surface);
+  color: var(--bio-nexus-color-text);
   font-family: inherit;
-  font-size: var(--toro-font-size-sm);
+  font-size: var(--bio-nexus-font-size-sm);
 }
 
 .ag-picker-field-wrapper {
   min-height: 36px;
-  padding-inline: var(--toro-space-2);
+  padding-inline: var(--bio-nexus-space-2);
 }
 
 .ag-input-field-input,
 .ag-text-field-input {
   min-height: 36px;
-  padding-inline: var(--toro-space-2);
+  padding-inline: var(--bio-nexus-space-2);
 }
 
 .ag-picker-field-wrapper:focus-within,
 .ag-input-field-input:focus,
 .ag-text-field-input:focus {
-  border-color: var(--toro-color-primary);
-  box-shadow: 0 0 0 3px var(--toro-color-info-soft);
+  border-color: var(--bio-nexus-color-primary);
+  box-shadow: 0 0 0 3px var(--bio-nexus-color-info-soft);
   outline: 0;
 }
 
 .ag-list-item,
 .ag-virtual-list-item {
   min-height: 34px;
-  padding-inline: var(--toro-space-2);
-  color: var(--toro-color-text);
+  padding-inline: var(--bio-nexus-space-2);
+  color: var(--bio-nexus-color-text);
   font-family: inherit;
-  font-size: var(--toro-font-size-sm);
-  font-weight: var(--toro-font-weight-regular);
+  font-size: var(--bio-nexus-font-size-sm);
+  font-weight: var(--bio-nexus-font-weight-regular);
   line-height: 1.35;
 }
 
@@ -618,36 +618,36 @@ function handleCellContextMenu(params) {
 .ag-virtual-list-item.ag-active-item,
 .ag-list-item.ag-selected,
 .ag-virtual-list-item.ag-selected {
-  background: var(--toro-color-info-soft);
-  color: var(--toro-color-primary-strong);
+  background: var(--bio-nexus-color-info-soft);
+  color: var(--bio-nexus-color-primary-strong);
 }
 
 .ag-filter-body-wrapper,
 .ag-filter-wrapper {
-  gap: var(--toro-space-2);
-  padding: var(--toro-space-2);
+  gap: var(--bio-nexus-space-2);
+  padding: var(--bio-nexus-space-2);
 }
 
 .ag-filter-condition-operator {
-  color: var(--toro-color-text-muted);
-  font-size: var(--toro-font-size-sm);
+  color: var(--bio-nexus-color-text-muted);
+  font-size: var(--bio-nexus-font-size-sm);
 }
 
 .ag-standard-button {
   min-height: 32px;
-  padding-inline: var(--toro-space-2);
-  border: 1px solid var(--toro-color-border-strong);
-  border-radius: var(--toro-radius-md);
-  background: var(--toro-color-surface);
-  color: var(--toro-color-primary-strong);
+  padding-inline: var(--bio-nexus-space-2);
+  border: 1px solid var(--bio-nexus-color-border-strong);
+  border-radius: var(--bio-nexus-radius-md);
+  background: var(--bio-nexus-color-surface);
+  color: var(--bio-nexus-color-primary-strong);
   font-family: inherit;
-  font-size: var(--toro-font-size-sm);
-  font-weight: var(--toro-font-weight-bold);
+  font-size: var(--bio-nexus-font-size-sm);
+  font-weight: var(--bio-nexus-font-weight-bold);
 }
 
 .ag-standard-button:hover {
-  border-color: var(--toro-color-primary);
-  background: var(--toro-color-info-soft);
+  border-color: var(--bio-nexus-color-primary);
+  background: var(--bio-nexus-color-info-soft);
 }
 
 .ag-paging-panel,
@@ -655,30 +655,30 @@ function handleCellContextMenu(params) {
 .ag-paging-page-size,
 .ag-paging-row-summary-panel {
   font-family: inherit;
-  font-size: var(--toro-font-size-sm);
-  color: var(--toro-color-text-muted);
+  font-size: var(--bio-nexus-font-size-sm);
+  color: var(--bio-nexus-color-text-muted);
 }
 
 .ag-paging-panel select {
   min-height: 32px;
-  padding-inline: var(--toro-space-2);
-  border: 1px solid var(--toro-color-border);
-  border-radius: var(--toro-radius-md);
-  background: var(--toro-color-surface);
-  color: var(--toro-color-text);
+  padding-inline: var(--bio-nexus-space-2);
+  border: 1px solid var(--bio-nexus-color-border);
+  border-radius: var(--bio-nexus-radius-md);
+  background: var(--bio-nexus-color-surface);
+  color: var(--bio-nexus-color-text);
 }
 
 .ag-paging-button {
-  border-radius: var(--toro-radius-md);
-  color: var(--toro-color-primary-strong);
+  border-radius: var(--bio-nexus-radius-md);
+  color: var(--bio-nexus-color-primary-strong);
 }
 
 .ag-paging-button:not(.ag-disabled):hover {
-  background: var(--toro-color-info-soft);
+  background: var(--bio-nexus-color-info-soft);
 }
 
 .ag-icon {
-  color: var(--toro-color-primary-strong);
+  color: var(--bio-nexus-color-primary-strong);
 }
 
 /* TORO AG Grid filter icon spacing */
@@ -707,7 +707,7 @@ function handleCellContextMenu(params) {
   justify-content: center;
   width: 16px;
   height: 16px;
-  color: var(--toro-color-text-muted);
+  color: var(--bio-nexus-color-text-muted);
   pointer-events: none;
   transform: translateY(-50%);
 }
@@ -717,8 +717,8 @@ function handleCellContextMenu(params) {
   gap: 12px;
   min-height: 58px;
   padding: 6px 12px;
-  border-bottom: 1px solid var(--toro-color-border);
-  background: var(--toro-color-surface);
+  border-bottom: 1px solid var(--bio-nexus-color-border);
+  background: var(--bio-nexus-color-surface);
 }
 
 .bio-nexus-grid-toolbar-search {
@@ -734,13 +734,13 @@ function handleCellContextMenu(params) {
   min-height: 38px;
   height: 38px;
   padding: 8px 14px 5px;
-  border: 1px solid var(--toro-color-border);
-  border-radius: var(--toro-radius-md);
-  background: var(--toro-color-surface);
-  color: var(--toro-color-text-primary);
+  border: 1px solid var(--bio-nexus-color-border);
+  border-radius: var(--bio-nexus-radius-md);
+  background: var(--bio-nexus-color-surface);
+  color: var(--bio-nexus-color-text-primary);
   font: inherit;
-  font-size: var(--toro-font-size-md);
-  font-weight: var(--toro-font-weight-regular);
+  font-size: var(--bio-nexus-font-size-md);
+  font-weight: var(--bio-nexus-font-weight-regular);
   line-height: 1.2;
   text-transform: none;
 }
@@ -769,18 +769,18 @@ function handleCellContextMenu(params) {
   align-items: center;
   gap: 8px;
   min-height: 34px;
-  color: var(--toro-color-text-secondary);
-  font-size: var(--toro-font-size-sm);
+  color: var(--bio-nexus-color-text-secondary);
+  font-size: var(--bio-nexus-font-size-sm);
 }
 
 .bio-nexus-grid-page-size-control select {
   min-width: 76px;
   min-height: 34px;
   padding: 4px 28px 4px 10px;
-  border: 1px solid var(--toro-color-border);
-  border-radius: var(--toro-radius-sm);
-  background: var(--toro-color-surface);
-  color: var(--toro-color-text-primary);
+  border: 1px solid var(--bio-nexus-color-border);
+  border-radius: var(--bio-nexus-radius-sm);
+  background: var(--bio-nexus-color-surface);
+  color: var(--bio-nexus-color-text-primary);
   font: inherit;
 }
 
@@ -794,16 +794,16 @@ function handleCellContextMenu(params) {
 
 
 .bio-nexus-grid-toolbar :deep(.bio-nexus-form-field-label) {
-  color: var(--toro-color-text-secondary);
+  color: var(--bio-nexus-color-text-secondary);
   font-family: inherit;
-  font-size: var(--toro-font-size-sm);
+  font-size: var(--bio-nexus-font-size-sm);
   font-weight: 700;
   line-height: 1.2;
 }
 
 
 .bio-nexus-grid-toolbar :deep(input.bio-nexus-field::placeholder) {
-  color: var(--toro-color-text-muted);
+  color: var(--bio-nexus-color-text-muted);
   font-family: inherit;
   font-size: inherit;
   font-weight: 400;
@@ -819,29 +819,29 @@ function handleCellContextMenu(params) {
 
 
 .bio-nexus-grid-toolbar :deep(input.bio-nexus-field::placeholder) {
-  color: var(--toro-color-text-muted) !important;
-  font-family: var(--toro-font-family) !important;
-  font-size: var(--toro-font-size-md) !important;
+  color: var(--bio-nexus-color-text-muted) !important;
+  font-family: var(--bio-nexus-font-family) !important;
+  font-size: var(--bio-nexus-font-size-md) !important;
   font-style: normal !important;
-  font-weight: var(--toro-font-weight-regular) !important;
+  font-weight: var(--bio-nexus-font-weight-regular) !important;
   opacity: 1;
 }
 
 .bio-nexus-grid-toolbar :deep(.bio-nexus-form-field-label) {
-  color: var(--toro-color-text-muted);
-  font-family: var(--toro-font-family);
-  font-size: var(--toro-font-size-xs);
-  font-weight: var(--toro-font-weight-bold);
+  color: var(--bio-nexus-color-text-muted);
+  font-family: var(--bio-nexus-font-family);
+  font-size: var(--bio-nexus-font-size-xs);
+  font-weight: var(--bio-nexus-font-weight-bold);
 }
 
 
 
 .bio-nexus-grid-toolbar :deep(input.bio-nexus-field::placeholder) {
-  color: var(--toro-color-text-muted) !important;
-  font-family: var(--toro-font-family) !important;
-  font-size: var(--toro-font-size-md) !important;
+  color: var(--bio-nexus-color-text-muted) !important;
+  font-family: var(--bio-nexus-font-family) !important;
+  font-size: var(--bio-nexus-font-size-md) !important;
   font-style: normal !important;
-  font-weight: var(--toro-font-weight-regular) !important;
+  font-weight: var(--bio-nexus-font-weight-regular) !important;
   line-height: 1.2 !important;
   letter-spacing: normal !important;
   opacity: 1 !important;
@@ -855,10 +855,10 @@ function handleCellContextMenu(params) {
   height: 38px !important;
   margin: 0 !important;
   padding: 7px 26px 5px 12px !important;
-  color: var(--toro-color-text) !important;
-  font-family: var(--toro-font-family) !important;
-  font-size: var(--toro-font-size-md) !important;
-  font-weight: var(--toro-font-weight-regular) !important;
+  color: var(--bio-nexus-color-text) !important;
+  font-family: var(--bio-nexus-font-family) !important;
+  font-size: var(--bio-nexus-font-size-md) !important;
+  font-weight: var(--bio-nexus-font-weight-regular) !important;
   line-height: 1.2 !important;
 }
 
@@ -887,32 +887,32 @@ function handleCellContextMenu(params) {
 /* Shared visual contract for the native page-size select and search field. */
 .bio-nexus-grid-toolbar #bio-nexus-grid-page-size.bio-nexus-field,
 .bio-nexus-grid-toolbar #bio-nexus-grid-search.bio-nexus-field {
-  color: var(--toro-color-text-secondary) !important;
-  font-family: var(--toro-font-family) !important;
-  font-size: var(--toro-font-size-md) !important;
+  color: var(--bio-nexus-color-text-secondary) !important;
+  font-family: var(--bio-nexus-font-family) !important;
+  font-size: var(--bio-nexus-font-size-md) !important;
   font-style: normal !important;
-  font-weight: var(--toro-font-weight-regular) !important;
+  font-weight: var(--bio-nexus-font-weight-regular) !important;
   line-height: 1.2 !important;
   letter-spacing: normal !important;
   text-transform: none !important;
 }
 
 .bio-nexus-grid-toolbar #bio-nexus-grid-search.bio-nexus-field::placeholder {
-  color: var(--toro-color-text-secondary) !important;
-  font-family: var(--toro-font-family) !important;
-  font-size: var(--toro-font-size-md) !important;
+  color: var(--bio-nexus-color-text-secondary) !important;
+  font-family: var(--bio-nexus-font-family) !important;
+  font-size: var(--bio-nexus-font-size-md) !important;
   font-style: normal !important;
-  font-weight: var(--toro-font-weight-regular) !important;
+  font-weight: var(--bio-nexus-font-weight-regular) !important;
   line-height: 1.2 !important;
   letter-spacing: normal !important;
   opacity: 1 !important;
 }
 
 .bio-nexus-grid-toolbar :deep(.bio-nexus-form-field-label) {
-  color: var(--toro-color-text-muted);
-  font-family: var(--toro-font-family);
-  font-size: var(--toro-font-size-xs);
-  font-weight: var(--toro-font-weight-bold);
+  color: var(--bio-nexus-color-text-muted);
+  font-family: var(--bio-nexus-font-family);
+  font-size: var(--bio-nexus-font-size-xs);
+  font-weight: var(--bio-nexus-font-weight-bold);
   line-height: 1;
 }
 

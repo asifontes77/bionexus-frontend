@@ -111,24 +111,24 @@ function runAction(action) {
   outline: 0;
   background: transparent;
   box-shadow: none;
-  color: var(--toro-color-primary-strong);
+  color: var(--bio-nexus-color-primary-strong);
   cursor: pointer;
   transition: background-color 140ms ease, color 140ms ease, transform 140ms ease;
 }
 
 .bio-nexus-grid-icon-action:hover:not(:disabled) {
-  background: var(--toro-color-selection-soft);
-  color: var(--toro-color-primary);
+  background: var(--bio-nexus-color-selection-soft);
+  color: var(--bio-nexus-color-primary);
   transform: translateY(-1px);
 }
 
 .bio-nexus-grid-icon-action-accent {
-  color: var(--toro-color-accent-strong);
+  color: var(--bio-nexus-color-accent-strong);
 }
 
 .bio-nexus-grid-icon-action-accent:hover:not(:disabled) {
-  background: var(--toro-color-accent-soft);
-  color: var(--toro-color-accent-strong);
+  background: var(--bio-nexus-color-accent-soft);
+  color: var(--bio-nexus-color-accent-strong);
 }
 
 .bio-nexus-grid-icon-action:focus {
@@ -137,8 +137,8 @@ function runAction(action) {
 }
 
 .bio-nexus-grid-icon-action:focus-visible {
-  background: var(--toro-color-selection-soft);
-  outline: 2px solid var(--toro-color-primary);
+  background: var(--bio-nexus-color-selection-soft);
+  outline: 2px solid var(--bio-nexus-color-primary);
   outline-offset: 2px;
 }
 

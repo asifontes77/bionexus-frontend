@@ -1024,7 +1024,7 @@ function applyAssignedRolesToUserRow(userId, assignedRoles) {
 }
 
 .user-directory-empty {
-  margin: var(--toro-space-4);
+  margin: var(--bio-nexus-space-4);
 }
 
 .users-grid {
@@ -1037,17 +1037,17 @@ function applyAssignedRolesToUserRow(userId, assignedRoles) {
 }
 
 .user-authorization-page :deep(.bio-nexus-grid-code-cell) {
-  color: var(--toro-color-primary-strong);
-  font-weight: var(--toro-font-weight-bold);
+  color: var(--bio-nexus-color-primary-strong);
+  font-weight: var(--bio-nexus-font-weight-bold);
   overflow-wrap: anywhere;
 }
 
 .user-authorization-page :deep(.bio-nexus-grid-strong-cell) {
-  font-weight: var(--toro-font-weight-bold);
+  font-weight: var(--bio-nexus-font-weight-bold);
 }
 
 .user-authorization-page :deep(.bio-nexus-grid-muted-cell) {
-  color: var(--toro-color-text-muted);
+  color: var(--bio-nexus-color-text-muted);
 }
 
 .user-authorization-page :deep(.bio-nexus-grid-centered-header .ag-header-cell-label),
@@ -1062,8 +1062,8 @@ function applyAssignedRolesToUserRow(userId, assignedRoles) {
 
 .users-grid :deep(.ag-pinned-right-header),
 .users-grid :deep(.ag-pinned-right-cols-container) {
-  border-left: 1px solid var(--toro-color-border-strong);
-  box-shadow: calc(var(--toro-space-1) * -1) 0 var(--toro-space-3) var(--toro-shadow-panel-soft);
+  border-left: 1px solid var(--bio-nexus-color-border-strong);
+  box-shadow: calc(var(--bio-nexus-space-1) * -1) 0 var(--bio-nexus-space-3) var(--bio-nexus-shadow-panel-soft);
 }
 
 @media (max-width: 1050px) {

@@ -1200,7 +1200,7 @@ function focusOpenedDialog(dialogReference) {
 }
 
 .roles-empty {
-  margin: var(--toro-space-4);
+  margin: var(--bio-nexus-space-4);
 }
 
 .roles-grid {
@@ -1213,17 +1213,17 @@ function focusOpenedDialog(dialogReference) {
 }
 
 .roles-admin :deep(.bio-nexus-grid-code-cell) {
-  color: var(--toro-color-primary-strong);
-  font-weight: var(--toro-font-weight-bold);
+  color: var(--bio-nexus-color-primary-strong);
+  font-weight: var(--bio-nexus-font-weight-bold);
   overflow-wrap: anywhere;
 }
 
 .roles-admin :deep(.bio-nexus-grid-strong-cell) {
-  font-weight: var(--toro-font-weight-bold);
+  font-weight: var(--bio-nexus-font-weight-bold);
 }
 
 .roles-admin :deep(.bio-nexus-grid-muted-cell) {
-  color: var(--toro-color-text-muted);
+  color: var(--bio-nexus-color-text-muted);
 }
 
 .roles-admin :deep(.bio-nexus-grid-centered-cell),

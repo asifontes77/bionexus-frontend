@@ -13,7 +13,7 @@
 .migration-card {
   width: min(720px, 100%);
   padding: 32px;
-  border: 1px solid var(--toro-color-card-border);
+  border: 1px solid var(--bio-nexus-color-card-border);
   border-radius: 16px;
   background: #ffffff;
   box-shadow: 0 16px 48px rgba(30, 61, 98, 0.12);
@@ -26,7 +26,7 @@
 
 .migration-eyebrow {
   margin: 0 0 8px;
-  color: var(--toro-color-primary);
+  color: var(--bio-nexus-color-primary);
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -39,13 +39,13 @@
   padding: 24px;
   background:
     radial-gradient(circle at top left, #dbeafe 0, transparent 36%),
-    var(--toro-color-background);
+    var(--bio-nexus-color-background);
 }
 
 .login-card {
   width: min(440px, 100%);
   padding: 32px;
-  border: 1px solid var(--toro-color-card-border);
+  border: 1px solid var(--bio-nexus-color-card-border);
   border-radius: 16px;
   background: #ffffff;
   box-shadow: 0 16px 48px rgba(30, 61, 98, 0.14);
@@ -77,12 +77,12 @@
   padding: 12px 14px;
   border: 1px solid #b9c6d8;
   border-radius: 8px;
-  color: var(--toro-color-text);
+  color: var(--bio-nexus-color-text);
   background: #ffffff;
 }
 
 .login-form input:focus {
-  border-color: var(--toro-color-primary);
+  border-color: var(--bio-nexus-color-primary);
   outline: 3px solid rgba(21, 101, 192, 0.16);
 }
 
@@ -99,7 +99,7 @@
   margin-top: 14px;
   padding: 0 18px;
   color: #ffffff;
-  background: var(--toro-color-primary);
+  background: var(--bio-nexus-color-primary);
 }
 
 .login-form button:disabled {
@@ -109,19 +109,19 @@
 
 .login-message {
   margin: 8px 0 0;
-  color: var(--toro-color-danger);
+  color: var(--bio-nexus-color-danger);
   font-weight: 700;
 }
 
 .login-success {
   margin: 8px 0 0;
-  color: var(--toro-color-success-strong);
+  color: var(--bio-nexus-color-success-strong);
   font-weight: 700;
 }
 
 .secondary-button {
   padding: 0 16px;
-  color: var(--toro-color-primary);
+  color: var(--bio-nexus-color-primary);
   background: #e8f1fb;
 }
 
@@ -140,7 +140,7 @@
   color: #ffffff;
   background:
     radial-gradient(circle at right top, rgba(92, 171, 255, 0.38), transparent 35%),
-    linear-gradient(135deg, var(--toro-color-primary-strong) 0%, var(--toro-color-primary) 100%);
+    linear-gradient(135deg, var(--bio-nexus-color-primary-strong) 0%, var(--bio-nexus-color-primary) 100%);
   box-shadow: 0 16px 38px rgba(25, 74, 124, 0.17);
 }
 
@@ -201,14 +201,14 @@
   min-width: 0;
   gap: 5px;
   padding: 20px;
-  border: 1px solid var(--toro-color-border-subtle);
+  border: 1px solid var(--bio-nexus-color-border-subtle);
   border-radius: 14px;
   background: #ffffff;
-  box-shadow: 0 8px 22px var(--toro-shadow-panel-soft);
+  box-shadow: 0 8px 22px var(--bio-nexus-shadow-panel-soft);
 }
 
 .dashboard-metric-label {
-  color: var(--toro-color-text-muted-strong);
+  color: var(--bio-nexus-color-text-muted-strong);
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.08em;
@@ -223,7 +223,7 @@
 }
 
 .dashboard-metric-card span:last-child {
-  color: var(--toro-color-text-muted-strong);
+  color: var(--bio-nexus-color-text-muted-strong);
   font-size: 12px;
 }
 
@@ -235,10 +235,10 @@
 
 .dashboard-panel {
   padding: 24px;
-  border: 1px solid var(--toro-color-border-subtle);
+  border: 1px solid var(--bio-nexus-color-border-subtle);
   border-radius: 16px;
   background: #ffffff;
-  box-shadow: 0 8px 22px var(--toro-shadow-panel-soft);
+  box-shadow: 0 8px 22px var(--bio-nexus-shadow-panel-soft);
 }
 
 .dashboard-panel-heading {
@@ -260,7 +260,7 @@
 }
 
 .dashboard-panel-eyebrow {
-  color: var(--toro-color-text-muted-strong);
+  color: var(--bio-nexus-color-text-muted-strong);
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.1em;
@@ -270,15 +270,15 @@
 .dashboard-panel-badge {
   padding: 6px 9px;
   border-radius: 999px;
-  color: var(--toro-color-success-strong);
-  background: var(--toro-color-success-soft);
+  color: var(--bio-nexus-color-success-strong);
+  background: var(--bio-nexus-color-success-soft);
   font-size: 10px;
   font-weight: 800;
 }
 
 .dashboard-panel-badge-pending {
-  color: var(--toro-color-warning);
-  background: var(--toro-color-warning-soft);
+  color: var(--bio-nexus-color-warning);
+  background: var(--bio-nexus-color-warning-soft);
 }
 
 .dashboard-checklist {
@@ -304,8 +304,8 @@
   flex: 0 0 28px;
   place-items: center;
   border-radius: 7px;
-  color: var(--toro-color-success-strong);
-  background: var(--toro-color-success-soft);
+  color: var(--bio-nexus-color-success-strong);
+  background: var(--bio-nexus-color-success-soft);
   font-size: 9px;
   font-weight: 800;
 }
@@ -367,35 +367,35 @@
 }
 
 .dashboard-page {
-  gap: var(--toro-space-4);
+  gap: var(--bio-nexus-space-4);
 }
 
 .dashboard-hero {
-  gap: var(--toro-space-5);
-  padding: var(--toro-space-5);
-  border-radius: var(--toro-radius-lg);
+  gap: var(--bio-nexus-space-5);
+  padding: var(--bio-nexus-space-5);
+  border-radius: var(--bio-nexus-radius-lg);
 }
 
 .dashboard-hero h2 {
-  font-size: var(--toro-font-size-display);
+  font-size: var(--bio-nexus-font-size-display);
 }
 
 .dashboard-hero p:not(.dashboard-eyebrow) {
-  margin-top: var(--toro-space-2);
-  font-size: var(--toro-font-size-md);
+  margin-top: var(--bio-nexus-space-2);
+  font-size: var(--bio-nexus-font-size-md);
   line-height: 1.5;
 }
 
 .dashboard-metrics {
-  gap: var(--toro-space-3);
+  gap: var(--bio-nexus-space-3);
 }
 
 .dashboard-metric-card {
-  gap: var(--toro-space-1);
-  padding: var(--toro-panel-padding);
-  border-color: var(--toro-color-border);
-  border-radius: var(--toro-radius-md);
-  box-shadow: var(--toro-shadow-sm);
+  gap: var(--bio-nexus-space-1);
+  padding: var(--bio-nexus-panel-padding);
+  border-color: var(--bio-nexus-color-border);
+  border-radius: var(--bio-nexus-radius-md);
+  box-shadow: var(--bio-nexus-shadow-sm);
 }
 
 .dashboard-metric-card strong {
@@ -403,33 +403,33 @@
 }
 
 .dashboard-grid {
-  gap: var(--toro-space-3);
+  gap: var(--bio-nexus-space-3);
 }
 
 .dashboard-panel {
-  padding: var(--toro-panel-padding);
-  border-color: var(--toro-color-border);
-  border-radius: var(--toro-radius-md);
-  box-shadow: var(--toro-shadow-sm);
+  padding: var(--bio-nexus-panel-padding);
+  border-color: var(--bio-nexus-color-border);
+  border-radius: var(--bio-nexus-radius-md);
+  box-shadow: var(--bio-nexus-shadow-sm);
 }
 
 .dashboard-panel-heading h3 {
-  font-size: var(--toro-font-size-lg);
+  font-size: var(--bio-nexus-font-size-lg);
 }
 
 .dashboard-checklist {
-  gap: var(--toro-space-2);
-  margin-top: var(--toro-space-4);
+  gap: var(--bio-nexus-space-2);
+  margin-top: var(--bio-nexus-space-4);
 }
 
 .dashboard-checklist li,
 .dashboard-panel-copy {
-  font-size: var(--toro-font-size-sm);
+  font-size: var(--bio-nexus-font-size-sm);
 }
 
 .dashboard-eyebrow,
 .dashboard-panel-eyebrow {
-  color: var(--toro-color-accent);
+  color: var(--bio-nexus-color-accent);
 }
 
 .dashboard-hero .dashboard-eyebrow {
@@ -448,25 +448,25 @@
   left: 14px;
   height: 2px;
   border-radius: 0 0 999px 999px;
-  background: var(--toro-color-accent);
+  background: var(--bio-nexus-color-accent);
   content: "";
   opacity: 0.75;
 }
 
 .dashboard-panel-badge-pending {
-  color: var(--toro-color-accent-strong);
-  background: var(--toro-color-accent-soft);
+  color: var(--bio-nexus-color-accent-strong);
+  background: var(--bio-nexus-color-accent-soft);
 }
 
 .dashboard-module-list span {
-  border-color: var(--toro-color-accent-border);
+  border-color: var(--bio-nexus-color-accent-border);
 }
 
 /* Bio Nexus official brand integration */
 .login-card { width: min(480px, 100%); }
 .login-brand { text-align: center; }
 .login-brand-logo { display: block; width: min(330px, 88%); max-height: 180px; margin: 0 auto 4px; object-fit: contain; }
-.login-brand-descriptor { margin: 0 0 18px !important; color: var(--toro-color-text-muted-strong) !important; font-size: var(--toro-font-size-sm); font-weight: var(--toro-font-weight-medium); letter-spacing: 0.02em; }
+.login-brand-descriptor { margin: 0 0 18px !important; color: var(--bio-nexus-color-text-muted-strong) !important; font-size: var(--bio-nexus-font-size-sm); font-weight: var(--bio-nexus-font-weight-medium); letter-spacing: 0.02em; }
 .login-brand h1 { margin-top: 0; }
 @media (max-width: 620px) { .login-brand-logo { width: min(280px, 92%); max-height: 150px; } }
 

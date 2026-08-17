@@ -329,8 +329,8 @@ onBeforeUnmount(() => {
 .type-payment-grid :deep(.bio-nexus-grid-actions-cell) { justify-content: center; }
 .type-payment-grid :deep(.ag-pinned-right-header),
 .type-payment-grid :deep(.ag-pinned-right-cols-container) {
-  border-left: 1px solid var(--toro-color-border-strong);
-  box-shadow: calc(var(--toro-space-1) * -1) 0 var(--toro-space-3) var(--toro-shadow-panel-soft);
+  border-left: 1px solid var(--bio-nexus-color-border-strong);
+  box-shadow: calc(var(--bio-nexus-space-1) * -1) 0 var(--bio-nexus-space-3) var(--bio-nexus-shadow-panel-soft);
 }
 .type-payment-grid :deep(.type-payment-dollar-indicator) {
   display: inline-flex;
@@ -345,14 +345,14 @@ onBeforeUnmount(() => {
   width: 34px;
   height: 18px;
   padding: 2px;
-  border: 1px solid var(--toro-color-border-strong);
+  border: 1px solid var(--bio-nexus-color-border-strong);
   border-radius: 999px;
-  background: var(--toro-color-surface-muted);
+  background: var(--bio-nexus-color-surface-muted);
   transition: background-color 160ms ease, border-color 160ms ease;
 }
 .type-payment-grid :deep(.type-payment-dollar-switch.is-on) {
-  border-color: var(--toro-color-success, #18836f);
-  background: var(--toro-color-success, #18836f);
+  border-color: var(--bio-nexus-color-success, #18836f);
+  background: var(--bio-nexus-color-success, #18836f);
 }
 .type-payment-grid :deep(.type-payment-dollar-switch-knob) {
   width: 12px;
@@ -395,7 +395,7 @@ onBeforeUnmount(() => {
   user-select: none;
 }
 .type-payment-grid :deep(.type-payment-dollar-indicator.is-interactive:focus-visible) {
-  outline: 2px solid var(--toro-color-primary, #26789f);
+  outline: 2px solid var(--bio-nexus-color-primary, #26789f);
   outline-offset: 3px;
   border-radius: 999px;
 }
@@ -405,9 +405,9 @@ onBeforeUnmount(() => {
   display: grid;
   min-width: 190px;
   padding: 6px;
-  border: 1px solid var(--toro-color-border-strong);
+  border: 1px solid var(--bio-nexus-color-border-strong);
   border-radius: 10px;
-  background: var(--toro-color-surface);
+  background: var(--bio-nexus-color-surface);
   box-shadow: 0 12px 32px rgb(15 42 61 / 22%);
 }
 .type-payment-context-menu button {
@@ -419,7 +419,7 @@ onBeforeUnmount(() => {
   border: 0;
   border-radius: 7px;
   background: transparent;
-  color: var(--toro-color-text);
+  color: var(--bio-nexus-color-text);
   font: inherit;
   font-weight: 700;
   text-align: left;
@@ -427,7 +427,7 @@ onBeforeUnmount(() => {
 }
 .type-payment-context-menu button:hover,
 .type-payment-context-menu button:focus-visible {
-  background: var(--toro-color-surface-muted);
+  background: var(--bio-nexus-color-surface-muted);
   outline: none;
 }
 .type-payment-grid :deep(.type-payment-center-header .ag-header-cell-label) {
@@ -451,7 +451,7 @@ onBeforeUnmount(() => {
   user-select: none;
 }
 .type-payment-grid :deep(.type-payment-toggle-cell.is-interactive:focus-visible) {
-  outline: 2px solid var(--toro-color-primary, #26789f);
+  outline: 2px solid var(--bio-nexus-color-primary, #26789f);
   outline-offset: 3px;
   border-radius: 999px;
 }
@@ -460,13 +460,13 @@ onBeforeUnmount(() => {
   width: 34px;
   height: 18px;
   padding: 2px;
-  border: 1px solid var(--toro-color-border-strong);
+  border: 1px solid var(--bio-nexus-color-border-strong);
   border-radius: 999px;
-  background: var(--toro-color-surface-muted);
+  background: var(--bio-nexus-color-surface-muted);
 }
 .type-payment-grid :deep(.type-payment-toggle.is-on) {
-  border-color: var(--toro-color-success, #18836f);
-  background: var(--toro-color-success, #18836f);
+  border-color: var(--bio-nexus-color-success, #18836f);
+  background: var(--bio-nexus-color-success, #18836f);
 }
 .type-payment-grid :deep(.type-payment-toggle-knob) {
   width: 12px;
@@ -501,9 +501,9 @@ onBeforeUnmount(() => {
   display: grid;
   min-width: 190px;
   padding: 6px;
-  border: 1px solid var(--toro-color-border-strong);
+  border: 1px solid var(--bio-nexus-color-border-strong);
   border-radius: 10px;
-  background: var(--toro-color-surface);
+  background: var(--bio-nexus-color-surface);
   box-shadow: 0 12px 32px rgb(15 42 61 / 22%);
 }
 .type-payment-context-menu button {
@@ -515,7 +515,7 @@ onBeforeUnmount(() => {
   border: 0;
   border-radius: 7px;
   background: transparent;
-  color: var(--toro-color-text);
+  color: var(--bio-nexus-color-text);
   font: inherit;
   font-weight: 700;
   text-align: left;
@@ -523,7 +523,7 @@ onBeforeUnmount(() => {
 }
 .type-payment-context-menu button:hover,
 .type-payment-context-menu button:focus-visible {
-  background: var(--toro-color-surface-muted);
+  background: var(--bio-nexus-color-surface-muted);
   outline: none;
 }
 

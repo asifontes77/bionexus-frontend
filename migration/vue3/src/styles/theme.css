@@ -2,93 +2,93 @@
   color-scheme: light;
 
   /* Brand */
-  --toro-color-primary: #3f7898;
-  --toro-color-primary-strong: #445d8c;
-  --toro-color-accent: #f1722c;
-  --toro-color-accent-strong: #d95c1d;
-  --toro-color-accent-soft: #fff1e8;
-  --toro-color-accent-border: #f6c3a5;
-  --toro-color-success: #397f7a;
-  --toro-color-success-soft: #ecfdf3;
-  --toro-color-success-border: #a6dfc3;
-  --toro-color-warning: #9a6700;
-  --toro-color-warning-soft: #fffaeb;
-  --toro-color-danger: #b42318;
-  --toro-color-danger-soft: #fff4f2;
-  --toro-color-danger-border: #f4b4ae;
-  --toro-color-info-soft: #e7f1f6;
-  --toro-color-selection-soft: #edf6fa;
+  --bio-nexus-color-primary: #3f7898;
+  --bio-nexus-color-primary-strong: #445d8c;
+  --bio-nexus-color-accent: #f1722c;
+  --bio-nexus-color-accent-strong: #d95c1d;
+  --bio-nexus-color-accent-soft: #fff1e8;
+  --bio-nexus-color-accent-border: #f6c3a5;
+  --bio-nexus-color-success: #397f7a;
+  --bio-nexus-color-success-soft: #ecfdf3;
+  --bio-nexus-color-success-border: #a6dfc3;
+  --bio-nexus-color-warning: #9a6700;
+  --bio-nexus-color-warning-soft: #fffaeb;
+  --bio-nexus-color-danger: #b42318;
+  --bio-nexus-color-danger-soft: #fff4f2;
+  --bio-nexus-color-danger-border: #f4b4ae;
+  --bio-nexus-color-info-soft: #e7f1f6;
+  --bio-nexus-color-selection-soft: #edf6fa;
 
   /* Surfaces */
-  --toro-color-background: #f3f8fb;
-  --toro-color-surface: #ffffff;
-  --toro-color-surface-soft: #f5f9fb;
-  --toro-color-sidebar: #263e63;
-  --toro-color-sidebar-strong: #1b304f;
+  --bio-nexus-color-background: #f3f8fb;
+  --bio-nexus-color-surface: #ffffff;
+  --bio-nexus-color-surface-soft: #f5f9fb;
+  --bio-nexus-color-sidebar: #263e63;
+  --bio-nexus-color-sidebar-strong: #1b304f;
 
   /* Text */
-  --toro-color-text: #172033;
-  --toro-color-text-secondary: #526a7a;
-  --toro-color-text-muted: #708697;
-  --toro-color-text-inverse: #ffffff;
+  --bio-nexus-color-text: #172033;
+  --bio-nexus-color-text-secondary: #526a7a;
+  --bio-nexus-color-text-muted: #708697;
+  --bio-nexus-color-text-inverse: #ffffff;
 
   /* Typography */
-  --toro-font-family: Inter, Roboto, Arial, sans-serif;
-  --toro-font-size-xs: 10px;
-  --toro-font-size-sm: 11px;
-  --toro-font-size-md: 13px;
-  --toro-font-size-lg: 16px;
-  --toro-font-size-title: 20px;
-  --toro-font-size-display: 28px;
+  --bio-nexus-font-family: Inter, Roboto, Arial, sans-serif;
+  --bio-nexus-font-size-xs: 10px;
+  --bio-nexus-font-size-sm: 11px;
+  --bio-nexus-font-size-md: 13px;
+  --bio-nexus-font-size-lg: 16px;
+  --bio-nexus-font-size-title: 20px;
+  --bio-nexus-font-size-display: 28px;
 
-  --toro-font-weight-regular: 400;
-  --toro-font-weight-medium: 600;
-  --toro-font-weight-bold: 700;
-  --toro-font-weight-heavy: 800;
+  --bio-nexus-font-weight-regular: 400;
+  --bio-nexus-font-weight-medium: 600;
+  --bio-nexus-font-weight-bold: 700;
+  --bio-nexus-font-weight-heavy: 800;
 
   /* Spacing */
-  --toro-space-1: 4px;
-  --toro-space-2: 8px;
-  --toro-space-3: 12px;
-  --toro-space-4: 16px;
-  --toro-space-5: 20px;
-  --toro-space-6: 24px;
+  --bio-nexus-space-1: 4px;
+  --bio-nexus-space-2: 8px;
+  --bio-nexus-space-3: 12px;
+  --bio-nexus-space-4: 16px;
+  --bio-nexus-space-5: 20px;
+  --bio-nexus-space-6: 24px;
 
   /* Borders and effects */
-  --toro-color-border: #d8e5eb;
-  --toro-color-border-strong: #bfd2dc;
-  --toro-focus-ring: 3px solid rgba(63, 120, 152, 0.14);
+  --bio-nexus-color-border: #d8e5eb;
+  --bio-nexus-color-border-strong: #bfd2dc;
+  --bio-nexus-focus-ring: 3px solid rgba(63, 120, 152, 0.14);
 
-  --toro-radius-sm: 6px;
-  --toro-radius-md: 9px;
-  --toro-radius-lg: 12px;
+  --bio-nexus-radius-sm: 6px;
+  --bio-nexus-radius-md: 9px;
+  --bio-nexus-radius-lg: 12px;
 
-  --toro-shadow-sm: 0 4px 12px rgba(34, 59, 87, 0.05);
-  --toro-shadow-md: 0 8px 22px rgba(34, 59, 87, 0.08);
-  --toro-shadow-sidebar: 10px 0 28px rgba(13, 34, 57, 0.2);
+  --bio-nexus-shadow-sm: 0 4px 12px rgba(34, 59, 87, 0.05);
+  --bio-nexus-shadow-md: 0 8px 22px rgba(34, 59, 87, 0.08);
+  --bio-nexus-shadow-sidebar: 10px 0 28px rgba(13, 34, 57, 0.2);
 
   /* Authenticated layout */
-  --toro-sidebar-collapsed-width: 64px;
-  --toro-sidebar-expanded-width: 252px;
-  --toro-topbar-height: 68px;
-  --toro-content-padding-x: 18px;
-  --toro-content-padding-y: 14px;
+  --bio-nexus-sidebar-collapsed-width: 64px;
+  --bio-nexus-sidebar-expanded-width: 252px;
+  --bio-nexus-topbar-height: 68px;
+  --bio-nexus-content-padding-x: 18px;
+  --bio-nexus-content-padding-y: 14px;
 
   /* Dense work areas */
-  --toro-control-height: 36px;
-  --toro-table-row-height: 38px;
-  --toro-panel-padding: 16px;
+  --bio-nexus-control-height: 36px;
+  --bio-nexus-table-row-height: 38px;
+  --bio-nexus-panel-padding: 16px;
   /* Global layout and page semantic tokens */
-  --toro-color-text-muted-strong: #718096;
-  --toro-color-sidebar-interaction: rgba(255, 255, 255, 0.08);
-  --toro-color-success-strong: #067647;
-  --toro-color-border-subtle: #dfe7f1;
-  --toro-color-sidebar-child-disabled: #7189a2;
-  --toro-color-sidebar-link-disabled: #8198b0;
-  --toro-color-sidebar-meta: #a9bfd7;
-  --toro-color-card-border: #dce4ef;
-  --toro-color-sidebar-text: #dce8f5;
-  --toro-shadow-panel-soft: rgba(34, 59, 87, 0.05);
-  --toro-color-sidebar-divider: rgba(255, 255, 255, 0.1);
-  --toro-color-sidebar-scrollbar: rgba(173, 197, 222, 0.34);
+  --bio-nexus-color-text-muted-strong: #718096;
+  --bio-nexus-color-sidebar-interaction: rgba(255, 255, 255, 0.08);
+  --bio-nexus-color-success-strong: #067647;
+  --bio-nexus-color-border-subtle: #dfe7f1;
+  --bio-nexus-color-sidebar-child-disabled: #7189a2;
+  --bio-nexus-color-sidebar-link-disabled: #8198b0;
+  --bio-nexus-color-sidebar-meta: #a9bfd7;
+  --bio-nexus-color-card-border: #dce4ef;
+  --bio-nexus-color-sidebar-text: #dce8f5;
+  --bio-nexus-shadow-panel-soft: rgba(34, 59, 87, 0.05);
+  --bio-nexus-color-sidebar-divider: rgba(255, 255, 255, 0.1);
+  --bio-nexus-color-sidebar-scrollbar: rgba(173, 197, 222, 0.34);
 }

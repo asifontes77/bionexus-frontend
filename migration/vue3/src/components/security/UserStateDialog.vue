@@ -37,15 +37,15 @@ function confirm() { if (target.value) emit("confirm", target.value); }
 defineExpose({ open, close, setError });
 </script>
 <style scoped>
-.bio-nexus-dialog { box-sizing: border-box; position: fixed; inset: 0; width: min(560px, calc(100vw - 32px)); min-width: 0; max-width: 560px; height: fit-content; max-height: calc(100vh - 32px); margin: auto; padding: 0; border: 1px solid var(--toro-color-border-strong); border-radius: var(--toro-radius-md); background: var(--toro-color-surface); color: var(--toro-color-text); box-shadow: var(--toro-shadow-md); overflow: hidden; }
-.bio-nexus-dialog::backdrop { background: color-mix(in srgb, var(--toro-color-sidebar-strong) 48%, transparent); backdrop-filter: blur(2px); }
+.bio-nexus-dialog { box-sizing: border-box; position: fixed; inset: 0; width: min(560px, calc(100vw - 32px)); min-width: 0; max-width: 560px; height: fit-content; max-height: calc(100vh - 32px); margin: auto; padding: 0; border: 1px solid var(--bio-nexus-color-border-strong); border-radius: var(--bio-nexus-radius-md); background: var(--bio-nexus-color-surface); color: var(--bio-nexus-color-text); box-shadow: var(--bio-nexus-shadow-md); overflow: hidden; }
+.bio-nexus-dialog::backdrop { background: color-mix(in srgb, var(--bio-nexus-color-sidebar-strong) 48%, transparent); backdrop-filter: blur(2px); }
 .dialog-shell { display: flex; flex-direction: column; width: 100%; max-height: calc(100vh - 32px); overflow: hidden; }
-.dialog-header { display: flex; align-items: center; justify-content: space-between; gap: var(--toro-space-3); padding: var(--toro-space-3) var(--toro-space-4); border-bottom: 1px solid var(--toro-color-border); background: var(--toro-color-surface); }
+.dialog-header { display: flex; align-items: center; justify-content: space-between; gap: var(--bio-nexus-space-3); padding: var(--bio-nexus-space-3) var(--bio-nexus-space-4); border-bottom: 1px solid var(--bio-nexus-color-border); background: var(--bio-nexus-color-surface); }
 .dialog-header p, .dialog-header h3 { margin: 0; }
-.dialog-header p { margin-bottom: var(--toro-space-1); color: var(--toro-color-accent-strong); font-size: var(--toro-font-size-xs); font-weight: var(--toro-font-weight-bold); text-transform: uppercase; letter-spacing: 0.06em; }
-.dialog-body { padding: var(--toro-space-4); overflow: auto; }
-.state-dialog-body { display: grid; gap: var(--toro-space-3); }
-.state-dialog-body > p { margin: 0; color: var(--toro-color-text-secondary); line-height: 1.55; }
-.dialog-footer { display: flex; align-items: center; justify-content: flex-end; gap: var(--toro-space-2); padding: var(--toro-space-3) var(--toro-space-4); border-top: 1px solid var(--toro-color-border); background: var(--toro-color-surface-soft); }
+.dialog-header p { margin-bottom: var(--bio-nexus-space-1); color: var(--bio-nexus-color-accent-strong); font-size: var(--bio-nexus-font-size-xs); font-weight: var(--bio-nexus-font-weight-bold); text-transform: uppercase; letter-spacing: 0.06em; }
+.dialog-body { padding: var(--bio-nexus-space-4); overflow: auto; }
+.state-dialog-body { display: grid; gap: var(--bio-nexus-space-3); }
+.state-dialog-body > p { margin: 0; color: var(--bio-nexus-color-text-secondary); line-height: 1.55; }
+.dialog-footer { display: flex; align-items: center; justify-content: flex-end; gap: var(--bio-nexus-space-2); padding: var(--bio-nexus-space-3) var(--bio-nexus-space-4); border-top: 1px solid var(--bio-nexus-color-border); background: var(--bio-nexus-color-surface-soft); }
 @media (max-width: 720px) { .bio-nexus-dialog { width: calc(100vw - 16px); } .dialog-footer { flex-wrap: wrap; } }
 </style>

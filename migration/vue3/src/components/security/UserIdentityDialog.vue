@@ -211,11 +211,11 @@ defineExpose({ openCreate, openEdit, openState });
   max-height: calc(100vh - 32px) !important;
   margin: auto !important;
   padding: 0 !important;
-  border: 1px solid var(--toro-color-border-strong) !important;
-  border-radius: var(--toro-radius-md) !important;
-  background: var(--toro-color-surface) !important;
-  color: var(--toro-color-text) !important;
-  box-shadow: var(--toro-shadow-md) !important;
+  border: 1px solid var(--bio-nexus-color-border-strong) !important;
+  border-radius: var(--bio-nexus-radius-md) !important;
+  background: var(--bio-nexus-color-surface) !important;
+  color: var(--bio-nexus-color-text) !important;
+  box-shadow: var(--bio-nexus-shadow-md) !important;
   overflow: hidden !important;
 }
 .dialog-shell {
@@ -225,10 +225,10 @@ defineExpose({ openCreate, openEdit, openState });
   max-height: calc(100vh - 32px);
   overflow: hidden;
 }
-.identity-password-section { display: grid; gap: var(--toro-space-3); padding: var(--toro-space-3); border: 1px solid var(--toro-color-border); border-radius: var(--toro-radius-md); background: var(--toro-color-surface-soft); }
-.identity-password-section header { display: flex; align-items: start; justify-content: space-between; gap: var(--toro-space-3); }
+.identity-password-section { display: grid; gap: var(--bio-nexus-space-3); padding: var(--bio-nexus-space-3); border: 1px solid var(--bio-nexus-color-border); border-radius: var(--bio-nexus-radius-md); background: var(--bio-nexus-color-surface-soft); }
+.identity-password-section header { display: flex; align-items: start; justify-content: space-between; gap: var(--bio-nexus-space-3); }
 .identity-password-section h4, .identity-password-section p { margin: 0; }
-.identity-password-section header span { color: var(--toro-color-text-muted); font-size: var(--toro-font-size-xs); font-weight: var(--toro-font-weight-bold); text-transform: uppercase; }
-.identity-password-section header p { color: var(--toro-color-text-muted); font-size: var(--toro-font-size-sm); }
+.identity-password-section header span { color: var(--bio-nexus-color-text-muted); font-size: var(--bio-nexus-font-size-xs); font-weight: var(--bio-nexus-font-weight-bold); text-transform: uppercase; }
+.identity-password-section header p { color: var(--bio-nexus-color-text-muted); font-size: var(--bio-nexus-font-size-sm); }
 @media (max-width: 720px) { .bio-nexus-dialog { width: calc(100vw - 16px); } .identity-form-grid { grid-template-columns: 1fr; } .identity-address-field { grid-column: auto; } .identity-password-section header { flex-direction: column; } }
 </style>
