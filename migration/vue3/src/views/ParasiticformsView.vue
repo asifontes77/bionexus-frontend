@@ -10,7 +10,7 @@
       <div v-else-if="parasiticforms.length === 0" class="toro-empty-state">
         No existen formas parasitarias registradas.
       </div>
-      <ToroDataGrid
+      <BioNexusDataGrid
         v-else
         ref="dataGrid"
         class="parasitic-grid"
@@ -41,13 +41,13 @@
             :disabled="loading || saving"
             @click="openCreate"
           >
-            <ToroActionIcon action="create" />
+            <BioNexusActionIcon action="create" />
             <span>Nueva forma</span>
           </button>
         </template>
-      </ToroDataGrid>
+      </BioNexusDataGrid>
 
-      <ToroContextMenu
+      <BioNexusContextMenu
         ref="parasiticContextMenu"
         :open="parasiticContextMenuState.open"
         :x="parasiticContextMenuState.x"
@@ -75,14 +75,14 @@
 
 <script setup>
 import { computed, nextTick, onMounted, ref } from "vue";
-import ToroDataGrid from "@/components/grid/ToroDataGrid.vue";
-import ToroGridToggleCell from "@/components/grid/ToroGridToggleCell.vue";
-import ToroGridActionsCell from "@/components/grid/ToroGridActionsCell.vue";
-import ToroOptionFilter from "@/components/grid/ToroOptionFilter.vue";
-import ToroActionIcon from "@/components/ui/ToroActionIcon.vue";
+import BioNexusDataGrid from "@/components/grid/BioNexusDataGrid.vue";
+import BioNexusGridToggleCell from "@/components/grid/BioNexusGridToggleCell.vue";
+import BioNexusGridActionsCell from "@/components/grid/BioNexusGridActionsCell.vue";
+import BioNexusOptionFilter from "@/components/grid/BioNexusOptionFilter.vue";
+import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
 import ParasiticformDialog from "@/components/parasiticforms/ParasiticformDialog.vue";
 import ParasiticformStateDialog from "@/components/parasiticforms/ParasiticformStateDialog.vue";
-import { useToroToast } from "@/composables/useToroToast";
+import { useBioNexusToast } from "@/composables/useBioNexusToast";
 import {
   createParasiticform,
   getParasiticformErrorMessage,
@@ -90,10 +90,10 @@ import {
   updateParasiticform,
 } from "@/services/parasiticformsService";
 import { useAuthorizationStore } from "@/stores/authorization";
-import ToroContextMenu from "@/components/ui/ToroContextMenu.vue";
+import BioNexusContextMenu from "@/components/ui/BioNexusContextMenu.vue";
 
 const authorizationStore = useAuthorizationStore();
-const toast = useToroToast();
+const toast = useBioNexusToast();
 const parasiticforms = ref([]);
 const loading = ref(false);
 const saving = ref(false);
@@ -137,7 +137,7 @@ const defaultColDef = Object.freeze({
   resizable: true,
   suppressHeaderMenuButton: true,
 });
-const gridComponents = Object.freeze({ ToroGridActionsCell, ToroGridToggleCell });
+const gridComponents = Object.freeze({ BioNexusGridActionsCell, BioNexusGridToggleCell });
 const columnDefs = computed(() => [
   {
     field: "description",
@@ -152,7 +152,7 @@ const columnDefs = computed(() => [
     width: 160,
     minWidth: 150,
     maxWidth: 180,
-    filter: ToroOptionFilter,
+    filter: BioNexusOptionFilter,
     filterParams: {
       options: [
         { value: true, label: "Activo" },
@@ -161,7 +161,7 @@ const columnDefs = computed(() => [
     },
     headerClass: "toro-grid-toggle-header",
     cellClass: "toro-grid-toggle-cell",
-    cellRenderer: ToroGridToggleCell,
+    cellRenderer: BioNexusGridToggleCell,
     cellRendererParams: {
       onLabel: "Activo",
       offLabel: "Inactivo",
@@ -179,7 +179,7 @@ const columnDefs = computed(() => [
     sortable: false,
     filter: false,
     cellClass: "toro-grid-actions-cell",
-    cellRenderer: ToroGridActionsCell,
+    cellRenderer: BioNexusGridActionsCell,
     cellRendererParams: {
       actions: [
         {

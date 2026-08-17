@@ -3,7 +3,7 @@
     <form class="dialog-shell" @submit.prevent="confirm">
       <header class="dialog-header">
         <div><p>Estado del registro</p><h3>{{ target?.annulled ? "Activar forma parasitaria" : "Inactivar forma parasitaria" }}</h3></div>
-        <ToroDialogCloseButton @click="close" />
+        <BioNexusDialogCloseButton @click="close" />
       </header>
       <section class="dialog-body parasiticform-state-body">
         <p><strong>{{ target?.description }}</strong></p>
@@ -11,16 +11,16 @@
         <div v-if="errorMessage" class="toro-message toro-message-error" role="alert">{{ errorMessage }}</div>
       </section>
       <footer class="dialog-footer">
-        <button type="button" class="toro-action toro-action-secondary" :disabled="saving" @click="close"><ToroActionIcon action="cancel" /><span>Cancelar</span></button>
-        <button type="submit" class="toro-action toro-action-primary" :disabled="saving || !target"><ToroActionIcon :action="target?.annulled ? 'activate' : 'deactivate'" /><span>{{ saving ? "Guardando..." : target?.annulled ? "Activar" : "Inactivar" }}</span></button>
+        <button type="button" class="toro-action toro-action-secondary" :disabled="saving" @click="close"><BioNexusActionIcon action="cancel" /><span>Cancelar</span></button>
+        <button type="submit" class="toro-action toro-action-primary" :disabled="saving || !target"><BioNexusActionIcon :action="target?.annulled ? 'activate' : 'deactivate'" /><span>{{ saving ? "Guardando..." : target?.annulled ? "Activar" : "Inactivar" }}</span></button>
       </footer>
     </form>
   </dialog>
 </template>
 <script setup>
 import { ref } from "vue";
-import ToroActionIcon from "@/components/ui/ToroActionIcon.vue";
-import ToroDialogCloseButton from "@/components/ui/ToroDialogCloseButton.vue";
+import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
+import BioNexusDialogCloseButton from "@/components/ui/BioNexusDialogCloseButton.vue";
 defineProps({ saving: { type: Boolean, default: false } });
 const emit = defineEmits(["confirm"]);
 const dialog = ref(null);

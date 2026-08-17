@@ -11,7 +11,7 @@
       <div v-if="loading" class="toro-empty-state">Cargando Formas de pago...</div>
       <div v-else-if="rows.length === 0" class="toro-empty-state">No existen Formas de pago registrados.</div>
       <div v-else-if="filteredRows.length === 0" class="toro-empty-state">No existen registros que coincidan con los filtros.</div>
-      <ToroDataGrid
+      <BioNexusDataGrid
         v-else
         class="type-payment-grid"
         :row-data="filteredRows"
@@ -41,13 +41,13 @@
           :disabled="loading || saving"
           @click="openCreate"
         >
-          <ToroActionIcon action="create" />
+          <BioNexusActionIcon action="create" />
           <span>Nuevo tipo</span>
         </button>
       </template>
-    </ToroDataGrid>
+    </BioNexusDataGrid>
 
-    <ToroContextMenu
+    <BioNexusContextMenu
       ref="typePaymentContextMenu"
       :open="typePaymentContextMenuState.open"
       :x="typePaymentContextMenuState.x"
@@ -65,21 +65,21 @@
 
 <script setup>
 import { computed, onBeforeUnmount, onMounted, reactive, ref, shallowRef, nextTick } from "vue";
-import ToroDataGrid from "@/components/grid/ToroDataGrid.vue";
-import ToroGridActionsCell from "@/components/grid/ToroGridActionsCell.vue";
-import ToroGridToggleCell from "@/components/grid/ToroGridToggleCell.vue";
-import ToroOptionFilter from "@/components/grid/ToroOptionFilter.vue";
-import ToroStatusBadgeCell from "@/components/grid/ToroStatusBadgeCell.vue";
-import ToroActionIcon from "@/components/ui/ToroActionIcon.vue";
+import BioNexusDataGrid from "@/components/grid/BioNexusDataGrid.vue";
+import BioNexusGridActionsCell from "@/components/grid/BioNexusGridActionsCell.vue";
+import BioNexusGridToggleCell from "@/components/grid/BioNexusGridToggleCell.vue";
+import BioNexusOptionFilter from "@/components/grid/BioNexusOptionFilter.vue";
+import BioNexusStatusBadgeCell from "@/components/grid/BioNexusStatusBadgeCell.vue";
+import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
 import TypePaymentDialog from "@/components/typepayment/TypePaymentDialog.vue";
 import TypePaymentStateDialog from "@/components/typepayment/TypePaymentStateDialog.vue";
-import { useToroToast } from "@/composables/useToroToast";
+import { useBioNexusToast } from "@/composables/useBioNexusToast";
 import { createTypePayment, getTypePaymentErrorMessage, getTypePayments, updateTypePayment } from "@/services/typePaymentService";
 import { useAuthorizationStore } from "@/stores/authorization";
-import ToroContextMenu from "@/components/ui/ToroContextMenu.vue";
+import BioNexusContextMenu from "@/components/ui/BioNexusContextMenu.vue";
 
 const authorizationStore = useAuthorizationStore();
-const toast = useToroToast();
+const toast = useBioNexusToast();
 const rows = shallowRef([]);
 const loading = ref(false);
 const saving = ref(false);
@@ -106,14 +106,14 @@ const filteredRows = computed(() => rows.value.filter((item) => {
 }).map((item) => ({ ...item, isActive: !item.annulled })));
 
 const defaultColDef = Object.freeze({ sortable: true, filter: true, resizable: true, suppressHeaderMenuButton: true });
-const gridComponents = Object.freeze({ ToroGridActionsCell, ToroStatusBadgeCell, ToroGridToggleCell });
+const gridComponents = Object.freeze({ BioNexusGridActionsCell, BioNexusStatusBadgeCell, BioNexusGridToggleCell });
 const columnDefs = computed(() => [
   { field: "description", headerName: "Descripcion", minWidth: 210, flex: 1 },
   { field: "description_1", headerName: "Descripcion auxiliar 1", minWidth: 190, flex: 1 },
   { field: "description_2", headerName: "Descripcion auxiliar 2", minWidth: 190, flex: 1 },
   {
     field: "only_dollars",
-    filter: ToroOptionFilter,
+    filter: BioNexusOptionFilter,
     filterParams: {
       options: [{"value":true,"label":"Si"},{"value":false,"label":"No"}],
     },
@@ -121,12 +121,12 @@ const columnDefs = computed(() => [
     width: 170,
     headerClass: "type-payment-center-header",
     cellClass: "type-payment-center-cell",
-    cellRenderer: "ToroGridToggleCell",
+    cellRenderer: "BioNexusGridToggleCell",
     cellRendererParams: { onLabel: "Si", offLabel: "No", ariaLabel: "Solo dolares", disabled: () => !canUpdate.value || saving.value, onToggle: toggleOnlyDollars },
   },
   {
     field: "isActive",
-    filter: ToroOptionFilter,
+    filter: BioNexusOptionFilter,
     filterParams: {
       options: [{"value":true,"label":"Activo"},{"value":false,"label":"Inactivo"}],
     },
@@ -134,7 +134,7 @@ const columnDefs = computed(() => [
     width: 170,
     headerClass: "type-payment-center-header",
     cellClass: "type-payment-center-cell",
-    cellRenderer: "ToroGridToggleCell",
+    cellRenderer: "BioNexusGridToggleCell",
     cellRendererParams: { onLabel: "Activo", offLabel: "Inactivo", ariaLabel: "Estado", disabled: () => !canChangeStatus.value || saving.value, onToggle: openState },
   },
   {
@@ -153,7 +153,7 @@ const columnDefs = computed(() => [
     suppressHeaderMenuButton: true,
     headerClass: "toro-grid-actions-header",
     cellClass: "toro-grid-actions-cell",
-    cellRenderer: "ToroGridActionsCell",
+    cellRenderer: "BioNexusGridActionsCell",
     cellRendererParams: {
       actions: [
         { key: "edit", label: "Editar", icon: "edit", visible: () => canUpdate.value, disabled: () => saving.value, onClick: openEdit },

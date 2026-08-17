@@ -6,13 +6,13 @@
           <p>Asignación directa</p>
           <h3>Roles de {{ user?.name || "Usuario" }}</h3>
         </div>
-        <ToroDialogCloseButton @click="cancel" />
+        <BioNexusDialogCloseButton @click="cancel" />
       </header>
 
       <div class="dialog-toolbar">
-        <ToroFormField label="Buscar rol" field-id="user-role-search">
+        <BioNexusFormField label="Buscar rol" field-id="user-role-search">
           <input id="user-role-search" v-model="searchText" class="toro-field" type="search" autocomplete="off" placeholder="Código, nombre o descripción" />
-        </ToroFormField>
+        </BioNexusFormField>
         <span><strong>{{ draftRoleIds.length }}</strong> seleccionados</span>
       </div>
 
@@ -63,10 +63,10 @@
       <footer class="dialog-footer">
         <span class="dialog-pending-status">{{ hasChanges ? "Existen cambios pendientes." : "Los roles están sincronizados." }}</span>
         <button type="button" class="toro-action toro-action-secondary" :disabled="saving" @click="cancel">
-          <ToroActionIcon action="cancel" />Cancelar
+          <BioNexusActionIcon action="cancel" />Cancelar
         </button>
         <button v-if="canAssign" type="button" class="toro-action toro-action-primary" :disabled="!canEdit || !hasChanges || saving" @click="emit('save')">
-          <ToroActionIcon action="assignRoles" />{{ saving ? "Guardando..." : "Guardar roles" }}
+          <BioNexusActionIcon action="assignRoles" />{{ saving ? "Guardando..." : "Guardar roles" }}
         </button>
       </footer>
     </div>
@@ -75,9 +75,9 @@
 
 <script setup>
 import { computed, ref } from "vue";
-import ToroActionIcon from "@/components/ui/ToroActionIcon.vue";
-import ToroDialogCloseButton from "@/components/ui/ToroDialogCloseButton.vue";
-import ToroFormField from "@/components/ui/ToroFormField.vue";
+import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
+import BioNexusDialogCloseButton from "@/components/ui/BioNexusDialogCloseButton.vue";
+import BioNexusFormField from "@/components/ui/BioNexusFormField.vue";
 
 const props = defineProps({
   user: { type: Object, default: null },

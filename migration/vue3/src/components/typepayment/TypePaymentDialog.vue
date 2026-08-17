@@ -3,34 +3,34 @@
     <form class="dialog-shell" @submit.prevent="submit">
       <header class="dialog-header">
         <div><p>{{ mode === "create" ? "Nuevo registro" : "Editar registro" }}</p><h3>{{ mode === "create" ? "Crear tipo de pago" : "Editar tipo de pago" }}</h3></div>
-        <ToroDialogCloseButton @click="close" />
+        <BioNexusDialogCloseButton @click="close" />
       </header>
       <section class="dialog-body type-payment-dialog-body">
-        <ToroFormField label="Descripcion" field-id="type-payment-description"
+        <BioNexusFormField label="Descripcion" field-id="type-payment-description"
           :error="descriptionError" required>
           <input id="type-payment-description" ref="firstInput" v-model="draft.description" class="toro-field" type="text" maxlength="50" autocomplete="off" />
-        </ToroFormField>
-        <ToroFormField label="Descripcion auxiliar 1" field-id="type-payment-description-1">
+        </BioNexusFormField>
+        <BioNexusFormField label="Descripcion auxiliar 1" field-id="type-payment-description-1">
           <input id="type-payment-description-1" v-model="draft.description_1" class="toro-field" type="text" maxlength="50" autocomplete="off" />
-        </ToroFormField>
-        <ToroFormField label="Descripcion auxiliar 2" field-id="type-payment-description-2">
+        </BioNexusFormField>
+        <BioNexusFormField label="Descripcion auxiliar 2" field-id="type-payment-description-2">
           <input id="type-payment-description-2" v-model="draft.description_2" class="toro-field" type="text" maxlength="50" autocomplete="off" />
-        </ToroFormField>
+        </BioNexusFormField>
         <label class="type-payment-check"><input v-model="draft.only_dollars" type="checkbox" /><span>Disponible solo para pagos en dolares</span></label>
         <div v-if="errorMessage" class="toro-message toro-message-error" role="alert">{{ errorMessage }}</div>
       </section>
       <footer class="dialog-footer">
-        <button type="button" class="toro-action toro-action-secondary" :disabled="saving" @click="close"><ToroActionIcon action="cancel" /><span>Cancelar</span></button>
-        <button type="submit" class="toro-action toro-action-primary" :disabled="submitDisabled"><ToroActionIcon action="save" /><span>{{ saving ? "Guardando..." : mode === "create" ? "Crear" : "Guardar" }}</span></button>
+        <button type="button" class="toro-action toro-action-secondary" :disabled="saving" @click="close"><BioNexusActionIcon action="cancel" /><span>Cancelar</span></button>
+        <button type="submit" class="toro-action toro-action-primary" :disabled="submitDisabled"><BioNexusActionIcon action="save" /><span>{{ saving ? "Guardando..." : mode === "create" ? "Crear" : "Guardar" }}</span></button>
       </footer>
     </form>
   </dialog>
 </template>
 <script setup>
 import { computed, nextTick, reactive, ref } from "vue";
-import ToroActionIcon from "@/components/ui/ToroActionIcon.vue";
-import ToroDialogCloseButton from "@/components/ui/ToroDialogCloseButton.vue";
-import ToroFormField from "@/components/ui/ToroFormField.vue";
+import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
+import BioNexusDialogCloseButton from "@/components/ui/BioNexusDialogCloseButton.vue";
+import BioNexusFormField from "@/components/ui/BioNexusFormField.vue";
 const props = defineProps({ saving: { type: Boolean, default: false }, canCreate: { type: Boolean, default: false }, canUpdate: { type: Boolean, default: false } });
 const emit = defineEmits(["submit"]);
 const dialog = ref(null); const firstInput = ref(null); const mode = ref("create"); const current = ref(null); const errorMessage = ref("");

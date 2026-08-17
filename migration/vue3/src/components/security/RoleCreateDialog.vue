@@ -7,11 +7,11 @@
             <h3>Crear rol</h3>
           </div>
 
-          <ToroDialogCloseButton @click="emit('close')" />
+          <BioNexusDialogCloseButton @click="emit('close')" />
         </header>
 
         <div class="dialog-body role-dialog-form">
-                    <ToroFormField
+                    <BioNexusFormField
             label="Código"
             field-id="create-role-code"
             :error="createRoleCodeError"
@@ -35,9 +35,9 @@
               "
               required
             />
-          </ToroFormField>
+          </BioNexusFormField>
 
-                    <ToroFormField
+                    <BioNexusFormField
             label="Nombre"
             field-id="create-role-name"
             :error="createRoleNameError"
@@ -56,9 +56,9 @@
               :aria-describedby="createRoleNameError ? 'create-role-name-error' : undefined"
               required
             />
-          </ToroFormField>
+          </BioNexusFormField>
 
-                    <ToroFormField
+                    <BioNexusFormField
             label="Descripción"
             field-id="create-role-description"
             :help="`${createRoleForm.description.length} de 250 caracteres`"
@@ -74,7 +74,7 @@
               :disabled="creatingRole"
               aria-describedby="create-role-description-help"
             ></textarea>
-          </ToroFormField>
+          </BioNexusFormField>
 
           <div v-if="createRoleError" class="dialog-field-wide toro-inline-message toro-message-error" role="alert">
             {{ createRoleError }}
@@ -89,12 +89,12 @@
         <footer class="dialog-footer">
           <button type="button" class="toro-action toro-action-secondary" :disabled="creatingRole"
             @click="emit('close')">
-  <ToroActionIcon action="cancel" />
+  <BioNexusActionIcon action="cancel" />
             Cancelar
           </button>
 
           <button type="submit" class="toro-action toro-action-primary" :disabled="creatingRole || !canCreateRoles">
-  <ToroActionIcon action="create" />
+  <BioNexusActionIcon action="create" />
             {{ creatingRole ? "Creando..." : "Crear rol" }}
           </button>
         </footer>
@@ -104,10 +104,10 @@
 
 <script setup>
 import { ref } from "vue";
-import ToroActionIcon from "@/components/ui/ToroActionIcon.vue";
-import ToroDialogCloseButton from "@/components/ui/ToroDialogCloseButton.vue";
-import ToroFormField from "@/components/ui/ToroFormField.vue";
-import ToroPermissionTree from "@/components/tree/ToroPermissionTree.vue";
+import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
+import BioNexusDialogCloseButton from "@/components/ui/BioNexusDialogCloseButton.vue";
+import BioNexusFormField from "@/components/ui/BioNexusFormField.vue";
+import BioNexusPermissionTree from "@/components/tree/BioNexusPermissionTree.vue";
 
 const props = defineProps({ creatingRole: Boolean, canCreateRoles: Boolean, createRoleForm: { type: Object, required: true }, createRoleCodeError: String, createRoleNameError: String, createRoleError: String, createRoleMessage: String });
 const emit = defineEmits(["close","submit"]);

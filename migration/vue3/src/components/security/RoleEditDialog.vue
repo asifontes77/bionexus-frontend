@@ -7,11 +7,11 @@
             <h3>{{ selectedRole?.name || "Rol" }}</h3>
           </div>
 
-          <ToroDialogCloseButton @click="emit('close')" />
+          <BioNexusDialogCloseButton @click="emit('close')" />
         </header>
 
         <div class="dialog-body role-dialog-form">
-                    <ToroFormField
+                    <BioNexusFormField
             label="Código"
             field-id="edit-role-code"
             help="El código identifica al rol y no puede modificarse."
@@ -26,9 +26,9 @@
               aria-describedby="edit-role-code-help"
               disabled
             />
-          </ToroFormField>
+          </BioNexusFormField>
 
-                    <ToroFormField
+                    <BioNexusFormField
             label="Nombre"
             field-id="edit-role-name"
             :error="updateRoleNameError"
@@ -45,9 +45,9 @@
               :aria-describedby="updateRoleNameError ? 'edit-role-name-error' : undefined"
               required
             />
-          </ToroFormField>
+          </BioNexusFormField>
 
-                    <ToroFormField
+                    <BioNexusFormField
             label="Descripción"
             field-id="edit-role-description"
             :help="`${updateRoleForm.description.length} de 250 caracteres`"
@@ -62,7 +62,7 @@
               :disabled="editingRole"
               aria-describedby="edit-role-description-help"
             ></textarea>
-          </ToroFormField>
+          </BioNexusFormField>
 
           <label class="dialog-field-wide role-active-option toro-option">
             <input v-model="updateRoleForm.isActive" type="checkbox"
@@ -92,12 +92,12 @@
         <footer class="dialog-footer">
           <button type="button" class="toro-action toro-action-secondary" :disabled="editingRole"
             @click="emit('close')">
-  <ToroActionIcon action="cancel" />
+  <BioNexusActionIcon action="cancel" />
             Cancelar
           </button>
 
           <button type="submit" class="toro-action toro-action-primary" :disabled="editingRole || !canUpdateRoles || !hasRoleMetadataChanges">
-  <ToroActionIcon action="save" />
+  <BioNexusActionIcon action="save" />
             {{ editingRole ? "Guardando..." : "Guardar" }}
           </button>
         </footer>
@@ -107,10 +107,10 @@
 
 <script setup>
 import { ref } from "vue";
-import ToroActionIcon from "@/components/ui/ToroActionIcon.vue";
-import ToroDialogCloseButton from "@/components/ui/ToroDialogCloseButton.vue";
-import ToroFormField from "@/components/ui/ToroFormField.vue";
-import ToroPermissionTree from "@/components/tree/ToroPermissionTree.vue";
+import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
+import BioNexusDialogCloseButton from "@/components/ui/BioNexusDialogCloseButton.vue";
+import BioNexusFormField from "@/components/ui/BioNexusFormField.vue";
+import BioNexusPermissionTree from "@/components/tree/BioNexusPermissionTree.vue";
 
 const props = defineProps({ selectedRole: { type: Object, default: null }, updateRoleForm: { type: Object, required: true }, updateRoleNameError: String, updateRoleError: String, updateRoleMessage: String, editingRole: Boolean, canUpdateRoles: Boolean, hasRoleMetadataChanges: Boolean });
 const emit = defineEmits(["close","submit"]);

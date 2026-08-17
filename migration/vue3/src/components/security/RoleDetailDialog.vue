@@ -7,7 +7,7 @@
             <h3>{{ selectedRole?.name || "Rol" }}</h3>
           </div>
 
-          <ToroDialogCloseButton @click="emit('close')" />
+          <BioNexusDialogCloseButton @click="emit('close')" />
         </header>
 
         <div v-if="selectedRole" class="dialog-body role-summary-card">
@@ -46,7 +46,7 @@
         </div>
         <footer class="dialog-footer">
           <button type="button" class="toro-action toro-action-secondary" @click="emit('close')">
-  <ToroActionIcon action="close" />
+  <BioNexusActionIcon action="close" />
             Cerrar
           </button>
         </footer>
@@ -56,10 +56,10 @@
 
 <script setup>
 import { ref } from "vue";
-import ToroActionIcon from "@/components/ui/ToroActionIcon.vue";
-import ToroDialogCloseButton from "@/components/ui/ToroDialogCloseButton.vue";
-import ToroFormField from "@/components/ui/ToroFormField.vue";
-import ToroPermissionTree from "@/components/tree/ToroPermissionTree.vue";
+import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
+import BioNexusDialogCloseButton from "@/components/ui/BioNexusDialogCloseButton.vue";
+import BioNexusFormField from "@/components/ui/BioNexusFormField.vue";
+import BioNexusPermissionTree from "@/components/tree/BioNexusPermissionTree.vue";
 
 const props = defineProps({ selectedRole: { type: Object, default: null } });
 const emit = defineEmits(["close"]);

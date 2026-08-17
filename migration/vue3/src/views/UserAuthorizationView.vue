@@ -14,7 +14,7 @@
         No existen usuarios que coincidan con los filtros.
       </div>
 
-            <ToroDataGrid
+            <BioNexusDataGrid
         v-else
         class="users-grid"
         :row-data="filteredUsers"
@@ -44,13 +44,13 @@
             :disabled="usersLoading || authorizationLoading || savingRoles || savingOverrides"
             @click="openCreateUserDialog"
           >
-            <ToroIcon name="person_add" :size="19" />
+            <BioNexusIcon name="person_add" :size="19" />
             <span>Nuevo usuario</span>
           </button>
         </template>
-      </ToroDataGrid>
+      </BioNexusDataGrid>
 
-      <ToroContextMenu
+      <BioNexusContextMenu
         ref="userContextMenu"
         :open="userContextMenuState.open"
         :x="userContextMenuState.x"
@@ -115,12 +115,12 @@
 <script setup>
 import { computed, onMounted, ref } from "vue";
 import { nextTick } from "vue";
-import ToroDataGrid from "@/components/grid/ToroDataGrid.vue";
-import ToroGridToggleCell from "@/components/grid/ToroGridToggleCell.vue";
-import ToroGridActionsCell from "@/components/grid/ToroGridActionsCell.vue";
-import ToroOptionFilter from "@/components/grid/ToroOptionFilter.vue";
-import ToroContextMenu from "@/components/ui/ToroContextMenu.vue";
-import ToroIcon from "@/components/ui/ToroIcon.vue";
+import BioNexusDataGrid from "@/components/grid/BioNexusDataGrid.vue";
+import BioNexusGridToggleCell from "@/components/grid/BioNexusGridToggleCell.vue";
+import BioNexusGridActionsCell from "@/components/grid/BioNexusGridActionsCell.vue";
+import BioNexusOptionFilter from "@/components/grid/BioNexusOptionFilter.vue";
+import BioNexusContextMenu from "@/components/ui/BioNexusContextMenu.vue";
+import BioNexusIcon from "@/components/ui/BioNexusIcon.vue";
 import UserIdentityDialog from "@/components/security/UserIdentityDialog.vue";
 import UserDetailDialog from "@/components/security/UserDetailDialog.vue";
 import UserRolesDialog from "@/components/security/UserRolesDialog.vue";
@@ -135,9 +135,9 @@ import {
 } from "@/services/authorizationService";
 import { PermissionEffect } from "@/models/authorization";
 import { useAuthorizationStore } from "@/stores/authorization";
-import { useToroToast } from "@/composables/useToroToast";
+import { useBioNexusToast } from "@/composables/useBioNexusToast";
 
-const toast = useToroToast();
+const toast = useBioNexusToast();
 
 const authorizationStore = useAuthorizationStore();
 const users = ref([]);
@@ -237,8 +237,8 @@ const canEditSelectedUser = computed(
 );
 
 const gridComponents = {
-  ToroGridActionsCell,
-  ToroOptionFilter,
+  BioNexusGridActionsCell,
+  BioNexusOptionFilter,
 };
 
 const gridContext = {
@@ -333,7 +333,7 @@ const userColumnDefs = computed(() => [
     flex: 0.9,
     valueGetter: ({ data }) => data?.position || "Sin cargo",
     filterValueGetter: ({ data }) => data?.position || "Sin cargo",
-    filter: "ToroOptionFilter",
+    filter: "BioNexusOptionFilter",
     filterParams: { options: cargoFilterOptions.value },
   },
   {
@@ -343,7 +343,7 @@ const userColumnDefs = computed(() => [
     flex: 0.8,
     valueGetter: ({ data }) => data?.roles || "Sin roles",
     filterValueGetter: ({ data }) => data?.roles || "Sin roles",
-    filter: "ToroOptionFilter",
+    filter: "BioNexusOptionFilter",
     filterParams: { options: roleFilterOptions.value },
   },
   {
@@ -352,7 +352,7 @@ const userColumnDefs = computed(() => [
     maxWidth: 145,
     flex: 0.6,
     valueGetter: ({ data }) => data?.hidden !== true,
-    filter: "ToroOptionFilter",
+    filter: "BioNexusOptionFilter",
     filterParams: {
       getValue: (data) => data?.hidden !== true,
       options: [
@@ -362,7 +362,7 @@ const userColumnDefs = computed(() => [
     },
     headerClass: "toro-grid-centered-header",
     cellClass: "toro-grid-status-cell",
-    cellRenderer: ToroGridToggleCell,
+    cellRenderer: BioNexusGridToggleCell,
     cellRendererParams: {
       onLabel: "Activo",
       offLabel: "Inactivo",
@@ -384,7 +384,7 @@ const userColumnDefs = computed(() => [
     suppressHeaderMenuButton: true,
     headerClass: "toro-grid-actions-header",
     cellClass: "toro-grid-actions-cell",
-    cellRenderer: "ToroGridActionsCell",
+    cellRenderer: "BioNexusGridActionsCell",
     cellRendererParams: {
       actions: userActions.value,
     },

@@ -6,7 +6,7 @@
           <p>Estado del rol</p>
           <h3>{{ target?.isActive ? "Inactivar rol" : "Activar rol" }}</h3>
         </div>
-        <ToroDialogCloseButton @click="close" />
+        <BioNexusDialogCloseButton @click="close" />
       </header>
       <div class="dialog-body">
         <div class="toro-message toro-message-warning" role="status">
@@ -18,11 +18,11 @@
       </div>
       <footer class="dialog-footer">
         <button type="button" class="toro-action toro-action-secondary" :disabled="saving" @click="close">
-          <ToroActionIcon action="cancel" />
+          <BioNexusActionIcon action="cancel" />
           <span>Cancelar</span>
         </button>
         <button type="submit" class="toro-action" :class="target?.isActive ? 'toro-action-danger' : 'toro-action-primary'" :disabled="saving || !target">
-          <ToroActionIcon :action="target?.isActive ? 'deactivate' : 'activate'" />
+          <BioNexusActionIcon :action="target?.isActive ? 'deactivate' : 'activate'" />
           <span>{{ saving ? "Guardando..." : target?.isActive ? "Inactivar" : "Activar" }}</span>
         </button>
       </footer>
@@ -32,8 +32,8 @@
 
 <script setup>
 import { ref } from "vue";
-import ToroActionIcon from "@/components/ui/ToroActionIcon.vue";
-import ToroDialogCloseButton from "@/components/ui/ToroDialogCloseButton.vue";
+import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
+import BioNexusDialogCloseButton from "@/components/ui/BioNexusDialogCloseButton.vue";
 
 defineProps({ saving: { type: Boolean, default: false } });
 const emit = defineEmits(["confirm"]);

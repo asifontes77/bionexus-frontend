@@ -6,7 +6,7 @@
           <p>Estado de la cuenta</p>
           <h3>{{ target?.hidden ? "Reactivar usuario" : "Inactivar usuario" }}</h3>
         </div>
-        <ToroDialogCloseButton @click="close" />
+        <BioNexusDialogCloseButton @click="close" />
       </header>
       <div class="dialog-body state-dialog-body">
         <div v-if="errorMessage" class="toro-message toro-message-error" role="alert">{{ errorMessage }}</div>
@@ -14,17 +14,17 @@
         <div v-if="!target?.hidden" class="toro-message toro-message-warning" role="status">El sistema impedirá inactivar al último administrador visible.</div>
       </div>
       <footer class="dialog-footer">
-        <button type="button" class="toro-action toro-action-secondary" :disabled="saving" @click="close"><ToroActionIcon action="cancel" />Cancelar</button>
-        <button type="submit" class="toro-action" :class="target?.hidden ? 'toro-action-primary' : 'toro-action-danger'" :disabled="saving || !target"><ToroIcon :name="target?.hidden ? 'person_check' : 'person_off'" :size="19" />{{ saving ? "Guardando..." : target?.hidden ? "Reactivar" : "Inactivar" }}</button>
+        <button type="button" class="toro-action toro-action-secondary" :disabled="saving" @click="close"><BioNexusActionIcon action="cancel" />Cancelar</button>
+        <button type="submit" class="toro-action" :class="target?.hidden ? 'toro-action-primary' : 'toro-action-danger'" :disabled="saving || !target"><BioNexusIcon :name="target?.hidden ? 'person_check' : 'person_off'" :size="19" />{{ saving ? "Guardando..." : target?.hidden ? "Reactivar" : "Inactivar" }}</button>
       </footer>
     </form>
   </dialog>
 </template>
 <script setup>
 import { ref } from "vue";
-import ToroActionIcon from "@/components/ui/ToroActionIcon.vue";
-import ToroDialogCloseButton from "@/components/ui/ToroDialogCloseButton.vue";
-import ToroIcon from "@/components/ui/ToroIcon.vue";
+import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
+import BioNexusDialogCloseButton from "@/components/ui/BioNexusDialogCloseButton.vue";
+import BioNexusIcon from "@/components/ui/BioNexusIcon.vue";
 defineProps({ saving: { type: Boolean, default: false } });
 const emit = defineEmits(["confirm"]);
 const dialog = ref(null);

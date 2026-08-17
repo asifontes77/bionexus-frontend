@@ -6,7 +6,7 @@
           <p>Detalle administrativo</p>
           <h3>{{ authorization?.user?.name || "Usuario" }}</h3>
         </div>
-        <ToroDialogCloseButton @click="close" />
+        <BioNexusDialogCloseButton @click="close" />
       </header>
 
       <div class="dialog-body">
@@ -48,7 +48,7 @@
 
       <footer class="dialog-footer">
         <button type="button" class="toro-action toro-action-secondary" @click="close">
-          <ToroActionIcon action="close" />Cerrar
+          <BioNexusActionIcon action="close" />Cerrar
         </button>
       </footer>
     </div>
@@ -57,8 +57,8 @@
 
 <script setup>
 import { ref } from "vue";
-import ToroActionIcon from "@/components/ui/ToroActionIcon.vue";
-import ToroDialogCloseButton from "@/components/ui/ToroDialogCloseButton.vue";
+import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
+import BioNexusDialogCloseButton from "@/components/ui/BioNexusDialogCloseButton.vue";
 
 defineProps({
   authorization: { type: Object, default: null },

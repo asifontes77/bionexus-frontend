@@ -6,10 +6,10 @@
           <p>{{ mode === "create" ? "Nuevo registro" : "Editar registro" }}</p>
           <h3>{{ mode === "create" ? "Crear forma parasitaria" : `Editar ${current?.description || "forma parasitaria"}` }}</h3>
         </div>
-        <ToroDialogCloseButton @click="close" />
+        <BioNexusDialogCloseButton @click="close" />
       </header>
       <section class="dialog-body parasiticform-dialog-body">
-        <ToroFormField
+        <BioNexusFormField
           label="Descripcion"
           field-id="parasiticform-description"
           :error="descriptionError"
@@ -25,15 +25,15 @@
             maxlength="50"
             autocomplete="off"
           />
-        </ToroFormField>
+        </BioNexusFormField>
         <div v-if="errorMessage" class="toro-message toro-message-error" role="alert">{{ errorMessage }}</div>
       </section>
       <footer class="dialog-footer">
         <button type="button" class="toro-action toro-action-secondary" :disabled="saving" @click="close">
-          <ToroActionIcon action="cancel" /><span>Cancelar</span>
+          <BioNexusActionIcon action="cancel" /><span>Cancelar</span>
         </button>
         <button type="submit" class="toro-action toro-action-primary" :disabled="submitDisabled">
-          <ToroActionIcon action="save" /><span>{{ saving ? "Guardando..." : mode === "create" ? "Crear" : "Guardar" }}</span>
+          <BioNexusActionIcon action="save" /><span>{{ saving ? "Guardando..." : mode === "create" ? "Crear" : "Guardar" }}</span>
         </button>
       </footer>
     </form>
@@ -41,9 +41,9 @@
 </template>
 <script setup>
 import { computed, nextTick, reactive, ref } from "vue";
-import ToroActionIcon from "@/components/ui/ToroActionIcon.vue";
-import ToroDialogCloseButton from "@/components/ui/ToroDialogCloseButton.vue";
-import ToroFormField from "@/components/ui/ToroFormField.vue";
+import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
+import BioNexusDialogCloseButton from "@/components/ui/BioNexusDialogCloseButton.vue";
+import BioNexusFormField from "@/components/ui/BioNexusFormField.vue";
 const props = defineProps({ saving: { type: Boolean, default: false }, canCreate: { type: Boolean, default: false }, canUpdate: { type: Boolean, default: false } });
 const emit = defineEmits(["submit"]);
 const dialog = ref(null);

@@ -12,11 +12,11 @@
             </h3>
           </div>
 
-          <ToroDialogCloseButton @click="emit('close')" />
+          <BioNexusDialogCloseButton @click="emit('close')" />
         </header>
 
         <div class="permissions-dialog-toolbar role-permissions-toolbar">
-          <ToroFormField label="Buscar permiso" field-id="role-permission-search">
+          <BioNexusFormField label="Buscar permiso" field-id="role-permission-search">
             <input
               id="role-permission-search"
               :value="permissionSearchText"
@@ -26,7 +26,7 @@
               :placeholder="'Nombre, descripci\u00f3n o m\u00f3dulo'"
               @input="emit('update:permissionSearchText', $event.target.value)"
             />
-          </ToroFormField>
+          </BioNexusFormField>
 
           <span>
             <strong>{{ draftPermissionIds.length }}</strong> seleccionados
@@ -55,7 +55,7 @@
               No existen permisos que coincidan con la búsqueda.
             </div>
 
-            <ToroPermissionTree
+            <BioNexusPermissionTree
               class="role-permission-tree"
               :modules="filteredPermissionModules"
               :search-text="permissionSearchText"
@@ -88,13 +88,13 @@
 
           <button type="button" class="toro-action toro-action-secondary" :disabled="savingPermissions"
             @click="emit('close')">
-  <ToroActionIcon action="cancel" />
+  <BioNexusActionIcon action="cancel" />
             Cancelar
           </button>
 
           <button v-if="canAssignPermissions" type="button" class="toro-action toro-action-primary"
             :disabled="!hasPermissionChanges || savingPermissions" @click="emit('submit')">
-  <ToroActionIcon action="assignPermissions" />
+  <BioNexusActionIcon action="assignPermissions" />
             {{ savingPermissions ? "Guardando..." : "Guardar permisos" }}
           </button>
         </footer>
@@ -104,10 +104,10 @@
 
 <script setup>
 import { ref } from "vue";
-import ToroActionIcon from "@/components/ui/ToroActionIcon.vue";
-import ToroDialogCloseButton from "@/components/ui/ToroDialogCloseButton.vue";
-import ToroFormField from "@/components/ui/ToroFormField.vue";
-import ToroPermissionTree from "@/components/tree/ToroPermissionTree.vue";
+import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
+import BioNexusDialogCloseButton from "@/components/ui/BioNexusDialogCloseButton.vue";
+import BioNexusFormField from "@/components/ui/BioNexusFormField.vue";
+import BioNexusPermissionTree from "@/components/tree/BioNexusPermissionTree.vue";
 
 const props = defineProps({ selectedRole: { type: Object, default: null }, permissionSearchText: String, draftPermissionIds: Array, assignedPermissionsLoading: Boolean, assignedPermissionsError: String, inactiveAssignedPermissions: Array, filteredPermissionModules: Array, canAssignPermissions: Boolean, savingPermissions: Boolean, savePermissionsError: String, savePermissionsMessage: String, hasPermissionChanges: Boolean });
 const emit = defineEmits(["close","submit","update:permissionSearchText","togglePermission","toggleModulePermissions"]);

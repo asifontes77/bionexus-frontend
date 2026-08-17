@@ -7,11 +7,11 @@
             <h3>Permisos</h3>
           </div>
 
-          <ToroDialogCloseButton @click="emit('close')" />
+          <BioNexusDialogCloseButton @click="emit('close')" />
         </header>
 
         <div class="permissions-dialog-toolbar catalog-permissions-toolbar">
-          <ToroFormField label="Buscar permiso" field-id="catalog-permission-search">
+          <BioNexusFormField label="Buscar permiso" field-id="catalog-permission-search">
             <input
               id="catalog-permission-search"
               :value="catalogSearchText"
@@ -21,13 +21,13 @@
               :placeholder="'Nombre, descripci\u00f3n o m\u00f3dulo'"
               @input="emit('update:catalogSearchText', $event.target.value)"
             />
-          </ToroFormField>
+          </BioNexusFormField>
 
           <span><strong>{{ filteredCatalogPermissions.length }}</strong> permisos</span>
         </div>
 
         <div class="dialog-body catalog-grid-body">
-          <ToroPermissionTree
+          <BioNexusPermissionTree
             class="catalog-tree" :permissions="filteredCatalogPermissions"
             :search-text="catalogSearchText"
             empty-text="No existen permisos que coincidan con la búsqueda."
@@ -35,7 +35,7 @@
         </div>
         <footer class="dialog-footer">
           <button type="button" class="toro-action toro-action-secondary" @click="emit('close')">
-  <ToroActionIcon action="close" />
+  <BioNexusActionIcon action="close" />
             Cerrar
           </button>
         </footer>
@@ -45,10 +45,10 @@
 
 <script setup>
 import { ref } from "vue";
-import ToroActionIcon from "@/components/ui/ToroActionIcon.vue";
-import ToroDialogCloseButton from "@/components/ui/ToroDialogCloseButton.vue";
-import ToroFormField from "@/components/ui/ToroFormField.vue";
-import ToroPermissionTree from "@/components/tree/ToroPermissionTree.vue";
+import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
+import BioNexusDialogCloseButton from "@/components/ui/BioNexusDialogCloseButton.vue";
+import BioNexusFormField from "@/components/ui/BioNexusFormField.vue";
+import BioNexusPermissionTree from "@/components/tree/BioNexusPermissionTree.vue";
 
 const props = defineProps({ catalogSearchText: String, filteredCatalogPermissions: Array });
 const emit = defineEmits(["close","update:catalogSearchText"]);

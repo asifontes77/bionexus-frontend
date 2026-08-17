@@ -6,33 +6,33 @@
           <p>{{ isCreateMode ? "Nueva identidad" : "Datos administrativos" }}</p>
           <h3>{{ isCreateMode ? "Nuevo usuario" : `Editar ${currentUser?.name || "usuario"}` }}</h3>
         </div>
-        <ToroDialogCloseButton @click="closeIdentityDialog" />
+        <BioNexusDialogCloseButton @click="closeIdentityDialog" />
       </header>
 
       <div class="dialog-body identity-dialog-body">
         <div v-if="formError" class="toro-message toro-message-error" role="alert">{{ formError }}</div>
         <div class="identity-form-grid">
-          <ToroFormField label="Nombre completo" field-id="identity-name" :error="errors.name" required>
+          <BioNexusFormField label="Nombre completo" field-id="identity-name" :error="errors.name" required>
             <input id="identity-name" v-model.trim="form.name" class="toro-field" type="text" maxlength="100" autocomplete="name" />
-          </ToroFormField>
-          <ToroFormField label="Nombre de usuario" field-id="identity-user-name" :error="errors.userName" required>
+          </BioNexusFormField>
+          <BioNexusFormField label="Nombre de usuario" field-id="identity-user-name" :error="errors.userName" required>
             <input id="identity-user-name" v-model.trim="form.userName" class="toro-field" type="text" maxlength="100" autocomplete="username" />
-          </ToroFormField>
-          <ToroFormField label="Correo" field-id="identity-email" :error="errors.email" required>
+          </BioNexusFormField>
+          <BioNexusFormField label="Correo" field-id="identity-email" :error="errors.email" required>
             <input id="identity-email" v-model.trim="form.email" class="toro-field" type="email" maxlength="100" autocomplete="email" />
-          </ToroFormField>
-          <ToroFormField label="Teléfono" field-id="identity-telephone" :error="errors.telephone">
+          </BioNexusFormField>
+          <BioNexusFormField label="Teléfono" field-id="identity-telephone" :error="errors.telephone">
             <input id="identity-telephone" v-model.trim="form.telephone" class="toro-field" type="tel" maxlength="20" autocomplete="tel" placeholder="+58 0000 000 0000" />
-          </ToroFormField>
-          <ToroFormField label="Cargo" field-id="identity-position" :error="errors.position">
+          </BioNexusFormField>
+          <BioNexusFormField label="Cargo" field-id="identity-position" :error="errors.position">
             <input id="identity-position" v-model.trim="form.position" class="toro-field" type="text" maxlength="50" autocomplete="organization-title" />
-          </ToroFormField>
-          <ToroFormField label="Número de colegiatura" field-id="identity-college" :error="errors.collegeNumber">
+          </BioNexusFormField>
+          <BioNexusFormField label="Número de colegiatura" field-id="identity-college" :error="errors.collegeNumber">
             <input id="identity-college" v-model.trim="form.collegeNumber" class="toro-field" type="text" maxlength="50" />
-          </ToroFormField>
-          <ToroFormField class="identity-address-field" label="Dirección" field-id="identity-direction" :error="errors.direction">
+          </BioNexusFormField>
+          <BioNexusFormField class="identity-address-field" label="Dirección" field-id="identity-direction" :error="errors.direction">
             <textarea id="identity-direction" v-model.trim="form.direction" class="toro-field identity-textarea" maxlength="100" rows="3" autocomplete="street-address"></textarea>
-          </ToroFormField>
+          </BioNexusFormField>
         </div>
 
         <section class="identity-password-section">
@@ -44,12 +44,12 @@
             <p v-if="!isCreateMode">Deja ambos campos vacios para conservar la contraseña actual.</p>
           </header>
           <div class="identity-form-grid">
-            <ToroFormField label="Contraseña" field-id="identity-password" :error="errors.password" :required="isCreateMode">
+            <BioNexusFormField label="Contraseña" field-id="identity-password" :error="errors.password" :required="isCreateMode">
               <input id="identity-password" v-model="form.password" class="toro-field" type="password" maxlength="500" :autocomplete="isCreateMode ? 'new-password' : 'off'" />
-            </ToroFormField>
-            <ToroFormField label="Confirmar contraseña" field-id="identity-password-confirm" :error="errors.passwordConfirm" :required="isCreateMode">
+            </BioNexusFormField>
+            <BioNexusFormField label="Confirmar contraseña" field-id="identity-password-confirm" :error="errors.passwordConfirm" :required="isCreateMode">
               <input id="identity-password-confirm" v-model="form.passwordConfirm" class="toro-field" type="password" maxlength="500" autocomplete="new-password" />
-            </ToroFormField>
+            </BioNexusFormField>
           </div>
         </section>
 
@@ -60,9 +60,9 @@
 
       <footer class="dialog-footer">
         <button type="button" class="toro-action toro-action-secondary" :disabled="saving" @click="closeIdentityDialog">
-  <ToroActionIcon action="cancel" />Cancelar</button>
+  <BioNexusActionIcon action="cancel" />Cancelar</button>
         <button type="submit" class="toro-action toro-action-primary" :disabled="saving">
-          <ToroIcon :name="isCreateMode ? 'person_add' : 'save'" :size="19" />
+          <BioNexusIcon :name="isCreateMode ? 'person_add' : 'save'" :size="19" />
           {{ saving ? "Guardando..." : isCreateMode ? "Crear usuario" : "Guardar datos" }}
         </button>
       </footer>
@@ -74,15 +74,15 @@
 
 <script setup>
 import { computed, reactive, ref } from "vue";
-import ToroFormField from "@/components/ui/ToroFormField.vue";
-import ToroIcon from "@/components/ui/ToroIcon.vue";
+import BioNexusFormField from "@/components/ui/BioNexusFormField.vue";
+import BioNexusIcon from "@/components/ui/BioNexusIcon.vue";
 import { createUser, updateUser } from "@/services/authorizationService";
-import ToroDialogCloseButton from "@/components/ui/ToroDialogCloseButton.vue";
-import { useToroToast } from "@/composables/useToroToast";
-import ToroActionIcon from "@/components/ui/ToroActionIcon.vue";
+import BioNexusDialogCloseButton from "@/components/ui/BioNexusDialogCloseButton.vue";
+import { useBioNexusToast } from "@/composables/useBioNexusToast";
+import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
 import UserStateDialog from "@/components/security/UserStateDialog.vue";
 
-const toast = useToroToast();
+const toast = useBioNexusToast();
 
 const emit = defineEmits(["saved"]);
 const identityDialog = ref(null);

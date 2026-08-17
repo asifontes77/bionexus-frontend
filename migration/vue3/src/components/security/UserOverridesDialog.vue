@@ -6,20 +6,20 @@
           <p>Excepciones individuales</p>
           <h3>Permisos de {{ user?.name || "Usuario" }}</h3>
         </div>
-        <ToroDialogCloseButton @click="cancel" />
+        <BioNexusDialogCloseButton @click="cancel" />
       </header>
       <div class="dialog-toolbar overrides-toolbar">
-        <ToroFormField label="Buscar permiso" field-id="user-permission-search">
+        <BioNexusFormField label="Buscar permiso" field-id="user-permission-search">
           <input id="user-permission-search" v-model="searchText" class="toro-field" type="search" autocomplete="off" placeholder="Módulo, nombre o descripción" />
-        </ToroFormField>
-        <ToroFormField label="Estado" field-id="user-override-filter">
+        </BioNexusFormField>
+        <BioNexusFormField label="Estado" field-id="user-override-filter">
           <select id="user-override-filter" v-model="statusFilter" class="toro-field">
             <option value="all">Todos</option>
             <option value="inherited">Segun roles</option>
             <option value="allow">Permitir</option>
             <option value="deny">Denegar</option>
           </select>
-        </ToroFormField>
+        </BioNexusFormField>
         <span><strong>{{ draftOverrides.length }}</strong> excepciones</span>
       </div>
       <div class="dialog-body overrides-dialog-body">
@@ -41,7 +41,7 @@
           <div v-else-if="!canAssign" class="toro-empty-state">La cuenta actual puede consultar las excepciones, pero no modificarlas.</div>
           <div v-if="inactiveOverrideCount > 0" class="toro-message toro-message-warning" role="status">Las excepciones inactivas se conservan para consulta y se retirarán al guardar.</div>
           <div v-if="filteredModules.length === 0" class="toro-empty-state">No existen permisos que coincidan con los filtros.</div>
-          <ToroPermissionTree
+          <BioNexusPermissionTree
             class="user-override-tree"
             :modules="filteredModules"
             :search-text="searchText"
@@ -67,15 +67,15 @@
                 </span>
               </div>
             </template>
-          </ToroPermissionTree>
+          </BioNexusPermissionTree>
           <div v-if="saveError" class="toro-inline-message toro-message-error" role="alert">{{ saveError }}</div>
           <div v-if="saveMessage" class="toro-inline-message toro-message-success" role="status">{{ saveMessage }}</div>
         </template>
       </div>
       <footer class="dialog-footer">
         <span class="dialog-pending-status">{{ hasChanges ? "Existen cambios pendientes." : "Las excepciones están sincronizadas." }}</span>
-        <button type="button" class="toro-action toro-action-secondary" :disabled="saving" @click="cancel"><ToroActionIcon action="cancel" />Cancelar</button>
-        <button v-if="canAssign" type="button" class="toro-action toro-action-primary" :disabled="!canEdit || !hasChanges || saving" @click="emit('save')"><ToroActionIcon action="assignPermissions" />{{ saving ? "Guardando..." : "Guardar excepciones" }}</button>
+        <button type="button" class="toro-action toro-action-secondary" :disabled="saving" @click="cancel"><BioNexusActionIcon action="cancel" />Cancelar</button>
+        <button v-if="canAssign" type="button" class="toro-action toro-action-primary" :disabled="!canEdit || !hasChanges || saving" @click="emit('save')"><BioNexusActionIcon action="assignPermissions" />{{ saving ? "Guardando..." : "Guardar excepciones" }}</button>
       </footer>
     </div>
   </dialog>
@@ -84,10 +84,10 @@
 import { computed, ref } from "vue";
 import { PermissionEffect } from "@/models/authorization";
 import { groupPermissionsForPresentation } from "@/presentation/permissionPresentation";
-import ToroActionIcon from "@/components/ui/ToroActionIcon.vue";
-import ToroDialogCloseButton from "@/components/ui/ToroDialogCloseButton.vue";
-import ToroFormField from "@/components/ui/ToroFormField.vue";
-import ToroPermissionTree from "@/components/tree/ToroPermissionTree.vue";
+import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
+import BioNexusDialogCloseButton from "@/components/ui/BioNexusDialogCloseButton.vue";
+import BioNexusFormField from "@/components/ui/BioNexusFormField.vue";
+import BioNexusPermissionTree from "@/components/tree/BioNexusPermissionTree.vue";
 const props = defineProps({
   user: { type: Object, default: null }, authorization: { type: Object, default: null }, permissions: { type: Array, default: () => [] },
   draftOverrides: { type: Array, default: () => [] }, loading: { type: Boolean, default: false }, errorMessage: { type: String, default: "" },

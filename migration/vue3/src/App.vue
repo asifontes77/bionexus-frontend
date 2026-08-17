@@ -1,11 +1,11 @@
 <template>
   <router-view />
-  <ToroToastHost />
+  <BioNexusToastHost />
 </template>
 
 <script setup>
 </script>
 
 <script setup>
-import ToroToastHost from "@/components/ui/ToroToastHost.vue";
+import BioNexusToastHost from "@/components/ui/BioNexusToastHost.vue";
 </script>

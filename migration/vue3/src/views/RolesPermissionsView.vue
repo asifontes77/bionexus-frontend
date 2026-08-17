@@ -15,7 +15,7 @@
           No existen roles registrados.
         </div>
 
-        <ToroDataGrid
+        <BioNexusDataGrid
           v-else
           class="roles-grid"
           :row-data="visibleRoles"
@@ -39,7 +39,7 @@
         >
           <template #actions>
             <button type="button" class="toro-action toro-action-secondary" @click="openPermissionCatalogDialog">
-              <ToroActionIcon action="catalog" />
+              <BioNexusActionIcon action="catalog" />
               <span>Ver catalogo</span>
             </button>
             <button
@@ -49,15 +49,15 @@
               :disabled="loading || creatingRole"
               @click="openCreateRoleDialog"
             >
-              <ToroActionIcon action="create" />
+              <BioNexusActionIcon action="create" />
               <span>Nuevo rol</span>
             </button>
           </template>
-        </ToroDataGrid>
+        </BioNexusDataGrid>
 
         <RoleStateDialog ref="roleStateDialog" :saving="editingRole" @confirm="confirmRoleStatus" />
 
-        <ToroContextMenu
+        <BioNexusContextMenu
           ref="roleContextMenu"
           :open="roleContextMenuState.open"
           :x="roleContextMenuState.x"
@@ -83,11 +83,11 @@
 
 <script setup>
 import { computed, nextTick, onMounted, ref } from "vue";
-import ToroDataGrid from "@/components/grid/ToroDataGrid.vue";
-import ToroOptionFilter from "@/components/grid/ToroOptionFilter.vue";
-import ToroGridToggleCell from "@/components/grid/ToroGridToggleCell.vue";
-import ToroGridActionsCell from "@/components/grid/ToroGridActionsCell.vue";
-import ToroContextMenu from "@/components/ui/ToroContextMenu.vue";
+import BioNexusDataGrid from "@/components/grid/BioNexusDataGrid.vue";
+import BioNexusOptionFilter from "@/components/grid/BioNexusOptionFilter.vue";
+import BioNexusGridToggleCell from "@/components/grid/BioNexusGridToggleCell.vue";
+import BioNexusGridActionsCell from "@/components/grid/BioNexusGridActionsCell.vue";
+import BioNexusContextMenu from "@/components/ui/BioNexusContextMenu.vue";
 import {
   groupPermissionsForPresentation,
   presentPermission,
@@ -103,8 +103,8 @@ import {
 } from "@/services/authorizationService";
 
 import { useAuthorizationStore } from "@/stores/authorization";
-import { useToroToast } from "@/composables/useToroToast";
-import ToroActionIcon from "@/components/ui/ToroActionIcon.vue";
+import { useBioNexusToast } from "@/composables/useBioNexusToast";
+import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
 import RoleStateDialog from "@/components/security/RoleStateDialog.vue";
 import RoleCreateDialog from "@/components/security/RoleCreateDialog.vue";
 import RoleDetailDialog from "@/components/security/RoleDetailDialog.vue";
@@ -112,7 +112,7 @@ import RoleEditDialog from "@/components/security/RoleEditDialog.vue";
 import RolePermissionsDialog from "@/components/security/RolePermissionsDialog.vue";
 import PermissionCatalogDialog from "@/components/security/PermissionCatalogDialog.vue";
 
-const toast = useToroToast();
+const toast = useBioNexusToast();
 
 const authorizationStore = useAuthorizationStore();
 const roles = ref([]);
@@ -214,7 +214,7 @@ const filteredCatalogPermissions = computed(() => {
 });
 
 const gridComponents = {
-  ToroGridActionsCell,
+  BioNexusGridActionsCell,
 
 };
 
@@ -320,7 +320,7 @@ const roleColumnDefs = computed(() => [
   },
   {
     headerName: "Origen",
-    filter: ToroOptionFilter,
+    filter: BioNexusOptionFilter,
     filterParams: {
       getValue: (data) => data?.isSystem ? "Sistema" : "Configurable",
       options: [
@@ -338,7 +338,7 @@ const roleColumnDefs = computed(() => [
   },
   {
     headerName: "Estado",
-    filter: ToroOptionFilter,
+    filter: BioNexusOptionFilter,
     filterParams: {
       getValue: (data) => Boolean(data?.isActive),
       options: [
@@ -359,7 +359,7 @@ const roleColumnDefs = computed(() => [
       paddingRight: "6px",
     },
     headerClass: "toro-grid-centered-header",
-    cellRenderer: ToroGridToggleCell,
+    cellRenderer: BioNexusGridToggleCell,
 
   cellRendererParams: { onLabel: "Activo", offLabel: "Inactivo", ariaLabel: "Estado", disabled: false, onToggle: (row) => openRoleStateDialog(row) },
 },
@@ -379,7 +379,7 @@ const roleColumnDefs = computed(() => [
     headerClass: "toro-grid-actions-header",
     cellClass: "toro-grid-actions-cell",
     cellStyle: roleActionsCellStyle,
-    cellRenderer: "ToroGridActionsCell",
+    cellRenderer: "BioNexusGridActionsCell",
     cellRendererParams: {
       actions: roleActions.value,
     },
