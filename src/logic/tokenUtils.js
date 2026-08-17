@@ -1,18 +1,30 @@
-export default {
-  isTokenExpired(token) {
-    if (!token) return true
-    const decodedToken = this.parseJwt(token)
-    if (!decodedToken) return true
-    if (!decodedToken.exp) return true
-    const expirationTime = decodedToken.exp * 1000
-    const currentTime = new Date().getTime()
-    return currentTime > expirationTime
-  },
-  parseJwt(token) {
-    try {
-      return JSON.parse(atob(token.split('.')[1]))
-    } catch (error) {
-      return null
-    }
-  },
+function decodeBase64Url(value) {
+  const normalized = value
+    .replace(/-/g, '+')
+    .replace(/_/g, '/')
+    .padEnd(Math.ceil(value.length / 4) * 4, '=')
+
+  return atob(normalized)
+}
+
+export function parseJwt(token) {
+  if (typeof token !== 'string') return null
+
+  const parts = token.split('.')
+
+  if (parts.length !== 3) return null
+
+  try {
+    return JSON.parse(decodeBase64Url(parts[1]))
+  } catch {
+    return null
+  }
+}
+
+export function isTokenExpired(token, now = Date.now()) {
+  const payload = parseJwt(token)
+
+  if (!payload || typeof payload.exp !== 'number') return true
+
+  return now >= payload.exp * 1000
 }

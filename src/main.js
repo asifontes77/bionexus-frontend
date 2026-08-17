@@ -1,52 +1,37 @@
-import Vue from 'vue'
-import VueHtmlToPaper from 'vue-html-to-paper'
-import VMask from 'v-mask'
+import "@fontsource-variable/material-symbols-rounded/wght.css";
+import { createApp } from 'vue'
+import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
-import store from './store'
-import vuetify from './plugins/vuetify'
-import authConfig from '../auth_config.json'
-import VueToast from 'vue-toast-notification';
-import 'vue-toast-notification/dist/theme-sugar.css';
+import { useAuthorizationStore } from './stores/authorization'
+import { useSessionStore } from './stores/session'
+import './styles/theme.css'
+import './styles/base.css'
+import './styles/layout.css'
+import './styles/components.css'
+import './styles/pages.css'
+import './styles/utilities.css'
 
-const publicPath = process.env.BASE_URL
+const app = createApp(App)
+const pinia = createPinia()
 
-const options = {
-  name: '_blank',
-  timeout: 1000,
-  autoClose: true,
-  windowTitle: 'Imprimir',
-  specs: [
-    'fullscreen=yes',
-    'titlebar=yes',
-    'scrollbars=yes'
-  ],
-  styles: [
-    'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css',
-    'https://unpkg.com/kidlat-css/css/kidlat.css',
-    `${publicPath}printer.css`
-  ],
+app.use(pinia)
+
+const sessionStore = useSessionStore(pinia)
+const authorizationStore = useAuthorizationStore(pinia)
+
+sessionStore.hydrate()
+
+if (sessionStore.isAuthenticated) {
+  try {
+    await authorizationStore.loadContext()
+  } catch {
+    authorizationStore.clear()
+  }
+} else {
+  authorizationStore.clear()
 }
-Vue.use(VMask)
-Vue.use(VueHtmlToPaper, options)
-Vue.use(VueToast, {
-  duration: 5000,
-  position: "bottom",
-  dismissible: true,
 
-})
-
-Vue.config.productionTip = false
-
-
-Vue.prototype.$user = {
-  clientId: authConfig.clientId,
-  name:'Hector Vera',
-  token:''
-}
-new Vue({
-  router,
-  store,
-  vuetify,
-  render: h => h(App)
-}).$mount('#app')
+app.use(router)
+app.mount('#app')
+import "@/styles/security-management.css";

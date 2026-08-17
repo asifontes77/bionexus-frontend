@@ -1,93 +1,162 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import View404 from '@/views/View404.vue'
-import Login from '@/components/Login.vue'
-import Home from '@/views/Home.vue'
-import settingRouter from '@/router/setting.router'
-import movementsRouter from '@/router/movements.router'
-import PatientAdmission from '@/router/admission.router'
-import PatientHistory from '@/router/history.router'
-import PatientApprove from '@/router/approve.router'
-import { authGuard } from '@/auth/authGuard'
-
-const SettingLayout = () => import('@/layouts/modules/SettingLayout.vue')
-const PatientAdmissionLayout = () => import('@/layouts/modules/PatientAdmissionLayout.vue')
-const PatientHistoryLayout = () => import('@/layouts/modules/HistoryLayout.vue')
-const PatientApproveLayout = () => import('@/layouts/modules/ApproveLayout.vue')
-const MovementsLayout = () => import('@/layouts/modules/MovementsLayout.vue')
-Vue.use(VueRouter)
+import { createRouter, createWebHistory } from "vue-router";
+import { useAuthorizationStore } from "@/stores/authorization";
+import { useSessionStore } from "@/stores/session";
+import AuthenticatedLayout from "@/layouts/AuthenticatedLayout.vue";
+import LoginView from "@/views/LoginView.vue";
+import MigrationHomeView from "@/views/MigrationHomeView.vue";
+import NotFoundView from "@/views/NotFoundView.vue";
+import RolesPermissionsView from "@/views/RolesPermissionsView.vue";
+import UserAuthorizationView from "@/views/UserAuthorizationView.vue";
+import ParasiticformsView from "@/views/ParasiticformsView.vue";
+import TypePaymentView from "@/views/TypePaymentView.vue";
 
 const routes = [
   {
-    path: '/login',
-    name: 'login',
-    component: Login,
-    meta: { layout: 'BlankLayout', title: 'Login'},
+    path: "/login",
+    name: "login",
+    component: LoginView,
+    meta: {
+      public: true,
+      title: "Iniciar sesion",
+    },
   },
   {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
+    path: "/",
+    component: AuthenticatedLayout,
+    meta: {
+      requiresAuth: true,
+    },
+    children: [
+      {
+        path: "",
+        redirect: {
+          name: "dashboard",
+        },
+      },
+      {
+        path: "dashboard",
+        name: "dashboard",
+        component: MigrationHomeView,
+        meta: {
+          requiresAuth: true,
+          title: "Inicio",
+        },
+      },
+      {
+        path: "security/roles",
+        name: "security-roles",
+        component: RolesPermissionsView,
+        meta: {
+          requiresAuth: true,
+          permissions: ["security.roles.read", "security.permissions.read"],
+          title: "Roles y permisos",
+          description: "Administra los roles del sistema y configura los permisos asignados a cada rol.",
+        },
+      },
+      {
+        path: "security/users",
+        name: "security-users",
+        component: UserAuthorizationView,
+        meta: {
+          requiresAuth: true,
+          permissions: ["security.users.read"],
+          title: "Usuarios y autorización",
+          description: "Administra los usuarios, sus roles y las excepciones individuales de permisos.",
+        },
+      },
+      {
+        path: "configuration/parasiticforms",
+        name: "configuration-parasiticforms",
+        component: ParasiticformsView,
+        meta: {
+          requiresAuth: true,
+          permissions: ["parasiticforms.read"],
+          title: "Formas parasitarias",
+                    description: "Administra las descripciones disponibles y controla cuales permanecen activas en los flujos operativos.",
+        },
+            },
+      {
+        path: "configuration/type-payments",
+        name: "type-payments",
+        component: TypePaymentView,
+        meta: {
+          requiresAuth: true,
+          permission: "typepayment.read",
+          title: "Formas de pago",
+          description: "Administra las descripciones, disponibilidad por moneda y estado de los formas de pago.",
+        },
+      },
+    ],
   },
   {
-    path: '/',
-    name: 'home',
-    component: Home,
-    beforeEnter: authGuard,
-    meta: { layout: 'SuiteLayout', title: 'Home', requiresAuth: true}
+    path: "/:pathMatch(.*)*",
+    name: "not-found",
+    component: NotFoundView,
+    meta: {
+      public: true,
+      title: "Bio Nexus 404",
+    },
   },
-  {
-    path: '/setting',
-    component: SettingLayout,
-    children: settingRouter,
-    beforeEnter: authGuard,
-    meta: { layout: 'SuiteLayout', requiresAuth: true}
-  },
-  {
-    path: '/movements',
-    component: MovementsLayout,
-    children: movementsRouter,
-    beforeEnter: authGuard,
-    meta: { layout: 'SuiteLayout', requiresAuth: true}
-  },
-    
-  {
-    path: '/admission',
-    component: PatientAdmissionLayout,
-    children: PatientAdmission,
-    beforeEnter: authGuard,
-    meta: { layout: 'SuiteLayout', requiresAuth: true}
-  },  
-  {
-    path: '/history',
-    component: PatientHistoryLayout,
-    children: PatientHistory,
-    beforeEnter: authGuard,
-    meta: { layout: 'SuiteLayout', requiresAuth: true}
-  }, 
-  {
-    path: '/approve',
-    component: PatientApproveLayout,
-    children: PatientApprove,
-    beforeEnter: authGuard,
-    meta: { layout: 'SuiteLayout', requiresAuth: true}
-  },
-  {
-    path: '/:invalidRoute',
-    name: 'View404',
-    component: View404,
-    meta: { layout: 'BlankLayout', title: 'TORO 404'},
+];
+
+const router = createRouter({
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes,
+});
+
+router.beforeEach(async (to) => {
+  const sessionStore = useSessionStore();
+  const authorizationStore = useAuthorizationStore();
+
+  if (to.meta.requiresAuth && !sessionStore.isAuthenticated) {
+    authorizationStore.clear();
+
+    return {
+      name: "login",
+      query: {
+        redirect: to.fullPath,
+      },
+    };
   }
-]
 
-const router = new VueRouter({
-  mode: 'history',
-  base: process.env.BASE_URL,
-  routes
-})
+  if (to.name === "login" && sessionStore.isAuthenticated) {
+    return {
+      name: "dashboard",
+    };
+  }
 
+  const requiredPermissions = Array.isArray(to.meta.permissions)
+    ? to.meta.permissions
+    : [];
 
-export default router
+  if (requiredPermissions.length === 0) {
+    return true;
+  }
+
+  if (!authorizationStore.loaded) {
+    try {
+      await authorizationStore.loadContext();
+    } catch {
+      authorizationStore.clear();
+
+      return {
+        name: "dashboard",
+      };
+    }
+  }
+
+  if (!authorizationStore.hasAllPermissions(requiredPermissions)) {
+    return {
+      name: "dashboard",
+    };
+  }
+
+  return true;
+});
+
+router.afterEach((to) => {
+  document.title =
+    typeof to.meta.title === "string" ? `${to.meta.title} | Bio Nexus` : "Bio Nexus";
+});
+
+export default router;

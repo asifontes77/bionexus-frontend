@@ -1,19 +1,17 @@
-# toro
+# Bio Nexus Vue 3 migration shell
 
-## Project setup
-```
-yarn install
-```
+Shell paralelo para validar la arquitectura objetivo antes de sustituir la
+aplicacion Vue 2 existente.
 
-### Compiles and hot-reloads for development
-```
-yarn serve
-```
+## Stack
 
-### Compiles and minifies for production
-```
-yarn build
-```
+- Vue 3.5.41
+- Vite 8.2.1
+- Vue Router 5.2.0
+- Pinia 4.0.2
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## Commands
+
+- yarn dev
+- yarn build
+- yarn preview
