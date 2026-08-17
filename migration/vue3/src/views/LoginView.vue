@@ -2,7 +2,12 @@
   <main class="login-page">
     <section class="login-card" aria-labelledby="login-title">
       <div class="login-brand">
-        <p class="migration-eyebrow">TORO</p>
+        <img
+          class="login-brand-logo"
+          :src="bioNexusLogo"
+          :alt="BIO_NEXUS_BRAND.logoAlt"
+        />
+        <p class="login-brand-descriptor">{{ BIO_NEXUS_BRAND.descriptor }}</p>
         <h1 id="login-title">
           {{ licenseRequired ? "Registrar licencia" : "Iniciar sesion" }}
         </h1>
@@ -91,6 +96,8 @@
 
 <script setup>
 import { computed, ref } from "vue";
+import bioNexusLogo from "@/assets/bionexus_logo.png";
+import { BIO_NEXUS_BRAND } from "@/config/brand";
 import { useRoute, useRouter } from "vue-router";
 import { ApiError } from "@/api/apiClient";
 import { loginUser } from "@/services/authService";

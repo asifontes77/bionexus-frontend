@@ -46,7 +46,7 @@ import AppTopbar from '@/components/layout/AppTopbar.vue'
 import { useAuthorizationStore } from '@/stores/authorization'
 import { useSessionStore } from '@/stores/session'
 
-const SIDEBAR_PIN_STORAGE_KEY = 'toro.sidebar.pinned'
+const SIDEBAR_PIN_STORAGE_KEY = 'bio-nexus.sidebar.pinned'
 
 const route = useRoute()
 const router = useRouter()
@@ -56,7 +56,7 @@ const sidebarOpen = ref(false)
 const sidebarPinned = ref(readSidebarPinnedPreference())
 
 const pageTitle = computed(() =>
-  typeof route.meta.title === 'string' ? route.meta.title : 'TORO'
+  typeof route.meta.title === 'string' ? route.meta.title : 'Bio Nexus'
 )
 
 watch(

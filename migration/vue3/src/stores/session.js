@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { isTokenExpired } from '@/logic/tokenUtils'
 
-const STORAGE_KEY = 'toro.session'
+const STORAGE_KEY = 'bio-nexus.session'
 
 function emptySession() {
   return {

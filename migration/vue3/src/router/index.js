@@ -94,7 +94,7 @@ const routes = [
     component: NotFoundView,
     meta: {
       public: true,
-      title: "TORO 404",
+      title: "Bio Nexus 404",
     },
   },
 ];
@@ -156,7 +156,7 @@ router.beforeEach(async (to) => {
 
 router.afterEach((to) => {
   document.title =
-    typeof to.meta.title === "string" ? `${to.meta.title} | TORO` : "TORO";
+    typeof to.meta.title === "string" ? `${to.meta.title} | Bio Nexus` : "Bio Nexus";
 });
 
 export default router;

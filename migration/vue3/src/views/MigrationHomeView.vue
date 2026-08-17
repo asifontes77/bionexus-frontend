@@ -4,10 +4,10 @@
       <div>
         <p class="dashboard-eyebrow">Migracion estructural</p>
         <h2 id="dashboard-title">
-          Bienvenido, {{ sessionStore.userName || 'Usuario TORO' }}
+          Bienvenido, {{ sessionStore.userName || 'Usuario Bio Nexus' }}
         </h2>
         <p>
-          La estructura autenticada principal de TORO ya esta preparada para
+          La estructura autenticada principal de Bio Nexus ya esta preparada para
           recibir los modulos funcionales migrados desde Vue 2.
         </p>
       </div>

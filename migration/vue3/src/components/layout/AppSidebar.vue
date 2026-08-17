@@ -9,11 +9,12 @@
     aria-label="Navegacion principal"
   >
     <div class="sidebar-brand">
-      <div class="sidebar-brand-mark" aria-hidden="true">T</div>
-
+      <div class="sidebar-brand-mark">
+        <img :src="bioNexusLogo" alt="" aria-hidden="true" />
+      </div>
       <div class="sidebar-brand-content">
-        <p class="sidebar-brand-name">TORO</p>
-        <p class="sidebar-brand-caption">Gestion de laboratorio</p>
+        <p class="sidebar-brand-name">{{ BIO_NEXUS_BRAND.name }}</p>
+        <p class="sidebar-brand-caption">{{ BIO_NEXUS_BRAND.descriptor }}</p>
       </div>
 
       <button
@@ -144,6 +145,8 @@
 
 <script setup>
 import { computed, ref } from 'vue'
+import bioNexusLogo from '@/assets/bionexus_logo-only.png'
+import { BIO_NEXUS_BRAND } from '@/config/brand'
 import { navigationItems } from '@/config/navigation'
 import { useAuthorizationStore } from "@/stores/authorization";
 

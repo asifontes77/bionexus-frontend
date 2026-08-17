@@ -461,3 +461,159 @@
 .dashboard-module-list span {
   border-color: var(--toro-color-accent-border);
 }
+
+/* Bio Nexus official brand integration */
+.login-card { width: min(480px, 100%); }
+.login-brand { text-align: center; }
+.login-brand-logo { display: block; width: min(330px, 88%); max-height: 180px; margin: 0 auto 4px; object-fit: contain; }
+.login-brand-descriptor { margin: 0 0 18px !important; color: var(--toro-color-text-muted-strong) !important; font-size: var(--toro-font-size-sm); font-weight: var(--toro-font-weight-medium); letter-spacing: 0.02em; }
+.login-brand h1 { margin-top: 0; }
+@media (max-width: 620px) { .login-brand-logo { width: min(280px, 92%); max-height: 150px; } }
+
+/* Bio Nexus compact login with monochrome watermark */
+.login-page {
+  position: relative;
+  isolation: isolate;
+  box-sizing: border-box;
+  min-height: 100vh;
+  min-height: 100dvh;
+  height: 100vh;
+  height: 100dvh;
+  padding: 16px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 14% 12%, rgb(212 228 242 / 76%) 0, transparent 34%),
+    linear-gradient(135deg, #f8fafc 0%, #eef4f8 100%);
+}
+.login-page::before {
+  position: fixed;
+  z-index: -1;
+  inset: 0;
+  background: url("../assets/bionexus_logo-only.png") no-repeat 78% 50% / min(48vw, 660px) auto;
+  content: "";
+  filter: grayscale(1);
+  opacity: 0.055;
+  pointer-events: none;
+}
+.login-card {
+  box-sizing: border-box;
+  width: min(440px, 100%);
+  max-height: calc(100dvh - 32px);
+  padding: 22px 28px 24px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  border-color: rgb(18 61 97 / 16%);
+  box-shadow: 0 18px 55px rgb(21 55 87 / 16%);
+  scrollbar-width: thin;
+}
+.login-brand-logo {
+  width: min(252px, 76%);
+  max-height: 126px;
+  margin: 0 auto;
+}
+.login-brand-descriptor {
+  margin: 0 0 10px !important;
+  font-size: 12px;
+}
+.login-brand h1 {
+  margin: 0 0 4px;
+  font-size: 30px;
+  line-height: 1.15;
+}
+.login-brand p:last-child {
+  margin: 0 0 14px;
+  font-size: 14px;
+}
+.login-form {
+  gap: 7px;
+}
+.login-form label {
+  margin-top: 5px;
+  font-size: 14px;
+}
+.login-form input {
+  min-height: 44px;
+  padding: 9px 12px;
+}
+.login-form button {
+  min-height: 42px;
+  margin-top: 10px;
+}
+@media (max-height: 720px) and (min-width: 621px) {
+  .login-card {
+    padding-block: 14px 16px;
+  }
+  .login-brand-logo {
+    width: min(210px, 70%);
+    max-height: 96px;
+  }
+  .login-brand-descriptor {
+    margin-bottom: 6px !important;
+  }
+  .login-brand h1 {
+    font-size: 26px;
+  }
+  .login-brand p:last-child {
+    margin-bottom: 8px;
+  }
+  .login-form input {
+    min-height: 40px;
+  }
+}
+@media (max-width: 620px) {
+  .login-page {
+    min-height: 100dvh;
+    height: auto;
+    padding: 10px;
+    overflow-y: auto;
+  }
+  .login-page::before {
+    background-position: 50% 18%;
+    background-size: min(90vw, 430px) auto;
+    opacity: 0.045;
+  }
+  .login-card {
+    max-height: none;
+    padding: 18px 20px 20px;
+  }
+  .login-brand-logo {
+    width: min(230px, 82%);
+    max-height: 110px;
+  }
+}
+
+/* Bio Nexus horizontal monochrome isotype pattern */
+.login-page::before {
+  position: fixed;
+  z-index: -1;
+  inset: 0;
+  background-color: transparent;
+  background-image: url("../assets/bionexus_logo-only.png");
+  background-repeat: repeat-x;
+  background-position: left 50%;
+  background-size: 310px auto;
+  content: "";
+  filter: grayscale(1);
+  opacity: 0.045;
+  pointer-events: none;
+}
+@media (min-width: 1500px) {
+  .login-page::before {
+    background-size: 340px auto;
+  }
+}
+@media (max-width: 900px) {
+  .login-page::before {
+    background-position: left 48%;
+    background-size: 250px auto;
+    opacity: 0.035;
+  }
+}
+@media (max-width: 620px) {
+  .login-page::before {
+    background-repeat: repeat-y;
+    background-position: 50% top;
+    background-size: min(74vw, 300px) auto;
+    opacity: 0.03;
+  }
+}

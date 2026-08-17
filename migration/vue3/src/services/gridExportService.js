@@ -33,7 +33,7 @@ function resolveExportIdentity(options = {}) {
     document.querySelector(".page-title")?.textContent,
     document.querySelector(".breadcrumb li:last-child")?.textContent,
   ].map((value) => String(value || "").trim()).find(Boolean) || "";
-  const title = explicitTitle || mappedTitle || visibleTitle || "Exportacion TORO";
+  const title = explicitTitle || mappedTitle || visibleTitle || "Exportacion Bio Nexus";
   const fileName = safeFileName(options.fileName || title);
   return { title, fileName };
 }
@@ -104,7 +104,7 @@ export async function exportGridToExcel(api, options = {}) {
   const { headers, rows } = collect(api, options);
   if (!headers.length) throw new Error("No hay columnas visibles para exportar.");
   const workbook = new ExcelJS.Workbook();
-  workbook.creator = "TORO";
+  workbook.creator = "Bio Nexus";
   workbook.created = new Date();
   const sheet = workbook.addWorksheet(title.slice(0, 31));
   const lastColumn = headers.length;
@@ -173,7 +173,7 @@ export function exportGridToPdf(api, options = {}, orientation = "portrait") {
   pdfMake.createPdf({
     pageOrientation: normalizedOrientation,
     pageMargins: [26, 38, 26, 34],
-    info: { title, creator: "TORO" },
+    info: { title, creator: "Bio Nexus" },
     content: [
       { text: title, style: "title" },
       { text: new Date().toLocaleString("es-VE"), style: "date" },

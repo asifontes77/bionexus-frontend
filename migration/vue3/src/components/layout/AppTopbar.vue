@@ -48,7 +48,7 @@ const props = defineProps({
   },
   title: {
     type: String,
-    default: 'TORO'
+    default: 'Bio Nexus'
   },
   user: {
     type: Object,
@@ -58,7 +58,7 @@ const props = defineProps({
 
 const emit = defineEmits(['logout', 'toggle-sidebar'])
 
-const displayName = computed(() => props.user?.name || 'Usuario TORO')
+const displayName = computed(() => props.user?.name || 'Usuario Bio Nexus')
 const position = computed(() => props.user?.position || 'Usuario autenticado')
 
 const initials = computed(() => {

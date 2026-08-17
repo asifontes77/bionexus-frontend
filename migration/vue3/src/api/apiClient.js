@@ -1,4 +1,4 @@
-const SESSION_STORAGE_KEY = 'toro.session'
+const SESSION_STORAGE_KEY = 'bio-nexus.session'
 
 function getStoredToken() {
   try {

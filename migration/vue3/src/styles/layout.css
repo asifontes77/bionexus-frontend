@@ -889,3 +889,81 @@
   color: var(--toro-color-accent);
   font-weight: var(--toro-font-weight-heavy);
 }
+
+/* Bio Nexus official sidebar brand */
+.sidebar-brand-mark {
+  display: grid;
+  width: 52px;
+  height: 52px;
+  flex: 0 0 52px;
+  overflow: hidden;
+  place-items: center;
+  padding: 5px;
+  border: 1px solid rgb(255 255 255 / 32%);
+  border-radius: var(--toro-radius-md);
+  background: #ffffff;
+}
+.sidebar-brand-mark img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+.sidebar-brand-name {
+  color: #ffffff;
+  font-size: 18px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.sidebar-brand-caption {
+  max-width: 170px;
+  font-size: 10px;
+  line-height: 1.3;
+  white-space: normal;
+}
+@media (min-width: 821px) {
+  .app-sidebar:not(:hover):not(.app-sidebar-pinned) .sidebar-brand {
+    justify-content: center;
+    padding-inline: 10px;
+  }
+  .app-sidebar:not(:hover):not(.app-sidebar-pinned) .sidebar-brand-mark {
+    margin-inline: auto;
+  }
+}
+
+/* Bio Nexus collapsed sidebar logo visibility fix */
+@media (min-width: 821px) {
+  .app-sidebar:not(:hover):not(.app-sidebar-pinned) .sidebar-brand {
+    position: relative;
+    display: block;
+    width: var(--toro-sidebar-collapsed-width);
+    min-height: var(--toro-topbar-height);
+    padding: 0;
+    background: transparent;
+  }
+  .app-sidebar:not(:hover):not(.app-sidebar-pinned) .sidebar-brand-mark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 2;
+    display: grid !important;
+    width: 52px;
+    height: 52px;
+    margin: 0;
+    visibility: visible !important;
+    opacity: 1 !important;
+    place-items: center;
+    pointer-events: auto !important;
+    transform: translate(-50%, -50%);
+  }
+  .app-sidebar:not(:hover):not(.app-sidebar-pinned) .sidebar-brand-mark img {
+    display: block !important;
+    width: 100%;
+    height: 100%;
+    visibility: visible !important;
+    opacity: 1 !important;
+    object-fit: contain;
+    object-position: center;
+  }
+}
