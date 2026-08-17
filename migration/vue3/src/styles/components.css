@@ -4,7 +4,7 @@
 
 /* Administrative pages */
 
-.toro-page,
+.bio-nexus-page,
 .security-page {
   display: grid;
   gap: var(--toro-space-4);
@@ -12,7 +12,7 @@
 
 /* Page headers */
 
-.toro-page-header,
+.bio-nexus-page-header,
 .security-header,
 .user-security-header,
 .parasitic-header {
@@ -27,7 +27,7 @@
   box-shadow: var(--toro-shadow-sm);
 }
 
-.toro-page-header h2,
+.bio-nexus-page-header h2,
 .security-header h2,
 .user-security-header h2,
 .parasitic-header h2 {
@@ -36,7 +36,7 @@
   font-size: var(--toro-font-size-display);
 }
 
-.toro-page-description,
+.bio-nexus-page-description,
 .security-header p:not(.security-eyebrow),
 .user-security-header p:not(.user-security-eyebrow),
 .parasitic-header p:not(.parasitic-eyebrow) {
@@ -46,7 +46,7 @@
   line-height: 1.5;
 }
 
-.toro-page-eyebrow,
+.bio-nexus-page-eyebrow,
 .security-eyebrow,
 .user-security-eyebrow,
 .parasitic-eyebrow {
@@ -60,7 +60,7 @@
 
 /* Metrics */
 
-.toro-metrics,
+.bio-nexus-metrics,
 .security-metrics,
 .user-security-metrics,
 .parasitic-metrics {
@@ -69,7 +69,7 @@
   gap: var(--toro-space-3);
 }
 
-.toro-metric,
+.bio-nexus-metric,
 .security-metrics article,
 .user-security-metrics article,
 .parasitic-metrics article {
@@ -82,7 +82,7 @@
   box-shadow: var(--toro-shadow-sm);
 }
 
-.toro-metric-label,
+.bio-nexus-metric-label,
 .security-metrics span,
 .user-security-metrics span,
 .parasitic-metrics span {
@@ -95,7 +95,7 @@
 
 /* Panels */
 
-.toro-panel,
+.bio-nexus-panel,
 .security-panel,
 .user-security-panel,
 .parasitic-panel {
@@ -107,7 +107,7 @@
   box-shadow: var(--toro-shadow-sm);
 }
 
-.toro-panel-heading,
+.bio-nexus-panel-heading,
 .security-panel-heading,
 .user-security-panel-heading,
 .parasitic-panel-heading {
@@ -118,7 +118,7 @@
   margin-bottom: var(--toro-space-4);
 }
 
-.toro-panel-eyebrow,
+.bio-nexus-panel-eyebrow,
 .security-panel-heading p,
 .user-security-panel-heading p,
 .parasitic-panel-heading p {
@@ -130,7 +130,7 @@
   text-transform: uppercase;
 }
 
-.toro-panel-count,
+.bio-nexus-panel-count,
 .security-panel-heading > span,
 .user-security-panel-heading > span,
 .parasitic-panel-heading > span {
@@ -143,7 +143,7 @@
 
 /* Empty states */
 
-.toro-empty-state,
+.bio-nexus-empty-state,
 .security-empty,
 .user-security-empty {
   padding: var(--toro-space-6);
@@ -155,7 +155,7 @@
 
 /* Actions */
 
-.toro-action,
+.bio-nexus-action,
 .permission-action,
 .role-assignment-button,
 .override-button,
@@ -167,13 +167,13 @@
   font-weight: var(--toro-font-weight-bold);
 }
 
-.toro-action-primary {
+.bio-nexus-action-primary {
   border: 1px solid var(--toro-color-primary);
   color: var(--toro-color-text-inverse);
   background: var(--toro-color-primary);
 }
 
-.toro-action-secondary {
+.bio-nexus-action-secondary {
   border: 1px solid var(--toro-color-border-strong);
   color: var(--toro-color-primary-strong);
   background: var(--toro-color-surface);
@@ -181,7 +181,7 @@
 
 /* Status badges */
 
-.toro-badge,
+.bio-nexus-badge,
 .authorization-badge {
   flex: 0 0 auto;
   padding: 5px 8px;
@@ -192,14 +192,14 @@
   font-weight: var(--toro-font-weight-bold);
 }
 
-.toro-badge-warning {
+.bio-nexus-badge-warning {
   color: var(--toro-color-warning);
   background: var(--toro-color-warning-soft);
 }
 
 /* Notes and warnings */
 
-.toro-note {
+.bio-nexus-note {
   margin: var(--toro-space-4) 0 0;
   padding: var(--toro-space-3);
   border-left: 3px solid var(--toro-color-accent);
@@ -207,7 +207,7 @@
   background: var(--toro-color-accent-soft);
 }
 
-.toro-warning {
+.bio-nexus-warning {
   padding: var(--toro-space-3);
   border-left: 3px solid var(--toro-color-warning);
   color: var(--toro-color-warning);
@@ -216,7 +216,7 @@
 
 /* Entity details */
 
-.toro-detail,
+.bio-nexus-detail,
 .role-detail,
 .user-detail,
 .parasitic-detail {
@@ -226,7 +226,7 @@
   margin: 0;
 }
 
-.toro-detail dt,
+.bio-nexus-detail dt,
 .role-detail dt,
 .user-detail dt,
 .parasitic-detail dt {
@@ -238,7 +238,7 @@
 
 /* Selected list items */
 
-.toro-list-item-selected,
+.bio-nexus-list-item-selected,
 .role-item-selected,
 .user-list-item-selected,
 .parasitic-list-item-selected {
@@ -253,7 +253,7 @@
 
 /* Messages */
 
-.toro-message,
+.bio-nexus-message,
 .security-message,
 .user-security-message,
 .parasitic-message {
@@ -266,7 +266,7 @@
   background: var(--toro-color-surface);
 }
 
-.toro-inline-message,
+.bio-nexus-inline-message,
 .role-form-message,
 .override-message {
   padding: var(--toro-space-3);
@@ -274,14 +274,14 @@
   border-radius: var(--toro-radius-md);
 }
 
-.toro-message-error,
+.bio-nexus-message-error,
 .security-message-error {
   border-color: var(--toro-color-danger-border);
   color: var(--toro-color-danger);
   background: var(--toro-color-danger-soft);
 }
 
-.toro-message-success {
+.bio-nexus-message-success {
   border-color: var(--toro-color-success-border);
   color: var(--toro-color-success);
   background: var(--toro-color-success-soft);
@@ -289,14 +289,14 @@
 
 /* Forms and fields */
 
-.toro-form,
+.bio-nexus-form,
 .role-metadata-form,
 .parasitic-form {
   display: grid;
   gap: var(--toro-space-3);
 }
 
-.toro-field-group,
+.bio-nexus-field-group,
 .role-form label,
 .role-metadata-form > label,
 .parasitic-search,
@@ -305,7 +305,7 @@
   gap: var(--toro-space-2);
 }
 
-.toro-field-label,
+.bio-nexus-field-label,
 .role-form label > span,
 .role-metadata-form > label > span,
 .user-search span,
@@ -316,7 +316,7 @@
   font-weight: var(--toro-font-weight-bold);
 }
 
-.toro-field,
+.bio-nexus-field,
 .user-search input,
 .parasitic-search input,
 .parasitic-form input[type="text"] {
@@ -329,7 +329,7 @@
   background: var(--toro-color-surface);
 }
 
-.toro-field:focus,
+.bio-nexus-field:focus,
 .role-form input:focus,
 .role-form textarea:focus,
 .role-metadata-form input:focus,
@@ -342,7 +342,7 @@
   outline: var(--toro-focus-ring);
 }
 
-.toro-field-help,
+.bio-nexus-field-help,
 .role-form small,
 .role-metadata-form small,
 .parasitic-form small {
@@ -352,7 +352,7 @@
 
 /* Form actions */
 
-.toro-form-actions,
+.bio-nexus-form-actions,
 .role-assignment-actions,
 .override-actions {
   display: flex;
@@ -363,7 +363,7 @@
   border-top: 1px solid var(--toro-color-border);
 }
 
-.toro-form-actions-buttons,
+.bio-nexus-form-actions-buttons,
 .role-assignment-actions > div,
 .override-actions > div {
   display: flex;
@@ -372,7 +372,7 @@
 
 /* Selectable options */
 
-.toro-option-copy,
+.bio-nexus-option-copy,
 .user-list-copy,
 .parasitic-list-copy {
   display: grid;
@@ -381,7 +381,7 @@
   gap: 2px;
 }
 
-.toro-option-copy-truncated,
+.bio-nexus-option-copy-truncated,
 .role-content strong,
 .role-content small,
 .user-list-copy strong,
@@ -393,18 +393,18 @@
   white-space: nowrap;
 }
 
-.toro-option-selected {
+.bio-nexus-option-selected {
   background: var(--toro-color-selection-soft);
 }
 
-.toro-option-disabled {
+.bio-nexus-option-disabled {
   cursor: not-allowed;
   opacity: 0.68;
 }
 
 /* Administrative lists */
 
-.toro-list,
+.bio-nexus-list,
 .authorization-list {
   display: grid;
   gap: var(--toro-space-2);
@@ -413,7 +413,7 @@
   list-style: none;
 }
 
-.toro-list-item,
+.bio-nexus-list-item,
 .authorization-list li {
   display: flex;
   min-height: var(--toro-table-row-height);
@@ -426,14 +426,14 @@
   background: var(--toro-color-surface-soft);
 }
 
-.toro-list-copy-compact,
+.bio-nexus-list-copy-compact,
 .authorization-list li > span:first-child {
   display: grid;
   min-width: 0;
   gap: 2px;
 }
 
-.toro-list-item:hover,
+.bio-nexus-list-item:hover,
 .role-item:hover,
 .user-list-item:hover,
 .parasitic-list-item:hover {
@@ -441,14 +441,14 @@
   background: var(--toro-color-surface-soft);
 }
 
-.toro-list-item:disabled,
+.bio-nexus-list-item:disabled,
 .role-item:disabled,
 .user-list-item:disabled,
 .parasitic-list-item:disabled {
   cursor: wait;
 }
 
-.toro-list-item-muted,
+.bio-nexus-list-item-muted,
 .user-list-item-hidden,
 .parasitic-list-item-annulled {
   opacity: 0.72;
@@ -456,14 +456,14 @@
 
 /* Internal sections */
 
-.toro-section,
+.bio-nexus-section,
 .override-module {
   overflow: hidden;
   border: 1px solid var(--toro-color-border);
   border-radius: var(--toro-radius-md);
 }
 
-.toro-section-heading,
+.bio-nexus-section-heading,
 .override-module > header {
   display: flex;
   align-items: center;
@@ -472,7 +472,7 @@
   background: var(--toro-color-surface-soft);
 }
 
-.toro-section-title,
+.bio-nexus-section-title,
 .override-module h5 {
   margin: 0;
   color: var(--toro-color-primary-strong);
@@ -481,7 +481,7 @@
 
 /* Shared muted text */
 
-.toro-muted {
+.bio-nexus-muted {
   color: var(--toro-color-text-muted);
 }
 
@@ -492,26 +492,26 @@
  */
 
 @media (max-width: 620px) {
-  .toro-page-header {
+  .bio-nexus-page-header {
     align-items: flex-start;
     flex-direction: column;
   }
 
-  .toro-action {
+  .bio-nexus-action {
     width: 100%;
   }
 
-  .toro-list-item,
-  .toro-option {
+  .bio-nexus-list-item,
+  .bio-nexus-option {
     align-items: flex-start;
   }
 
-  .toro-form-actions {
+  .bio-nexus-form-actions {
     align-items: stretch;
     flex-direction: column;
   }
 
-  .toro-form-actions-buttons {
+  .bio-nexus-form-actions-buttons {
     display: grid;
     grid-template-columns: 1fr 1fr;
   }
@@ -520,7 +520,7 @@
 /* TORO_SHARED_RESPONSIVE_END */
 
 /* TORO TOAST SYSTEM START */
-.toro-toast-region {
+.bio-nexus-toast-region {
   position: fixed;
   z-index: 5000;
   inset-block-start: var(--toro-space-4);
@@ -529,8 +529,8 @@
   pointer-events: none;
 }
 
-.toro-toast-stack { display: grid; gap: var(--toro-space-2); }
-.toro-toast {
+.bio-nexus-toast-stack { display: grid; gap: var(--toro-space-2); }
+.bio-nexus-toast {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
@@ -543,12 +543,12 @@
   color: var(--toro-color-text);
   pointer-events: auto;
 }
-.toro-toast p { margin: 0; line-height: 1.4; }
-.toro-toast-success { border-inline-start: 4px solid var(--toro-color-success); }
-.toro-toast-info { border-inline-start: 4px solid var(--toro-color-primary); }
-.toro-toast-warning { border-inline-start: 4px solid var(--toro-color-warning); }
-.toro-toast-error { border-inline-start: 4px solid var(--toro-color-danger); }
-.toro-toast-close {
+.bio-nexus-toast p { margin: 0; line-height: 1.4; }
+.bio-nexus-toast-success { border-inline-start: 4px solid var(--toro-color-success); }
+.bio-nexus-toast-info { border-inline-start: 4px solid var(--toro-color-primary); }
+.bio-nexus-toast-warning { border-inline-start: 4px solid var(--toro-color-warning); }
+.bio-nexus-toast-error { border-inline-start: 4px solid var(--toro-color-danger); }
+.bio-nexus-toast-close {
   display: inline-grid;
   width: 32px;
   height: 32px;
@@ -560,18 +560,18 @@
   color: currentColor;
   cursor: pointer;
 }
-.toro-toast-close:hover { background: var(--toro-color-selection-soft); }
-.toro-toast-enter-active, .toro-toast-leave-active { transition: opacity 180ms ease, transform 180ms ease; }
-.toro-toast-enter-from, .toro-toast-leave-to { opacity: 0; transform: translateY(-8px); }
+.bio-nexus-toast-close:hover { background: var(--toro-color-selection-soft); }
+.bio-nexus-toast-enter-active, .bio-nexus-toast-leave-active { transition: opacity 180ms ease, transform 180ms ease; }
+.bio-nexus-toast-enter-from, .bio-nexus-toast-leave-to { opacity: 0; transform: translateY(-8px); }
 @media (max-width: 640px) {
-  .toro-toast-region { inset-inline: 8px; width: auto; }
+  .bio-nexus-toast-region { inset-inline: 8px; width: auto; }
 }
 /* TORO TOAST SYSTEM END */
 
 
 
 /* TORO TOAST SEMANTIC BACKGROUNDS START */
-.toro-toast-success {
+.bio-nexus-toast-success {
   background: color-mix(
     in srgb,
     var(--toro-color-success-soft) 58%,
@@ -579,7 +579,7 @@
   );
 }
 
-.toro-toast-info {
+.bio-nexus-toast-info {
   background: color-mix(
     in srgb,
     var(--toro-color-info-soft) 58%,
@@ -587,7 +587,7 @@
   );
 }
 
-.toro-toast-warning {
+.bio-nexus-toast-warning {
   background: color-mix(
     in srgb,
     var(--toro-color-warning-soft) 60%,
@@ -595,7 +595,7 @@
   );
 }
 
-.toro-toast-error {
+.bio-nexus-toast-error {
   background: color-mix(
     in srgb,
     var(--toro-color-danger-soft) 52%,
@@ -604,26 +604,26 @@
 }
 
 @supports not (background: color-mix(in srgb, white, black)) {
-  .toro-toast-success { background: var(--toro-color-success-soft); }
-  .toro-toast-info { background: var(--toro-color-info-soft); }
-  .toro-toast-warning { background: var(--toro-color-warning-soft); }
-  .toro-toast-error { background: var(--toro-color-danger-soft); }
+  .bio-nexus-toast-success { background: var(--toro-color-success-soft); }
+  .bio-nexus-toast-info { background: var(--toro-color-info-soft); }
+  .bio-nexus-toast-warning { background: var(--toro-color-warning-soft); }
+  .bio-nexus-toast-error { background: var(--toro-color-danger-soft); }
 }
 /* TORO TOAST SEMANTIC BACKGROUNDS END */
 
 /* TORO TOAST PROGRESS START */
-.toro-toast {
+.bio-nexus-toast {
   position: relative;
   overflow: hidden;
   grid-template-columns: auto minmax(0, 1fr) auto;
 }
-.toro-toast-actions {
+.bio-nexus-toast-actions {
   display: inline-flex;
   align-items: center;
   gap: 4px;
 }
-.toro-toast-control,
-.toro-toast-close {
+.bio-nexus-toast-control,
+.bio-nexus-toast-close {
   display: inline-grid;
   width: 32px;
   height: 32px;
@@ -635,17 +635,17 @@
   color: currentColor;
   cursor: pointer;
 }
-.toro-toast-control:hover,
-.toro-toast-close:hover {
+.bio-nexus-toast-control:hover,
+.bio-nexus-toast-close:hover {
   background: var(--toro-color-accent-soft);
   color: var(--toro-color-accent-strong);
 }
-.toro-toast-control:focus-visible,
-.toro-toast-close:focus-visible {
+.bio-nexus-toast-control:focus-visible,
+.bio-nexus-toast-close:focus-visible {
   outline: 2px solid var(--toro-color-accent-strong);
   outline-offset: 2px;
 }
-.toro-toast-progress-track {
+.bio-nexus-toast-progress-track {
   position: absolute;
   inset-inline: 0;
   inset-block-end: 0;
@@ -654,7 +654,7 @@
   background: rgb(255 255 255 / 42%);
   pointer-events: none;
 }
-.toro-toast-progress {
+.bio-nexus-toast-progress {
   display: block;
   width: 100%;
   height: 100%;
@@ -662,21 +662,21 @@
   transition: transform 50ms linear;
   background: var(--toro-color-accent-strong);
 }
-.toro-toast-paused {
+.bio-nexus-toast-paused {
   box-shadow: 0 0 0 2px var(--toro-color-accent-soft), var(--toro-shadow-md);
 }
-.toro-toast:focus-visible {
+.bio-nexus-toast:focus-visible {
   outline: 2px solid var(--toro-color-accent-strong);
   outline-offset: 2px;
 }
-.toro-action {
+.bio-nexus-action {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--toro-space-2);
 }
-.toro-action > .toro-icon,
-.toro-action > .material-symbols-rounded { flex: 0 0 auto; }
+.bio-nexus-action > .bio-nexus-icon,
+.bio-nexus-action > .material-symbols-rounded { flex: 0 0 auto; }
 /* TORO TOAST PROGRESS END */
 /* TORO AUTHENTICATED PAGE DESCRIPTION START */
 .authenticated-page-description {
@@ -688,7 +688,7 @@
 }
 /* TORO AUTHENTICATED PAGE DESCRIPTION END */
 /* TORO ADMINISTRATIVE DIRECTORY TOOLBAR START */
-.toro-administrative-directory,
+.bio-nexus-administrative-directory,
 .parasitic-directory {
   overflow: hidden;
   border: 1px solid var(--toro-color-border);
@@ -697,7 +697,7 @@
   box-shadow: var(--toro-shadow-sm);
 }
 
-.toro-administrative-toolbar,
+.bio-nexus-administrative-toolbar,
 .parasitic-directory-toolbar {
   display: grid;
   grid-template-columns: minmax(280px, 1fr) minmax(190px, 260px) auto auto;
@@ -707,7 +707,7 @@
   border-bottom: 1px solid var(--toro-color-border);
 }
 
-.toro-administrative-filter,
+.bio-nexus-administrative-filter,
 .parasitic-filter {
   display: grid;
   align-content: end;
@@ -715,7 +715,7 @@
   min-width: 0;
 }
 
-.toro-administrative-filter > span,
+.bio-nexus-administrative-filter > span,
 .parasitic-filter > span {
   color: var(--toro-color-text-muted);
   font-size: var(--toro-font-size-sm);
@@ -724,8 +724,8 @@
   text-transform: uppercase;
 }
 
-.toro-administrative-filter input,
-.toro-administrative-filter select,
+.bio-nexus-administrative-filter input,
+.bio-nexus-administrative-filter select,
 .parasitic-filter input,
 .parasitic-filter select {
   box-sizing: border-box;
@@ -740,7 +740,7 @@
   font-size: var(--toro-font-size-md);
 }
 
-.toro-administrative-summary,
+.bio-nexus-administrative-summary,
 .parasitic-directory-summary {
   display: flex;
   align-items: center;
@@ -751,7 +751,7 @@
   color: var(--toro-color-text-secondary);
 }
 
-.toro-administrative-actions,
+.bio-nexus-administrative-actions,
 .parasitic-directory-actions {
   display: flex;
   align-items: center;
@@ -762,19 +762,19 @@
 }
 
 @media (max-width: 1050px) {
-  .toro-administrative-toolbar,
+  .bio-nexus-administrative-toolbar,
   .parasitic-directory-toolbar {
     grid-template-columns: minmax(260px, 1fr) minmax(180px, 240px);
   }
 }
 
 @media (max-width: 720px) {
-  .toro-administrative-toolbar,
+  .bio-nexus-administrative-toolbar,
   .parasitic-directory-toolbar {
     grid-template-columns: 1fr;
   }
 
-  .toro-administrative-actions,
+  .bio-nexus-administrative-actions,
   .parasitic-directory-actions {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -783,14 +783,14 @@
 /* TORO ADMINISTRATIVE DIRECTORY TOOLBAR END */
 
 /* TORO PARASITIC STATUS ACTION COLORS START */
-.toro-grid-action-list button[title="Activar"],
-.toro-grid-action-list button[aria-label="Activar"] {
+.bio-nexus-grid-action-list button[title="Activar"],
+.bio-nexus-grid-action-list button[aria-label="Activar"] {
   color: var(--toro-color-success-strong);
   background: var(--toro-color-success-soft);
 }
 
-.toro-grid-action-list button[title="Inactivar"],
-.toro-grid-action-list button[aria-label="Inactivar"] {
+.bio-nexus-grid-action-list button[title="Inactivar"],
+.bio-nexus-grid-action-list button[aria-label="Inactivar"] {
   color: var(--toro-color-warning-strong);
   background: var(--toro-color-warning-soft);
 }

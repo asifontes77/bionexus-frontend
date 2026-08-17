@@ -1,5 +1,5 @@
 <template>
-  <dialog ref="dialog" class="toro-dialog type-payment-dialog" @cancel.prevent="close">
+  <dialog ref="dialog" class="bio-nexus-dialog type-payment-dialog" @cancel.prevent="close">
     <form class="dialog-shell" @submit.prevent="submit">
       <header class="dialog-header">
         <div><p>{{ mode === "create" ? "Nuevo registro" : "Editar registro" }}</p><h3>{{ mode === "create" ? "Crear tipo de pago" : "Editar tipo de pago" }}</h3></div>
@@ -8,20 +8,20 @@
       <section class="dialog-body type-payment-dialog-body">
         <BioNexusFormField label="Descripcion" field-id="type-payment-description"
           :error="descriptionError" required>
-          <input id="type-payment-description" ref="firstInput" v-model="draft.description" class="toro-field" type="text" maxlength="50" autocomplete="off" />
+          <input id="type-payment-description" ref="firstInput" v-model="draft.description" class="bio-nexus-field" type="text" maxlength="50" autocomplete="off" />
         </BioNexusFormField>
         <BioNexusFormField label="Descripcion auxiliar 1" field-id="type-payment-description-1">
-          <input id="type-payment-description-1" v-model="draft.description_1" class="toro-field" type="text" maxlength="50" autocomplete="off" />
+          <input id="type-payment-description-1" v-model="draft.description_1" class="bio-nexus-field" type="text" maxlength="50" autocomplete="off" />
         </BioNexusFormField>
         <BioNexusFormField label="Descripcion auxiliar 2" field-id="type-payment-description-2">
-          <input id="type-payment-description-2" v-model="draft.description_2" class="toro-field" type="text" maxlength="50" autocomplete="off" />
+          <input id="type-payment-description-2" v-model="draft.description_2" class="bio-nexus-field" type="text" maxlength="50" autocomplete="off" />
         </BioNexusFormField>
         <label class="type-payment-check"><input v-model="draft.only_dollars" type="checkbox" /><span>Disponible solo para pagos en dolares</span></label>
-        <div v-if="errorMessage" class="toro-message toro-message-error" role="alert">{{ errorMessage }}</div>
+        <div v-if="errorMessage" class="bio-nexus-message bio-nexus-message-error" role="alert">{{ errorMessage }}</div>
       </section>
       <footer class="dialog-footer">
-        <button type="button" class="toro-action toro-action-secondary" :disabled="saving" @click="close"><BioNexusActionIcon action="cancel" /><span>Cancelar</span></button>
-        <button type="submit" class="toro-action toro-action-primary" :disabled="submitDisabled"><BioNexusActionIcon action="save" /><span>{{ saving ? "Guardando..." : mode === "create" ? "Crear" : "Guardar" }}</span></button>
+        <button type="button" class="bio-nexus-action bio-nexus-action-secondary" :disabled="saving" @click="close"><BioNexusActionIcon action="cancel" /><span>Cancelar</span></button>
+        <button type="submit" class="bio-nexus-action bio-nexus-action-primary" :disabled="submitDisabled"><BioNexusActionIcon action="save" /><span>{{ saving ? "Guardando..." : mode === "create" ? "Crear" : "Guardar" }}</span></button>
       </footer>
     </form>
   </dialog>

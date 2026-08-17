@@ -7,7 +7,7 @@
   gap: var(--toro-space-2);
 }
 
-.user-authorization-page .user-directory-actions .toro-action {
+.user-authorization-page .user-directory-actions .bio-nexus-action {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -18,22 +18,22 @@
   box-shadow: none;
 }
 
-.user-authorization-page .user-directory-actions .toro-action:focus {
+.user-authorization-page .user-directory-actions .bio-nexus-action:focus {
   outline: none;
   box-shadow: none;
 }
 
-.user-authorization-page .user-directory-actions .toro-action:focus-visible {
+.user-authorization-page .user-directory-actions .bio-nexus-action:focus-visible {
   outline: 2px solid var(--toro-color-primary-strong);
   outline-offset: 2px;
 }
 
-.user-authorization-page .users-grid .toro-grid-actions-cell {
+.user-authorization-page .users-grid .bio-nexus-grid-actions-cell {
   padding-inline: var(--toro-space-2);
 }
 
-dialog.toro-dialog.user-identity-dialog,
-dialog.toro-dialog.user-state-dialog {
+dialog.bio-nexus-dialog.user-identity-dialog,
+dialog.bio-nexus-dialog.user-state-dialog {
   box-sizing: border-box !important;
   position: fixed !important;
   inset: 0 !important;
@@ -50,25 +50,25 @@ dialog.toro-dialog.user-state-dialog {
   overflow: hidden !important;
 }
 
-dialog.toro-dialog.user-identity-dialog {
+dialog.bio-nexus-dialog.user-identity-dialog {
   width: min(760px, calc(100vw - 32px)) !important;
   min-width: 0 !important;
   max-width: 760px !important;
 }
 
-dialog.toro-dialog.user-state-dialog {
+dialog.bio-nexus-dialog.user-state-dialog {
   width: min(520px, calc(100vw - 32px)) !important;
   min-width: 0 !important;
   max-width: 520px !important;
 }
 
-dialog.toro-dialog.user-identity-dialog::backdrop,
-dialog.toro-dialog.user-state-dialog::backdrop {
+dialog.bio-nexus-dialog.user-identity-dialog::backdrop,
+dialog.bio-nexus-dialog.user-state-dialog::backdrop {
   background: color-mix(in srgb, var(--toro-color-sidebar-strong) 48%, transparent);
   backdrop-filter: blur(2px);
 }
 
-dialog.toro-dialog .dialog-shell {
+dialog.bio-nexus-dialog .dialog-shell {
   display: flex !important;
   flex-direction: column !important;
   width: 100% !important;
@@ -76,7 +76,7 @@ dialog.toro-dialog .dialog-shell {
   overflow: hidden !important;
 }
 
-dialog.toro-dialog .dialog-header {
+dialog.bio-nexus-dialog .dialog-header {
   display: flex !important;
   flex: 0 0 auto !important;
   align-items: center !important;
@@ -88,16 +88,16 @@ dialog.toro-dialog .dialog-header {
   background: var(--toro-color-surface) !important;
 }
 
-dialog.toro-dialog .dialog-header > div:first-child {
+dialog.bio-nexus-dialog .dialog-header > div:first-child {
   min-width: 0;
 }
 
-dialog.toro-dialog .dialog-header p,
-dialog.toro-dialog .dialog-header h3 {
+dialog.bio-nexus-dialog .dialog-header p,
+dialog.bio-nexus-dialog .dialog-header h3 {
   margin: 0 !important;
 }
 
-dialog.toro-dialog .dialog-header p {
+dialog.bio-nexus-dialog .dialog-header p {
   margin-bottom: var(--toro-space-1) !important;
   color: var(--toro-color-accent-strong) !important;
   font-size: var(--toro-font-size-xs) !important;
@@ -106,13 +106,13 @@ dialog.toro-dialog .dialog-header p {
   text-transform: uppercase !important;
 }
 
-dialog.toro-dialog .dialog-header h3 {
+dialog.bio-nexus-dialog .dialog-header h3 {
   color: var(--toro-color-text) !important;
   font-size: var(--toro-font-size-xl) !important;
   line-height: 1.2 !important;
 }
 
-dialog.toro-dialog .dialog-close {
+dialog.bio-nexus-dialog .dialog-close {
   display: inline-grid !important;
   width: 36px !important;
   height: 36px !important;
@@ -131,17 +131,17 @@ dialog.toro-dialog .dialog-close {
   cursor: pointer !important;
 }
 
-dialog.toro-dialog .dialog-close:hover {
+dialog.bio-nexus-dialog .dialog-close:hover {
   background: var(--toro-color-selection-soft) !important;
   color: var(--toro-color-primary-strong) !important;
 }
 
-dialog.toro-dialog .dialog-close:focus-visible {
+dialog.bio-nexus-dialog .dialog-close:focus-visible {
   outline: 2px solid var(--toro-color-primary) !important;
   outline-offset: 2px !important;
 }
 
-dialog.toro-dialog .dialog-body {
+dialog.bio-nexus-dialog .dialog-body {
   flex: 1 1 auto !important;
   min-height: 0 !important;
   padding: var(--toro-space-4) !important;
@@ -150,7 +150,7 @@ dialog.toro-dialog .dialog-body {
   scrollbar-gutter: stable;
 }
 
-dialog.toro-dialog .dialog-footer {
+dialog.bio-nexus-dialog .dialog-footer {
   display: flex !important;
   flex: 0 0 auto !important;
   align-items: center !important;
@@ -161,7 +161,7 @@ dialog.toro-dialog .dialog-footer {
   background: var(--toro-color-surface-soft) !important;
 }
 
-dialog.toro-dialog .dialog-footer .toro-action {
+dialog.bio-nexus-dialog .dialog-footer .bio-nexus-action {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -172,7 +172,7 @@ dialog.toro-dialog .dialog-footer .toro-action {
   box-shadow: none !important;
 }
 
-dialog.toro-dialog .dialog-footer .toro-action:focus-visible {
+dialog.bio-nexus-dialog .dialog-footer .bio-nexus-action:focus-visible {
   outline: 2px solid var(--toro-color-primary) !important;
   outline-offset: 2px !important;
 }
@@ -218,8 +218,8 @@ dialog.user-state-dialog .state-dialog-body > p {
 }
 
 @media (max-width: 720px) {
-  dialog.toro-dialog.user-identity-dialog,
-  dialog.toro-dialog.user-state-dialog {
+  dialog.bio-nexus-dialog.user-identity-dialog,
+  dialog.bio-nexus-dialog.user-state-dialog {
     width: calc(100vw - 16px) !important;
     max-width: calc(100vw - 16px) !important;
   }
@@ -234,10 +234,10 @@ dialog.user-state-dialog .state-dialog-body > p {
 }
 
 /* TORO GRID ICON ONLY OVERRIDES START */
-.user-authorization-page .users-grid button.toro-grid-icon-action,
-.user-authorization-page .users-grid button.toro-grid-icon-action:hover,
-.user-authorization-page .users-grid button.toro-grid-icon-action:focus,
-.user-authorization-page .users-grid button.toro-grid-icon-action:active {
+.user-authorization-page .users-grid button.bio-nexus-grid-icon-action,
+.user-authorization-page .users-grid button.bio-nexus-grid-icon-action:hover,
+.user-authorization-page .users-grid button.bio-nexus-grid-icon-action:focus,
+.user-authorization-page .users-grid button.bio-nexus-grid-icon-action:active {
   appearance: none !important;
   width: 32px !important;
   height: 32px !important;
@@ -252,50 +252,50 @@ dialog.user-state-dialog .state-dialog-body > p {
   box-shadow: none !important;
 }
 
-.user-authorization-page .users-grid .toro-grid-action-list {
+.user-authorization-page .users-grid .bio-nexus-grid-action-list {
   gap: 8px !important;
 }
 
-.user-authorization-page .users-grid button.toro-grid-icon-action:hover:not(:disabled) {
+.user-authorization-page .users-grid button.bio-nexus-grid-icon-action:hover:not(:disabled) {
   background: var(--toro-color-selection-soft) !important;
   color: var(--toro-color-primary) !important;
 }
 
-.user-authorization-page .users-grid button.toro-grid-icon-action-accent:hover:not(:disabled) {
+.user-authorization-page .users-grid button.bio-nexus-grid-icon-action-accent:hover:not(:disabled) {
   background: var(--toro-color-accent-soft) !important;
   color: var(--toro-color-accent-strong) !important;
 }
 
-.user-authorization-page .users-grid button.toro-grid-icon-action:focus-visible {
+.user-authorization-page .users-grid button.bio-nexus-grid-icon-action:focus-visible {
   background: var(--toro-color-selection-soft) !important;
   outline: 2px solid var(--toro-color-primary) !important;
   outline-offset: 2px !important;
 }
 
-.user-authorization-page .users-grid button.toro-grid-icon-action:disabled {
+.user-authorization-page .users-grid button.bio-nexus-grid-icon-action:disabled {
   background: transparent !important;
   opacity: 0.36 !important;
 }
 /* TORO GRID ICON ONLY OVERRIDES END */
 
 /* TORO GRID MOUSE FOCUS OVERRIDES START */
-.user-authorization-page .users-grid .toro-grid-actions-cell.ag-cell-focus,
-.user-authorization-page .users-grid .toro-grid-actions-cell.ag-cell-range-selected,
-.user-authorization-page .users-grid .toro-grid-actions-cell:focus,
-.user-authorization-page .users-grid .toro-grid-actions-cell:focus-within {
+.user-authorization-page .users-grid .bio-nexus-grid-actions-cell.ag-cell-focus,
+.user-authorization-page .users-grid .bio-nexus-grid-actions-cell.ag-cell-range-selected,
+.user-authorization-page .users-grid .bio-nexus-grid-actions-cell:focus,
+.user-authorization-page .users-grid .bio-nexus-grid-actions-cell:focus-within {
   border: 0 !important;
   outline: 0 !important;
   box-shadow: none !important;
 }
 
-.user-authorization-page .users-grid button.toro-grid-icon-action:focus:not(:focus-visible) {
+.user-authorization-page .users-grid button.bio-nexus-grid-icon-action:focus:not(:focus-visible) {
   border: 0 !important;
   outline: 0 !important;
   background: transparent !important;
   box-shadow: none !important;
 }
 
-.user-authorization-page .users-grid button.toro-grid-icon-action:focus-visible {
+.user-authorization-page .users-grid button.bio-nexus-grid-icon-action:focus-visible {
   background: var(--toro-color-selection-soft) !important;
   outline: 2px solid var(--toro-color-primary) !important;
   outline-offset: 2px !important;
@@ -303,25 +303,25 @@ dialog.user-state-dialog .state-dialog-body > p {
 /* TORO GRID MOUSE FOCUS OVERRIDES END */
 
 /* TORO DIALOG INITIAL FOCUS OVERRIDES START */
-dialog.toro-dialog:focus,
-dialog.toro-dialog:focus-visible {
+dialog.bio-nexus-dialog:focus,
+dialog.bio-nexus-dialog:focus-visible {
   outline: 0 !important;
   box-shadow: var(--toro-shadow-md) !important;
 }
 
-dialog.toro-dialog .dialog-close:focus:not(:focus-visible) {
+dialog.bio-nexus-dialog .dialog-close:focus:not(:focus-visible) {
   outline: 0 !important;
   box-shadow: none !important;
 }
 
-dialog.toro-dialog .dialog-close:focus-visible {
+dialog.bio-nexus-dialog .dialog-close:focus-visible {
   outline: 2px solid var(--toro-color-primary) !important;
   outline-offset: 2px !important;
 }
 /* TORO DIALOG INITIAL FOCUS OVERRIDES END */
 
 /* TORO UNIFORM SECURITY COMPONENTS START */
-.toro-dialog-close-button.dialog-close {
+.bio-nexus-dialog-close-button.dialog-close {
   appearance: none !important;
   display: inline-grid !important;
   width: 36px !important;
@@ -341,24 +341,24 @@ dialog.toro-dialog .dialog-close:focus-visible {
   cursor: pointer !important;
 }
 
-.toro-dialog-close-button.dialog-close:hover {
+.bio-nexus-dialog-close-button.dialog-close:hover {
   background: var(--toro-color-selection-soft) !important;
   color: var(--toro-color-primary-strong) !important;
 }
 
-.toro-dialog-close-button.dialog-close:focus:not(:focus-visible) {
+.bio-nexus-dialog-close-button.dialog-close:focus:not(:focus-visible) {
   outline: 0 !important;
   box-shadow: none !important;
 }
 
-.toro-dialog-close-button.dialog-close:focus-visible {
+.bio-nexus-dialog-close-button.dialog-close:focus-visible {
   outline: 2px solid var(--toro-color-primary) !important;
   outline-offset: 2px !important;
 }
 /* TORO UNIFORM SECURITY COMPONENTS END */
 
 /* TORO GLOBAL GRID ACTIONS UNIFORMITY START */
-.toro-grid-action-list {
+.bio-nexus-grid-action-list {
   display: flex !important;
   width: 100% !important;
   align-items: center !important;
@@ -366,7 +366,7 @@ dialog.toro-dialog .dialog-close:focus-visible {
   gap: 8px !important;
 }
 
-.toro-grid-action-list > button.toro-grid-icon-action {
+.bio-nexus-grid-action-list > button.bio-nexus-grid-icon-action {
   appearance: none !important;
   display: inline-grid !important;
   width: 32px !important;
@@ -385,23 +385,23 @@ dialog.toro-dialog .dialog-close:focus-visible {
   color: var(--toro-color-primary-strong) !important;
 }
 
-.toro-grid-action-list > button.toro-grid-icon-action:hover:not(:disabled) {
+.bio-nexus-grid-action-list > button.bio-nexus-grid-icon-action:hover:not(:disabled) {
   background: var(--toro-color-selection-soft) !important;
   color: var(--toro-color-primary) !important;
 }
 
-.toro-grid-action-list > button.toro-grid-icon-action-accent:hover:not(:disabled) {
+.bio-nexus-grid-action-list > button.bio-nexus-grid-icon-action-accent:hover:not(:disabled) {
   background: var(--toro-color-accent-soft) !important;
   color: var(--toro-color-accent-strong) !important;
 }
 
-.toro-grid-action-list > button.toro-grid-icon-action:focus:not(:focus-visible) {
+.bio-nexus-grid-action-list > button.bio-nexus-grid-icon-action:focus:not(:focus-visible) {
   outline: 0 !important;
   background: transparent !important;
   box-shadow: none !important;
 }
 
-.toro-grid-action-list > button.toro-grid-icon-action:focus-visible {
+.bio-nexus-grid-action-list > button.bio-nexus-grid-icon-action:focus-visible {
   background: var(--toro-color-selection-soft) !important;
   outline: 2px solid var(--toro-color-primary) !important;
   outline-offset: 2px !important;
@@ -409,8 +409,8 @@ dialog.toro-dialog .dialog-close:focus-visible {
 /* TORO GLOBAL GRID ACTIONS UNIFORMITY END */
 
 /* TORO ROLES DIALOG INITIAL FOCUS START */
-.roles-permissions-page dialog.toro-dialog:focus,
-.roles-permissions-page dialog.toro-dialog:focus-visible {
+.roles-permissions-page dialog.bio-nexus-dialog:focus,
+.roles-permissions-page dialog.bio-nexus-dialog:focus-visible {
   outline: 0 !important;
   box-shadow: var(--toro-shadow-md) !important;
 }
@@ -418,7 +418,7 @@ dialog.toro-dialog .dialog-close:focus-visible {
 
 
 /* TORO GLOBAL DIALOG CONTRACT START */
-.toro-dialog {
+.bio-nexus-dialog {
   max-width: none;
   max-height: calc(100vh - 32px);
   padding: 0;
@@ -433,12 +433,12 @@ dialog.toro-dialog .dialog-close:focus-visible {
   overflow: hidden;
 }
 
-.toro-dialog::backdrop {
+.bio-nexus-dialog::backdrop {
   background: rgb(13 36 58 / 48%);
   backdrop-filter: blur(2px);
 }
 
-.toro-dialog .dialog-shell {
+.bio-nexus-dialog .dialog-shell {
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -448,7 +448,7 @@ dialog.toro-dialog .dialog-close:focus-visible {
   overflow: hidden;
 }
 
-.toro-dialog .dialog-header {
+.bio-nexus-dialog .dialog-header {
   position: relative;
   z-index: 3;
   display: flex;
@@ -461,7 +461,7 @@ dialog.toro-dialog .dialog-close:focus-visible {
   background: var(--toro-color-surface);
 }
 
-.toro-dialog .dialog-header p {
+.bio-nexus-dialog .dialog-header p {
   margin: 0 0 var(--toro-space-1);
   color: var(--toro-color-accent-strong);
   font-size: var(--toro-font-size-xs);
@@ -470,9 +470,9 @@ dialog.toro-dialog .dialog-close:focus-visible {
   letter-spacing: 0.06em;
 }
 
-.toro-dialog .dialog-header h3 { margin: 0; }
+.bio-nexus-dialog .dialog-header h3 { margin: 0; }
 
-.toro-dialog .dialog-body {
+.bio-nexus-dialog .dialog-body {
   flex: 1 1 auto;
   width: 100%;
   min-width: 0;
@@ -483,7 +483,7 @@ dialog.toro-dialog .dialog-close:focus-visible {
   background: var(--toro-color-surface);
 }
 
-.toro-dialog .dialog-footer {
+.bio-nexus-dialog .dialog-footer {
   position: relative;
   z-index: 3;
   display: flex;
@@ -497,13 +497,13 @@ dialog.toro-dialog .dialog-close:focus-visible {
 }
 
 @media (max-width: 720px) {
-  .toro-dialog {
+  .bio-nexus-dialog {
     max-height: calc(100vh - 16px);
   }
-  .toro-dialog .dialog-shell {
+  .bio-nexus-dialog .dialog-shell {
     max-height: calc(100vh - 16px);
   }
-  .toro-dialog .dialog-footer {
+  .bio-nexus-dialog .dialog-footer {
     flex-wrap: wrap;
   }
 }

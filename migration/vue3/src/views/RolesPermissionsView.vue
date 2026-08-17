@@ -1,17 +1,17 @@
 <template>
   <section class="roles-admin" aria-label="Administracion de roles y permisos">
-    <div v-if="errorMessage" class="toro-message toro-message-error" role="alert">
+    <div v-if="errorMessage" class="bio-nexus-message bio-nexus-message-error" role="alert">
       <strong>No fue posible cargar la informacion.</strong>
       <span>{{ errorMessage }}</span>
     </div>
 
-    <div v-if="loading && !loaded" class="toro-message" role="status">
+    <div v-if="loading && !loaded" class="bio-nexus-message" role="status">
       Cargando roles y permisos...
     </div>
 
     <template v-else>
-      <section class="roles-workspace toro-panel">
-        <div v-if="roles.length === 0" class="roles-empty toro-empty-state">
+      <section class="roles-workspace bio-nexus-panel">
+        <div v-if="roles.length === 0" class="roles-empty bio-nexus-empty-state">
           No existen roles registrados.
         </div>
 
@@ -38,14 +38,14 @@
           @row-context-menu="openRoleContextMenu"
         >
           <template #actions>
-            <button type="button" class="toro-action toro-action-secondary" @click="openPermissionCatalogDialog">
+            <button type="button" class="bio-nexus-action bio-nexus-action-secondary" @click="openPermissionCatalogDialog">
               <BioNexusActionIcon action="catalog" />
               <span>Ver catalogo</span>
             </button>
             <button
               v-if="canCreateRoles"
               type="button"
-              class="toro-action toro-action-primary"
+              class="bio-nexus-action bio-nexus-action-primary"
               :disabled="loading || creatingRole"
               @click="openCreateRoleDialog"
             >
@@ -301,14 +301,14 @@ const roleColumnDefs = computed(() => [
     minWidth: 135,
     maxWidth: 200,
     flex: 0.75,
-    cellClass: "toro-grid-code-cell",
+    cellClass: "bio-nexus-grid-code-cell",
   },
   {
     field: "name",
     headerName: "Nombre",
     minWidth: 220,
     flex: 1.2,
-    cellClass: "toro-grid-strong-cell",
+    cellClass: "bio-nexus-grid-strong-cell",
   },
   {
     field: "description",
@@ -316,7 +316,7 @@ const roleColumnDefs = computed(() => [
     minWidth: 300,
     flex: 2,
     valueFormatter: ({ value }) => value || "Sin descripción",
-    cellClass: "toro-grid-muted-cell",
+    cellClass: "bio-nexus-grid-muted-cell",
   },
   {
     headerName: "Origen",
@@ -332,8 +332,8 @@ const roleColumnDefs = computed(() => [
     maxWidth: 150,
     flex: 0.7,
     valueGetter: ({ data }) => data?.isSystem ? "Sistema" : "Configurable",
-    headerClass: "toro-grid-centered-header",
-    cellClass: "toro-grid-centered-cell",
+    headerClass: "bio-nexus-grid-centered-header",
+    cellClass: "bio-nexus-grid-centered-cell",
     headerTooltip: "Sistema: administrado internamente por TORO. Configurable: creado y administrado desde esta pantalla.",
   },
   {
@@ -350,7 +350,7 @@ const roleColumnDefs = computed(() => [
     maxWidth: 155,
     flex: 0.65,
     valueGetter: ({ data }) => Boolean(data?.isActive),
-    cellClass: "toro-grid-status-cell",
+    cellClass: "bio-nexus-grid-status-cell",
     cellStyle: {
       display: "flex",
       alignItems: "center",
@@ -358,7 +358,7 @@ const roleColumnDefs = computed(() => [
       paddingLeft: "6px",
       paddingRight: "6px",
     },
-    headerClass: "toro-grid-centered-header",
+    headerClass: "bio-nexus-grid-centered-header",
     cellRenderer: BioNexusGridToggleCell,
 
   cellRendererParams: { onLabel: "Activo", offLabel: "Inactivo", ariaLabel: "Estado", disabled: false, onToggle: (row) => openRoleStateDialog(row) },
@@ -376,8 +376,8 @@ const roleColumnDefs = computed(() => [
     filter: false,
     resizable: false,
     suppressHeaderMenuButton: true,
-    headerClass: "toro-grid-actions-header",
-    cellClass: "toro-grid-actions-cell",
+    headerClass: "bio-nexus-grid-actions-header",
+    cellClass: "bio-nexus-grid-actions-cell",
     cellStyle: roleActionsCellStyle,
     cellRenderer: "BioNexusGridActionsCell",
     cellRendererParams: {
@@ -1212,41 +1212,41 @@ function focusOpenedDialog(dialogReference) {
   border-radius: 0;
 }
 
-.roles-admin :deep(.toro-grid-code-cell) {
+.roles-admin :deep(.bio-nexus-grid-code-cell) {
   color: var(--toro-color-primary-strong);
   font-weight: var(--toro-font-weight-bold);
   overflow-wrap: anywhere;
 }
 
-.roles-admin :deep(.toro-grid-strong-cell) {
+.roles-admin :deep(.bio-nexus-grid-strong-cell) {
   font-weight: var(--toro-font-weight-bold);
 }
 
-.roles-admin :deep(.toro-grid-muted-cell) {
+.roles-admin :deep(.bio-nexus-grid-muted-cell) {
   color: var(--toro-color-text-muted);
 }
 
-.roles-admin :deep(.toro-grid-centered-cell),
-.roles-admin :deep(.toro-grid-status-cell) {
+.roles-admin :deep(.bio-nexus-grid-centered-cell),
+.roles-admin :deep(.bio-nexus-grid-status-cell) {
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
 }
 
-.roles-admin :deep(.toro-grid-centered-header .ag-header-cell-label),
-.roles-admin :deep(.toro-grid-actions-header .ag-header-cell-label) {
+.roles-admin :deep(.bio-nexus-grid-centered-header .ag-header-cell-label),
+.roles-admin :deep(.bio-nexus-grid-actions-header .ag-header-cell-label) {
   justify-content: center;
   width: 100%;
   text-align: center;
 }
 
-.roles-admin :deep(.toro-grid-actions-cell) {
+.roles-admin :deep(.bio-nexus-grid-actions-cell) {
   padding-inline: 4px;
 }
 
-.roles-admin :deep(.toro-grid-actions-cell .ag-cell-wrapper),
-.roles-admin :deep(.toro-grid-actions-cell .ag-cell-value) {
+.roles-admin :deep(.bio-nexus-grid-actions-cell .ag-cell-wrapper),
+.roles-admin :deep(.bio-nexus-grid-actions-cell .ag-cell-value) {
   display: flex;
   align-items: center;
   justify-content: center;

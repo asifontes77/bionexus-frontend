@@ -1,16 +1,16 @@
 <template>
   <section class="type-payment-page">
-    <div v-if="loadError" class="toro-message toro-message-error" role="alert">
+    <div v-if="loadError" class="bio-nexus-message bio-nexus-message-error" role="alert">
       <strong>No fue posible cargar los Formas de pago.</strong>
       <span>{{ loadError }}</span>
     </div>
 
-    <section class="toro-administrative-directory type-payment-directory">
+    <section class="bio-nexus-administrative-directory type-payment-directory">
 
 
-      <div v-if="loading" class="toro-empty-state">Cargando Formas de pago...</div>
-      <div v-else-if="rows.length === 0" class="toro-empty-state">No existen Formas de pago registrados.</div>
-      <div v-else-if="filteredRows.length === 0" class="toro-empty-state">No existen registros que coincidan con los filtros.</div>
+      <div v-if="loading" class="bio-nexus-empty-state">Cargando Formas de pago...</div>
+      <div v-else-if="rows.length === 0" class="bio-nexus-empty-state">No existen Formas de pago registrados.</div>
+      <div v-else-if="filteredRows.length === 0" class="bio-nexus-empty-state">No existen registros que coincidan con los filtros.</div>
       <BioNexusDataGrid
         v-else
         class="type-payment-grid"
@@ -37,7 +37,7 @@
         <button
           v-if="canCreate"
           type="button"
-          class="toro-action toro-action-primary"
+          class="bio-nexus-action bio-nexus-action-primary"
           :disabled="loading || saving"
           @click="openCreate"
         >
@@ -151,8 +151,8 @@ const columnDefs = computed(() => [
     filter: false,
     resizable: false,
     suppressHeaderMenuButton: true,
-    headerClass: "toro-grid-actions-header",
-    cellClass: "toro-grid-actions-cell",
+    headerClass: "bio-nexus-grid-actions-header",
+    cellClass: "bio-nexus-grid-actions-cell",
     cellRenderer: "BioNexusGridActionsCell",
     cellRendererParams: {
       actions: [
@@ -325,8 +325,8 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .type-payment-page { min-width: 0; }
-.type-payment-grid :deep(.toro-grid-actions-header .ag-header-cell-label),
-.type-payment-grid :deep(.toro-grid-actions-cell) { justify-content: center; }
+.type-payment-grid :deep(.bio-nexus-grid-actions-header .ag-header-cell-label),
+.type-payment-grid :deep(.bio-nexus-grid-actions-cell) { justify-content: center; }
 .type-payment-grid :deep(.ag-pinned-right-header),
 .type-payment-grid :deep(.ag-pinned-right-cols-container) {
   border-left: 1px solid var(--toro-color-border-strong);

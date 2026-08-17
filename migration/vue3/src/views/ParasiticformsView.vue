@@ -1,13 +1,13 @@
 <template>
   <section class="parasitic-page">
-    <div v-if="loadError" class="toro-message toro-message-error" role="alert">
+    <div v-if="loadError" class="bio-nexus-message bio-nexus-message-error" role="alert">
       <strong>No fue posible cargar las formas parasitarias.</strong>
       <span>{{ loadError }}</span>
     </div>
 
-    <section class="toro-administrative-directory parasitic-directory">
-      <div v-if="loading" class="toro-empty-state">Cargando formas parasitarias...</div>
-      <div v-else-if="parasiticforms.length === 0" class="toro-empty-state">
+    <section class="bio-nexus-administrative-directory parasitic-directory">
+      <div v-if="loading" class="bio-nexus-empty-state">Cargando formas parasitarias...</div>
+      <div v-else-if="parasiticforms.length === 0" class="bio-nexus-empty-state">
         No existen formas parasitarias registradas.
       </div>
       <BioNexusDataGrid
@@ -37,7 +37,7 @@
           <button
             v-if="canCreate"
             type="button"
-            class="toro-action toro-action-primary"
+            class="bio-nexus-action bio-nexus-action-primary"
             :disabled="loading || saving"
             @click="openCreate"
           >
@@ -159,8 +159,8 @@ const columnDefs = computed(() => [
         { value: false, label: "Inactivo" },
       ],
     },
-    headerClass: "toro-grid-toggle-header",
-    cellClass: "toro-grid-toggle-cell",
+    headerClass: "bio-nexus-grid-toggle-header",
+    cellClass: "bio-nexus-grid-toggle-cell",
     cellRenderer: BioNexusGridToggleCell,
     cellRendererParams: {
       onLabel: "Activo",
@@ -178,7 +178,7 @@ const columnDefs = computed(() => [
     width: 110,
     sortable: false,
     filter: false,
-    cellClass: "toro-grid-actions-cell",
+    cellClass: "bio-nexus-grid-actions-cell",
     cellRenderer: BioNexusGridActionsCell,
     cellRendererParams: {
       actions: [

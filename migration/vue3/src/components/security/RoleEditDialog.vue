@@ -1,5 +1,5 @@
 <template>
-<dialog ref="dialog" class="toro-dialog role-dialog role-edit-dialog" tabindex="-1">
+<dialog ref="dialog" class="bio-nexus-dialog role-dialog role-edit-dialog" tabindex="-1">
       <form class="dialog-shell" novalidate @submit.prevent="emit('submit')">
         <header class="dialog-header">
           <div>
@@ -20,7 +20,7 @@
             <input
               id="edit-role-code"
               :value="selectedRole?.code || ''"
-              class="toro-field"
+              class="bio-nexus-field"
               type="text"
               aria-disabled="true"
               aria-describedby="edit-role-code-help"
@@ -37,7 +37,7 @@
             <input
               id="edit-role-name"
               v-model.trim="updateRoleForm.name"
-              class="toro-field"
+              class="bio-nexus-field"
               type="text"
               maxlength="100"
               :disabled="editingRole"
@@ -56,7 +56,7 @@
             <textarea
               id="edit-role-description"
               v-model="updateRoleForm.description"
-              class="toro-field"
+              class="bio-nexus-field"
               maxlength="250"
               rows="4"
               :disabled="editingRole"
@@ -64,10 +64,10 @@
             ></textarea>
           </BioNexusFormField>
 
-          <label class="dialog-field-wide role-active-option toro-option">
+          <label class="dialog-field-wide role-active-option bio-nexus-option">
             <input v-model="updateRoleForm.isActive" type="checkbox"
               :disabled="editingRole || selectedRole?.code === 'admin'" />
-            <span class="toro-option-copy">
+            <span class="bio-nexus-option-copy">
               <strong>Rol activo</strong>
               <small>
                 {{
@@ -79,24 +79,24 @@
             </span>
           </label>
 
-          <div v-if="updateRoleError" class="dialog-field-wide toro-inline-message toro-message-error" role="alert">
+          <div v-if="updateRoleError" class="dialog-field-wide bio-nexus-inline-message bio-nexus-message-error" role="alert">
             {{ updateRoleError }}
           </div>
 
-          <div v-if="updateRoleMessage" class="dialog-field-wide toro-inline-message toro-message-success"
+          <div v-if="updateRoleMessage" class="dialog-field-wide bio-nexus-inline-message bio-nexus-message-success"
             role="status">
             {{ updateRoleMessage }}
           </div>
         </div>
 
         <footer class="dialog-footer">
-          <button type="button" class="toro-action toro-action-secondary" :disabled="editingRole"
+          <button type="button" class="bio-nexus-action bio-nexus-action-secondary" :disabled="editingRole"
             @click="emit('close')">
   <BioNexusActionIcon action="cancel" />
             Cancelar
           </button>
 
-          <button type="submit" class="toro-action toro-action-primary" :disabled="editingRole || !canUpdateRoles || !hasRoleMetadataChanges">
+          <button type="submit" class="bio-nexus-action bio-nexus-action-primary" :disabled="editingRole || !canUpdateRoles || !hasRoleMetadataChanges">
   <BioNexusActionIcon action="save" />
             {{ editingRole ? "Guardando..." : "Guardar" }}
           </button>

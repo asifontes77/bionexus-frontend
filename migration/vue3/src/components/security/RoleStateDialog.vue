@@ -1,5 +1,5 @@
 <template>
-  <dialog ref="dialog" class="toro-dialog role-state-dialog" @cancel.prevent="close">
+  <dialog ref="dialog" class="bio-nexus-dialog role-state-dialog" @cancel.prevent="close">
     <form class="dialog-shell" @submit.prevent="confirm">
       <header class="dialog-header">
         <div>
@@ -9,19 +9,19 @@
         <BioNexusDialogCloseButton @click="close" />
       </header>
       <div class="dialog-body">
-        <div class="toro-message toro-message-warning" role="status">
+        <div class="bio-nexus-message bio-nexus-message-warning" role="status">
           {{ target?.isActive
             ? "El rol quedara inactivo y no podra asignarse a nuevos usuarios."
             : "El rol volvera a estar disponible para las asignaciones permitidas." }}
         </div>
-        <p v-if="errorMessage" class="toro-message toro-message-danger" role="alert">{{ errorMessage }}</p>
+        <p v-if="errorMessage" class="bio-nexus-message bio-nexus-message-danger" role="alert">{{ errorMessage }}</p>
       </div>
       <footer class="dialog-footer">
-        <button type="button" class="toro-action toro-action-secondary" :disabled="saving" @click="close">
+        <button type="button" class="bio-nexus-action bio-nexus-action-secondary" :disabled="saving" @click="close">
           <BioNexusActionIcon action="cancel" />
           <span>Cancelar</span>
         </button>
-        <button type="submit" class="toro-action" :class="target?.isActive ? 'toro-action-danger' : 'toro-action-primary'" :disabled="saving || !target">
+        <button type="submit" class="bio-nexus-action" :class="target?.isActive ? 'bio-nexus-action-danger' : 'bio-nexus-action-primary'" :disabled="saving || !target">
           <BioNexusActionIcon :action="target?.isActive ? 'deactivate' : 'activate'" />
           <span>{{ saving ? "Guardando..." : target?.isActive ? "Inactivar" : "Activar" }}</span>
         </button>

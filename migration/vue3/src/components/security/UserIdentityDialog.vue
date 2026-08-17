@@ -1,5 +1,5 @@
 <template>
-  <dialog ref="identityDialog" class="toro-dialog user-identity-dialog" tabindex="-1">
+  <dialog ref="identityDialog" class="bio-nexus-dialog user-identity-dialog" tabindex="-1">
     <form class="dialog-shell" @submit.prevent="submitIdentity">
       <header class="dialog-header">
         <div>
@@ -10,28 +10,28 @@
       </header>
 
       <div class="dialog-body identity-dialog-body">
-        <div v-if="formError" class="toro-message toro-message-error" role="alert">{{ formError }}</div>
+        <div v-if="formError" class="bio-nexus-message bio-nexus-message-error" role="alert">{{ formError }}</div>
         <div class="identity-form-grid">
           <BioNexusFormField label="Nombre completo" field-id="identity-name" :error="errors.name" required>
-            <input id="identity-name" v-model.trim="form.name" class="toro-field" type="text" maxlength="100" autocomplete="name" />
+            <input id="identity-name" v-model.trim="form.name" class="bio-nexus-field" type="text" maxlength="100" autocomplete="name" />
           </BioNexusFormField>
           <BioNexusFormField label="Nombre de usuario" field-id="identity-user-name" :error="errors.userName" required>
-            <input id="identity-user-name" v-model.trim="form.userName" class="toro-field" type="text" maxlength="100" autocomplete="username" />
+            <input id="identity-user-name" v-model.trim="form.userName" class="bio-nexus-field" type="text" maxlength="100" autocomplete="username" />
           </BioNexusFormField>
           <BioNexusFormField label="Correo" field-id="identity-email" :error="errors.email" required>
-            <input id="identity-email" v-model.trim="form.email" class="toro-field" type="email" maxlength="100" autocomplete="email" />
+            <input id="identity-email" v-model.trim="form.email" class="bio-nexus-field" type="email" maxlength="100" autocomplete="email" />
           </BioNexusFormField>
           <BioNexusFormField label="Teléfono" field-id="identity-telephone" :error="errors.telephone">
-            <input id="identity-telephone" v-model.trim="form.telephone" class="toro-field" type="tel" maxlength="20" autocomplete="tel" placeholder="+58 0000 000 0000" />
+            <input id="identity-telephone" v-model.trim="form.telephone" class="bio-nexus-field" type="tel" maxlength="20" autocomplete="tel" placeholder="+58 0000 000 0000" />
           </BioNexusFormField>
           <BioNexusFormField label="Cargo" field-id="identity-position" :error="errors.position">
-            <input id="identity-position" v-model.trim="form.position" class="toro-field" type="text" maxlength="50" autocomplete="organization-title" />
+            <input id="identity-position" v-model.trim="form.position" class="bio-nexus-field" type="text" maxlength="50" autocomplete="organization-title" />
           </BioNexusFormField>
           <BioNexusFormField label="Número de colegiatura" field-id="identity-college" :error="errors.collegeNumber">
-            <input id="identity-college" v-model.trim="form.collegeNumber" class="toro-field" type="text" maxlength="50" />
+            <input id="identity-college" v-model.trim="form.collegeNumber" class="bio-nexus-field" type="text" maxlength="50" />
           </BioNexusFormField>
           <BioNexusFormField class="identity-address-field" label="Dirección" field-id="identity-direction" :error="errors.direction">
-            <textarea id="identity-direction" v-model.trim="form.direction" class="toro-field identity-textarea" maxlength="100" rows="3" autocomplete="street-address"></textarea>
+            <textarea id="identity-direction" v-model.trim="form.direction" class="bio-nexus-field identity-textarea" maxlength="100" rows="3" autocomplete="street-address"></textarea>
           </BioNexusFormField>
         </div>
 
@@ -45,23 +45,23 @@
           </header>
           <div class="identity-form-grid">
             <BioNexusFormField label="Contraseña" field-id="identity-password" :error="errors.password" :required="isCreateMode">
-              <input id="identity-password" v-model="form.password" class="toro-field" type="password" maxlength="500" :autocomplete="isCreateMode ? 'new-password' : 'off'" />
+              <input id="identity-password" v-model="form.password" class="bio-nexus-field" type="password" maxlength="500" :autocomplete="isCreateMode ? 'new-password' : 'off'" />
             </BioNexusFormField>
             <BioNexusFormField label="Confirmar contraseña" field-id="identity-password-confirm" :error="errors.passwordConfirm" :required="isCreateMode">
-              <input id="identity-password-confirm" v-model="form.passwordConfirm" class="toro-field" type="password" maxlength="500" autocomplete="new-password" />
+              <input id="identity-password-confirm" v-model="form.passwordConfirm" class="bio-nexus-field" type="password" maxlength="500" autocomplete="new-password" />
             </BioNexusFormField>
           </div>
         </section>
 
-        <div class="toro-message toro-message-info" role="status">
+        <div class="bio-nexus-message bio-nexus-message-info" role="status">
           Los roles y permisos no se editan aqui. Despues de guardar, utiliza las acciones Roles y Permisos del grid.
         </div>
       </div>
 
       <footer class="dialog-footer">
-        <button type="button" class="toro-action toro-action-secondary" :disabled="saving" @click="closeIdentityDialog">
+        <button type="button" class="bio-nexus-action bio-nexus-action-secondary" :disabled="saving" @click="closeIdentityDialog">
   <BioNexusActionIcon action="cancel" />Cancelar</button>
-        <button type="submit" class="toro-action toro-action-primary" :disabled="saving">
+        <button type="submit" class="bio-nexus-action bio-nexus-action-primary" :disabled="saving">
           <BioNexusIcon :name="isCreateMode ? 'person_add' : 'save'" :size="19" />
           {{ saving ? "Guardando..." : isCreateMode ? "Crear usuario" : "Guardar datos" }}
         </button>
@@ -200,7 +200,7 @@ defineExpose({ openCreate, openEdit, openState });
 </script>
 
 <style scoped>
-.toro-dialog {
+.bio-nexus-dialog {
   box-sizing: border-box;
   position: fixed;
   inset: 0;
@@ -230,5 +230,5 @@ defineExpose({ openCreate, openEdit, openState });
 .identity-password-section h4, .identity-password-section p { margin: 0; }
 .identity-password-section header span { color: var(--toro-color-text-muted); font-size: var(--toro-font-size-xs); font-weight: var(--toro-font-weight-bold); text-transform: uppercase; }
 .identity-password-section header p { color: var(--toro-color-text-muted); font-size: var(--toro-font-size-sm); }
-@media (max-width: 720px) { .toro-dialog { width: calc(100vw - 16px); } .identity-form-grid { grid-template-columns: 1fr; } .identity-address-field { grid-column: auto; } .identity-password-section header { flex-direction: column; } }
+@media (max-width: 720px) { .bio-nexus-dialog { width: calc(100vw - 16px); } .identity-form-grid { grid-template-columns: 1fr; } .identity-address-field { grid-column: auto; } .identity-password-section header { flex-direction: column; } }
 </style>

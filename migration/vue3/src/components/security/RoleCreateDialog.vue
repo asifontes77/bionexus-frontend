@@ -1,5 +1,5 @@
 <template>
-<dialog ref="dialog" class="toro-dialog role-dialog role-create-dialog"  tabindex="-1">
+<dialog ref="dialog" class="bio-nexus-dialog role-dialog role-create-dialog"  tabindex="-1">
       <form class="dialog-shell" novalidate @submit.prevent="emit('submit')">
         <header class="dialog-header">
           <div>
@@ -21,7 +21,7 @@
             <input
               id="create-role-code"
               v-model.trim="createRoleForm.code"
-              class="toro-field"
+              class="bio-nexus-field"
               type="text"
               maxlength="60"
               autocomplete="off"
@@ -46,7 +46,7 @@
             <input
               id="create-role-name"
               v-model.trim="createRoleForm.name"
-              class="toro-field"
+              class="bio-nexus-field"
               type="text"
               maxlength="100"
               autocomplete="off"
@@ -67,7 +67,7 @@
             <textarea
               id="create-role-description"
               v-model="createRoleForm.description"
-              class="toro-field"
+              class="bio-nexus-field"
               maxlength="250"
               rows="4"
               placeholder="Descripción opcional"
@@ -76,24 +76,24 @@
             ></textarea>
           </BioNexusFormField>
 
-          <div v-if="createRoleError" class="dialog-field-wide toro-inline-message toro-message-error" role="alert">
+          <div v-if="createRoleError" class="dialog-field-wide bio-nexus-inline-message bio-nexus-message-error" role="alert">
             {{ createRoleError }}
           </div>
 
-          <div v-if="createRoleMessage" class="dialog-field-wide toro-inline-message toro-message-success"
+          <div v-if="createRoleMessage" class="dialog-field-wide bio-nexus-inline-message bio-nexus-message-success"
             role="status">
             {{ createRoleMessage }}
           </div>
         </div>
 
         <footer class="dialog-footer">
-          <button type="button" class="toro-action toro-action-secondary" :disabled="creatingRole"
+          <button type="button" class="bio-nexus-action bio-nexus-action-secondary" :disabled="creatingRole"
             @click="emit('close')">
   <BioNexusActionIcon action="cancel" />
             Cancelar
           </button>
 
-          <button type="submit" class="toro-action toro-action-primary" :disabled="creatingRole || !canCreateRoles">
+          <button type="submit" class="bio-nexus-action bio-nexus-action-primary" :disabled="creatingRole || !canCreateRoles">
   <BioNexusActionIcon action="create" />
             {{ creatingRole ? "Creando..." : "Crear rol" }}
           </button>

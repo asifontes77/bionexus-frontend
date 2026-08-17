@@ -3,7 +3,7 @@
     <div
       v-if="open"
       ref="menuElement"
-      class="toro-context-menu"
+      class="bio-nexus-context-menu"
       :style="menuStyle"
       role="menu"
       @contextmenu.prevent
@@ -12,9 +12,9 @@
         v-for="item in visibleItems"
         :key="item.key"
         type="button"
-        class="toro-context-menu-item"
+        class="bio-nexus-context-menu-item"
         :class="{
-          'toro-context-menu-danger': item.variant === 'danger',
+          'bio-nexus-context-menu-danger': item.variant === 'danger',
         }"
         :disabled="item.disabled"
         role="menuitem"
@@ -22,7 +22,7 @@
       >
         <svg
           v-if="resolveIcon(item)"
-          class="toro-context-menu-icon"
+          class="bio-nexus-context-menu-icon"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -68,7 +68,7 @@
             <path d="M12 16h.01" />
           </template>
         </svg>
-        <span class="toro-context-menu-label">{{ item.label }}</span>
+        <span class="bio-nexus-context-menu-label">{{ item.label }}</span>
       </button>
     </div>
   </Teleport>
@@ -254,7 +254,7 @@ defineExpose({
 </script>
 
 <style scoped>
-.toro-context-menu {
+.bio-nexus-context-menu {
   position: fixed;
   z-index: 5000;
   display: grid;
@@ -266,7 +266,7 @@ defineExpose({
   box-shadow: 0 14px 36px rgb(15 23 42 / 20%);
 }
 
-.toro-context-menu-item {
+.bio-nexus-context-menu-item {
   display: flex;
   align-items: center;
   gap: 9px;
@@ -285,31 +285,31 @@ defineExpose({
   cursor: pointer;
 }
 
-.toro-context-menu-icon {
+.bio-nexus-context-menu-icon {
   flex: 0 0 auto;
   width: 16px;
   height: 16px;
   color: currentColor;
 }
 
-.toro-context-menu-label {
+.bio-nexus-context-menu-label {
   min-width: 0;
   line-height: 1.25;
 }
 
-.toro-context-menu-item:not(:disabled):hover,
-.toro-context-menu-item:not(:disabled):focus-visible {
+.bio-nexus-context-menu-item:not(:disabled):hover,
+.bio-nexus-context-menu-item:not(:disabled):focus-visible {
   color: var(--toro-color-primary-strong);
   background: var(--toro-color-info-soft);
   outline: none;
 }
 
-.toro-context-menu-item:disabled {
+.bio-nexus-context-menu-item:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.toro-context-menu-danger {
+.bio-nexus-context-menu-danger {
   color: var(--toro-color-danger, #b42318);
 }
 </style>

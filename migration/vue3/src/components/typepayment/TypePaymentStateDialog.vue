@@ -1,9 +1,9 @@
 <template>
-  <dialog ref="dialog" class="toro-dialog type-payment-state-dialog" @cancel.prevent="close">
+  <dialog ref="dialog" class="bio-nexus-dialog type-payment-state-dialog" @cancel.prevent="close">
     <form class="dialog-shell" @submit.prevent="confirm">
       <header class="dialog-header"><div><p>Estado del registro</p><h3>{{ target?.annulled ? "Activar tipo de pago" : "Inactivar tipo de pago" }}</h3></div><BioNexusDialogCloseButton @click="close" /></header>
-      <section class="dialog-body type-payment-state-body"><p><strong>{{ target?.description }}</strong></p><p>{{ target?.annulled ? "El tipo de pago volvera a estar disponible." : "La forma de pago permanecera en el catalogo, pero no estara disponible para nuevas operaciones." }}</p><div v-if="errorMessage" class="toro-message toro-message-error" role="alert">{{ errorMessage }}</div></section>
-      <footer class="dialog-footer"><button type="button" class="toro-action toro-action-secondary" :disabled="saving" @click="close"><BioNexusActionIcon action="cancel" /><span>Cancelar</span></button><button type="submit" class="toro-action toro-action-primary" :disabled="saving || !target"><BioNexusActionIcon :action="target?.annulled ? 'activate' : 'deactivate'" /><span>{{ saving ? "Guardando..." : target?.annulled ? "Activar" : "Inactivar" }}</span></button></footer>
+      <section class="dialog-body type-payment-state-body"><p><strong>{{ target?.description }}</strong></p><p>{{ target?.annulled ? "El tipo de pago volvera a estar disponible." : "La forma de pago permanecera en el catalogo, pero no estara disponible para nuevas operaciones." }}</p><div v-if="errorMessage" class="bio-nexus-message bio-nexus-message-error" role="alert">{{ errorMessage }}</div></section>
+      <footer class="dialog-footer"><button type="button" class="bio-nexus-action bio-nexus-action-secondary" :disabled="saving" @click="close"><BioNexusActionIcon action="cancel" /><span>Cancelar</span></button><button type="submit" class="bio-nexus-action bio-nexus-action-primary" :disabled="saving || !target"><BioNexusActionIcon :action="target?.annulled ? 'activate' : 'deactivate'" /><span>{{ saving ? "Guardando..." : target?.annulled ? "Activar" : "Inactivar" }}</span></button></footer>
     </form>
   </dialog>
 </template>

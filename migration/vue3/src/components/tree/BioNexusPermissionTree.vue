@@ -1,5 +1,5 @@
 <template>
-  <div class="toro-permission-tree">
+  <div class="bio-nexus-permission-tree">
     <div
       v-if="treeItems.length === 0"
       class="permission-tree-empty"
@@ -526,7 +526,7 @@ function toggleModule(slotValue) {
 </script>
 
 <style scoped>
-.toro-permission-tree {
+.bio-nexus-permission-tree {
   width: 100%;
   min-width: 0;
   color: var(--toro-color-text);
@@ -534,12 +534,12 @@ function toggleModule(slotValue) {
   font-size: var(--toro-font-size-sm);
 }
 
-.toro-permission-tree :deep(.tree-item),
-.toro-permission-tree :deep(.tree-item-node) {
+.bio-nexus-permission-tree :deep(.tree-item),
+.bio-nexus-permission-tree :deep(.tree-item-node) {
   min-height: 30px;
 }
 
-.toro-permission-tree :deep(.tree-item-children) {
+.bio-nexus-permission-tree :deep(.tree-item-children) {
   margin-block: 1px;
 }
 
@@ -639,25 +639,25 @@ function toggleModule(slotValue) {
 
 /* TORO final direct aligned tree rows */
 
-.toro-permission-tree {
+.bio-nexus-permission-tree {
   width: 100%;
   max-width: 920px;
 }
 
-.toro-permission-tree :deep(.tree-item),
-.toro-permission-tree :deep(.tree-item-node) {
+.bio-nexus-permission-tree :deep(.tree-item),
+.bio-nexus-permission-tree :deep(.tree-item-node) {
   position: relative;
   width: 100%;
   min-width: 0;
 }
 
-.toro-permission-tree :deep(.tree-item:has(.permission-tree-badge)),
-.toro-permission-tree :deep(.tree-item-node:has(.permission-tree-badge)) {
+.bio-nexus-permission-tree :deep(.tree-item:has(.permission-tree-badge)),
+.bio-nexus-permission-tree :deep(.tree-item-node:has(.permission-tree-badge)) {
   padding-inline-end: 104px;
 }
 
-.toro-permission-tree :deep(.tree-item:has(.permission-tree-module-actions)),
-.toro-permission-tree :deep(.tree-item-node:has(.permission-tree-module-actions)) {
+.bio-nexus-permission-tree :deep(.tree-item:has(.permission-tree-module-actions)),
+.bio-nexus-permission-tree :deep(.tree-item-node:has(.permission-tree-module-actions)) {
   padding-inline-end: 268px;
 }
 
@@ -695,12 +695,12 @@ function toggleModule(slotValue) {
 }
 
 @media (max-width: 720px) {
-  .toro-permission-tree {
+  .bio-nexus-permission-tree {
     max-width: 100%;
   }
 
-  .toro-permission-tree :deep(.tree-item:has(.permission-tree-module-actions)),
-  .toro-permission-tree :deep(.tree-item-node:has(.permission-tree-module-actions)) {
+  .bio-nexus-permission-tree :deep(.tree-item:has(.permission-tree-module-actions)),
+  .bio-nexus-permission-tree :deep(.tree-item-node:has(.permission-tree-module-actions)) {
     padding-inline-end: 12px;
   }
 

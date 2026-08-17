@@ -1,7 +1,7 @@
 <template>
   <button
     type="button"
-    class="toro-grid-toggle"
+    class="bio-nexus-grid-toggle"
     :class="{ 'is-on': value, 'is-disabled': disabled }"
     :disabled="disabled"
     :aria-pressed="value"
@@ -10,10 +10,10 @@
     @keydown.enter.stop.prevent="requestToggle"
     @keydown.space.stop.prevent="requestToggle"
   >
-    <span class="toro-grid-toggle__track" aria-hidden="true">
-      <span class="toro-grid-toggle__knob"></span>
+    <span class="bio-nexus-grid-toggle__track" aria-hidden="true">
+      <span class="bio-nexus-grid-toggle__knob"></span>
     </span>
-    <span class="toro-grid-toggle__label">{{ value ? onLabel : offLabel }}</span>
+    <span class="bio-nexus-grid-toggle__label">{{ value ? onLabel : offLabel }}</span>
   </button>
 </template>
 
@@ -45,7 +45,7 @@ function requestToggle(event) {
 </script>
 
 <style>
-.toro-grid-toggle {
+.bio-nexus-grid-toggle {
   display: inline-flex;
   align-items: center;
   gap: 5px;
@@ -59,18 +59,18 @@ function requestToggle(event) {
   font: inherit;
   user-select: none;
 }
-.toro-grid-toggle:hover:not(:disabled) {
+.bio-nexus-grid-toggle:hover:not(:disabled) {
   background: rgb(38 120 159 / 6%);
 }
-.toro-grid-toggle:focus-visible {
+.bio-nexus-grid-toggle:focus-visible {
   outline: 2px solid rgb(38 120 159 / 42%);
   outline-offset: 2px;
 }
-.toro-grid-toggle:disabled {
+.bio-nexus-grid-toggle:disabled {
   cursor: default;
   opacity: 0.72;
 }
-.toro-grid-toggle__track {
+.bio-nexus-grid-toggle__track {
   display: inline-flex;
   align-items: center;
   width: 25px;
@@ -82,12 +82,12 @@ function requestToggle(event) {
   box-shadow: inset 0 1px 2px rgb(27 66 94 / 10%);
   transition: border-color 150ms ease, background 150ms ease, box-shadow 150ms ease;
 }
-.is-on .toro-grid-toggle__track {
+.is-on .bio-nexus-grid-toggle__track {
   border-color: #218479;
   background: linear-gradient(180deg, #3b9c90 0%, #247d73 100%);
   box-shadow: inset 0 1px 1px rgb(255 255 255 / 16%), 0 1px 2px rgb(25 95 85 / 18%);
 }
-.toro-grid-toggle__knob {
+.bio-nexus-grid-toggle__knob {
   width: 8px;
   height: 8px;
   border: 1px solid rgb(35 77 104 / 10%);
@@ -97,10 +97,10 @@ function requestToggle(event) {
   transform: translateX(0);
   transition: transform 150ms ease;
 }
-.is-on .toro-grid-toggle__knob {
+.is-on .bio-nexus-grid-toggle__knob {
   transform: translateX(11px);
 }
-.toro-grid-toggle__label {
+.bio-nexus-grid-toggle__label {
   padding: 2px 6px;
   border: 1px solid #d6e1e8;
   border-radius: 999px;
@@ -112,16 +112,16 @@ function requestToggle(event) {
   line-height: 1.15;
   white-space: nowrap;
 }
-.is-on .toro-grid-toggle__label {
+.is-on .bio-nexus-grid-toggle__label {
   border-color: #bee7db;
   background: linear-gradient(180deg, #f1fcf8 0%, #e0f5ec 100%);
   box-shadow: 0 1px 2px rgb(20 111 98 / 9%);
   color: #146f62;
 }
-.toro-grid-toggle-header .ag-header-cell-label {
+.bio-nexus-grid-toggle-header .ag-header-cell-label {
   justify-content: center;
 }
-.toro-grid-toggle-cell {
+.bio-nexus-grid-toggle-cell {
   display: flex;
   align-items: center;
   justify-content: center;

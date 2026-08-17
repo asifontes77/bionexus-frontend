@@ -1,16 +1,16 @@
 <template>
   <section class="user-authorization-page">
-    <div v-if="usersError" class="toro-message toro-message-error" role="alert">
+    <div v-if="usersError" class="bio-nexus-message bio-nexus-message-error" role="alert">
       <strong>No fue posible cargar los usuarios.</strong>
       <span>{{ usersError }}</span>
     </div>
 
-    <div v-if="usersLoading && !usersLoaded" class="toro-empty-state">
+    <div v-if="usersLoading && !usersLoaded" class="bio-nexus-empty-state">
       Cargando usuarios y catálogos de autorización...
     </div>
 
-    <section v-else class="toro-panel user-directory-panel">
-            <div v-if="filteredUsers.length === 0" class="toro-empty-state user-directory-empty">
+    <section v-else class="bio-nexus-panel user-directory-panel">
+            <div v-if="filteredUsers.length === 0" class="bio-nexus-empty-state user-directory-empty">
         No existen usuarios que coincidan con los filtros.
       </div>
 
@@ -40,7 +40,7 @@
           <button
             v-if="canCreateUsers"
             type="button"
-            class="toro-action toro-action-primary"
+            class="bio-nexus-action bio-nexus-action-primary"
             :disabled="usersLoading || authorizationLoading || savingRoles || savingOverrides"
             @click="openCreateUserDialog"
           >
@@ -308,7 +308,7 @@ const userColumnDefs = computed(() => [
     sort: "asc",
     minWidth: 170,
     flex: 0.9,
-    cellClass: "toro-grid-code-cell",
+    cellClass: "bio-nexus-grid-code-cell",
   },
   {
     field: "name",
@@ -316,7 +316,7 @@ const userColumnDefs = computed(() => [
     minWidth: 220,
     flex: 1.2,
     valueFormatter: ({ value }) => value || "Sin nombre",
-    cellClass: "toro-grid-strong-cell",
+    cellClass: "bio-nexus-grid-strong-cell",
   },
   {
     field: "email",
@@ -324,7 +324,7 @@ const userColumnDefs = computed(() => [
     minWidth: 230,
     flex: 1.2,
     valueFormatter: ({ value }) => value || "Sin correo",
-    cellClass: "toro-grid-muted-cell",
+    cellClass: "bio-nexus-grid-muted-cell",
   },
   {
     field: "position",
@@ -360,8 +360,8 @@ const userColumnDefs = computed(() => [
         { value: false, label: "Inactivo" },
       ],
     },
-    headerClass: "toro-grid-centered-header",
-    cellClass: "toro-grid-status-cell",
+    headerClass: "bio-nexus-grid-centered-header",
+    cellClass: "bio-nexus-grid-status-cell",
     cellRenderer: BioNexusGridToggleCell,
     cellRendererParams: {
       onLabel: "Activo",
@@ -382,8 +382,8 @@ const userColumnDefs = computed(() => [
     filter: false,
     resizable: false,
     suppressHeaderMenuButton: true,
-    headerClass: "toro-grid-actions-header",
-    cellClass: "toro-grid-actions-cell",
+    headerClass: "bio-nexus-grid-actions-header",
+    cellClass: "bio-nexus-grid-actions-cell",
     cellRenderer: "BioNexusGridActionsCell",
     cellRendererParams: {
       actions: userActions.value,
@@ -1036,27 +1036,27 @@ function applyAssignedRolesToUserRow(userId, assignedRoles) {
   border-radius: 0;
 }
 
-.user-authorization-page :deep(.toro-grid-code-cell) {
+.user-authorization-page :deep(.bio-nexus-grid-code-cell) {
   color: var(--toro-color-primary-strong);
   font-weight: var(--toro-font-weight-bold);
   overflow-wrap: anywhere;
 }
 
-.user-authorization-page :deep(.toro-grid-strong-cell) {
+.user-authorization-page :deep(.bio-nexus-grid-strong-cell) {
   font-weight: var(--toro-font-weight-bold);
 }
 
-.user-authorization-page :deep(.toro-grid-muted-cell) {
+.user-authorization-page :deep(.bio-nexus-grid-muted-cell) {
   color: var(--toro-color-text-muted);
 }
 
-.user-authorization-page :deep(.toro-grid-centered-header .ag-header-cell-label),
-.user-authorization-page :deep(.toro-grid-actions-header .ag-header-cell-label) {
+.user-authorization-page :deep(.bio-nexus-grid-centered-header .ag-header-cell-label),
+.user-authorization-page :deep(.bio-nexus-grid-actions-header .ag-header-cell-label) {
   justify-content: center;
 }
 
-.user-authorization-page :deep(.toro-grid-status-cell),
-.user-authorization-page :deep(.toro-grid-actions-cell) {
+.user-authorization-page :deep(.bio-nexus-grid-status-cell),
+.user-authorization-page :deep(.bio-nexus-grid-actions-cell) {
   justify-content: center;
 }
 

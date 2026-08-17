@@ -1,5 +1,5 @@
 <template>
-  <dialog ref="dialog" class="toro-dialog parasiticform-dialog" @cancel.prevent="close">
+  <dialog ref="dialog" class="bio-nexus-dialog parasiticform-dialog" @cancel.prevent="close">
     <form class="dialog-shell" @submit.prevent="submit">
       <header class="dialog-header">
         <div>
@@ -20,19 +20,19 @@
             id="parasiticform-description"
             ref="descriptionInput"
             v-model="draft.description"
-            class="toro-field"
+            class="bio-nexus-field"
             type="text"
             maxlength="50"
             autocomplete="off"
           />
         </BioNexusFormField>
-        <div v-if="errorMessage" class="toro-message toro-message-error" role="alert">{{ errorMessage }}</div>
+        <div v-if="errorMessage" class="bio-nexus-message bio-nexus-message-error" role="alert">{{ errorMessage }}</div>
       </section>
       <footer class="dialog-footer">
-        <button type="button" class="toro-action toro-action-secondary" :disabled="saving" @click="close">
+        <button type="button" class="bio-nexus-action bio-nexus-action-secondary" :disabled="saving" @click="close">
           <BioNexusActionIcon action="cancel" /><span>Cancelar</span>
         </button>
-        <button type="submit" class="toro-action toro-action-primary" :disabled="submitDisabled">
+        <button type="submit" class="bio-nexus-action bio-nexus-action-primary" :disabled="submitDisabled">
           <BioNexusActionIcon action="save" /><span>{{ saving ? "Guardando..." : mode === "create" ? "Crear" : "Guardar" }}</span>
         </button>
       </footer>

@@ -1,22 +1,22 @@
 <template>
   <section
-    class="toro-data-grid"
+    class="bio-nexus-data-grid"
     :class="{
-      'toro-data-grid-fill': fill,
+      'bio-nexus-data-grid-fill': fill,
     }"
     :style="[gridContainerStyle, adaptiveGridHeightStyle]"
   >
-        <div v-if="toolbarVisible" class="toro-grid-toolbar">
+        <div v-if="toolbarVisible" class="bio-nexus-grid-toolbar">
       <BioNexusFormField
         v-if="pagination"
-        class="toro-grid-toolbar-page-size-control"
+        class="bio-nexus-grid-toolbar-page-size-control"
         label="Mostrar"
-        field-id="toro-grid-page-size"
+        field-id="bio-nexus-grid-page-size"
       >
         <select
-          id="toro-grid-page-size"
+          id="bio-nexus-grid-page-size"
           v-model="selectedPageSize"
-          class="toro-field toro-grid-toolbar-page-size"
+          class="bio-nexus-field bio-nexus-grid-toolbar-page-size"
           aria-label="Mostrar registros"
           @change="changePageSize"
         >
@@ -25,11 +25,11 @@
         </select>
       </BioNexusFormField>
 
-      <BioNexusFormField v-if="searchEnabled" class="toro-grid-toolbar-search" label="Buscar" field-id="toro-grid-search">
+      <BioNexusFormField v-if="searchEnabled" class="bio-nexus-grid-toolbar-search" label="Buscar" field-id="bio-nexus-grid-search">
         <input
-          id="toro-grid-search"
+          id="bio-nexus-grid-search"
           :value="searchModelValue"
-          class="toro-field"
+          class="bio-nexus-field"
           type="search"
           :placeholder="searchPlaceholder"
           autocomplete="off"
@@ -37,14 +37,14 @@
         />
       </BioNexusFormField>
 
-      <div class="toro-grid-toolbar-spacer"></div>
-      <div v-if="$slots.stats" class="toro-grid-toolbar-stats"><slot name="stats" /></div>
-      <div v-if="$slots.actions" class="toro-grid-toolbar-actions"><slot name="actions" /></div>
+      <div class="bio-nexus-grid-toolbar-spacer"></div>
+      <div v-if="$slots.stats" class="bio-nexus-grid-toolbar-stats"><slot name="stats" /></div>
+      <div v-if="$slots.actions" class="bio-nexus-grid-toolbar-actions"><slot name="actions" /></div>
 
       <button
         v-if="refreshEnabled"
         type="button"
-        class="toro-action toro-action-primary"
+        class="bio-nexus-action bio-nexus-action-primary"
         :disabled="refreshing || refreshDisabled"
         @click="emit('refresh')"
       >
@@ -63,7 +63,7 @@
       />
     </div>
 <AgGridVue
-      class="toro-ag-grid"
+      class="bio-nexus-ag-grid"
       :theme="gridTheme"
       :row-data="rowData"
       :column-defs="columnDefs"
@@ -365,7 +365,7 @@ const adaptiveGridHeightStyle = computed(() => {
 
 const emptyOverlay = computed(
   () =>
-    `<span class="toro-grid-empty">${escapeHtml(
+    `<span class="bio-nexus-grid-empty">${escapeHtml(
       props.emptyText,
     )}</span>`,
 );
@@ -421,7 +421,7 @@ function handleCellContextMenu(params) {
 </script>
 
 <style scoped>
-.toro-data-grid {
+.bio-nexus-data-grid {
   width: 100%;
   min-width: 0;
   height: var(--toro-grid-height);
@@ -435,24 +435,24 @@ function handleCellContextMenu(params) {
   position: relative;
 }
 
-.toro-data-grid-fill {
+.bio-nexus-data-grid-fill {
   height: 100%;
   min-height: 0;
 }
 
-.toro-ag-grid {
+.bio-nexus-ag-grid {
   width: 100%;
   height: 100%;
   min-height: 0;
   min-width: 0;
 }
 
-.toro-data-grid :deep(.ag-root-wrapper) {
+.bio-nexus-data-grid :deep(.ag-root-wrapper) {
   border: 0;
 }
 
 /* TORO DATA GRID EMPHASIZED HEADER START */
-.toro-data-grid :deep(.ag-header) {
+.bio-nexus-data-grid :deep(.ag-header) {
   border-top: 1px solid #f9fdff;
   border-bottom: 1px solid #78abc5;
   background: #d8eaf4;
@@ -462,12 +462,12 @@ function handleCellContextMenu(params) {
     0 2px 5px rgb(13 36 58 / 12%);
 }
 
-.toro-data-grid :deep(.ag-header-row) {
+.bio-nexus-data-grid :deep(.ag-header-row) {
   background: transparent;
 }
 
-.toro-data-grid :deep(.ag-header-cell),
-.toro-data-grid :deep(.ag-header-group-cell) {
+.bio-nexus-data-grid :deep(.ag-header-cell),
+.bio-nexus-data-grid :deep(.ag-header-group-cell) {
   background: linear-gradient(
     180deg,
     #eef8fc 0%,
@@ -481,16 +481,16 @@ function handleCellContextMenu(params) {
     inset 0 -1px 0 rgb(65 128 160 / 16%);
 }
 
-.toro-data-grid :deep(.ag-header-cell-label),
-.toro-data-grid :deep(.ag-header-cell-text),
-.toro-data-grid :deep(.ag-header-icon),
-.toro-data-grid :deep(.ag-icon) {
+.bio-nexus-data-grid :deep(.ag-header-cell-label),
+.bio-nexus-data-grid :deep(.ag-header-cell-text),
+.bio-nexus-data-grid :deep(.ag-header-icon),
+.bio-nexus-data-grid :deep(.ag-icon) {
   color: #174b6b !important;
   text-shadow: 0 1px 0 rgb(255 255 255 / 90%);
 }
 
-.toro-data-grid :deep(.ag-header-cell:hover),
-.toro-data-grid :deep(.ag-header-cell.ag-header-active) {
+.bio-nexus-data-grid :deep(.ag-header-cell:hover),
+.bio-nexus-data-grid :deep(.ag-header-cell.ag-header-active) {
   background: linear-gradient(
     180deg,
     #e4f4fb 0%,
@@ -502,27 +502,27 @@ function handleCellContextMenu(params) {
     inset 0 -2px 0 rgb(46 112 148 / 20%);
 }
 /* TORO DATA GRID EMPHASIZED HEADER END */
-.toro-data-grid :deep(.ag-header-cell-label) {
+.bio-nexus-data-grid :deep(.ag-header-cell-label) {
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
 
-.toro-data-grid :deep(.ag-header-cell-text) {
+.bio-nexus-data-grid :deep(.ag-header-cell-text) {
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.toro-data-grid :deep(.ag-cell) {
+.bio-nexus-data-grid :deep(.ag-cell) {
   display: flex;
   align-items: center;
   line-height: 1.35;
 }
 
-.toro-data-grid :deep(.ag-row-hover) {
+.bio-nexus-data-grid :deep(.ag-row-hover) {
   background: var(--toro-color-info-soft);
 }
 
-.toro-data-grid :deep(.ag-paging-panel) {
+.bio-nexus-data-grid :deep(.ag-paging-panel) {
   min-height: 44px;
   border-top-color: var(--toro-color-border);
   color: var(--toro-color-text-muted);
@@ -530,21 +530,21 @@ function handleCellContextMenu(params) {
   padding-right: 235px;
 }
 
-.toro-data-grid :deep(.ag-paging-button) {
+.bio-nexus-data-grid :deep(.ag-paging-button) {
   color: var(--toro-color-primary-strong);
 }
 
-.toro-data-grid :deep(.ag-overlay-no-rows-center) {
+.bio-nexus-data-grid :deep(.ag-overlay-no-rows-center) {
   padding: var(--toro-space-4);
   color: var(--toro-color-text-muted);
 }
 
-.toro-grid-empty {
+.bio-nexus-grid-empty {
   color: var(--toro-color-text-muted);
 }
 
-.toro-data-grid :deep(.ag-header-cell:not(:last-child)),
-.toro-data-grid :deep(.ag-cell:not(:last-child)) {
+.bio-nexus-data-grid :deep(.ag-header-cell:not(:last-child)),
+.bio-nexus-data-grid :deep(.ag-cell:not(:last-child)) {
   border-right: 1px solid var(--toro-color-border);
 }
 </style>
@@ -711,7 +711,7 @@ function handleCellContextMenu(params) {
   pointer-events: none;
   transform: translateY(-50%);
 }
-.toro-grid-toolbar {
+.bio-nexus-grid-toolbar {
   display: flex;
   align-items: end;
   gap: 12px;
@@ -721,14 +721,14 @@ function handleCellContextMenu(params) {
   background: var(--toro-color-surface);
 }
 
-.toro-grid-toolbar-search {
+.bio-nexus-grid-toolbar-search {
   flex: 1 1 420px;
   width: auto;
   max-width: 720px;
   min-width: 0;
 }
 
-.toro-grid-toolbar-search input {
+.bio-nexus-grid-toolbar-search input {
   box-sizing: border-box;
   width: 100%;
   min-height: 38px;
@@ -745,22 +745,22 @@ function handleCellContextMenu(params) {
   text-transform: none;
 }
 
-.toro-grid-toolbar-spacer { flex: 1 1 auto; }
-.toro-grid-toolbar-stats,
-.toro-grid-toolbar-actions { display: inline-flex; align-items: center; gap: 14px; white-space: nowrap; }
-.toro-grid-toolbar > .toro-action,
-.toro-grid-toolbar :deep(.toro-grid-export-trigger) { min-height: 44px; }
-.toro-grid-toolbar > .toro-action svg { width: 20px; height: 20px; }
+.bio-nexus-grid-toolbar-spacer { flex: 1 1 auto; }
+.bio-nexus-grid-toolbar-stats,
+.bio-nexus-grid-toolbar-actions { display: inline-flex; align-items: center; gap: 14px; white-space: nowrap; }
+.bio-nexus-grid-toolbar > .bio-nexus-action,
+.bio-nexus-grid-toolbar :deep(.bio-nexus-grid-export-trigger) { min-height: 44px; }
+.bio-nexus-grid-toolbar > .bio-nexus-action svg { width: 20px; height: 20px; }
 
 @media (max-width: 980px) {
-  .toro-grid-toolbar { align-items: stretch; flex-wrap: wrap; }
-  .toro-grid-toolbar-search { flex-basis: 100%; max-width: none; }
-  .toro-grid-toolbar-spacer { display: none; }
+  .bio-nexus-grid-toolbar { align-items: stretch; flex-wrap: wrap; }
+  .bio-nexus-grid-toolbar-search { flex-basis: 100%; max-width: none; }
+  .bio-nexus-grid-toolbar-spacer { display: none; }
 }
 
 
 
-.toro-grid-page-size-control {
+.bio-nexus-grid-page-size-control {
   position: absolute;
   right: 12px;
   bottom: 7px;
@@ -773,7 +773,7 @@ function handleCellContextMenu(params) {
   font-size: var(--toro-font-size-sm);
 }
 
-.toro-grid-page-size-control select {
+.bio-nexus-grid-page-size-control select {
   min-width: 76px;
   min-height: 34px;
   padding: 4px 28px 4px 10px;
@@ -785,7 +785,7 @@ function handleCellContextMenu(params) {
 }
 
 
-.toro-grid-toolbar-page-size-control {
+.bio-nexus-grid-toolbar-page-size-control {
   flex: 0 0 96px;
   width: 96px;
   min-width: 96px;
@@ -793,7 +793,7 @@ function handleCellContextMenu(params) {
 }
 
 
-.toro-grid-toolbar :deep(.toro-form-field-label) {
+.bio-nexus-grid-toolbar :deep(.bio-nexus-form-field-label) {
   color: var(--toro-color-text-secondary);
   font-family: inherit;
   font-size: var(--toro-font-size-sm);
@@ -802,7 +802,7 @@ function handleCellContextMenu(params) {
 }
 
 
-.toro-grid-toolbar :deep(input.toro-field::placeholder) {
+.bio-nexus-grid-toolbar :deep(input.bio-nexus-field::placeholder) {
   color: var(--toro-color-text-muted);
   font-family: inherit;
   font-size: inherit;
@@ -812,13 +812,13 @@ function handleCellContextMenu(params) {
 
 
 /* Compact toolbar controls with one exact theme contract. */
-.toro-grid-toolbar :deep(.toro-form-field-control) {
+.bio-nexus-grid-toolbar :deep(.bio-nexus-form-field-control) {
   min-height: 38px;
   padding-block-start: 5px;
 }
 
 
-.toro-grid-toolbar :deep(input.toro-field::placeholder) {
+.bio-nexus-grid-toolbar :deep(input.bio-nexus-field::placeholder) {
   color: var(--toro-color-text-muted) !important;
   font-family: var(--toro-font-family) !important;
   font-size: var(--toro-font-size-md) !important;
@@ -827,7 +827,7 @@ function handleCellContextMenu(params) {
   opacity: 1;
 }
 
-.toro-grid-toolbar :deep(.toro-form-field-label) {
+.bio-nexus-grid-toolbar :deep(.bio-nexus-form-field-label) {
   color: var(--toro-color-text-muted);
   font-family: var(--toro-font-family);
   font-size: var(--toro-font-size-xs);
@@ -836,7 +836,7 @@ function handleCellContextMenu(params) {
 
 
 
-.toro-grid-toolbar :deep(input.toro-field::placeholder) {
+.bio-nexus-grid-toolbar :deep(input.bio-nexus-field::placeholder) {
   color: var(--toro-color-text-muted) !important;
   font-family: var(--toro-font-family) !important;
   font-size: var(--toro-font-size-md) !important;
@@ -848,7 +848,7 @@ function handleCellContextMenu(params) {
 }
 
 /* Native functional page-size select, aligned with the compact shared toolbar. */
-.toro-grid-toolbar-page-size {
+.bio-nexus-grid-toolbar-page-size {
   box-sizing: border-box;
   width: 100%;
   min-height: 38px !important;
@@ -865,7 +865,7 @@ function handleCellContextMenu(params) {
 
 
 /* Native Mostrar remains compact inside BioNexusFormField. */
-.toro-grid-toolbar :deep(#toro-grid-page-size.toro-field) {
+.bio-nexus-grid-toolbar :deep(#bio-nexus-grid-page-size.bio-nexus-field) {
   box-sizing: border-box !important;
   width: 100% !important;
   min-height: 38px !important;
@@ -875,7 +875,7 @@ function handleCellContextMenu(params) {
 }
 
 /* DevTools measured fix: use the real parent-scoped DOM selector, not :deep(). */
-.toro-grid-toolbar .toro-grid-toolbar-search #toro-grid-search.toro-field {
+.bio-nexus-grid-toolbar .bio-nexus-grid-toolbar-search #bio-nexus-grid-search.bio-nexus-field {
   box-sizing: border-box !important;
   min-height: 38px !important;
   height: 38px !important;
@@ -885,8 +885,8 @@ function handleCellContextMenu(params) {
 }
 
 /* Shared visual contract for the native page-size select and search field. */
-.toro-grid-toolbar #toro-grid-page-size.toro-field,
-.toro-grid-toolbar #toro-grid-search.toro-field {
+.bio-nexus-grid-toolbar #bio-nexus-grid-page-size.bio-nexus-field,
+.bio-nexus-grid-toolbar #bio-nexus-grid-search.bio-nexus-field {
   color: var(--toro-color-text-secondary) !important;
   font-family: var(--toro-font-family) !important;
   font-size: var(--toro-font-size-md) !important;
@@ -897,7 +897,7 @@ function handleCellContextMenu(params) {
   text-transform: none !important;
 }
 
-.toro-grid-toolbar #toro-grid-search.toro-field::placeholder {
+.bio-nexus-grid-toolbar #bio-nexus-grid-search.bio-nexus-field::placeholder {
   color: var(--toro-color-text-secondary) !important;
   font-family: var(--toro-font-family) !important;
   font-size: var(--toro-font-size-md) !important;
@@ -908,7 +908,7 @@ function handleCellContextMenu(params) {
   opacity: 1 !important;
 }
 
-.toro-grid-toolbar :deep(.toro-form-field-label) {
+.bio-nexus-grid-toolbar :deep(.bio-nexus-form-field-label) {
   color: var(--toro-color-text-muted);
   font-family: var(--toro-font-family);
   font-size: var(--toro-font-size-xs);

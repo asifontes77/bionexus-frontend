@@ -1,5 +1,5 @@
 <template>
-  <dialog ref="dialog" class="toro-dialog parasiticform-state-dialog" @cancel.prevent="close">
+  <dialog ref="dialog" class="bio-nexus-dialog parasiticform-state-dialog" @cancel.prevent="close">
     <form class="dialog-shell" @submit.prevent="confirm">
       <header class="dialog-header">
         <div><p>Estado del registro</p><h3>{{ target?.annulled ? "Activar forma parasitaria" : "Inactivar forma parasitaria" }}</h3></div>
@@ -8,11 +8,11 @@
       <section class="dialog-body parasiticform-state-body">
         <p><strong>{{ target?.description }}</strong></p>
         <p>{{ target?.annulled ? "El registro volvera a estar disponible en los flujos operativos." : "El registro permanecera visible en este catalogo, pero se ocultara en los flujos operativos." }}</p>
-        <div v-if="errorMessage" class="toro-message toro-message-error" role="alert">{{ errorMessage }}</div>
+        <div v-if="errorMessage" class="bio-nexus-message bio-nexus-message-error" role="alert">{{ errorMessage }}</div>
       </section>
       <footer class="dialog-footer">
-        <button type="button" class="toro-action toro-action-secondary" :disabled="saving" @click="close"><BioNexusActionIcon action="cancel" /><span>Cancelar</span></button>
-        <button type="submit" class="toro-action toro-action-primary" :disabled="saving || !target"><BioNexusActionIcon :action="target?.annulled ? 'activate' : 'deactivate'" /><span>{{ saving ? "Guardando..." : target?.annulled ? "Activar" : "Inactivar" }}</span></button>
+        <button type="button" class="bio-nexus-action bio-nexus-action-secondary" :disabled="saving" @click="close"><BioNexusActionIcon action="cancel" /><span>Cancelar</span></button>
+        <button type="submit" class="bio-nexus-action bio-nexus-action-primary" :disabled="saving || !target"><BioNexusActionIcon :action="target?.annulled ? 'activate' : 'deactivate'" /><span>{{ saving ? "Guardando..." : target?.annulled ? "Activar" : "Inactivar" }}</span></button>
       </footer>
     </form>
   </dialog>

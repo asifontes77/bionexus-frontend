@@ -1,5 +1,5 @@
 <template>
-<dialog ref="dialog" class="toro-dialog permissions-dialog" tabindex="-1">
+<dialog ref="dialog" class="bio-nexus-dialog permissions-dialog" tabindex="-1">
       <div class="dialog-shell">
         <header class="dialog-header">
           <div>
@@ -20,7 +20,7 @@
             <input
               id="role-permission-search"
               :value="permissionSearchText"
-              class="toro-field"
+              class="bio-nexus-field"
               type="search"
               autocomplete="off"
               :placeholder="'Nombre, descripci\u00f3n o m\u00f3dulo'"
@@ -34,24 +34,24 @@
         </div>
 
         <div class="dialog-body permissions-dialog-body">
-          <div v-if="assignedPermissionsLoading" class="toro-message" role="status">
+          <div v-if="assignedPermissionsLoading" class="bio-nexus-message" role="status">
             Consultando permisos asignados...
           </div>
 
-          <div v-else-if="assignedPermissionsError" class="toro-message toro-message-error" role="alert">
+          <div v-else-if="assignedPermissionsError" class="bio-nexus-message bio-nexus-message-error" role="alert">
             {{ assignedPermissionsError }}
           </div>
 
           <template v-else>
-            <div v-if="selectedRole?.code === 'admin'" class="toro-warning">
+            <div v-if="selectedRole?.code === 'admin'" class="bio-nexus-warning">
               El rol administrador debe conservar los permisos esenciales.
             </div>
 
-            <div v-if="inactiveAssignedPermissions.length > 0" class="toro-warning">
+            <div v-if="inactiveAssignedPermissions.length > 0" class="bio-nexus-warning">
               Los permisos inactivos se conservan para consulta y se retiraran al guardar.
             </div>
 
-            <div v-if="filteredPermissionModules.length === 0" class="toro-empty-state">
+            <div v-if="filteredPermissionModules.length === 0" class="bio-nexus-empty-state">
               No existen permisos que coincidan con la búsqueda.
             </div>
 
@@ -67,11 +67,11 @@
               empty-text="No existen permisos que coincidan con la búsqueda."
             />
 
-            <div v-if="savePermissionsError" class="toro-inline-message toro-message-error" role="alert">
+            <div v-if="savePermissionsError" class="bio-nexus-inline-message bio-nexus-message-error" role="alert">
               {{ savePermissionsError }}
             </div>
 
-            <div v-if="savePermissionsMessage" class="toro-inline-message toro-message-success" role="status">
+            <div v-if="savePermissionsMessage" class="bio-nexus-inline-message bio-nexus-message-success" role="status">
               {{ savePermissionsMessage }}
             </div>
           </template>
@@ -86,13 +86,13 @@
             }}
           </span>
 
-          <button type="button" class="toro-action toro-action-secondary" :disabled="savingPermissions"
+          <button type="button" class="bio-nexus-action bio-nexus-action-secondary" :disabled="savingPermissions"
             @click="emit('close')">
   <BioNexusActionIcon action="cancel" />
             Cancelar
           </button>
 
-          <button v-if="canAssignPermissions" type="button" class="toro-action toro-action-primary"
+          <button v-if="canAssignPermissions" type="button" class="bio-nexus-action bio-nexus-action-primary"
             :disabled="!hasPermissionChanges || savingPermissions" @click="emit('submit')">
   <BioNexusActionIcon action="assignPermissions" />
             {{ savingPermissions ? "Guardando..." : "Guardar permisos" }}

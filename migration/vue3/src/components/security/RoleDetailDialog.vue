@@ -1,5 +1,5 @@
 <template>
-<dialog ref="dialog" class="toro-dialog role-dialog role-detail-dialog" tabindex="-1">
+<dialog ref="dialog" class="bio-nexus-dialog role-dialog role-detail-dialog" tabindex="-1">
       <div class="dialog-shell">
         <header class="dialog-header">
           <div>
@@ -20,8 +20,8 @@
               </p>
             </div>
 
-            <span class="toro-badge" :class="{
-              'toro-badge-warning': !selectedRole.isActive,
+            <span class="bio-nexus-badge" :class="{
+              'bio-nexus-badge-warning': !selectedRole.isActive,
             }">
               {{ selectedRole.isActive ? "Activo" : "Inactivo" }}
             </span>
@@ -45,7 +45,7 @@
           </dl>
         </div>
         <footer class="dialog-footer">
-          <button type="button" class="toro-action toro-action-secondary" @click="emit('close')">
+          <button type="button" class="bio-nexus-action bio-nexus-action-secondary" @click="emit('close')">
   <BioNexusActionIcon action="close" />
             Cerrar
           </button>

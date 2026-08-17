@@ -1,5 +1,5 @@
 <template>
-<dialog ref="dialog" class="toro-dialog catalog-dialog toro-catalog-layout" tabindex="-1">
+<dialog ref="dialog" class="bio-nexus-dialog catalog-dialog bio-nexus-catalog-layout" tabindex="-1">
       <div class="dialog-shell">
         <header class="dialog-header">
           <div>
@@ -15,7 +15,7 @@
             <input
               id="catalog-permission-search"
               :value="catalogSearchText"
-              class="toro-field"
+              class="bio-nexus-field"
               type="search"
               autocomplete="off"
               :placeholder="'Nombre, descripci\u00f3n o m\u00f3dulo'"
@@ -34,7 +34,7 @@
           />
         </div>
         <footer class="dialog-footer">
-          <button type="button" class="toro-action toro-action-secondary" @click="emit('close')">
+          <button type="button" class="bio-nexus-action bio-nexus-action-secondary" @click="emit('close')">
   <BioNexusActionIcon action="close" />
             Cerrar
           </button>

@@ -1,7 +1,7 @@
 <template>
   <button
     type="button"
-    class="dialog-close toro-dialog-close-button"
+    class="dialog-close bio-nexus-dialog-close-button"
     aria-label="Cerrar"
     title="Cerrar"
     @mousedown.prevent.stop
@@ -18,7 +18,7 @@ defineEmits(["click"]);
 </script>
 
 <style scoped>
-.toro-dialog-close-button {
+.bio-nexus-dialog-close-button {
   appearance: none;
 }
 </style>

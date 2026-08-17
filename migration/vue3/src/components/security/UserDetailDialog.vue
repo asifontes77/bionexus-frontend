@@ -1,5 +1,5 @@
 <template>
-  <dialog ref="dialog" class="toro-dialog user-detail-dialog" tabindex="-1">
+  <dialog ref="dialog" class="bio-nexus-dialog user-detail-dialog" tabindex="-1">
     <div class="dialog-shell">
       <header class="dialog-header">
         <div>
@@ -10,8 +10,8 @@
       </header>
 
       <div class="dialog-body">
-        <div v-if="loading" class="toro-empty-state">Consultando autorización...</div>
-        <div v-else-if="errorMessage" class="toro-message toro-message-error" role="alert">{{ errorMessage }}</div>
+        <div v-if="loading" class="bio-nexus-empty-state">Consultando autorización...</div>
+        <div v-else-if="errorMessage" class="bio-nexus-message bio-nexus-message-error" role="alert">{{ errorMessage }}</div>
         <div v-else-if="authorization" class="user-detail-content">
           <section class="user-detail-heading">
             <div class="user-avatar-large">{{ getUserInitials(authorization.user) }}</div>
@@ -20,7 +20,7 @@
               <h4>{{ authorization.user.name || "Sin nombre" }}</h4>
               <p>{{ authorization.user.position || "Sin cargo registrado" }}</p>
             </div>
-            <span class="toro-badge" :class="authorization.user.hidden ? 'toro-badge-warning' : 'toro-badge-success'">
+            <span class="bio-nexus-badge" :class="authorization.user.hidden ? 'bio-nexus-badge-warning' : 'bio-nexus-badge-success'">
               {{ authorization.user.hidden ? "Inactivo" : "Activo" }}
             </span>
           </section>
@@ -41,13 +41,13 @@
               <article><span>Permisos efectivos</span><strong>{{ authorization.context.permissions.length }}</strong></article>
               <article><span>Denegados</span><strong>{{ authorization.context.deniedPermissions.length }}</strong></article>
             </div>
-            <p v-else class="toro-empty-state">El usuario no dispone de un contexto efectivo activo.</p>
+            <p v-else class="bio-nexus-empty-state">El usuario no dispone de un contexto efectivo activo.</p>
           </section>
         </div>
       </div>
 
       <footer class="dialog-footer">
-        <button type="button" class="toro-action toro-action-secondary" @click="close">
+        <button type="button" class="bio-nexus-action bio-nexus-action-secondary" @click="close">
           <BioNexusActionIcon action="close" />Cerrar
         </button>
       </footer>
@@ -87,8 +87,8 @@ defineExpose({ open, close });
 </script>
 
 <style scoped>
-.toro-dialog { width: min(720px, calc(100vw - 32px)); max-width: none; max-height: calc(100vh - 32px); padding: 0; border: 1px solid var(--toro-color-border-strong); border-radius: var(--toro-radius-md); background: var(--toro-color-surface); color: var(--toro-color-text); box-shadow: var(--toro-shadow-md); overflow: hidden; }
-.toro-dialog::backdrop { background: color-mix(in srgb, var(--toro-color-sidebar-strong) 48%, transparent); backdrop-filter: blur(2px); }
+.bio-nexus-dialog { width: min(720px, calc(100vw - 32px)); max-width: none; max-height: calc(100vh - 32px); padding: 0; border: 1px solid var(--toro-color-border-strong); border-radius: var(--toro-radius-md); background: var(--toro-color-surface); color: var(--toro-color-text); box-shadow: var(--toro-shadow-md); overflow: hidden; }
+.bio-nexus-dialog::backdrop { background: color-mix(in srgb, var(--toro-color-sidebar-strong) 48%, transparent); backdrop-filter: blur(2px); }
 .dialog-shell { display: flex; flex-direction: column; width: 100%; max-height: calc(100vh - 32px); overflow: hidden; }
 .dialog-header { display: flex; flex: 0 0 auto; align-items: center; justify-content: space-between; gap: var(--toro-space-3); padding: var(--toro-space-3) var(--toro-space-4); border-bottom: 1px solid var(--toro-color-border); background: var(--toro-color-surface); }
 .dialog-header p, .dialog-header h3 { margin: 0; }
@@ -110,5 +110,5 @@ defineExpose({ open, close });
 .effective-summary article { display: grid; gap: var(--toro-space-1); padding: var(--toro-space-3); border: 1px solid var(--toro-color-border); border-radius: var(--toro-radius-md); background: var(--toro-color-surface-soft); }
 .effective-summary span { color: var(--toro-color-text-muted); font-size: var(--toro-font-size-xs); }
 .effective-summary strong { color: var(--toro-color-primary-strong); font-size: 18px; }
-@media (max-width: 720px) { .toro-dialog { width: calc(100vw - 16px); } .user-detail-grid, .effective-summary { grid-template-columns: 1fr; } .user-detail-heading { grid-template-columns: 48px minmax(0, 1fr); } .user-detail-heading > .toro-badge { grid-column: 2; justify-self: start; } }
+@media (max-width: 720px) { .bio-nexus-dialog { width: calc(100vw - 16px); } .user-detail-grid, .effective-summary { grid-template-columns: 1fr; } .user-detail-heading { grid-template-columns: 48px minmax(0, 1fr); } .user-detail-heading > .bio-nexus-badge { grid-column: 2; justify-self: start; } }
 </style>

@@ -1,21 +1,21 @@
 <template>
   <Teleport to="body">
-    <section class="toro-toast-region" aria-label="Notificaciones" aria-live="polite" aria-relevant="additions removals">
-      <TransitionGroup name="toro-toast" tag="div" class="toro-toast-stack">
+    <section class="bio-nexus-toast-region" aria-label="Notificaciones" aria-live="polite" aria-relevant="additions removals">
+      <TransitionGroup name="bio-nexus-toast" tag="div" class="bio-nexus-toast-stack">
         <article
           v-for="toast in toasts"
           :key="toast.id"
-          class="toro-toast"
-          :class="['toro-toast-' + toast.type, { 'toro-toast-paused': toast.paused }]"
+          class="bio-nexus-toast"
+          :class="['bio-nexus-toast-' + toast.type, { 'bio-nexus-toast-paused': toast.paused }]"
           role="status"
         >
           <BioNexusIcon :name="iconByType[toast.type]" :size="22" :filled="toast.type === 'success'" />
           <p>{{ toast.message }}</p>
-          <div class="toro-toast-actions">
+          <div class="bio-nexus-toast-actions">
             <button
               v-if="toast.duration > 0"
               type="button"
-              class="toro-toast-control"
+              class="bio-nexus-toast-control"
               :aria-label="toast.paused ? 'Reanudar notificación' : 'Pausar notificación'"
               :title="toast.paused ? 'Reanudar' : 'Pausar'"
               @click="togglePauseStore(toast.id)"
@@ -24,7 +24,7 @@
             </button>
             <button
               type="button"
-              class="toro-toast-close"
+              class="bio-nexus-toast-close"
               aria-label="Cerrar notificación"
               title="Cerrar"
               @click="remove(toast.id)"
@@ -32,8 +32,8 @@
               <BioNexusIcon name="close" :size="18" />
             </button>
           </div>
-          <span class="toro-toast-progress-track" aria-hidden="true">
-            <span class="toro-toast-progress" :style="progressStyle(toast)" />
+          <span class="bio-nexus-toast-progress-track" aria-hidden="true">
+            <span class="bio-nexus-toast-progress" :style="progressStyle(toast)" />
           </span>
         </article>
       </TransitionGroup>

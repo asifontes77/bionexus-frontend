@@ -1,9 +1,9 @@
 <template>
-  <div class="toro-status-cell">
+  <div class="bio-nexus-status-cell">
     <span
-      class="toro-badge toro-status-badge"
+      class="bio-nexus-badge bio-nexus-status-badge"
       :class="{
-        'toro-badge-warning': !isActive,
+        'bio-nexus-badge-warning': !isActive,
       }"
     >
       {{ isActive ? "Activo" : "Inactivo" }}
@@ -34,7 +34,7 @@ const isActive = computed(() => {
 </script>
 
 <style scoped>
-.toro-status-cell {
+.bio-nexus-status-cell {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -45,7 +45,7 @@ const isActive = computed(() => {
   box-sizing: border-box;
 }
 
-.toro-status-badge {
+.bio-nexus-status-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;

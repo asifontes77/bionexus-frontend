@@ -1,6 +1,6 @@
 <template>
   <span
-    class="material-symbols-rounded toro-icon"
+    class="material-symbols-rounded bio-nexus-icon"
     :style="iconStyle"
     aria-hidden="true"
     focusable="false"
@@ -24,7 +24,7 @@ const iconStyle = computed(() => ({
 </script>
 
 <style scoped>
-.toro-icon {
+.bio-nexus-icon {
   display: inline-block;
   flex: 0 0 auto;
   width: 1em;

@@ -1,18 +1,18 @@
 ﻿<template>
   <div
-    class="toro-form-field"
+    class="bio-nexus-form-field"
     :class="{
-      'toro-form-field-error': hasError,
-      'toro-form-field-disabled': disabled,
-      'toro-form-field-wide': wide,
+      'bio-nexus-form-field-error': hasError,
+      'bio-nexus-form-field-disabled': disabled,
+      'bio-nexus-form-field-wide': wide,
     }"
   >
-    <div class="toro-form-field-control">
-      <span class="toro-form-field-label">
+    <div class="bio-nexus-form-field-control">
+      <span class="bio-nexus-form-field-label">
         {{ label }}
         <span
           v-if="required"
-          class="toro-form-field-required"
+          class="bio-nexus-form-field-required"
           aria-hidden="true"
         >
           *
@@ -25,7 +25,7 @@
     <small
       v-if="error"
       :id="errorId"
-      class="toro-form-field-message toro-form-field-message-error"
+      class="bio-nexus-form-field-message bio-nexus-form-field-message-error"
       role="alert"
     >
       {{ error }}
@@ -34,7 +34,7 @@
     <small
       v-else-if="help"
       :id="helpId"
-      class="toro-form-field-message"
+      class="bio-nexus-form-field-message"
     >
       {{ help }}
     </small>
@@ -89,24 +89,24 @@ const helpId = computed(
 </script>
 
 <style scoped>
-.toro-form-field {
+.bio-nexus-form-field {
   display: grid;
   align-content: start;
   gap: var(--toro-space-1);
   min-width: 0;
 }
 
-.toro-form-field-wide {
+.bio-nexus-form-field-wide {
   grid-column: 1 / -1;
 }
 
-.toro-form-field-control {
+.bio-nexus-form-field-control {
   position: relative;
   min-width: 0;
   padding-block-start: 7px;
 }
 
-.toro-form-field-label {
+.bio-nexus-form-field-label {
   position: absolute;
   z-index: 2;
   inset-block-start: 0;
@@ -127,12 +127,12 @@ const helpId = computed(
   pointer-events: none;
 }
 
-.toro-form-field-required {
+.bio-nexus-form-field-required {
   color: var(--toro-color-danger, #b42318);
 }
 
-.toro-form-field-control :deep(input.toro-field),
-.toro-form-field-control :deep(select.toro-field) {
+.bio-nexus-form-field-control :deep(input.bio-nexus-field),
+.bio-nexus-form-field-control :deep(select.bio-nexus-field) {
   width: 100%;
   min-height: 46px;
   margin: 0;
@@ -140,34 +140,34 @@ const helpId = computed(
   padding-block-end: 7px;
 }
 
-.toro-form-field-control :deep(.toro-field) {
+.bio-nexus-form-field-control :deep(.bio-nexus-field) {
   width: 100%;
   margin: 0;
 }
 
-.toro-form-field-control :deep(textarea.toro-field) {
+.bio-nexus-form-field-control :deep(textarea.bio-nexus-field) {
   padding-block-start: 18px;
 }
 
-.toro-form-field-error .toro-form-field-label {
+.bio-nexus-form-field-error .bio-nexus-form-field-label {
   color: var(--toro-color-danger, #b42318);
 }
 
-.toro-form-field-error
-  .toro-form-field-control
-  :deep(.toro-field) {
+.bio-nexus-form-field-error
+  .bio-nexus-form-field-control
+  :deep(.bio-nexus-field) {
   border-color: var(--toro-color-danger, #b42318);
   box-shadow: 0 0 0 3px rgb(180 35 24 / 12%);
 }
 
-.toro-form-field-disabled .toro-form-field-label {
+.bio-nexus-form-field-disabled .bio-nexus-form-field-label {
   color: var(--toro-color-text-muted);
   background: var(--toro-color-surface-soft);
 }
 
-.toro-form-field-disabled
-  .toro-form-field-control
-  :deep(.toro-field) {
+.bio-nexus-form-field-disabled
+  .bio-nexus-form-field-control
+  :deep(.bio-nexus-field) {
   border-color: var(--toro-color-border-strong);
   color: var(--toro-color-text-muted);
   background: var(--toro-color-surface-soft);
@@ -175,7 +175,7 @@ const helpId = computed(
   opacity: 0.72;
 }
 
-.toro-form-field-message {
+.bio-nexus-form-field-message {
   display: block;
   padding-inline: 4px;
   color: var(--toro-color-text-muted);
@@ -183,7 +183,7 @@ const helpId = computed(
   line-height: 1.35;
 }
 
-.toro-form-field-message-error {
+.bio-nexus-form-field-message-error {
   color: var(--toro-color-danger, #b42318);
   font-weight: var(--toro-font-weight-bold);
 }

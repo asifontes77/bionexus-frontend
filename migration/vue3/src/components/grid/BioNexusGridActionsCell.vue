@@ -1,11 +1,11 @@
 <template>
-  <div class="toro-grid-action-list" role="group" aria-label="Acciones de la fila">
+  <div class="bio-nexus-grid-action-list" role="group" aria-label="Acciones de la fila">
     <button
       v-for="action in visibleActions"
       :key="action.key"
       type="button"
-      class="toro-grid-icon-action"
-      :class="'toro-grid-icon-action-' + (action.variant || 'subtle')"
+      class="bio-nexus-grid-icon-action"
+      :class="'bio-nexus-grid-icon-action-' + (action.variant || 'subtle')"
       :disabled="isDisabled(action)"
       :title="action.tooltip || action.label"
       :aria-label="action.tooltip || action.label"
@@ -86,7 +86,7 @@ function runAction(action) {
 </script>
 
 <style scoped>
-.toro-grid-action-list {
+.bio-nexus-grid-action-list {
   display: flex;
   width: 100%;
   align-items: center;
@@ -94,7 +94,7 @@ function runAction(action) {
   gap: 8px;
 }
 
-.toro-grid-icon-action {
+.bio-nexus-grid-icon-action {
   appearance: none;
   display: inline-grid;
   width: 32px;
@@ -116,33 +116,33 @@ function runAction(action) {
   transition: background-color 140ms ease, color 140ms ease, transform 140ms ease;
 }
 
-.toro-grid-icon-action:hover:not(:disabled) {
+.bio-nexus-grid-icon-action:hover:not(:disabled) {
   background: var(--toro-color-selection-soft);
   color: var(--toro-color-primary);
   transform: translateY(-1px);
 }
 
-.toro-grid-icon-action-accent {
+.bio-nexus-grid-icon-action-accent {
   color: var(--toro-color-accent-strong);
 }
 
-.toro-grid-icon-action-accent:hover:not(:disabled) {
+.bio-nexus-grid-icon-action-accent:hover:not(:disabled) {
   background: var(--toro-color-accent-soft);
   color: var(--toro-color-accent-strong);
 }
 
-.toro-grid-icon-action:focus {
+.bio-nexus-grid-icon-action:focus {
   outline: 0;
   box-shadow: none;
 }
 
-.toro-grid-icon-action:focus-visible {
+.bio-nexus-grid-icon-action:focus-visible {
   background: var(--toro-color-selection-soft);
   outline: 2px solid var(--toro-color-primary);
   outline-offset: 2px;
 }
 
-.toro-grid-icon-action:disabled {
+.bio-nexus-grid-icon-action:disabled {
   background: transparent;
   cursor: not-allowed;
   opacity: 0.36;

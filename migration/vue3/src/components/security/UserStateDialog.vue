@@ -1,5 +1,5 @@
 <template>
-  <dialog ref="dialog" class="toro-dialog user-state-dialog" tabindex="-1" @cancel.prevent="close">
+  <dialog ref="dialog" class="bio-nexus-dialog user-state-dialog" tabindex="-1" @cancel.prevent="close">
     <form class="dialog-shell" @submit.prevent="confirm">
       <header class="dialog-header">
         <div>
@@ -9,13 +9,13 @@
         <BioNexusDialogCloseButton @click="close" />
       </header>
       <div class="dialog-body state-dialog-body">
-        <div v-if="errorMessage" class="toro-message toro-message-error" role="alert">{{ errorMessage }}</div>
+        <div v-if="errorMessage" class="bio-nexus-message bio-nexus-message-error" role="alert">{{ errorMessage }}</div>
         <p>{{ target?.hidden ? `El usuario ${target?.name || "seleccionado"} recuperará el acceso efectivo según sus roles y permisos.` : `El usuario ${target?.name || "seleccionado"} quedará visible para consulta, pero no podrá iniciar operaciones.` }}</p>
-        <div v-if="!target?.hidden" class="toro-message toro-message-warning" role="status">El sistema impedirá inactivar al último administrador visible.</div>
+        <div v-if="!target?.hidden" class="bio-nexus-message bio-nexus-message-warning" role="status">El sistema impedirá inactivar al último administrador visible.</div>
       </div>
       <footer class="dialog-footer">
-        <button type="button" class="toro-action toro-action-secondary" :disabled="saving" @click="close"><BioNexusActionIcon action="cancel" />Cancelar</button>
-        <button type="submit" class="toro-action" :class="target?.hidden ? 'toro-action-primary' : 'toro-action-danger'" :disabled="saving || !target"><BioNexusIcon :name="target?.hidden ? 'person_check' : 'person_off'" :size="19" />{{ saving ? "Guardando..." : target?.hidden ? "Reactivar" : "Inactivar" }}</button>
+        <button type="button" class="bio-nexus-action bio-nexus-action-secondary" :disabled="saving" @click="close"><BioNexusActionIcon action="cancel" />Cancelar</button>
+        <button type="submit" class="bio-nexus-action" :class="target?.hidden ? 'bio-nexus-action-primary' : 'bio-nexus-action-danger'" :disabled="saving || !target"><BioNexusIcon :name="target?.hidden ? 'person_check' : 'person_off'" :size="19" />{{ saving ? "Guardando..." : target?.hidden ? "Reactivar" : "Inactivar" }}</button>
       </footer>
     </form>
   </dialog>
@@ -37,8 +37,8 @@ function confirm() { if (target.value) emit("confirm", target.value); }
 defineExpose({ open, close, setError });
 </script>
 <style scoped>
-.toro-dialog { box-sizing: border-box; position: fixed; inset: 0; width: min(560px, calc(100vw - 32px)); min-width: 0; max-width: 560px; height: fit-content; max-height: calc(100vh - 32px); margin: auto; padding: 0; border: 1px solid var(--toro-color-border-strong); border-radius: var(--toro-radius-md); background: var(--toro-color-surface); color: var(--toro-color-text); box-shadow: var(--toro-shadow-md); overflow: hidden; }
-.toro-dialog::backdrop { background: color-mix(in srgb, var(--toro-color-sidebar-strong) 48%, transparent); backdrop-filter: blur(2px); }
+.bio-nexus-dialog { box-sizing: border-box; position: fixed; inset: 0; width: min(560px, calc(100vw - 32px)); min-width: 0; max-width: 560px; height: fit-content; max-height: calc(100vh - 32px); margin: auto; padding: 0; border: 1px solid var(--toro-color-border-strong); border-radius: var(--toro-radius-md); background: var(--toro-color-surface); color: var(--toro-color-text); box-shadow: var(--toro-shadow-md); overflow: hidden; }
+.bio-nexus-dialog::backdrop { background: color-mix(in srgb, var(--toro-color-sidebar-strong) 48%, transparent); backdrop-filter: blur(2px); }
 .dialog-shell { display: flex; flex-direction: column; width: 100%; max-height: calc(100vh - 32px); overflow: hidden; }
 .dialog-header { display: flex; align-items: center; justify-content: space-between; gap: var(--toro-space-3); padding: var(--toro-space-3) var(--toro-space-4); border-bottom: 1px solid var(--toro-color-border); background: var(--toro-color-surface); }
 .dialog-header p, .dialog-header h3 { margin: 0; }
@@ -47,5 +47,5 @@ defineExpose({ open, close, setError });
 .state-dialog-body { display: grid; gap: var(--toro-space-3); }
 .state-dialog-body > p { margin: 0; color: var(--toro-color-text-secondary); line-height: 1.55; }
 .dialog-footer { display: flex; align-items: center; justify-content: flex-end; gap: var(--toro-space-2); padding: var(--toro-space-3) var(--toro-space-4); border-top: 1px solid var(--toro-color-border); background: var(--toro-color-surface-soft); }
-@media (max-width: 720px) { .toro-dialog { width: calc(100vw - 16px); } .dialog-footer { flex-wrap: wrap; } }
+@media (max-width: 720px) { .bio-nexus-dialog { width: calc(100vw - 16px); } .dialog-footer { flex-wrap: wrap; } }
 </style>

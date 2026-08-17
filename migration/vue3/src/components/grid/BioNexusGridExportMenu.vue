@@ -1,12 +1,12 @@
 ﻿<template>
-  <div class="toro-grid-export">
+  <div class="bio-nexus-grid-export">
     <button
       type="button"
-      class="toro-action toro-action-secondary toro-grid-export-trigger"
+      class="bio-nexus-action bio-nexus-action-secondary bio-nexus-grid-export-trigger"
       :disabled="disabled"
       @click="openDialog"
     >
-      <svg class="toro-grid-export-trigger-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <svg class="bio-nexus-grid-export-trigger-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <path d="M12 3v12" />
         <path d="m7 10 5 5 5-5" />
         <path d="M5 21h14" />
@@ -14,7 +14,7 @@
       <span>Exportar</span>
     </button>
 
-    <dialog ref="dialog" class="toro-dialog toro-grid-export-dialog" @cancel.prevent="closeDialog">
+    <dialog ref="dialog" class="bio-nexus-dialog bio-nexus-grid-export-dialog" @cancel.prevent="closeDialog">
       <form class="dialog-shell" @submit.prevent="confirmExport">
         <header class="dialog-header">
           <div>
@@ -24,61 +24,61 @@
           <BioNexusDialogCloseButton @click="closeDialog" />
         </header>
 
-        <section class="dialog-body toro-grid-export-dialog-body">
-          <section class="toro-grid-export-section" aria-labelledby="export-format-title">
+        <section class="dialog-body bio-nexus-grid-export-dialog-body">
+          <section class="bio-nexus-grid-export-section" aria-labelledby="export-format-title">
             <h4 id="export-format-title">Formato</h4>
-            <div class="toro-grid-export-choice-row">
-              <label class="toro-grid-export-choice">
+            <div class="bio-nexus-grid-export-choice-row">
+              <label class="bio-nexus-grid-export-choice">
                 <input v-model="format" type="radio" value="excel" />
                 <span>Excel (.xlsx)</span>
               </label>
-              <label class="toro-grid-export-choice">
+              <label class="bio-nexus-grid-export-choice">
                 <input v-model="format" type="radio" value="pdf" />
                 <span>PDF</span>
               </label>
             </div>
           </section>
 
-          <section v-if="format === 'pdf'" class="toro-grid-export-section" aria-labelledby="export-orientation-title">
+          <section v-if="format === 'pdf'" class="bio-nexus-grid-export-section" aria-labelledby="export-orientation-title">
             <h4 id="export-orientation-title">Orientacion</h4>
-            <div class="toro-grid-export-choice-row">
-              <label class="toro-grid-export-choice">
+            <div class="bio-nexus-grid-export-choice-row">
+              <label class="bio-nexus-grid-export-choice">
                 <input v-model="orientation" type="radio" value="portrait" />
                 <span>Vertical</span>
               </label>
-              <label class="toro-grid-export-choice">
+              <label class="bio-nexus-grid-export-choice">
                 <input v-model="orientation" type="radio" value="landscape" />
                 <span>Horizontal</span>
               </label>
             </div>
           </section>
 
-          <section class="toro-grid-export-section" aria-labelledby="export-columns-title">
-            <div class="toro-grid-export-columns-heading">
+          <section class="bio-nexus-grid-export-section" aria-labelledby="export-columns-title">
+            <div class="bio-nexus-grid-export-columns-heading">
               <h4 id="export-columns-title">Columnas</h4>
-              <div class="toro-grid-export-column-actions">
+              <div class="bio-nexus-grid-export-column-actions">
                 <button type="button" @click="selectAll">Seleccionar todas</button>
                 <button type="button" @click="clearAll">Limpiar</button>
               </div>
             </div>
-            <p class="toro-grid-export-help">Selecciona las columnas que apareceran en el archivo.</p>
-            <div class="toro-grid-export-columns">
-              <label v-for="column in availableColumns" :key="column.id" class="toro-grid-export-column">
+            <p class="bio-nexus-grid-export-help">Selecciona las columnas que apareceran en el archivo.</p>
+            <div class="bio-nexus-grid-export-columns">
+              <label v-for="column in availableColumns" :key="column.id" class="bio-nexus-grid-export-column">
                 <input v-model="selectedColumnIds" type="checkbox" :value="column.id" />
                 <span>{{ column.label }}</span>
               </label>
             </div>
           </section>
 
-          <p v-if="errorMessage" class="toro-message toro-message-error" role="alert">{{ errorMessage }}</p>
+          <p v-if="errorMessage" class="bio-nexus-message bio-nexus-message-error" role="alert">{{ errorMessage }}</p>
         </section>
 
         <footer class="dialog-footer">
-          <button type="button" class="toro-action toro-action-secondary" @click="closeDialog">
+          <button type="button" class="bio-nexus-action bio-nexus-action-secondary" @click="closeDialog">
             <BioNexusActionIcon action="cancel" />
             <span>Cancelar</span>
           </button>
-          <button type="submit" class="toro-action toro-action-primary" :disabled="selectedColumnIds.length === 0">
+          <button type="submit" class="bio-nexus-action bio-nexus-action-primary" :disabled="selectedColumnIds.length === 0">
             <BioNexusActionIcon action="save" />
             <span>Exportar</span>
           </button>
@@ -142,11 +142,11 @@ function confirmExport() {
 </script>
 
 <style scoped>
-.toro-grid-export {
+.bio-nexus-grid-export {
   display: inline-flex;
 }
 
-.toro-grid-export-trigger {
+.bio-nexus-grid-export-trigger {
   min-height: 34px;
   gap: 7px;
   padding: 6px 10px;
@@ -154,12 +154,12 @@ function confirmExport() {
   font-weight: 600;
 }
 
-.toro-grid-export-trigger-icon {
+.bio-nexus-grid-export-trigger-icon {
   width: 17px;
   height: 17px;
 }
 
-.toro-grid-export-dialog {
+.bio-nexus-grid-export-dialog {
   width: min(620px, calc(100vw - 32px));
   max-width: 620px;
   padding: 0;
@@ -170,21 +170,21 @@ function confirmExport() {
   box-shadow: var(--toro-shadow-md);
 }
 
-.toro-grid-export-dialog::backdrop {
+.bio-nexus-grid-export-dialog::backdrop {
   background: rgb(15 23 42 / 38%);
 }
 
-.toro-grid-export-dialog .dialog-shell {
+.bio-nexus-grid-export-dialog .dialog-shell {
   width: 100%;
 }
 
-.toro-grid-export-dialog-body {
+.bio-nexus-grid-export-dialog-body {
   display: grid;
   gap: var(--toro-space-3);
   overflow: visible;
 }
 
-.toro-grid-export-section {
+.bio-nexus-grid-export-section {
   display: grid;
   gap: var(--toro-space-2);
   padding: var(--toro-space-3);
@@ -193,21 +193,21 @@ function confirmExport() {
   background: var(--toro-color-surface-soft);
 }
 
-.toro-grid-export-section h4 {
+.bio-nexus-grid-export-section h4 {
   margin: 0;
   color: var(--toro-color-text);
   font-size: var(--toro-font-size-sm);
   font-weight: 700;
 }
 
-.toro-grid-export-choice-row {
+.bio-nexus-grid-export-choice-row {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--toro-space-2);
 }
 
-.toro-grid-export-choice,
-.toro-grid-export-column {
+.bio-nexus-grid-export-choice,
+.bio-nexus-grid-export-column {
   display: flex;
   align-items: center;
   gap: var(--toro-space-2);
@@ -215,7 +215,7 @@ function confirmExport() {
   cursor: pointer;
 }
 
-.toro-grid-export-choice {
+.bio-nexus-grid-export-choice {
   min-height: 38px;
   padding: 7px 10px;
   border: 1px solid var(--toro-color-border);
@@ -223,30 +223,30 @@ function confirmExport() {
   background: var(--toro-color-surface);
 }
 
-.toro-grid-export-choice:has(input:checked) {
+.bio-nexus-grid-export-choice:has(input:checked) {
   border-color: var(--toro-color-primary);
   background: var(--toro-color-info-soft);
 }
 
-.toro-grid-export-choice input,
-.toro-grid-export-column input {
+.bio-nexus-grid-export-choice input,
+.bio-nexus-grid-export-column input {
   accent-color: var(--toro-color-primary);
 }
 
-.toro-grid-export-columns-heading {
+.bio-nexus-grid-export-columns-heading {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--toro-space-3);
 }
 
-.toro-grid-export-column-actions {
+.bio-nexus-grid-export-column-actions {
   display: flex;
   align-items: center;
   gap: var(--toro-space-2);
 }
 
-.toro-grid-export-column-actions button {
+.bio-nexus-grid-export-column-actions button {
   padding: 2px 4px;
   border: 0;
   color: var(--toro-color-primary-strong);
@@ -257,19 +257,19 @@ function confirmExport() {
   cursor: pointer;
 }
 
-.toro-grid-export-column-actions button:hover,
-.toro-grid-export-column-actions button:focus-visible {
+.bio-nexus-grid-export-column-actions button:hover,
+.bio-nexus-grid-export-column-actions button:focus-visible {
   text-decoration: underline;
   outline: none;
 }
 
-.toro-grid-export-help {
+.bio-nexus-grid-export-help {
   margin: 0;
   color: var(--toro-color-text-muted);
   font-size: .78rem;
 }
 
-.toro-grid-export-columns {
+.bio-nexus-grid-export-columns {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--toro-space-2);
@@ -280,34 +280,34 @@ function confirmExport() {
   scrollbar-gutter: stable;
 }
 
-.toro-grid-export-column {
+.bio-nexus-grid-export-column {
   min-height: 34px;
   padding: 6px 8px;
   border-radius: var(--toro-radius-sm);
   background: var(--toro-color-surface);
 }
 
-.toro-grid-export-column:hover {
+.bio-nexus-grid-export-column:hover {
   background: var(--toro-color-info-soft);
 }
 
-.toro-grid-export-column span {
+.bio-nexus-grid-export-column span {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 @media (max-width: 600px) {
-  .toro-grid-export-dialog {
+  .bio-nexus-grid-export-dialog {
     width: calc(100vw - 16px);
   }
 
-  .toro-grid-export-choice-row,
-  .toro-grid-export-columns {
+  .bio-nexus-grid-export-choice-row,
+  .bio-nexus-grid-export-columns {
     grid-template-columns: 1fr;
   }
 
-  .toro-grid-export-columns-heading {
+  .bio-nexus-grid-export-columns-heading {
     align-items: flex-start;
     flex-direction: column;
   }
