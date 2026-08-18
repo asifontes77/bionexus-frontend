@@ -667,14 +667,14 @@ function handleIdentitySaved({ user, action }) {
 }
 
 async function prepareSelectedUser(user) {
-  if (!user) return false;
+  const userId = Number(user?.id);
+  if (!Number.isInteger(userId) || userId <= 0) return false;
 
-  if (selectedUser.value?.id !== user.id || !authorization.value) {
-    selectedUser.value = user;
-    await loadSelectedUserAuthorization();
-  }
+  const exactUser = users.value.find((candidate) => candidate.id === userId) ?? user;
+  selectedUser.value = exactUser;
+  await loadSelectedUserAuthorization();
 
-  return selectedUser.value?.id === user.id;
+  return selectedUser.value?.id === userId && authorization.value?.user?.id === userId;
 }
 
 async function openUserContextMenu({ event, row }) {
@@ -707,7 +707,10 @@ async function runUserContextAction(item) {
 }
 
 async function openUserDetailDialog(user) {
+  const userId = Number(user?.id);
+  if (!Number.isInteger(userId) || userId <= 0) return;
   if (!(await prepareSelectedUser(user))) return;
+  if (authorization.value?.user?.id !== userId) return;
   userDetailDialog.value?.open();
 }
 

@@ -127,3 +127,27 @@ export async function replaceUserPermissionOverrides(userId, overrides) {
 
   return normalizePermissionOverrides(response);
 }
+export async function uploadUserAsset(file, assetType) {
+  if (!["photos", "signatures"].includes(assetType)) throw new Error("Tipo de imagen de usuario invalido.");
+  const formData = new FormData();
+  formData.append("file", file, file.name);
+  const response = await apiRequest(`/api/users/upload/${assetType}`, {
+    method: "POST",
+    body: formData,
+    preserveBody: true,
+  });
+  return typeof response === "string" ? response : response?.filename ?? response?.message ?? response;
+}
+export async function verifyUserEmail(email, userId = null) {
+  const encodedEmail = encodeURIComponent(email.trim());
+  const path = Number.isInteger(userId) && userId > 0
+    ? `/api/users/verify-id/${userId}/${encodedEmail}`
+    : `/api/users/verify/${encodedEmail}`;
+  return apiRequest(path);
+}
+export async function verifyUserSignature(userId, passwordSignature) {
+  return apiRequest("/api/users/verify-signature", {
+    method: "POST",
+    body: { userId, passwordSignature },
+  });
+}

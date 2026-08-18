@@ -1,6 +1,6 @@
 <template>
-  <Teleport to="body">
-    <section class="bio-nexus-toast-region" aria-label="Notificaciones" aria-live="polite" aria-relevant="additions removals">
+  <Teleport :to="teleportTarget">
+    <section data-bio-nexus-toast-host class="bio-nexus-toast-region bio-nexus-toast-top-layer" aria-label="Notificaciones" aria-live="polite" aria-relevant="additions removals">
       <TransitionGroup name="bio-nexus-toast" tag="div" class="bio-nexus-toast-stack">
         <article
           v-for="toast in toasts"
@@ -16,7 +16,7 @@
               v-if="toast.duration > 0"
               type="button"
               class="bio-nexus-toast-control"
-              :aria-label="toast.paused ? 'Reanudar notificación' : 'Pausar notificación'"
+              :aria-label="toast.paused ? 'Reanudar notificaciÃ³n' : 'Pausar notificaciÃ³n'"
               :title="toast.paused ? 'Reanudar' : 'Pausar'"
               @click="togglePauseStore(toast.id)"
             >
@@ -25,7 +25,7 @@
             <button
               type="button"
               class="bio-nexus-toast-close"
-              aria-label="Cerrar notificación"
+              aria-label="Cerrar notificaciÃ³n"
               title="Cerrar"
               @click="remove(toast.id)"
             >
@@ -51,8 +51,12 @@ const {
   togglePause: togglePauseStore,
   remove,
 } = useBioNexusToast();
+
 const now = ref(Date.now());
+const teleportTarget = ref("body");
 let ticker = null;
+let dialogObserver = null;
+
 const iconByType = Object.freeze({
   success: "check_circle",
   info: "info",
@@ -69,13 +73,41 @@ function progressStyle(toast) {
   return { transform: "scaleX(" + ratio + ")" };
 }
 
+function updateTeleportTarget() {
+  const openDialogs = Array.from(document.querySelectorAll("dialog[open]"));
+  teleportTarget.value = openDialogs.at(-1) ?? document.body;
+}
+
 onMounted(() => {
   ticker = globalThis.setInterval(() => {
     now.value = Date.now();
   }, 50);
+
+  dialogObserver = new MutationObserver(updateTeleportTarget);
+  dialogObserver.observe(document.body, {
+    attributes: true,
+    attributeFilter: ["open"],
+    childList: true,
+    subtree: true,
+  });
+  updateTeleportTarget();
 });
 
 onBeforeUnmount(() => {
   if (ticker) globalThis.clearInterval(ticker);
+  dialogObserver?.disconnect();
 });
 </script>
+
+<style>
+.bio-nexus-toast-top-layer {
+  position: fixed;
+  z-index: 2147483000 !important;
+  pointer-events: none;
+}
+.bio-nexus-toast-top-layer > * { pointer-events: auto; }
+dialog[open] > .bio-nexus-toast-top-layer {
+  inset-block-start: var(--bio-nexus-space-4);
+  inset-inline-end: var(--bio-nexus-space-4);
+}
+</style>

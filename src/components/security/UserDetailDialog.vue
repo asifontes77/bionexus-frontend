@@ -43,6 +43,23 @@
             </div>
             <p v-else class="bio-nexus-empty-state">El usuario no dispone de un contexto efectivo activo.</p>
           </section>
+
+          <section class="user-detail-media" aria-label="Imagenes del usuario">
+          <article>
+            <span>Fotografia</span>
+            <div class="user-detail-image user-detail-photo">
+              <img v-if="authorization.user.photo" :src="assetUrl(authorization.user.photo)" alt="Fotografia del usuario" />
+              <BioNexusIcon v-else name="person" :size="42" />
+            </div>
+          </article>
+          <article>
+            <span>Firma digital</span>
+            <div class="user-detail-image">
+              <img v-if="authorization.user.signature" :src="assetUrl(authorization.user.signature)" alt="Firma digital del usuario" />
+              <BioNexusIcon v-else name="draw" :size="42" />
+            </div>
+          </article>
+        </section>
         </div>
       </div>
 
@@ -84,6 +101,7 @@ function close() {
 }
 
 defineExpose({ open, close });
+function assetUrl(value) { return value ? `/api/public/images/${value.split("/").map(encodeURIComponent).join("/")}` : ""; }
 </script>
 
 <style scoped>
@@ -111,4 +129,13 @@ defineExpose({ open, close });
 .effective-summary span { color: var(--bio-nexus-color-text-muted); font-size: var(--bio-nexus-font-size-xs); }
 .effective-summary strong { color: var(--bio-nexus-color-primary-strong); font-size: 18px; }
 @media (max-width: 720px) { .bio-nexus-dialog { width: calc(100vw - 16px); } .user-detail-grid, .effective-summary { grid-template-columns: 1fr; } .user-detail-heading { grid-template-columns: 48px minmax(0, 1fr); } .user-detail-heading > .bio-nexus-badge { grid-column: 2; justify-self: start; } }
+</style>
+<style>
+.user-detail-media { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--bio-nexus-space-3); }
+.user-detail-media article { display: grid; gap: var(--bio-nexus-space-2); }
+.user-detail-media article > span { color: var(--bio-nexus-color-text-muted); font-size: var(--bio-nexus-font-size-xs); font-weight: var(--bio-nexus-font-weight-bold); text-transform: uppercase; }
+.user-detail-image { display: grid; min-height: 132px; place-items: center; overflow: hidden; border: 1px solid var(--bio-nexus-color-border); border-radius: var(--bio-nexus-radius-md); background: var(--bio-nexus-color-surface-soft); color: var(--bio-nexus-color-text-muted); }
+.user-detail-image img { display: block; max-width: 100%; max-height: 150px; object-fit: contain; }
+.user-detail-photo img { width: 124px; height: 124px; border-radius: 50%; object-fit: cover; }
+@media (max-width: 640px) { .user-detail-media { grid-template-columns: 1fr; } }
 </style>

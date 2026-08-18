@@ -40,12 +40,15 @@ export async function apiRequest(path, options = {}) {
     body,
     headers = {},
     method = 'GET',
+    preserveBody = false,
     ...requestOptions
   } = options
 
   const requestHeaders = new Headers(headers)
+  const isFormData = typeof FormData !== 'undefined' && body instanceof FormData
+  const sendBodyDirectly = preserveBody || isFormData
 
-  if (body !== undefined && !requestHeaders.has('Content-Type')) {
+  if (body !== undefined && !sendBodyDirectly && !requestHeaders.has('Content-Type')) {
     requestHeaders.set('Content-Type', 'application/json;charset=UTF-8')
   }
 
@@ -61,7 +64,7 @@ export async function apiRequest(path, options = {}) {
     ...requestOptions,
     method,
     headers: requestHeaders,
-    body: body === undefined ? undefined : JSON.stringify(body)
+    body: body === undefined ? undefined : sendBodyDirectly ? body : JSON.stringify(body)
   })
 
   const data = await parseResponse(response)
