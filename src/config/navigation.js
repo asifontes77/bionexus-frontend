@@ -140,10 +140,9 @@ export const navigationItems = [
         key: "exams-list",
         label: "Lista de examenes",
         abbreviation: "LE",
-        legacyRouteName: "ExamsList",
-        legacyPath: "/setting/exams",
-        roles: ["admin"],
-        migrated: false,
+        routeName: "configuration-exams",
+        permissions: ["exam-catalog.read"],
+        migrated: true,
       },
       {
         key: "exams-order",

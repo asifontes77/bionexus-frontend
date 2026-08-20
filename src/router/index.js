@@ -9,6 +9,7 @@ import RolesPermissionsView from "@/views/RolesPermissionsView.vue";
 import UserAuthorizationView from "@/views/UserAuthorizationView.vue";
 import ParasiticformsView from "@/views/ParasiticformsView.vue";
 import TypePaymentView from "@/views/TypePaymentView.vue";
+import ExamCatalogView from "@/views/ExamCatalogView.vue";
 
 const routes = [
   {
@@ -62,6 +63,17 @@ const routes = [
           permissions: ["security.users.read"],
           title: "Usuarios y autorización",
           description: "Administra los usuarios, sus roles y las excepciones individuales de permisos.",
+        },
+      },
+      {
+        path: "configuration/exams",
+        name: "configuration-exams",
+        component: ExamCatalogView,
+        meta: {
+          requiresAuth: true,
+          permissions: ["exam-catalog.read"],
+          title: "Lista de examenes",
+          description: "Administra grupos, examenes, tarifas, impuestos y disponibilidad del catalogo.",
         },
       },
       {

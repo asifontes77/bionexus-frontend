@@ -1,0 +1,13 @@
+import { apiRequest } from "@/api/apiClient";
+import { normalizeExam, normalizeExamGroup, normalizeExamGroups, normalizeExams, normalizeTaxes, normalizeExamSearchResults } from "@/models/examCatalog";
+export async function getExamGroups() { return normalizeExamGroups(await apiRequest("/api/examgroup/all")); }
+export async function getExamsByGroup(groupId) { return normalizeExams(await apiRequest(`/api/examlists/group/${groupId}`)); }
+export async function getExam(examId) { return normalizeExam(await apiRequest(`/api/examlists/${examId}`)); }
+export async function searchExamCatalog(term, limit = 20) { const query = encodeURIComponent(String(term || "").trim()); return normalizeExamSearchResults(await apiRequest(`/api/examlists/search?q=${query}&limit=${limit}`)); }
+export async function getTaxes() { return normalizeTaxes(await apiRequest("/api/tax")); }
+export async function createExamGroup(values) { return normalizeExamGroup(await apiRequest("/api/examgroup", { method: "POST", body: values })); }
+export async function updateExamGroup(groupId, changes) { return normalizeExamGroup(await apiRequest(`/api/examgroup/${groupId}`, { method: "PATCH", body: changes })); }
+export async function createExam(values) { return normalizeExam(await apiRequest("/api/examlists", { method: "POST", body: values })); }
+export async function bulkUpdateExams(ids, changes) { return apiRequest("/api/examlists/bulk", { method: "PATCH", body: { ids, changes } }); }
+export async function updateExam(examId, changes) { return normalizeExam(await apiRequest(`/api/examlists/${examId}`, { method: "PATCH", body: changes })); }
+export function examCatalogError(error, fallback) { const key = String(error?.message || ""); const messages = { EXAM_GROUP_NOT_FOUND: "El grupo seleccionado ya no existe.", EXAM_GROUP_DESCRIPTION_ALREADY_EXISTS: "Ya existe un grupo con esa descripcion.", EXAM_CATALOG_NOT_FOUND: "El examen seleccionado ya no existe.", EXAM_CATALOG_DESCRIPTION_ALREADY_EXISTS: "Ya existe un examen con esa descripcion dentro del grupo.", EXAM_CATALOG_PRICE_INVALID: "Las tarifas deben ser numeros iguales o mayores que cero.", EXAM_CATALOG_WORK_SHEET_INVALID: "La Hoja de trabajo contiene un valor invalido.", EXAM_CATALOG_WORK_SHEET_TOO_LONG: "La Hoja de trabajo supera el limite permitido.", EXAM_CATALOG_PERMISSION_REQUIRED: "La cuenta actual no tiene permiso para realizar todos los cambios solicitados." }; return messages[key] || key || fallback; }

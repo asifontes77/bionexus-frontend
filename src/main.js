@@ -24,16 +24,21 @@ const authorizationStore = useAuthorizationStore(pinia)
 
 sessionStore.hydrate()
 
-if (sessionStore.isAuthenticated) {
-  try {
-    await authorizationStore.loadContext()
-  } catch {
-    authorizationStore.clear()
-  }
-} else {
-  authorizationStore.clear()
-}
-
 app.use(router)
 installBioNexusGlobalLogging(app)
 app.mount('#app')
+
+if (sessionStore.isAuthenticated) {
+  authorizationStore.loadContext().catch(async () => {
+    authorizationStore.clear()
+    sessionStore.clear()
+    if (router.currentRoute.value.name !== 'login') {
+      await router.replace({
+        name: 'login',
+        query: { redirect: router.currentRoute.value.fullPath }
+      })
+    }
+  })
+} else {
+  authorizationStore.clear()
+}

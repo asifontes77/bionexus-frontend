@@ -171,6 +171,11 @@ async function submitLogin() {
       (error.status === 401 || error.status === 404)
     ) {
       message.value = "Nombre de usuario o contraseña incorrectos.";
+    } else if (
+      error instanceof ApiError &&
+      error.status === 408
+    ) {
+      message.value = "El Backend no respondio a tiempo. Reinicie Bio Nexus y vuelva a intentar.";
     } else {
       message.value = "No fue posible iniciar sesion.";
     }

@@ -1,3 +1,4 @@
+const DEFAULT_REQUEST_TIMEOUT_MS = 15000
 const SESSION_STORAGE_KEY = 'bio-nexus.session'
 
 function getStoredToken() {
@@ -41,6 +42,8 @@ export async function apiRequest(path, options = {}) {
     headers = {},
     method = 'GET',
     preserveBody = false,
+    timeoutMs = DEFAULT_REQUEST_TIMEOUT_MS,
+    signal: externalSignal,
     ...requestOptions
   } = options
 
@@ -54,29 +57,53 @@ export async function apiRequest(path, options = {}) {
 
   if (auth) {
     const token = getStoredToken()
-
-    if (token) {
-      requestHeaders.set('Authorization', `Bearer ${token}`)
-    }
+    if (token) requestHeaders.set('Authorization', `Bearer ${token}`)
   }
 
-  const response = await fetch(path, {
-    ...requestOptions,
-    method,
-    headers: requestHeaders,
-    body: body === undefined ? undefined : sendBodyDirectly ? body : JSON.stringify(body)
-  })
+  const normalizedTimeoutMs = Number.isFinite(Number(timeoutMs))
+    ? Math.max(1000, Number(timeoutMs))
+    : DEFAULT_REQUEST_TIMEOUT_MS
+  const controller = new AbortController()
+  const abortFromExternalSignal = () => controller.abort(externalSignal?.reason)
+
+  if (externalSignal) {
+    if (externalSignal.aborted) abortFromExternalSignal()
+    else externalSignal.addEventListener('abort', abortFromExternalSignal, { once: true })
+  }
+
+  const timeout = globalThis.setTimeout(
+    () => controller.abort('BIO_NEXUS_REQUEST_TIMEOUT'),
+    normalizedTimeoutMs
+  )
+
+  let response
+  try {
+    response = await fetch(path, {
+      ...requestOptions,
+      signal: controller.signal,
+      method,
+      headers: requestHeaders,
+      body: body === undefined ? undefined : sendBodyDirectly ? body : JSON.stringify(body)
+    })
+  } catch (error) {
+    if (controller.signal.aborted && !externalSignal?.aborted) {
+      throw new ApiError('BIO_NEXUS_REQUEST_TIMEOUT', 408, {
+        message: 'BIO_NEXUS_REQUEST_TIMEOUT'
+      })
+    }
+    throw error
+  } finally {
+    globalThis.clearTimeout(timeout)
+    externalSignal?.removeEventListener?.('abort', abortFromExternalSignal)
+  }
 
   const data = await parseResponse(response)
-
   if (!response.ok) {
     const message =
       data && typeof data === 'object' && data.message
         ? data.message
         : `HTTP ${response.status}`
-
     throw new ApiError(message, response.status, data)
   }
-
   return data
 }

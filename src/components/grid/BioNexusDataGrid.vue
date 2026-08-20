@@ -71,6 +71,7 @@
       :components="components"
       :context="context"
       :get-row-id="getRowId"
+      :row-selection="rowSelection"
       :pagination="pagination"
       :pagination-page-size="pageSize"
       :pagination-page-size-selector="false"
@@ -134,6 +135,7 @@ const props = defineProps({
     type: Function,
     default: undefined,
   },
+  rowSelection: { type: [Object, String], default: undefined },
   quickFilterText: {
     type: String,
     default: "",
@@ -411,7 +413,10 @@ function handleCellContextMenu(params) {
   event.preventDefault();
   event.stopPropagation();
 
-  params.node?.setSelected?.(true, true);
+  if (params.node?.isSelected?.() !== true) {
+    params.api?.deselectAll?.();
+    params.node?.setSelected?.(true, true);
+  }
 
   emit("row-context-menu", {
     event,
