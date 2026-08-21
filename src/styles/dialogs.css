@@ -217,3 +217,38 @@ dialog.designer-dialog::backdrop {
     padding: 10px 14px;
   }
 }
+
+/* BIO NEXUS SHARED DIALOG COMPONENT V1 */
+.bio-nexus-dialog-shell { display:grid;grid-template-rows:auto auto minmax(0,1fr) auto;width:100%;max-height:var(--bio-nexus-dialog-max-height);overflow:hidden;border:1px solid var(--bio-nexus-color-border-strong);border-radius:var(--bio-nexus-radius-md);background:var(--bio-nexus-color-surface);box-shadow:var(--bio-nexus-shadow-md); }
+.bio-nexus-dialog-header { display:flex;align-items:center;justify-content:space-between;gap:var(--bio-nexus-space-3);min-height:76px;padding:12px 20px;border-bottom:1px solid var(--bio-nexus-color-border);background:var(--bio-nexus-color-surface); }
+.bio-nexus-dialog-heading { display:grid;gap:2px;min-width:0; }
+.bio-nexus-dialog-kicker { margin:0;color:var(--bio-nexus-color-accent-strong);font-size:var(--bio-nexus-font-size-xs);font-weight:var(--bio-nexus-font-weight-bold);line-height:1.15;letter-spacing:.06em;text-transform:uppercase; }
+.bio-nexus-dialog-title { margin:0;overflow:hidden;color:var(--bio-nexus-color-primary-strong);font-size:var(--bio-nexus-font-size-xl);font-weight:var(--bio-nexus-font-weight-bold);line-height:1.2;text-overflow:ellipsis; }
+.bio-nexus-dialog-subtitle { margin:0;overflow:hidden;color:var(--bio-nexus-color-text-muted);font-size:var(--bio-nexus-font-size-sm);line-height:1.2;text-overflow:ellipsis;white-space:nowrap; }
+.bio-nexus-dialog-header-actions,.bio-nexus-dialog-footer-actions { display:flex;align-items:center;gap:var(--bio-nexus-space-2); }
+.bio-nexus-dialog-toolbar { flex:0 0 auto;border-bottom:1px solid var(--bio-nexus-color-border);background:var(--bio-nexus-color-surface); }
+.bio-nexus-dialog-body { min-height:0;padding:var(--bio-nexus-dialog-body-padding);overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable;background:var(--bio-nexus-color-surface); }
+.bio-nexus-dialog-body-flush { padding:0; }
+.bio-nexus-dialog-footer { display:flex;align-items:center;justify-content:flex-end;gap:var(--bio-nexus-space-2);padding:var(--bio-nexus-dialog-footer-padding);border-top:1px solid var(--bio-nexus-color-border);background:var(--bio-nexus-color-surface-soft); }
+.bio-nexus-dialog-footer-status { margin-right:auto; }
+.bio-nexus-dialog-header .bio-nexus-dialog-close-button { flex:0 0 44px;width:44px;height:44px;border:0;border-radius:50%;background:var(--bio-nexus-color-surface-soft);color:var(--bio-nexus-color-text); }
+/* BIO NEXUS SHARED DIALOG HEADER SOFT FINAL START */
+dialog.bio-nexus-dialog > .bio-nexus-dialog-shell > .bio-nexus-dialog-header {
+  background-color: var(--bio-nexus-color-surface-soft) !important;
+}
+/* BIO NEXUS SHARED DIALOG HEADER SOFT FINAL END */
+/* BIO NEXUS SHARED DIALOG HEADER COMPACT FINAL START */
+dialog.bio-nexus-dialog > .bio-nexus-dialog-shell > .bio-nexus-dialog-header {
+  min-height: 60px !important;
+  padding: 8px 16px !important;
+  background-color: var(--bio-nexus-color-surface-soft) !important;
+}
+dialog.bio-nexus-dialog > .bio-nexus-dialog-shell > .bio-nexus-dialog-header .bio-nexus-dialog-heading { gap: 1px; }
+dialog.bio-nexus-dialog > .bio-nexus-dialog-shell > .bio-nexus-dialog-header .bio-nexus-dialog-kicker { line-height: 1.05; }
+dialog.bio-nexus-dialog > .bio-nexus-dialog-shell > .bio-nexus-dialog-header .bio-nexus-dialog-title { line-height: 1.12; }
+dialog.bio-nexus-dialog > .bio-nexus-dialog-shell > .bio-nexus-dialog-header .bio-nexus-dialog-close-button {
+  flex: 0 0 38px !important;
+  width: 38px !important;
+  height: 38px !important;
+}
+/* BIO NEXUS SHARED DIALOG HEADER COMPACT FINAL END */
