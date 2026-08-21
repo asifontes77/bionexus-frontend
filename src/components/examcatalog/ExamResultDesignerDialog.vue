@@ -1,7 +1,7 @@
 <template>
   <dialog ref="dialog" class="designer-dialog" @cancel.prevent="requestClose" @click="onBackdropClick">
     <section class="designer-shell" @click.stop>
-      <header class="designer-header">
+      <header class="designer-header bio-nexus-dialog-header">
         <div><p>Configuracion del examen</p><h2>Disenador de resultado</h2><small>{{ exam?.description }}</small></div>
         <div class="designer-header-actions"><span class="visual-badge">Validacion visual</span><BioNexusDialogCloseButton @click="requestClose" /></div>
       </header>

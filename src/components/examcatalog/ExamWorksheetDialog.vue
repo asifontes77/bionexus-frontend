@@ -1,7 +1,7 @@
 <template>
   <dialog ref="dialog" class="worksheet-dialog" @cancel.prevent="requestClose" @click="onBackdropClick">
     <section class="worksheet-shell" @click.stop>
-      <header class="worksheet-header">
+      <header class="worksheet-header bio-nexus-dialog-header">
         <div><p>Configuracion del examen</p><h2>Hoja de trabajo</h2><small>{{ exam?.description }}</small></div>
         <BioNexusDialogCloseButton @click="requestClose" />
       </header>

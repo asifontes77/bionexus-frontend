@@ -1,0 +1,219 @@
+:root {
+  --bio-nexus-dialog-backdrop: color-mix(in srgb, var(--bio-nexus-color-sidebar-strong) 48%, transparent);
+  --bio-nexus-dialog-max-height: calc(100vh - 32px);
+  --bio-nexus-dialog-header-padding: var(--bio-nexus-space-3) var(--bio-nexus-space-4);
+  --bio-nexus-dialog-body-padding: var(--bio-nexus-space-4);
+  --bio-nexus-dialog-footer-padding: var(--bio-nexus-space-3) var(--bio-nexus-space-4);
+}
+
+html.bio-nexus-modal-open,
+body.bio-nexus-modal-open { overscroll-behavior: none; }
+
+body.bio-nexus-modal-open { touch-action: none; }
+
+dialog.bio-nexus-dialog,
+dialog.exam-detail-dialog,
+dialog.worksheet-dialog,
+dialog.designer-dialog {
+  box-sizing: border-box;
+  color: var(--bio-nexus-color-text);
+  font-family: var(--bio-nexus-font-family);
+}
+
+dialog.bio-nexus-dialog::backdrop,
+dialog.exam-detail-dialog::backdrop,
+dialog.worksheet-dialog::backdrop,
+dialog.designer-dialog::backdrop {
+  background: var(--bio-nexus-dialog-backdrop);
+  backdrop-filter: blur(2px);
+}
+
+.bio-nexus-dialog .dialog-shell,
+.exam-detail-shell,
+.worksheet-shell,
+.designer-shell { overflow: hidden; }
+
+.bio-nexus-dialog .dialog-header,
+.exam-detail-header,
+.worksheet-header,
+.designer-header {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--bio-nexus-space-3);
+  padding: var(--bio-nexus-dialog-header-padding);
+  border-bottom: 1px solid var(--bio-nexus-color-border);
+  background: var(--bio-nexus-color-surface);
+}
+
+.bio-nexus-dialog .dialog-header > div:first-child,
+.exam-detail-header > div:first-child,
+.worksheet-header > div:first-child,
+.designer-header > div:first-child { min-width: 0; }
+
+.bio-nexus-dialog .dialog-header p,
+.exam-detail-header p,
+.worksheet-header p,
+.designer-header p {
+  margin: 0 0 var(--bio-nexus-space-1);
+  color: var(--bio-nexus-color-accent-strong);
+  font-size: var(--bio-nexus-font-size-xs);
+  font-weight: var(--bio-nexus-font-weight-bold);
+  line-height: 1.1;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.bio-nexus-dialog .dialog-header h2,
+.bio-nexus-dialog .dialog-header h3,
+.exam-detail-header h2,
+.worksheet-header h2,
+.designer-header h2 {
+  margin: 0;
+  overflow: hidden;
+  color: var(--bio-nexus-color-primary-strong);
+  font-size: var(--bio-nexus-font-size-xl);
+  font-weight: var(--bio-nexus-font-weight-bold);
+  line-height: 1.2;
+  text-overflow: ellipsis;
+}
+
+.exam-detail-header small,
+.worksheet-header small,
+.designer-header small {
+  display: block;
+  margin-top: var(--bio-nexus-space-1);
+  overflow: hidden;
+  color: var(--bio-nexus-color-text-muted);
+  font-size: var(--bio-nexus-font-size-sm);
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bio-nexus-dialog .dialog-body,
+.exam-detail-body,
+.worksheet-body {
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+.bio-nexus-dialog .dialog-footer,
+.exam-detail-footer,
+.worksheet-footer,
+.designer-footer {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--bio-nexus-space-2);
+  padding: var(--bio-nexus-dialog-footer-padding);
+  border-top: 1px solid var(--bio-nexus-color-border);
+  background: var(--bio-nexus-color-surface-soft);
+}
+
+.bio-nexus-dialog-size-compact { width: min(520px, calc(100vw - 32px)); }
+.bio-nexus-dialog-size-standard { width: min(720px, calc(100vw - 32px)); }
+.bio-nexus-dialog-size-wide { width: min(1040px, calc(100vw - 32px)); }
+.bio-nexus-dialog-size-fullscreen { width: calc(100vw - 24px); height: calc(100vh - 24px); }
+
+@media (max-width: 720px) {
+  :root {
+    --bio-nexus-dialog-header-padding: var(--bio-nexus-space-3);
+    --bio-nexus-dialog-body-padding: var(--bio-nexus-space-3);
+    --bio-nexus-dialog-footer-padding: var(--bio-nexus-space-3);
+  }
+  .bio-nexus-dialog .dialog-footer,
+  .exam-detail-footer,
+  .worksheet-footer,
+  .designer-footer { flex-wrap: wrap; }
+}
+
+/* BIO NEXUS DIALOG HEADER CONTRACT V1 */
+.bio-nexus-dialog .dialog-header,
+.bio-nexus-dialog-header {
+  min-height: 76px;
+  padding: 12px 20px;
+}
+
+.bio-nexus-dialog .dialog-header > div:first-child,
+.bio-nexus-dialog-header > div:first-child {
+  display: grid;
+  align-content: center;
+  gap: 2px;
+  min-width: 0;
+}
+
+.bio-nexus-dialog .dialog-header p,
+.bio-nexus-dialog-header p {
+  margin: 0;
+  color: var(--bio-nexus-color-accent-strong);
+  font-family: var(--bio-nexus-font-family);
+  font-size: var(--bio-nexus-font-size-xs);
+  font-weight: var(--bio-nexus-font-weight-bold);
+  line-height: 1.15;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.bio-nexus-dialog .dialog-header h2,
+.bio-nexus-dialog .dialog-header h3,
+.bio-nexus-dialog-header h2,
+.bio-nexus-dialog-header h3 {
+  margin: 0;
+  color: var(--bio-nexus-color-primary-strong);
+  font-family: var(--bio-nexus-font-family);
+  font-size: var(--bio-nexus-font-size-xl);
+  font-weight: var(--bio-nexus-font-weight-bold);
+  line-height: 1.2;
+}
+
+.bio-nexus-dialog-header small {
+  display: block;
+  margin: 0;
+  color: var(--bio-nexus-color-text-muted);
+  font-family: var(--bio-nexus-font-family);
+  font-size: var(--bio-nexus-font-size-sm);
+  font-weight: var(--bio-nexus-font-weight-regular);
+  line-height: 1.2;
+}
+
+.bio-nexus-dialog .dialog-header .bio-nexus-dialog-close-button,
+.bio-nexus-dialog-header .bio-nexus-dialog-close-button {
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--bio-nexus-color-surface-soft);
+  color: var(--bio-nexus-color-text);
+  box-shadow: none;
+}
+
+.bio-nexus-dialog .dialog-header .bio-nexus-dialog-close-button:hover,
+.bio-nexus-dialog-header .bio-nexus-dialog-close-button:hover {
+  background: var(--bio-nexus-color-selection-soft);
+  color: var(--bio-nexus-color-primary-strong);
+}
+
+.bio-nexus-dialog .dialog-header .bio-nexus-dialog-close-button:focus-visible,
+.bio-nexus-dialog-header .bio-nexus-dialog-close-button:focus-visible {
+  outline: 2px solid var(--bio-nexus-color-primary);
+  outline-offset: 2px;
+}
+
+.designer-header-actions {
+  flex: 0 0 auto;
+}
+
+@media (max-width: 720px) {
+  .bio-nexus-dialog .dialog-header,
+  .bio-nexus-dialog-header {
+    min-height: 68px;
+    padding: 10px 14px;
+  }
+}

@@ -1,3 +1,5 @@
+import "@/styles/dialogs.css";
+import { installBioNexusDialogManager } from "@/services/dialogManager";
 import "@fontsource-variable/material-symbols-rounded/wght.css";
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
@@ -26,6 +28,7 @@ sessionStore.hydrate()
 
 app.use(router)
 installBioNexusGlobalLogging(app)
+installBioNexusDialogManager();
 app.mount('#app')
 
 if (sessionStore.isAuthenticated) {

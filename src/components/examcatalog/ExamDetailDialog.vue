@@ -1,9 +1,9 @@
 <template>
   <dialog ref="dialog" class="exam-detail-dialog" @cancel.prevent="close" @click="onBackdropClick">
     <section class="exam-detail-shell" @click.stop>
-      <header class="exam-detail-header">
+      <header class="exam-detail-header bio-nexus-dialog-header">
         <div><p>Detalle del catalogo</p><h2>Ver examen</h2></div>
-        <button type="button" aria-label="Cerrar" title="Cerrar" @click="close"><BioNexusIcon name="close" :size="21" /></button>
+        <BioNexusDialogCloseButton @click="close" />
       </header>
       <main v-if="exam" class="exam-detail-body">
         <section class="exam-detail-summary">
@@ -32,7 +32,7 @@
 </template>
 <script setup>
 import { computed, nextTick, ref } from "vue";
-import BioNexusIcon from "@/components/ui/BioNexusIcon.vue";
+import BioNexusDialogCloseButton from "@/components/ui/BioNexusDialogCloseButton.vue";
 const props = defineProps({ taxes: { type: Array, default: () => [] } });
 const dialog = ref(null); const exam = ref(null); const group = ref(null);
 const tax = computed(() => props.taxes.find((item) => Number(item.id) === Number(exam.value?.tax_id)) ?? null);
