@@ -232,23 +232,3 @@ dialog.designer-dialog::backdrop {
 .bio-nexus-dialog-footer { display:flex;align-items:center;justify-content:flex-end;gap:var(--bio-nexus-space-2);padding:var(--bio-nexus-dialog-footer-padding);border-top:1px solid var(--bio-nexus-color-border);background:var(--bio-nexus-color-surface-soft); }
 .bio-nexus-dialog-footer-status { margin-right:auto; }
 .bio-nexus-dialog-header .bio-nexus-dialog-close-button { flex:0 0 44px;width:44px;height:44px;border:0;border-radius:50%;background:var(--bio-nexus-color-surface-soft);color:var(--bio-nexus-color-text); }
-/* BIO NEXUS SHARED DIALOG HEADER SOFT FINAL START */
-dialog.bio-nexus-dialog > .bio-nexus-dialog-shell > .bio-nexus-dialog-header {
-  background-color: var(--bio-nexus-color-surface-soft) !important;
-}
-/* BIO NEXUS SHARED DIALOG HEADER SOFT FINAL END */
-/* BIO NEXUS SHARED DIALOG HEADER COMPACT FINAL START */
-dialog.bio-nexus-dialog > .bio-nexus-dialog-shell > .bio-nexus-dialog-header {
-  min-height: 60px !important;
-  padding: 8px 16px !important;
-  background-color: var(--bio-nexus-color-surface-soft) !important;
-}
-dialog.bio-nexus-dialog > .bio-nexus-dialog-shell > .bio-nexus-dialog-header .bio-nexus-dialog-heading { gap: 1px; }
-dialog.bio-nexus-dialog > .bio-nexus-dialog-shell > .bio-nexus-dialog-header .bio-nexus-dialog-kicker { line-height: 1.05; }
-dialog.bio-nexus-dialog > .bio-nexus-dialog-shell > .bio-nexus-dialog-header .bio-nexus-dialog-title { line-height: 1.12; }
-dialog.bio-nexus-dialog > .bio-nexus-dialog-shell > .bio-nexus-dialog-header .bio-nexus-dialog-close-button {
-  flex: 0 0 38px !important;
-  width: 38px !important;
-  height: 38px !important;
-}
-/* BIO NEXUS SHARED DIALOG HEADER COMPACT FINAL END */
