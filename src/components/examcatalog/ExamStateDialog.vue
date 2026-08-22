@@ -2,7 +2,7 @@
   <BioNexusDialog ref="dialog" size="compact" kicker="Estado del registro" :title="dialogTitle" @close="handleClosed">
     <section class="exam-state-body">
       <p><strong>{{ target?.description }}</strong></p>
-      <p>{{ target?.annulled ? "El registro volvera a estar disponible." : "El registro permanecera visible en el catalogo, pero no estara disponible en nuevos procesos." }}</p>
+      <p>{{ target?.annulled ? "El registro volverá a estar disponible." : "El registro permanecerá visible en el catálogo, pero no estará disponible en nuevos procesos." }}</p>
       <div v-if="errorMessage" class="bio-nexus-message bio-nexus-message-error">{{ errorMessage }}</div>
     </section>
     <template #footer>
