@@ -4,7 +4,7 @@
       <BioNexusFormField label="Descripción" field-id="exam-group-description" :error="descriptionError" :help="draft.description.length + ' de 150 caracteres'" required>
         <input id="exam-group-description" ref="firstInput" v-model="draft.description" class="bio-nexus-field" maxlength="150" autocomplete="off" />
       </BioNexusFormField>
-      <label class="exam-check"><input v-model="draft.its_exam" type="checkbox" /><span>Es análisis clínico</span></label>
+      <BioNexusCheckbox v-model="draft.its_exam" class="exam-check" label="Es análisis clínico" />
       <div v-if="errorMessage" class="bio-nexus-message bio-nexus-message-error" role="alert">{{ errorMessage }}</div>
     </section>
     <template #footer>
@@ -15,6 +15,7 @@
 </template>
 
 <script setup>
+import BioNexusCheckbox from "@/components/ui/BioNexusCheckbox.vue";
 import { computed, nextTick, reactive, ref } from "vue";
 import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
 import BioNexusDialog from "@/components/ui/BioNexusDialog.vue";

@@ -25,22 +25,7 @@
             v-if="getItemType(slotValue) === 'module'"
             class="permission-tree-module-heading"
           >
-            <input
-              v-if="selectable"
-              type="checkbox"
-              class="permission-tree-module-checkbox"
-              :checked="isModuleSelected(slotValue)"
-              :indeterminate="isModulePartial(slotValue)"
-              :disabled="
-                disabled ||
-                getActivePermissions(slotValue).length === 0
-              "
-              :aria-label="
-                `Seleccionar todos los permisos de ${getItemName(slotValue)}`
-              "
-              @click.stop
-              @change="toggleModule(slotValue)"
-            />
+            <BioNexusCheckbox v-if="selectable" class="permission-tree-module-checkbox" :checked="isModuleSelected(slotValue)" :indeterminate="isModulePartial(slotValue)" :disabled="disabled || getActivePermissions(slotValue).length === 0" :aria-label="`Seleccionar todos los permisos de ${getItemName(slotValue)}`" stop-propagation @change="toggleModule(slotValue)" />
 
             <strong>{{ getItemName(slotValue) }}</strong>
 
@@ -86,17 +71,7 @@
             v-if="selectable"
             class="permission-tree-select-all"
           >
-            <input
-              type="checkbox"
-              :checked="isModuleSelected(slotValue)"
-              :indeterminate="isModulePartial(slotValue)"
-              :disabled="
-                disabled ||
-                getActivePermissions(slotValue).length === 0
-              "
-              @click.stop
-              @change="toggleModule(slotValue)"
-            />
+            <BioNexusCheckbox :checked="isModuleSelected(slotValue)" :indeterminate="isModulePartial(slotValue)" :disabled="disabled || getActivePermissions(slotValue).length === 0" stop-propagation @change="toggleModule(slotValue)" />
 
             <span>Seleccionar todo</span>
           </label>
@@ -132,30 +107,14 @@
         v-if="selectable"
         #item-prepend-icon="slotValue"
       >
-        <input
-          v-if="
-            getItemType(slotValue) === 'permission'
-          "
-          type="checkbox"
-          class="permission-tree-checkbox"
-          :checked="
-            isPermissionSelected(
-              getPermissionId(slotValue),
-            )
-          "
-          :disabled="
-            disabled ||
-            !getPermissionActive(slotValue)
-          "
-          @click.stop
-          @change="togglePermission(slotValue)"
-        />
+        <BioNexusCheckbox v-if="getItemType(slotValue) === 'permission'" class="permission-tree-checkbox" :checked="isPermissionSelected(getPermissionId(slotValue))" :disabled="disabled || !getPermissionActive(slotValue)" stop-propagation @change="togglePermission(slotValue)" />
       </template>
     </Vue3TreeVue>
   </div>
 </template>
 
 <script setup>
+import BioNexusCheckbox from "@/components/ui/BioNexusCheckbox.vue";
 import { computed, useSlots } from "vue";
 import Vue3TreeVue from "vue3-tree-vue";
 import "vue3-tree-vue/dist/style.css";
@@ -603,9 +562,9 @@ function toggleModule(slotValue) {
 }
 
 .permission-tree-checkbox {
-  width: 16px;
-  height: 16px;
-  accent-color: var(--bio-nexus-color-primary);
+  width: 20px;
+  height: 20px;
+  margin-inline-end: 4px;
 }
 
 .permission-tree-badge {
@@ -748,10 +707,9 @@ function toggleModule(slotValue) {
 
 .permission-tree-module-checkbox {
   flex: 0 0 auto;
-  width: 16px;
-  height: 16px;
-  margin: 0;
-  accent-color: var(--bio-nexus-color-primary);
+  width: 20px;
+  height: 20px;
+  margin: 0 4px 0 0;
   cursor: pointer;
 }
 

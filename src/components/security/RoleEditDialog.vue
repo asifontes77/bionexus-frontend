@@ -1,14 +1,5 @@
 <template>
-<dialog ref="dialog" class="bio-nexus-dialog role-dialog role-edit-dialog" tabindex="-1">
-      <form class="dialog-shell" novalidate @submit.prevent="emit('submit')">
-        <header class="dialog-header">
-          <div>
-            <p>Editar rol</p>
-            <h3>{{ selectedRole?.name || "Rol" }}</h3>
-          </div>
-
-          <BioNexusDialogCloseButton @click="emit('close')" />
-        </header>
+<BioNexusDialog ref="dialog" size="standard" kicker="Editar rol" :title="selectedRole?.name || &quot;Rol&quot;" @close="handleDialogClosed">
 
         <div class="dialog-body role-dialog-form">
                     <BioNexusFormField
@@ -64,20 +55,9 @@
             ></textarea>
           </BioNexusFormField>
 
-          <label class="dialog-field-wide role-active-option bio-nexus-option">
-            <input v-model="updateRoleForm.isActive" type="checkbox"
-              :disabled="editingRole || selectedRole?.code === 'admin'" />
-            <span class="bio-nexus-option-copy">
-              <strong>Rol activo</strong>
-              <small>
-                {{
-                  selectedRole?.code === "admin"
-                    ? "El rol administrador debe permanecer activo."
-                    : "Los roles inactivos no pueden asignarse a nuevos usuarios."
-                }}
-              </small>
-            </span>
-          </label>
+          <div class="dialog-field-wide role-active-option">
+            <BioNexusCheckbox v-model="updateRoleForm.isActive" :disabled="editingRole || selectedRole?.code === 'admin'" label="Rol activo" :help="selectedRole?.code === 'admin' ? 'El rol administrador debe permanecer activo.' : 'Los roles inactivos no pueden asignarse a nuevos usuarios.'" />
+          </div>
 
           <div v-if="updateRoleError" class="dialog-field-wide bio-nexus-inline-message bio-nexus-message-error" role="alert">
             {{ updateRoleError }}
@@ -89,43 +69,44 @@
           </div>
         </div>
 
-        <footer class="dialog-footer">
+        <template #footer>
           <button type="button" class="bio-nexus-action bio-nexus-action-secondary" :disabled="editingRole"
             @click="emit('close')">
   <BioNexusActionIcon action="cancel" />
             Cancelar
           </button>
 
-          <button type="submit" class="bio-nexus-action bio-nexus-action-primary" :disabled="editingRole || !canUpdateRoles || !hasRoleMetadataChanges">
+          <button  class="bio-nexus-action bio-nexus-action-primary" :disabled="editingRole || !canUpdateRoles || !hasRoleMetadataChanges" type="button" @click="emit('submit')">
   <BioNexusActionIcon action="save" />
             {{ editingRole ? "Guardando..." : "Guardar" }}
           </button>
-        </footer>
-      </form>
-    </dialog>
+        </template>
+  </BioNexusDialog>
 </template>
 
 <script setup>
+import BioNexusCheckbox from "@/components/ui/BioNexusCheckbox.vue";
 import { ref } from "vue";
 import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
-import BioNexusDialogCloseButton from "@/components/ui/BioNexusDialogCloseButton.vue";
+import BioNexusDialog from "@/components/ui/BioNexusDialog.vue";
 import BioNexusFormField from "@/components/ui/BioNexusFormField.vue";
 import BioNexusPermissionTree from "@/components/tree/BioNexusPermissionTree.vue";
 
 const props = defineProps({ selectedRole: { type: Object, default: null }, updateRoleForm: { type: Object, required: true }, updateRoleNameError: String, updateRoleError: String, updateRoleMessage: String, editingRole: Boolean, canUpdateRoles: Boolean, hasRoleMetadataChanges: Boolean });
 const emit = defineEmits(["close","submit"]);
 const dialog = ref(null);
-function showModal() { if (!dialog.value?.open) dialog.value?.showModal(); }
-function close() { if (dialog.value?.open) dialog.value.close(); }
-function focus(options) { dialog.value?.focus(options); }
+function showModal() { dialog.value?.open(); }
+function close() { dialog.value?.close(); }
+function focus(options) { dialog.value?.element?.focus(options); }
+function handleDialogClosed() {}
 defineExpose({ showModal, close, focus });
 </script>
 
 <style scoped>
 .dialog-field-wide { grid-column: 1 / -1; }
 .role-dialog-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--bio-nexus-space-3); }
-.role-active-option { display: grid; grid-template-columns: 24px minmax(0, 1fr); align-items: center; }
-.role-active-option input { width: 18px; height: 18px; accent-color: var(--bio-nexus-color-primary); }
+.role-active-option { display: block; min-width: 0; }
+.role-active-option :deep(.bio-nexus-checkbox) { width: 100%; }
 .role-summary-card { display: grid; gap: var(--bio-nexus-space-4); padding: var(--bio-nexus-space-4); }
 .role-summary-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--bio-nexus-space-4); padding-bottom: var(--bio-nexus-space-3); border-bottom: 1px solid var(--bio-nexus-color-border); }
 .role-summary-code { color: var(--bio-nexus-color-primary-strong); font-size: var(--bio-nexus-font-size-sm); font-weight: var(--bio-nexus-font-weight-bold); }
@@ -153,4 +134,12 @@ defineExpose({ showModal, close, focus });
     min-width: 0;
   }
 }
-</style>
+
+/* BIO NEXUS ROLE ACTIVE SPACING START */
+.role-active-option {
+  padding: var(--bio-nexus-space-2) var(--bio-nexus-space-1);
+}
+.role-active-option :deep(.bio-nexus-checkbox-copy) {
+  min-width: 0;
+}
+/* BIO NEXUS ROLE ACTIVE SPACING END */</style>

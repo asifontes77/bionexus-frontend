@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="bio-nexus-grid-export">
     <button
       type="button"
@@ -14,17 +14,8 @@
       <span>Exportar</span>
     </button>
 
-    <dialog ref="dialog" class="bio-nexus-dialog bio-nexus-grid-export-dialog" @cancel.prevent="closeDialog">
-      <form class="dialog-shell" @submit.prevent="confirmExport">
-        <header class="dialog-header">
-          <div>
-            <p>Exportacion del grid</p>
-            <h3>Configurar exportacion</h3>
-          </div>
-          <BioNexusDialogCloseButton @click="closeDialog" />
-        </header>
-
-        <section class="dialog-body bio-nexus-grid-export-dialog-body">
+        <BioNexusDialog ref="dialog" size="standard" kicker="Exportacion del grid" title="Configurar exportacion" @close="handleClosed">
+      <section class="bio-nexus-grid-export-dialog-body">
           <section class="bio-nexus-grid-export-section" aria-labelledby="export-format-title">
             <h4 id="export-format-title">Formato</h4>
             <div class="bio-nexus-grid-export-choice-row">
@@ -64,16 +55,15 @@
             <p class="bio-nexus-grid-export-help">Selecciona las columnas que apareceran en el archivo.</p>
             <div class="bio-nexus-grid-export-columns">
               <label v-for="column in availableColumns" :key="column.id" class="bio-nexus-grid-export-column">
-                <input v-model="selectedColumnIds" type="checkbox" :value="column.id" />
+                <BioNexusCheckbox v-model="selectedColumnIds" :value="column.id" />
                 <span>{{ column.label }}</span>
               </label>
             </div>
           </section>
 
           <p v-if="errorMessage" class="bio-nexus-message bio-nexus-message-error" role="alert">{{ errorMessage }}</p>
-        </section>
-
-        <footer class="dialog-footer">
+              </section>
+      <template #footer>
           <button type="button" class="bio-nexus-action bio-nexus-action-secondary" @click="closeDialog">
             <BioNexusActionIcon action="cancel" />
             <span>Cancelar</span>
@@ -82,16 +72,16 @@
             <BioNexusActionIcon action="save" />
             <span>Exportar</span>
           </button>
-        </footer>
-      </form>
-    </dialog>
+              </template>
+    </BioNexusDialog>
   </div>
 </template>
 
 <script setup>
+import BioNexusCheckbox from "@/components/ui/BioNexusCheckbox.vue";
 import { ref } from "vue";
 import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
-import BioNexusDialogCloseButton from "@/components/ui/BioNexusDialogCloseButton.vue";
+import BioNexusDialog from "@/components/ui/BioNexusDialog.vue";
 
 const props = defineProps({
   disabled: { type: Boolean, default: false },
@@ -111,11 +101,14 @@ function openDialog() {
   availableColumns.value = columns;
   selectedColumnIds.value = columns.map((column) => column.id);
   errorMessage.value = columns.length ? "" : "No hay columnas disponibles para exportar.";
-  dialog.value?.showModal();
+  dialog.value?.open();
 }
 
 function closeDialog() {
-  if (dialog.value?.open) dialog.value.close();
+  dialog.value?.close();
+}
+function handleClosed() {
+  errorMessage.value = "";
 }
 
 function selectAll() {
@@ -157,25 +150,6 @@ function confirmExport() {
 .bio-nexus-grid-export-trigger-icon {
   width: 17px;
   height: 17px;
-}
-
-.bio-nexus-grid-export-dialog {
-  width: min(620px, calc(100vw - 32px));
-  max-width: 620px;
-  padding: 0;
-  border: 1px solid var(--bio-nexus-color-border-strong);
-  border-radius: var(--bio-nexus-radius-md);
-  background: var(--bio-nexus-color-surface);
-  color: var(--bio-nexus-color-text);
-  box-shadow: var(--bio-nexus-shadow-md);
-}
-
-.bio-nexus-grid-export-dialog::backdrop {
-  background: rgb(15 23 42 / 38%);
-}
-
-.bio-nexus-grid-export-dialog .dialog-shell {
-  width: 100%;
 }
 
 .bio-nexus-grid-export-dialog-body {
@@ -298,9 +272,6 @@ function confirmExport() {
 }
 
 @media (max-width: 600px) {
-  .bio-nexus-grid-export-dialog {
-    width: calc(100vw - 16px);
-  }
 
   .bio-nexus-grid-export-choice-row,
   .bio-nexus-grid-export-columns {

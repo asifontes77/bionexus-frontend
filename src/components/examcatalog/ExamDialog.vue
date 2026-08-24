@@ -1,11 +1,11 @@
 <template>
-  <BioNexusDialog ref="dialog" size="wide" :kicker="mode === 'create' ? 'Nuevo registro' : 'Editar registro'" :title="mode === 'create' ? 'Crear examen' : 'Editar examen'" @close="handleClosed">
+  <BioNexusDialog ref="dialog" size="wide" dialog-class="exam-entry-dialog" shell-class="exam-entry-shell" body-class="exam-entry-dialog-body" :kicker="mode === 'create' ? 'Nuevo registro' : 'Editar registro'" :title="mode === 'create' ? 'Crear examen' : 'Editar examen'" @close="handleClosed">
     <section class="exam-body">
       <div class="exam-main-grid">
         <BioNexusFormField label="Descripción" field-id="exam-description" :error="descriptionError" required><input id="exam-description" ref="firstInput" v-model="draft.description" class="bio-nexus-field" maxlength="60" /></BioNexusFormField>
         <BioNexusFormField label="Abreviatura" field-id="exam-abbreviation" :error="abbreviationError" required><input id="exam-abbreviation" v-model="draft.abbreviation" class="bio-nexus-field" maxlength="10" /></BioNexusFormField>
         <BioNexusFormField label="Impuesto" field-id="exam-tax"><select id="exam-tax" v-model.number="draft.tax_id" class="bio-nexus-field"><option v-for="tax in taxes" :key="tax.id" :value="tax.id">{{ tax.description }} ({{ tax.value.toFixed(2) }}%)</option></select></BioNexusFormField>
-        <label class="exam-check"><input v-model="draft.special_test" type="checkbox" /><span>Prueba especial</span></label>
+        <BioNexusCheckbox v-model="draft.special_test" class="exam-check" label="Prueba especial" />
       </div>
       <section class="exam-price-panel"><h4>Tarifas</h4><div class="exam-price-grid"><BioNexusFormField v-for="number in 6" :key="number" :label="'Precio ' + number" :field-id="'exam-cost-' + number"><input :id="'exam-cost-' + number" v-model.number="draft['cost' + number]" class="bio-nexus-field" type="number" min="0" step="0.01" /></BioNexusFormField></div></section>
       <div v-if="errorMessage" class="bio-nexus-message bio-nexus-message-error" role="alert">{{ errorMessage }}</div>
@@ -18,6 +18,7 @@
 </template>
 
 <script setup>
+import BioNexusCheckbox from "@/components/ui/BioNexusCheckbox.vue";
 import { computed, nextTick, reactive, ref } from "vue";
 import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
 import BioNexusDialog from "@/components/ui/BioNexusDialog.vue";
@@ -52,6 +53,60 @@ defineExpose({ openCreate, openEdit, close, clearError, setError });
 .exam-price-panel { padding: var(--bio-nexus-space-3); border: 1px solid var(--bio-nexus-color-border); border-radius: var(--bio-nexus-radius-md); }
 .exam-price-panel h4 { margin: 0 0 var(--bio-nexus-space-3); color: var(--bio-nexus-color-primary-strong); }
 .exam-price-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--bio-nexus-space-3); }
-.exam-check { display: flex; align-items: center; gap: var(--bio-nexus-space-2); }
+.exam-check { display: flex; grid-column: 1 / -1; align-items: center; gap: var(--bio-nexus-space-2); min-height: 36px; }
 @media (max-width: 720px) { .exam-main-grid, .exam-price-grid { grid-template-columns: 1fr; } }
+</style>
+<style>
+/* BIO NEXUS EXAM ENTRY LAYOUT START */
+dialog.bio-nexus-dialog.exam-entry-dialog {
+  width: min(980px, calc(100vw - 32px)) !important;
+  height: auto !important;
+  max-height: calc(100dvh - 48px) !important;
+}
+dialog.bio-nexus-dialog.exam-entry-dialog > .exam-entry-shell {
+  height: auto !important;
+  max-height: calc(100dvh - 48px) !important;
+}
+dialog.bio-nexus-dialog.exam-entry-dialog > .exam-entry-shell > .exam-entry-dialog-body {
+  flex: 0 1 auto !important;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+@media (max-width: 720px) {
+  dialog.bio-nexus-dialog.exam-entry-dialog {
+    width: calc(100vw - 16px) !important;
+  }
+}
+/* BIO NEXUS EXAM ENTRY LAYOUT END */
+</style>
+<style>
+
+</style>
+<style>
+
+</style>
+<style>
+
+</style>
+<style>
+/* BIO NEXUS EXAM ENTRY CENTER V4 START */
+dialog.bio-nexus-dialog.exam-entry-dialog {
+  position: fixed !important;
+  inset: 50% auto auto 50% !important;
+  margin: 0 !important;
+  width: min(980px, calc(100vw - 32px)) !important;
+  height: auto !important;
+  max-height: calc(100dvh - 32px) !important;
+  transform: translate(-50%, -50%) !important;
+}
+dialog.bio-nexus-dialog.exam-entry-dialog > .exam-entry-shell {
+  max-height: calc(100dvh - 32px) !important;
+}
+dialog.bio-nexus-dialog.exam-entry-dialog > .exam-entry-shell > .exam-entry-dialog-body {
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+/* BIO NEXUS EXAM ENTRY CENTER V4 END */
 </style>

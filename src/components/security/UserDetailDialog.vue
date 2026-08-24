@@ -1,15 +1,6 @@
 <template>
-  <dialog ref="dialog" class="bio-nexus-dialog user-detail-dialog" tabindex="-1">
-    <div class="dialog-shell">
-      <header class="dialog-header">
-        <div>
-          <p>Detalle administrativo</p>
-          <h3>{{ authorization?.user?.name || "Usuario" }}</h3>
-        </div>
-        <BioNexusDialogCloseButton @click="close" />
-      </header>
-
-      <div class="dialog-body">
+    <BioNexusDialog ref="dialog" size="wide" kicker="Detalle administrativo" :title="authorization?.user?.name || 'Usuario'">
+    <section class="user-detail-body">
         <div v-if="loading" class="bio-nexus-empty-state">Consultando autorización...</div>
         <div v-else-if="errorMessage" class="bio-nexus-message bio-nexus-message-error" role="alert">{{ errorMessage }}</div>
         <div v-else-if="authorization" class="user-detail-content">
@@ -61,21 +52,19 @@
           </article>
         </section>
         </div>
-      </div>
-
-      <footer class="dialog-footer">
+          </section>
+    <template #footer>
         <button type="button" class="bio-nexus-action bio-nexus-action-secondary" @click="close">
           <BioNexusActionIcon action="close" />Cerrar
         </button>
-      </footer>
-    </div>
-  </dialog>
+          </template>
+  </BioNexusDialog>
 </template>
 
 <script setup>
 import { ref } from "vue";
 import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
-import BioNexusDialogCloseButton from "@/components/ui/BioNexusDialogCloseButton.vue";
+import BioNexusDialog from "@/components/ui/BioNexusDialog.vue";
 
 defineProps({
   authorization: { type: Object, default: null },
@@ -91,13 +80,10 @@ function getUserInitials(user) {
 }
 
 function open() {
-  if (!dialog.value || dialog.value.open) return;
-  dialog.value.showModal();
-  requestAnimationFrame(() => dialog.value?.focus({ preventScroll: true }));
+  dialog.value?.open();
 }
-
 function close() {
-  if (dialog.value?.open) dialog.value.close();
+  dialog.value?.close();
 }
 
 defineExpose({ open, close });
@@ -105,13 +91,7 @@ function assetUrl(value) { return value ? `/api/public/images/${value.split("/")
 </script>
 
 <style scoped>
-.bio-nexus-dialog { width: min(720px, calc(100vw - 32px)); max-width: none; max-height: calc(100vh - 32px); padding: 0; border: 1px solid var(--bio-nexus-color-border-strong); border-radius: var(--bio-nexus-radius-md); background: var(--bio-nexus-color-surface); color: var(--bio-nexus-color-text); box-shadow: var(--bio-nexus-shadow-md); overflow: hidden; }
-.bio-nexus-dialog::backdrop { background: color-mix(in srgb, var(--bio-nexus-color-sidebar-strong) 48%, transparent); backdrop-filter: blur(2px); }
-.dialog-shell { display: flex; flex-direction: column; width: 100%; max-height: calc(100vh - 32px); overflow: hidden; }
-.dialog-header { display: flex; flex: 0 0 auto; align-items: center; justify-content: space-between; gap: var(--bio-nexus-space-3); padding: var(--bio-nexus-space-3) var(--bio-nexus-space-4); border-bottom: 1px solid var(--bio-nexus-color-border); background: var(--bio-nexus-color-surface); }
-.dialog-header p, .dialog-header h3 { margin: 0; }
-.dialog-header p { margin-bottom: var(--bio-nexus-space-1); color: var(--bio-nexus-color-accent-strong); font-size: var(--bio-nexus-font-size-xs); font-weight: var(--bio-nexus-font-weight-bold); text-transform: uppercase; letter-spacing: 0.06em; }
-.dialog-body { flex: 1 1 auto; min-height: 0; padding: var(--bio-nexus-space-4); overflow: auto; scrollbar-gutter: stable; }
+.user-detail-body { flex: 1 1 auto; min-height: 0; padding: var(--bio-nexus-space-4); overflow: auto; scrollbar-gutter: stable; }
 .dialog-footer { display: flex; flex: 0 0 auto; align-items: center; justify-content: flex-end; gap: var(--bio-nexus-space-2); padding: var(--bio-nexus-space-3) var(--bio-nexus-space-4); border-top: 1px solid var(--bio-nexus-color-border); background: var(--bio-nexus-color-surface-soft); }
 .user-detail-content { display: grid; gap: var(--bio-nexus-space-4); }
 .user-detail-heading { display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; align-items: center; gap: var(--bio-nexus-space-3); padding-bottom: var(--bio-nexus-space-3); border-bottom: 1px solid var(--bio-nexus-color-border); }
@@ -128,7 +108,9 @@ function assetUrl(value) { return value ? `/api/public/images/${value.split("/")
 .effective-summary article { display: grid; gap: var(--bio-nexus-space-1); padding: var(--bio-nexus-space-3); border: 1px solid var(--bio-nexus-color-border); border-radius: var(--bio-nexus-radius-md); background: var(--bio-nexus-color-surface-soft); }
 .effective-summary span { color: var(--bio-nexus-color-text-muted); font-size: var(--bio-nexus-font-size-xs); }
 .effective-summary strong { color: var(--bio-nexus-color-primary-strong); font-size: 18px; }
-@media (max-width: 720px) { .bio-nexus-dialog { width: calc(100vw - 16px); } .user-detail-grid, .effective-summary { grid-template-columns: 1fr; } .user-detail-heading { grid-template-columns: 48px minmax(0, 1fr); } .user-detail-heading > .bio-nexus-badge { grid-column: 2; justify-self: start; } }
+@media (max-width: 720px) { .user-detail-grid, .effective-summary { grid-template-columns: 1fr; } .user-detail-heading { grid-template-columns: 48px minmax(0, 1fr); } .user-detail-heading > .bio-nexus-badge { grid-column: 2; justify-self: start; } }
+
+
 </style>
 <style>
 .user-detail-media { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--bio-nexus-space-3); }
@@ -138,4 +120,19 @@ function assetUrl(value) { return value ? `/api/public/images/${value.split("/")
 .user-detail-image img { display: block; max-width: 100%; max-height: 150px; object-fit: contain; }
 .user-detail-photo img { width: 124px; height: 124px; border-radius: 50%; object-fit: cover; }
 @media (max-width: 640px) { .user-detail-media { grid-template-columns: 1fr; } }
+</style>
+<style>
+/* BIO NEXUS USER DETAIL WIDTH GLOBAL START */
+dialog.bio-nexus-dialog.bio-nexus-dialog-size-wide:has(.user-detail-body) {
+  width: min(860px, calc(100vw - 32px)) !important;
+  max-width: 860px !important;
+}
+
+@media (max-width: 720px) {
+  dialog.bio-nexus-dialog.bio-nexus-dialog-size-wide:has(.user-detail-body) {
+    width: calc(100vw - 16px) !important;
+    max-width: none !important;
+  }
+}
+/* BIO NEXUS USER DETAIL WIDTH GLOBAL END */
 </style>

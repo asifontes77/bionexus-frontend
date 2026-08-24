@@ -1,93 +1,59 @@
 <template>
-<dialog ref="dialog" class="bio-nexus-dialog role-dialog role-detail-dialog" tabindex="-1">
-      <div class="dialog-shell">
-        <header class="dialog-header">
-          <div>
-            <p>Detalle administrativo</p>
-            <h3>{{ selectedRole?.name || "Rol" }}</h3>
-          </div>
-
-          <BioNexusDialogCloseButton @click="emit('close')" />
-        </header>
-
-        <div v-if="selectedRole" class="dialog-body role-summary-card">
-          <div class="role-summary-heading">
-            <div>
-              <span class="role-summary-code">{{ selectedRole.code }}</span>
-              <h4>{{ selectedRole.name }}</h4>
-              <p>
-                {{ selectedRole.isSystem ? "Rol de sistema" : "Rol configurable" }}
-              </p>
-            </div>
-
-            <span class="bio-nexus-badge" :class="{
-              'bio-nexus-badge-warning': !selectedRole.isActive,
-            }">
-              {{ selectedRole.isActive ? "Activo" : "Inactivo" }}
-            </span>
-          </div>
-
-          <section class="role-summary-description">
-            <span>Descripción</span>
-            <p>{{ selectedRole.description || "Sin descripción" }}</p>
-          </section>
-
-          <dl class="role-summary-metadata">
-            <div>
-              <dt>Identificador</dt>
-              <dd>{{ selectedRole.id }}</dd>
-            </div>
-
-            <div>
-              <dt>Tipo</dt>
-              <dd>{{ selectedRole.isSystem ? "Sistema" : "Configurable" }}</dd>
-            </div>
-          </dl>
+  <BioNexusDialog ref="dialog" size="standard" dialog-class="role-detail-dialog" kicker="Detalle administrativo" :title="selectedRole?.name || 'Rol'" @close="handleClosed">
+    <section v-if="selectedRole" class="role-summary-card">
+      <div class="role-summary-heading">
+        <div>
+          <span class="role-summary-code">{{ selectedRole.code }}</span>
+          <h4>{{ selectedRole.name }}</h4>
+          <p>{{ selectedRole.isSystem ? "Rol de sistema" : "Rol configurable" }}</p>
         </div>
-        <footer class="dialog-footer">
-          <button type="button" class="bio-nexus-action bio-nexus-action-secondary" @click="emit('close')">
-  <BioNexusActionIcon action="close" />
-            Cerrar
-          </button>
-        </footer>
+        <span class="bio-nexus-badge" :class="{ 'bio-nexus-badge-warning': !selectedRole.isActive }">{{ selectedRole.isActive ? "Activo" : "Inactivo" }}</span>
       </div>
-    </dialog>
+      <section class="role-summary-description">
+        <span>Descripcion</span>
+        <p>{{ selectedRole.description || "Sin descripcion" }}</p>
+      </section>
+      <dl class="role-summary-metadata role-summary-metadata-single">
+        <div><dt>Tipo</dt><dd>{{ selectedRole.isSystem ? "Sistema" : "Configurable" }}</dd></div>
+      </dl>
+    </section>
+    <template #footer>
+      <button type="button" class="bio-nexus-action bio-nexus-action-secondary" @click="close"><BioNexusActionIcon action="close" />Cerrar</button>
+    </template>
+  </BioNexusDialog>
 </template>
-
 <script setup>
 import { ref } from "vue";
 import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
-import BioNexusDialogCloseButton from "@/components/ui/BioNexusDialogCloseButton.vue";
-import BioNexusFormField from "@/components/ui/BioNexusFormField.vue";
-import BioNexusPermissionTree from "@/components/tree/BioNexusPermissionTree.vue";
-
+import BioNexusDialog from "@/components/ui/BioNexusDialog.vue";
 const props = defineProps({ selectedRole: { type: Object, default: null } });
 const emit = defineEmits(["close"]);
 const dialog = ref(null);
-function showModal() { if (!dialog.value?.open) dialog.value?.showModal(); }
-function close() { if (dialog.value?.open) dialog.value.close(); }
-function focus(options) { dialog.value?.focus(options); }
+function showModal() { dialog.value?.open(); }
+function close() { dialog.value?.close(); }
+function focus(options) { dialog.value?.element?.focus(options); }
+function handleClosed() { emit("close"); }
 defineExpose({ showModal, close, focus });
 </script>
-
 <style scoped>
-.dialog-field-wide { grid-column: 1 / -1; }
-.role-dialog-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--bio-nexus-space-3); }
-.role-active-option { display: grid; grid-template-columns: 24px minmax(0, 1fr); align-items: center; }
-.role-active-option input { width: 18px; height: 18px; accent-color: var(--bio-nexus-color-primary); }
-.role-summary-card { display: grid; gap: var(--bio-nexus-space-4); padding: var(--bio-nexus-space-4); }
+.role-summary-card { display: grid; gap: var(--bio-nexus-space-4); }
 .role-summary-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--bio-nexus-space-4); padding-bottom: var(--bio-nexus-space-3); border-bottom: 1px solid var(--bio-nexus-color-border); }
+.role-summary-heading h4, .role-summary-heading p { margin: 0; }
+.role-summary-heading p { margin-top: var(--bio-nexus-space-1); color: var(--bio-nexus-color-text-muted); }
 .role-summary-code { color: var(--bio-nexus-color-primary-strong); font-size: var(--bio-nexus-font-size-sm); font-weight: var(--bio-nexus-font-weight-bold); }
 .role-summary-description { padding: var(--bio-nexus-space-3); border: 1px solid var(--bio-nexus-color-border); border-radius: var(--bio-nexus-radius-md); background: var(--bio-nexus-color-surface-soft); }
+.role-summary-description > span { color: var(--bio-nexus-color-text-muted); font-size: var(--bio-nexus-font-size-xs); font-weight: var(--bio-nexus-font-weight-bold); text-transform: uppercase; }
+.role-summary-description p { margin: var(--bio-nexus-space-1) 0 0; color: var(--bio-nexus-color-text-secondary); }
 .role-summary-metadata { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--bio-nexus-space-3); margin: 0; }
-.role-summary-metadata > div { padding: var(--bio-nexus-space-3); border: 1px solid var(--bio-nexus-color-border); border-radius: var(--bio-nexus-radius-md); }
-.role-summary-metadata dd { margin: var(--bio-nexus-space-1) 0 0; font-weight: var(--bio-nexus-font-weight-bold); }
-.permissions-dialog, .catalog-dialog { width: min(980px, calc(100vw - 32px)); max-width: 980px; }
-.permissions-dialog-toolbar { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: var(--bio-nexus-space-3); padding: var(--bio-nexus-space-3) var(--bio-nexus-space-4); border-bottom: 1px solid var(--bio-nexus-color-border); background: var(--bio-nexus-color-surface-soft); }
-.permissions-dialog-body, .catalog-grid-body { min-height: 0; overflow: auto; }
-.role-permission-tree, .catalog-tree { width: 100%; min-width: 0; }
-.dialog-pending-status { margin-right: auto; color: var(--bio-nexus-color-text-muted); font-size: var(--bio-nexus-font-size-sm); }
-@media (max-width: 720px) { .role-dialog-form, .permissions-dialog-toolbar, .role-summary-metadata { grid-template-columns: 1fr; } .role-summary-heading { flex-direction: column; } }
+.role-summary-metadata > div { padding: var(--bio-nexus-space-3); border: 1px solid var(--bio-nexus-color-border); border-radius: var(--bio-nexus-radius-md); background: var(--bio-nexus-color-surface); }
+.role-summary-metadata dt { color: var(--bio-nexus-color-text-muted); font-size: var(--bio-nexus-font-size-xs); font-weight: var(--bio-nexus-font-weight-bold); text-transform: uppercase; }
+.role-summary-metadata dd { margin: var(--bio-nexus-space-1) 0 0; color: var(--bio-nexus-color-text); font-weight: var(--bio-nexus-font-weight-bold); }
+@media (max-width: 720px) { .role-summary-heading { flex-direction: column; } .role-summary-metadata { grid-template-columns: 1fr; } }
 
-.role-detail-dialog { width: min(760px, calc(100vw - 32px)); }
+.role-summary-metadata-single {
+  grid-template-columns: minmax(220px, 360px);
+}</style>
+<style>
+dialog.bio-nexus-dialog.role-detail-dialog { width: min(720px, calc(100vw - 32px)) !important; height: auto !important; max-height: calc(100dvh - 48px) !important; }
+@media (max-width: 720px) { dialog.bio-nexus-dialog.role-detail-dialog { width: calc(100vw - 16px) !important; } }
 </style>

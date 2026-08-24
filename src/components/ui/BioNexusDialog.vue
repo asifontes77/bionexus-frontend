@@ -1,6 +1,6 @@
 <template>
-  <dialog ref="dialog" class="bio-nexus-dialog" :class="dialogClasses" tabindex="-1" @cancel.prevent="requestClose" @click="onBackdropClick" @close="handleNativeClose">
-    <section class="bio-nexus-dialog-shell">
+  <dialog ref="dialog" class="bio-nexus-dialog" :class="[dialogClasses, dialogClass]" tabindex="-1" @cancel.prevent="requestClose" @click="onBackdropClick" @close="handleNativeClose">
+    <section class="bio-nexus-dialog-shell" :class="shellClass">
       <header class="bio-nexus-dialog-header">
         <div class="bio-nexus-dialog-heading">
           <p v-if="kicker" class="bio-nexus-dialog-kicker">{{ kicker }}</p>
@@ -14,7 +14,7 @@
       </header>
 
       <section v-if="$slots.toolbar" class="bio-nexus-dialog-toolbar"><slot name="toolbar" /></section>
-      <main class="bio-nexus-dialog-body" :class="{ 'bio-nexus-dialog-body-flush': bodyFlush }"><slot /></main>
+      <main class="bio-nexus-dialog-body" :class="[bodyClass, { 'bio-nexus-dialog-body-flush': bodyFlush, 'bio-nexus-dialog-body-scroll-hidden': bodyScroll === 'hidden' }]"><slot /></main>
 
       <footer v-if="$slots.footer || $slots['footer-status']" class="bio-nexus-dialog-footer">
         <div v-if="$slots['footer-status']" class="bio-nexus-dialog-footer-status"><slot name="footer-status" /></div>
@@ -34,6 +34,10 @@ const props = defineProps({
   subtitle: { type: String, default: "" },
   size: { type: String, default: "standard", validator: (value) => ["compact", "standard", "wide", "fullscreen"].includes(value) },
   bodyFlush: { type: Boolean, default: false },
+  bodyScroll: { type: String, default: "auto", validator: (value) => ["auto", "hidden"].includes(value) },
+  dialogClass: { type: String, default: "" },
+  shellClass: { type: String, default: "" },
+  bodyClass: { type: String, default: "" },
   closeOnBackdrop: { type: Boolean, default: false },
   preventClose: { type: Boolean, default: false },
 });
@@ -286,4 +290,6 @@ dialog.bio-nexus-dialog.bio-nexus-dialog-size-standard > .bio-nexus-dialog-shell
     transform: none;
   }
 }
-/* BIO NEXUS DIALOG SMALL CENTERING V4 END */</style>
+/* BIO NEXUS DIALOG SMALL CENTERING V4 END */
+.bio-nexus-dialog-body-scroll-hidden { overflow: hidden !important; }
+</style>

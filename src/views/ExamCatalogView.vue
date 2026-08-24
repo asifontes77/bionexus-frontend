@@ -4,13 +4,13 @@
     <div v-if="loadError" class="bio-nexus-message bio-nexus-message-error"><strong>No fue posible cargar el catalogo.</strong><span>{{ loadError }}</span></div>
     <section class="exam-catalog-layout" :class="{ 'groups-collapsed': groupsCollapsed }">
       <aside v-if="!groupsCollapsed" class="exam-group-panel">
-        <header><div><p>Catálogo</p><h3>Grupos de exámenes</h3></div><div class="group-header-actions"><button type="button" class="panel-collapse" title="Ocultar grupos" @click="groupsCollapsed=true"><BioNexusIcon name="chevron_left" :size="20" /></button><button v-if="canCreate" class="bio-nexus-action bio-nexus-action-primary" :disabled="saving" @click="groupDialog?.openCreate()"><BioNexusActionIcon action="create" />Nuevo grupo</button></div></header>
+        <header><div><p>Catálogo</p><h3>Grupos de exámenes</h3></div><div class="group-header-actions"><button type="button" class="panel-collapse panel-edge-toggle" title="Ocultar grupos" aria-label="Ocultar grupos" @click="groupsCollapsed=true"><BioNexusIcon name="chevron_left" :size="20" /></button><button v-if="canCreate" class="bio-nexus-action bio-nexus-action-primary" :disabled="saving" @click="groupDialog?.openCreate()"><BioNexusActionIcon action="create" />Nuevo grupo</button></div></header>
         <BioNexusFormField label="Buscar grupo" field-id="exam-group-search"><input id="exam-group-search" v-model="groupSearch" class="bio-nexus-field" type="search" /></BioNexusFormField>
         <div v-if="loadingGroups" class="bio-nexus-empty-state">Cargando grupos...</div>
         <ul v-else class="exam-group-list"><li v-for="group in filteredGroups" :key="group.id" @contextmenu.prevent.stop="openGroupContextMenu($event,group)"><button type="button" :class="{selected:selectedGroup?.id===group.id,inactive:group.annulled}" @click="selectGroup(group)"><span><strong>{{ group.description }}</strong><small>{{ group.its_exam ? 'Análisis clínico' : 'Grupo auxiliar' }}</small></span><em>{{ group.annulled ? 'Inactivo' : 'Activo' }}</em></button><button v-if="canUpdate" class="exam-group-edit" title="Editar grupo" @click="groupDialog?.openEdit(group)"><BioNexusIcon name="edit" :size="18" /></button></li></ul>
         <div v-if="selectedGroup" class="exam-group-actions"><button v-if="canChangeStatus" class="bio-nexus-action bio-nexus-action-secondary" @click="stateDialog?.open(selectedGroup,'grupo')">{{ selectedGroup.annulled ? 'Activar grupo' : 'Inactivar grupo' }}</button></div>
       </aside>
-      <button v-else type="button" class="panel-expand" title="Mostrar grupos" @click="groupsCollapsed=false"><BioNexusIcon name="chevron_right" :size="21" /><span>Grupos</span></button>
+      <button v-else type="button" class="panel-expand panel-edge-toggle" title="Mostrar grupos" aria-label="Mostrar grupos" @click="groupsCollapsed=false"><BioNexusIcon name="chevron_right" :size="21" /><span>Grupos</span></button>
       <main class="exam-grid-panel">
         <header class="exam-grid-heading"><div><p>Exámenes del grupo</p><h3>{{ selectedGroupTitle }}</h3></div></header>
         <div v-if="!selectedGroup" class="bio-nexus-empty-state">Seleccióna un grupo para consultar sus exámenes.</div>
@@ -84,4 +84,101 @@ onMounted(async()=>{try{taxes.value=await getTaxes()}catch{taxes.value=[]}await 
 </script>
 <style scoped>
 .exam-catalog-page{min-width:0}.exam-catalog-layout{display:grid;grid-template-columns:minmax(260px,320px) minmax(0,1fr);gap:var(--bio-nexus-space-4)}.exam-catalog-layout.groups-collapsed{grid-template-columns:42px minmax(0,1fr)}.exam-group-panel,.exam-grid-panel{min-width:0;padding:var(--bio-nexus-space-4);border:1px solid var(--bio-nexus-color-border);border-radius:var(--bio-nexus-radius-md);background:var(--bio-nexus-color-surface);box-shadow:var(--bio-nexus-shadow-sm)}.exam-group-panel>header,.exam-grid-heading{display:flex;justify-content:space-between;gap:var(--bio-nexus-space-3);align-items:center;margin-bottom:var(--bio-nexus-space-3)}header p{margin:0;color:var(--bio-nexus-color-accent);font-size:var(--bio-nexus-font-size-xs);font-weight:800;text-transform:uppercase}header h3{margin:2px 0 0;color:var(--bio-nexus-color-primary-strong)}.group-header-actions{display:flex;align-items:center;gap:8px}.panel-collapse,.panel-expand{display:grid;place-items:center;border:1px solid var(--bio-nexus-color-border);border-radius:var(--bio-nexus-radius-md);background:var(--bio-nexus-color-surface);color:var(--bio-nexus-color-primary);cursor:pointer}.panel-collapse{width:36px;height:36px}.panel-expand{align-self:start;gap:4px;width:42px;min-height:128px;padding:8px 0}.panel-expand span{writing-mode:vertical-rl;transform:rotate(180deg);font-size:var(--bio-nexus-font-size-xs);font-weight:700}.exam-group-list{display:grid;gap:6px;max-height:540px;margin:var(--bio-nexus-space-3) 0 0;padding:0;overflow:auto;list-style:none}.exam-group-list li{display:grid;grid-template-columns:minmax(0,1fr) 34px;gap:4px}.exam-group-list li>button:first-child{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;padding:10px;border:1px solid var(--bio-nexus-color-border);border-radius:var(--bio-nexus-radius-md);background:var(--bio-nexus-color-surface-soft);text-align:left;cursor:pointer}.exam-group-list button.selected{border-color:var(--bio-nexus-color-primary);box-shadow:inset 3px 0 0 var(--bio-nexus-color-accent)}.exam-group-list button.inactive{opacity:.65}.exam-group-list span{display:grid;min-width:0}.exam-group-list strong,.exam-group-list small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.exam-group-list small{color:var(--bio-nexus-color-text-muted)}.exam-group-list em{font-size:11px;font-style:normal;color:var(--bio-nexus-color-text-muted)}.exam-group-edit{display:grid;place-items:center;border:0;border-radius:50%;background:transparent;color:var(--bio-nexus-color-primary);cursor:pointer}.exam-group-actions{display:flex;margin-top:var(--bio-nexus-space-3)}.exam-catalog-page :deep(.ag-pinned-left-header),.exam-catalog-page :deep(.ag-pinned-left-cols-container){border-right:1px solid var(--bio-nexus-color-border-strong);box-shadow:4px 0 12px rgb(13 36 58 / 10%)}.exam-catalog-page :deep(.exam-description-pinned){font-weight:500}.exam-catalog-page :deep(.exam-price-cell){justify-content:flex-end;text-align:right;font-variant-numeric:tabular-nums}.exam-catalog-page :deep(.exam-price-header .ag-header-cell-label){justify-content:flex-end}.exam-catalog-page :deep(.exam-price-header .ag-header-cell-text){text-align:right;width:100%}.exam-catalog-page :deep(.exam-toggle-cell){display:flex;align-items:center;justify-content:center;text-align:center}.exam-catalog-page :deep(.exam-toggle-header .ag-header-cell-label){justify-content:center}.exam-catalog-page :deep(.exam-toggle-header .ag-header-cell-text){text-align:center;width:100%}.exam-selection-count{display:inline-flex;align-items:center;align-self:center;min-height:38px;margin:0;color:var(--bio-nexus-color-text-secondary);font-family:var(--bio-nexus-font-family);font-size:var(--bio-nexus-font-size-sm);font-weight:600;line-height:1.2;white-space:nowrap}.exam-catalog-page :deep(.ag-row.ag-row-selected){background:var(--bio-nexus-color-info-soft)!important;box-shadow:inset 3px 0 0 var(--bio-nexus-color-accent)}@media(max-width:980px){.exam-catalog-layout,.exam-catalog-layout.groups-collapsed{grid-template-columns:1fr}.panel-expand{width:100%;min-height:38px;grid-auto-flow:column;justify-content:center}.panel-expand span{writing-mode:horizontal-tb;transform:none}.exam-group-list{max-height:280px}}
-</style>
+
+
+
+
+
+
+
+
+
+/* BIO NEXUS EXAM GROUPS COLLAPSED COMPACT V15 START */
+section:has(.panel-collapse.panel-edge-toggle),
+aside:has(.panel-collapse.panel-edge-toggle) {
+  position: relative;
+  overflow: visible;
+}
+
+:is(header, .panel-header, .catalog-header):has(> .panel-collapse.panel-edge-toggle) {
+  position: static;
+}
+
+.panel-collapse.panel-edge-toggle {
+  position: absolute !important;
+  top: 0 !important;
+  right: -14px !important;
+  z-index: 12 !important;
+  display: grid !important;
+  place-items: center !important;
+  box-sizing: border-box !important;
+  width: 28px !important;
+  min-width: 28px !important;
+  max-width: 28px !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  max-height: 38px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  transform: none !important;
+  border: 1px solid var(--bio-nexus-color-border-strong) !important;
+  border-radius: 8px !important;
+  background: var(--bio-nexus-color-surface) !important;
+  color: var(--bio-nexus-color-primary) !important;
+  box-shadow: var(--bio-nexus-shadow-sm) !important;
+}
+
+.panel-collapse.panel-edge-toggle svg {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+/* Estado cerrado: carril exacto del boton y sin separacion desperdiciada. */
+.exam-catalog-layout:has(> .panel-expand.panel-edge-toggle),
+.exam-catalog-grid:has(> .panel-expand.panel-edge-toggle),
+.catalog-layout:has(> .panel-expand.panel-edge-toggle) {
+  grid-template-columns: 28px minmax(0, 1fr) !important;
+  column-gap: 0 !important;
+  gap: 0 !important;
+}
+
+.panel-expand.panel-edge-toggle {
+  display: grid !important;
+  place-items: center !important;
+  align-self: start !important;
+  box-sizing: border-box !important;
+  width: 28px !important;
+  min-width: 28px !important;
+  max-width: 28px !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  max-height: 38px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: visible !important;
+  border: 1px solid var(--bio-nexus-color-border-strong) !important;
+  border-left: 0 !important;
+  border-radius: 0 8px 8px 0 !important;
+  background: var(--bio-nexus-color-surface) !important;
+  color: var(--bio-nexus-color-primary) !important;
+  box-shadow: var(--bio-nexus-shadow-sm) !important;
+  font-size: 0 !important;
+}
+
+.panel-expand.panel-edge-toggle > * {
+  display: none !important;
+}
+
+/* Chevron dibujado con bordes, sin caracteres que puedan corromperse por codificacion. */
+.panel-expand.panel-edge-toggle::after {
+  content: "" !important;
+  display: block !important;
+  box-sizing: border-box !important;
+  width: 9px !important;
+  height: 9px !important;
+  margin-left: -3px !important;
+  border-top: 2px solid currentColor !important;
+  border-right: 2px solid currentColor !important;
+  transform: rotate(45deg) !important;
+}
+/* BIO NEXUS EXAM GROUPS COLLAPSED COMPACT V15 END */</style>
