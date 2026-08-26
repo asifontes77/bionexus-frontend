@@ -3,7 +3,7 @@
     <template #header-actions><span class="pilot-badge">Formato en Bio Nexus</span></template>
     <section class="grid-designer-shell">
       <nav class="grid-designer-toolbar" aria-label="Herramientas del disenador matricial">
-        <button type="button" @mousedown.prevent @click="mergeSelection"><BioNexusIcon name="cell_merge" :size="18" />Combinar</button>
+        <button type="button" @mousedown.prevent @click="save"><BioNexusIcon name="cell_merge" :size="18" />Combinar</button>
         <button type="button" @mousedown.prevent @click="unmergeSelection"><BioNexusIcon name="call_split" :size="18" />Separar</button>
         <button type="button" @mousedown.prevent @click="toggleBold"><strong>B</strong>Negrita</button>
         <button type="button" @mousedown.prevent @click="toggleUnderline"><u>U</u>Subrayado</button>
