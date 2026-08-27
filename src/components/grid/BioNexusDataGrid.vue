@@ -104,7 +104,7 @@ import { AgGridVue } from "ag-grid-vue3";
 import { AG_GRID_LOCALE_ES } from "@ag-grid-community/locale";
 import BioNexusGridExportMenu from "@/components/grid/BioNexusGridExportMenu.vue";
 import BioNexusFormField from "@/components/ui/BioNexusFormField.vue";
-let gridExportServicePromise;function loadGridExportService(){gridExportServicePromise??=import("@/services/gridExportService.js");return gridExportServicePromise}const exportGridToExcel=(...args)=>loadGridExportService().then(service=>service.exportGridToExcel(...args));const exportGridToPdf=(...args)=>loadGridExportService().then(service=>service.exportGridToPdf(...args));
+import { exportGridToExcel, exportGridToPdf } from "@/services/gridExportService.js";
 
 ModuleRegistry.registerModules([
   AllCommunityModule,
