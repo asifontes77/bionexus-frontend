@@ -227,11 +227,10 @@ export const navigationItems = [
         key: "laboratory",
         label: "Laboratorio",
         abbreviation: "LA",
-        legacyRouteName: "Laboratory",
-        legacyPath: "/setting/laboratory",
-        roles: ["admin"],
-        migrated: false,
-      },
+        routeName: "configuration-laboratory",
+        permissions: ["laboratory.read"],
+        migrated: true,
+      }
     ],
   },
   {

@@ -10,7 +10,8 @@ const UserAuthorizationView=()=>import("@/views/UserAuthorizationView.vue");
 const ParasiticformsView=()=>import("@/views/ParasiticformsView.vue");
 const TypePaymentView=()=>import("@/views/TypePaymentView.vue");
 const ExamCatalogView=()=>import("@/views/ExamCatalogView.vue");
-const applicationViewLoaders=[MigrationHomeView,RolesPermissionsView,UserAuthorizationView,ExamCatalogView,ParasiticformsView,TypePaymentView];
+const LaboratoryView=()=>import("@/views/LaboratoryView.vue");
+const applicationViewLoaders=[MigrationHomeView,RolesPermissionsView,UserAuthorizationView,ExamCatalogView,ParasiticformsView,TypePaymentView,LaboratoryView];
 let applicationRoutesPrefetched=false;
 function scheduleAuthorizedRoutePrefetch(){
   if(applicationRoutesPrefetched)return;
@@ -99,6 +100,17 @@ const routes = [
                     description: "Administra las descripciones disponibles y controla cuales permanecen activas en los flujos operativos.",
         },
             },
+      {
+        path: "configuration/laboratory",
+        name: "configuration-laboratory",
+        component: LaboratoryView,
+        meta: {
+          requiresAuth: true,
+          permissions: ["laboratory.read"],
+          title: "Laboratorio",
+          description: "Administra la identidad, impresiÃ³n, impuestos y correo del laboratorio.",
+        },
+      },
       {
         path: "configuration/type-payments",
         name: "type-payments",

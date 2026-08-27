@@ -1,4 +1,4 @@
-﻿import { apiRequest } from '@/api/apiClient'
+import { apiRequest } from '@/api/apiClient'
 import { normalizeLaboratory, normalizeLaboratoryChanges } from '@/models/laboratory'
 
 export function updateLaboratoryLicense(license) {
@@ -50,3 +50,10 @@ export function getLaboratoryErrorMessage(error, fallback) {
   };
   return messages[error?.message] || error?.message || fallback;
 }
+
+export async function getLaboratoryTaxes() { const value = await apiRequest("/api/tax"); return Array.isArray(value) ? value.map(normalizeTax) : []; }
+export async function createLaboratoryTax(value) { return normalizeTax(await apiRequest("/api/tax", { method: "POST", body: taxChanges(value) })); }
+export async function updateLaboratoryTax(id, value) { if (!Number.isInteger(id) || id <= 0) throw new Error("TAX_ID_INVALID"); return normalizeTax(await apiRequest("/api/tax/" + id, { method: "PATCH", body: taxChanges(value) })); }
+export async function deleteLaboratoryTax(id) { if (!Number.isInteger(id) || id <= 0) throw new Error("TAX_ID_INVALID"); return apiRequest("/api/tax/" + id, { method: "DELETE" }); }
+function normalizeTax(value) { const source = value && typeof value === "object" ? value : {}; return { ...source, id: Number.isInteger(Number(source.id)) ? Number(source.id) : -1, description: String(source.description || ""), value: Number(source.value || 0), only_dollars: Boolean(source.only_dollars), always_subtotal: Boolean(source.always_subtotal), hide: Boolean(source.hide) }; }
+function taxChanges(value) { const result = normalizeTax(value); delete result.id; delete result.localKey; return result; }
