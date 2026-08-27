@@ -12,8 +12,13 @@ async function loadPdfMake() {
     import("pdfmake/build/vfs_fonts"),
   ]).then(([pdfModule, fontModule]) => {
     const pdfMake = pdfModule.default ?? pdfModule;
-    const pdfFonts = fontModule.default ?? fontModule;
-    pdfMake.vfs = pdfFonts?.pdfMake?.vfs ?? pdfFonts?.vfs ?? pdfMake.vfs;
+    const fontExports = fontModule.default ?? fontModule;
+    const vfs = fontExports?.pdfMake?.vfs ?? fontExports?.vfs ?? fontExports;
+    if (!vfs || typeof vfs !== "object" || !vfs["Roboto-Medium.ttf"]) {
+      throw new Error("PDFMAKE_VFS_ROBOTO_MISSING");
+    }
+    if (typeof pdfMake.addVirtualFileSystem === "function") pdfMake.addVirtualFileSystem(vfs);
+    else pdfMake.vfs = { ...(pdfMake.vfs ?? {}), ...vfs };
     return pdfMake;
   });
   return pdfMakePromise;
