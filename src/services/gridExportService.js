@@ -95,6 +95,18 @@ function formatGridValue(api, column, node, value) {
   return value;
 }
 
+function resolveExportAlignment(column) {
+  const definition = column.getColDef();
+  const style = typeof definition.cellStyle === "object" && definition.cellStyle ? definition.cellStyle : {};
+  const explicit = String(style.textAlign || "").toLowerCase();
+  if (["left", "center", "right"].includes(explicit)) return explicit;
+  const classes = [definition.cellClass, definition.headerClass].flat().filter((value) => typeof value === "string").join(" ").toLowerCase();
+  const identity = [column.getColId(), definition.field, definition.headerName, definition.type].flat().filter(Boolean).join(" ").toLowerCase();
+  if (/right|numeric|number|currency|amount|price|precio|importe|total/.test(classes + " " + identity)) return "right";
+  if (/center|boolean|status|state|estado|active|activo|special|especial|toggle/.test(classes + " " + identity)) return "center";
+  return "left";
+}
+
 function collect(api, options = {}) {
   const excluded = new Set(["actions", ...(options.excludeColumns || [])]);
   const selected = Array.isArray(options.selectedColumnIds) && options.selectedColumnIds.length
@@ -116,7 +128,7 @@ function collect(api, options = {}) {
       return formatGridValue(api, column, node, value);
     }));
   });
-  return { headers, rows };
+  return { headers, rows, alignments: columns.map((column) => resolveExportAlignment(column)) };
 }
 
 function download(blob, name) {
@@ -133,7 +145,7 @@ function download(blob, name) {
 export async function exportGridToExcel(api, options = {}) {
   const ExcelJS = await loadExcelJS();
   const { title, fileName } = resolveExportIdentity(options);
-  const { headers, rows } = collect(api, options);
+  const { headers, rows, alignments } = collect(api, options);
   if (!headers.length) throw new Error("No hay columnas visibles para exportar.");
   const workbook = new ExcelJS.Workbook();
   workbook.creator = "Bio Nexus";
@@ -161,7 +173,7 @@ export async function exportGridToExcel(api, options = {}) {
     cell.value = value;
     cell.font = { bold: true, color: { argb: "FFFFFFFF" } };
     cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FF1F6F8B" } };
-    cell.alignment = { horizontal: "center", vertical: "middle" };
+    cell.alignment = { horizontal: alignments[index] || "left", vertical: "middle", wrapText: true };
     cell.border = {
       top: { style: "thin", color: { argb: "FFB8CAD7" } },
       left: { style: "thin", color: { argb: "FFB8CAD7" } },
@@ -169,7 +181,12 @@ export async function exportGridToExcel(api, options = {}) {
       right: { style: "thin", color: { argb: "FFB8CAD7" } },
     };
   });
-  rows.forEach((row) => sheet.addRow(row));
+  rows.forEach((row) => {
+    const excelRow = sheet.addRow(row);
+    excelRow.eachCell((cell, columnNumber) => {
+      cell.alignment = { horizontal: alignments[columnNumber - 1] || "left", vertical: "middle", wrapText: true };
+    });
+  });
 
   const dataEndRow = headerRowNumber + rows.length;
   sheet.autoFilter = { from: { row: headerRowNumber, column: 1 }, to: { row: dataEndRow, column: lastColumn } };
@@ -186,12 +203,12 @@ export async function exportGridToExcel(api, options = {}) {
 export async function exportGridToPdf(api, options = {}, orientation = "portrait") {
   const pdfMake = await loadPdfMake();
   const { title, fileName } = resolveExportIdentity(options);
-  const { headers, rows } = collect(api, options);
+  const { headers, rows, alignments } = collect(api, options);
   if (!headers.length) throw new Error("No hay columnas visibles para exportar.");
   const normalizedOrientation = orientation === "landscape" ? "landscape" : "portrait";
   const body = [
-    headers.map((value) => ({ text: String(value), style: "header" })),
-    ...rows.map((row) => row.map((value) => ({ text: String(value ?? ""), style: "cell" }))),
+    headers.map((value, index) => ({ text: String(value), style: "header", alignment: alignments[index] || "left" })),
+    ...rows.map((row) => row.map((value, index) => ({ text: String(value ?? ""), style: "cell", alignment: alignments[index] || "left" }))),
   ];
   const gridLayout = {
     hLineWidth: () => 0.6,

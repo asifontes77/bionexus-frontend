@@ -230,9 +230,7 @@ function getExportColumns() {
       const definition = column.getColDef();
       return !excluded.has(column.getColId())
         && !excluded.has(definition.field)
-        && definition.suppressExport !== true
-        && definition.checkboxSelection !== true
-        && definition.headerCheckboxSelection !== true;
+        && definition.suppressExport !== true;
     })
     .map((column) => ({
       id: column.getColId(),
