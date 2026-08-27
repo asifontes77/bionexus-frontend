@@ -452,12 +452,12 @@ function handleCellContextMenu(params) {
   min-width: 0;
 }
 
-.bio-nexus-data-grid :deep(.ag-root-wrapper) {
+.bio-nexus-data-grid :global(.ag-root-wrapper) {
   border: 0;
 }
 
 /* Bio Nexus DATA GRID EMPHASIZED HEADER START */
-.bio-nexus-data-grid :deep(.ag-header) {
+.bio-nexus-data-grid :global(.ag-header) {
   border-top: 1px solid #f9fdff;
   border-bottom: 1px solid #78abc5;
   background: #d8eaf4;
@@ -467,12 +467,12 @@ function handleCellContextMenu(params) {
     0 2px 5px rgb(13 36 58 / 12%);
 }
 
-.bio-nexus-data-grid :deep(.ag-header-row) {
+.bio-nexus-data-grid :global(.ag-header-row) {
   background: transparent;
 }
 
-.bio-nexus-data-grid :deep(.ag-header-cell),
-.bio-nexus-data-grid :deep(.ag-header-group-cell) {
+.bio-nexus-data-grid :global(.ag-header-cell),
+.bio-nexus-data-grid :global(.ag-header-group-cell) {
   background: linear-gradient(
     180deg,
     #eef8fc 0%,
@@ -486,16 +486,16 @@ function handleCellContextMenu(params) {
     inset 0 -1px 0 rgb(65 128 160 / 16%);
 }
 
-.bio-nexus-data-grid :deep(.ag-header-cell-label),
-.bio-nexus-data-grid :deep(.ag-header-cell-text),
-.bio-nexus-data-grid :deep(.ag-header-icon),
-.bio-nexus-data-grid :deep(.ag-icon) {
+.bio-nexus-data-grid :global(.ag-header-cell-label),
+.bio-nexus-data-grid :global(.ag-header-cell-text),
+.bio-nexus-data-grid :global(.ag-header-icon),
+.bio-nexus-data-grid :global(.ag-icon) {
   color: #174b6b !important;
   text-shadow: 0 1px 0 rgb(255 255 255 / 90%);
 }
 
-.bio-nexus-data-grid :deep(.ag-header-cell:hover),
-.bio-nexus-data-grid :deep(.ag-header-cell.ag-header-active) {
+.bio-nexus-data-grid :global(.ag-header-cell:hover),
+.bio-nexus-data-grid :global(.ag-header-cell.ag-header-active) {
   background: linear-gradient(
     180deg,
     #e4f4fb 0%,
@@ -507,27 +507,27 @@ function handleCellContextMenu(params) {
     inset 0 -2px 0 rgb(46 112 148 / 20%);
 }
 /* Bio Nexus DATA GRID EMPHASIZED HEADER END */
-.bio-nexus-data-grid :deep(.ag-header-cell-label) {
+.bio-nexus-data-grid :global(.ag-header-cell-label) {
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
 
-.bio-nexus-data-grid :deep(.ag-header-cell-text) {
+.bio-nexus-data-grid :global(.ag-header-cell-text) {
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.bio-nexus-data-grid :deep(.ag-cell) {
+.bio-nexus-data-grid :global(.ag-cell) {
   display: flex;
   align-items: center;
   line-height: 1.35;
 }
 
-.bio-nexus-data-grid :deep(.ag-row-hover) {
+.bio-nexus-data-grid :global(.ag-row-hover) {
   background: var(--bio-nexus-color-info-soft);
 }
 
-.bio-nexus-data-grid :deep(.ag-paging-panel) {
+.bio-nexus-data-grid :global(.ag-paging-panel) {
   min-height: 44px;
   border-top-color: var(--bio-nexus-color-border);
   color: var(--bio-nexus-color-text-muted);
@@ -535,11 +535,11 @@ function handleCellContextMenu(params) {
   padding-right: 235px;
 }
 
-.bio-nexus-data-grid :deep(.ag-paging-button) {
+.bio-nexus-data-grid :global(.ag-paging-button) {
   color: var(--bio-nexus-color-primary-strong);
 }
 
-.bio-nexus-data-grid :deep(.ag-overlay-no-rows-center) {
+.bio-nexus-data-grid :global(.ag-overlay-no-rows-center) {
   padding: var(--bio-nexus-space-4);
   color: var(--bio-nexus-color-text-muted);
 }
@@ -548,8 +548,8 @@ function handleCellContextMenu(params) {
   color: var(--bio-nexus-color-text-muted);
 }
 
-.bio-nexus-data-grid :deep(.ag-header-cell:not(:last-child)),
-.bio-nexus-data-grid :deep(.ag-cell:not(:last-child)) {
+.bio-nexus-data-grid :global(.ag-header-cell:not(:last-child)),
+.bio-nexus-data-grid :global(.ag-cell:not(:last-child)) {
   border-right: 1px solid var(--bio-nexus-color-border);
 }
 </style>
@@ -754,7 +754,7 @@ function handleCellContextMenu(params) {
 .bio-nexus-grid-toolbar-stats,
 .bio-nexus-grid-toolbar-actions { display: inline-flex; align-items: center; gap: 14px; white-space: nowrap; }
 .bio-nexus-grid-toolbar > .bio-nexus-action,
-.bio-nexus-grid-toolbar :deep(.bio-nexus-grid-export-trigger) { min-height: 44px; }
+.bio-nexus-grid-toolbar :global(.bio-nexus-grid-export-trigger) { min-height: 44px; }
 .bio-nexus-grid-toolbar > .bio-nexus-action svg { width: 20px; height: 20px; }
 
 @media (max-width: 980px) {
@@ -798,7 +798,7 @@ function handleCellContextMenu(params) {
 }
 
 
-.bio-nexus-grid-toolbar :deep(.bio-nexus-form-field-label) {
+.bio-nexus-grid-toolbar :global(.bio-nexus-form-field-label) {
   color: var(--bio-nexus-color-text-secondary);
   font-family: inherit;
   font-size: var(--bio-nexus-font-size-sm);
@@ -807,7 +807,7 @@ function handleCellContextMenu(params) {
 }
 
 
-.bio-nexus-grid-toolbar :deep(input.bio-nexus-field::placeholder) {
+.bio-nexus-grid-toolbar :global(input.bio-nexus-field::placeholder) {
   color: var(--bio-nexus-color-text-muted);
   font-family: inherit;
   font-size: inherit;
@@ -817,13 +817,13 @@ function handleCellContextMenu(params) {
 
 
 /* Compact toolbar controls with one exact theme contract. */
-.bio-nexus-grid-toolbar :deep(.bio-nexus-form-field-control) {
+.bio-nexus-grid-toolbar :global(.bio-nexus-form-field-control) {
   min-height: 38px;
   padding-block-start: 5px;
 }
 
 
-.bio-nexus-grid-toolbar :deep(input.bio-nexus-field::placeholder) {
+.bio-nexus-grid-toolbar :global(input.bio-nexus-field::placeholder) {
   color: var(--bio-nexus-color-text-muted) !important;
   font-family: var(--bio-nexus-font-family) !important;
   font-size: var(--bio-nexus-font-size-md) !important;
@@ -832,7 +832,7 @@ function handleCellContextMenu(params) {
   opacity: 1;
 }
 
-.bio-nexus-grid-toolbar :deep(.bio-nexus-form-field-label) {
+.bio-nexus-grid-toolbar :global(.bio-nexus-form-field-label) {
   color: var(--bio-nexus-color-text-muted);
   font-family: var(--bio-nexus-font-family);
   font-size: var(--bio-nexus-font-size-xs);
@@ -841,7 +841,7 @@ function handleCellContextMenu(params) {
 
 
 
-.bio-nexus-grid-toolbar :deep(input.bio-nexus-field::placeholder) {
+.bio-nexus-grid-toolbar :global(input.bio-nexus-field::placeholder) {
   color: var(--bio-nexus-color-text-muted) !important;
   font-family: var(--bio-nexus-font-family) !important;
   font-size: var(--bio-nexus-font-size-md) !important;
@@ -870,7 +870,7 @@ function handleCellContextMenu(params) {
 
 
 /* Native Mostrar remains compact inside BioNexusFormField. */
-.bio-nexus-grid-toolbar :deep(#bio-nexus-grid-page-size.bio-nexus-field) {
+.bio-nexus-grid-toolbar :global(#bio-nexus-grid-page-size.bio-nexus-field) {
   box-sizing: border-box !important;
   width: 100% !important;
   min-height: 38px !important;
@@ -879,7 +879,7 @@ function handleCellContextMenu(params) {
   padding: 7px 26px 5px 12px !important;
 }
 
-/* DevTools measured fix: use the real parent-scoped DOM selector, not :deep(). */
+/* DevTools measured fix: use the real parent-scoped DOM selector, not :global(). */
 .bio-nexus-grid-toolbar .bio-nexus-grid-toolbar-search #bio-nexus-grid-search.bio-nexus-field {
   box-sizing: border-box !important;
   min-height: 38px !important;
@@ -913,7 +913,7 @@ function handleCellContextMenu(params) {
   opacity: 1 !important;
 }
 
-.bio-nexus-grid-toolbar :deep(.bio-nexus-form-field-label) {
+.bio-nexus-grid-toolbar :global(.bio-nexus-form-field-label) {
   color: var(--bio-nexus-color-text-muted);
   font-family: var(--bio-nexus-font-family);
   font-size: var(--bio-nexus-font-size-xs);

@@ -27,7 +27,7 @@
   </section>
 </template>
 <script setup>
-import { computed, nextTick, onMounted, ref } from "vue";
+import { computed, nextTick, onMounted, ref, defineAsyncComponent } from "vue";
 import BioNexusDataGrid from "@/components/grid/BioNexusDataGrid.vue";
 import BioNexusGridActionsCell from "@/components/grid/BioNexusGridActionsCell.vue";
 import BioNexusGridToggleCell from "@/components/grid/BioNexusGridToggleCell.vue";
@@ -39,7 +39,7 @@ import BioNexusFormField from "@/components/ui/BioNexusFormField.vue";
 import ExamGlobalSearch from "@/components/examcatalog/ExamGlobalSearch.vue";
 import ExamGroupDialog from "@/components/examcatalog/ExamGroupDialog.vue";
 import ExamDialog from "@/components/examcatalog/ExamDialog.vue";
-import ExamStateDialog from "@/components/examcatalog/ExamStateDialog.vue";import ExamDetailDialog from "@/components/examcatalog/ExamDetailDialog.vue";import ExamWorksheetDialog from "@/components/examcatalog/ExamWorksheetDialog.vue";import ExamResultGridDesignerDialog from "@/components/examcatalog/experimental/ExamResultGridDesignerDialog.vue";
+import ExamStateDialog from "@/components/examcatalog/ExamStateDialog.vue";import ExamDetailDialog from "@/components/examcatalog/ExamDetailDialog.vue";import ExamWorksheetDialog from "@/components/examcatalog/ExamWorksheetDialog.vue";const ExamResultGridDesignerDialog=defineAsyncComponent(()=>import("@/components/examcatalog/experimental/ExamResultGridDesignerDialog.vue"));
 import { useBioNexusToast } from "@/composables/useBioNexusToast";
 import { bulkUpdateExams, createExam, createExamGroup, examCatalogError, getExam, getExamGroups, getExamsByGroup, getTaxes, updateExam, updateExamGroup } from "@/services/examCatalogService";
 import { useAuthorizationStore } from "@/stores/authorization";
