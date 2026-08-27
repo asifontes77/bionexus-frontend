@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import { normalizeLaboratory, normalizeLaboratoryChanges, validateLaboratoryRequired } from './laboratory.js';
+const laboratory = normalizeLaboratory({ id: 1, license: 'secret', sendEmail: { user: 'lab@example.com', pass: 'secret' }, settingQR: null });
+assert.equal(laboratory.license, undefined);
+assert.equal(laboratory.sendEmail.pass, '');
+assert.equal(laboratory.sendEmail.user, 'lab@example.com');
+const changes = normalizeLaboratoryChanges({ name: 'Bio Nexus', license: 'forbidden', unknown: true, sendEmail: { user: 'mail@example.com', pass: '' } });
+assert.equal(changes.name, 'Bio Nexus');
+assert.equal(changes.license, undefined);
+assert.equal(changes.unknown, undefined);
+assert.equal(changes.sendEmail.pass, '');
+assert.equal(validateLaboratoryRequired({}).length, 7);
+assert.equal(validateLaboratoryRequired({ business_name: 'A', name: 'B', address: 'C', email: 'a@b.com', rif: 'J', phone_1: '1', mask_phone: '###' }).length, 0);
+console.log('Laboratory frontend contract approved.');
