@@ -25,6 +25,6 @@ export function normalizeLaboratoryChanges(value) {
   return normalized;
 }
 export function validateLaboratoryRequired(value) {
-  const required = [['business_name', 'La razÃ³n social es obligatoria.'], ['name', 'El nombre del laboratorio es obligatorio.'], ['address', 'El domicilio es obligatorio.'], ['email', 'El correo es obligatorio.'], ['rif', 'El RIF es obligatorio.'], ['phone_1', 'El telÃ©fono principal es obligatorio.'], ['mask_phone', 'La mÃ¡scara de telÃ©fono es obligatoria.']];
+  const required = [['business_name', 'La razón social es obligatoria.'], ['name', 'El nombre del laboratorio es obligatorio.'], ['address', 'El domicilio es obligatorio.'], ['email', 'El correo es obligatorio.'], ['rif', 'El RIF es obligatorio.'], ['phone_1', 'El teléfono principal es obligatorio.'], ['mask_phone', 'La máscara de teléfono es obligatoria.']];
   return required.filter(([field]) => String(value?.[field] ?? '').trim() === '').map(([, message]) => message);
 }

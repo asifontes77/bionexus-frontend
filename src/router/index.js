@@ -108,7 +108,7 @@ const routes = [
           requiresAuth: true,
           permissions: ["laboratory.read"],
           title: "Laboratorio",
-          description: "Administra la identidad, impresiÃ³n, impuestos y correo del laboratorio.",
+          description: "Administra la identidad, impresión, impuestos y correo del laboratorio.",
         },
       },
       {

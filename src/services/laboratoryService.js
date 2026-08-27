@@ -36,17 +36,17 @@ export async function uploadLaboratoryLogo(file) {
 
 export function getLaboratoryErrorMessage(error, fallback) {
   const messages = {
-    LABORATORY_ID_INVALID: 'El identificador del laboratorio no es vÃ¡lido.',
-    LABORATORY_NOT_FOUND: 'No se encontrÃ³ la configuraciÃ³n del laboratorio.',
+    LABORATORY_ID_INVALID: 'El identificador del laboratorio no es válido.',
+    LABORATORY_NOT_FOUND: 'No se encontró la configuración del laboratorio.',
     LABORATORY_UPDATE_REQUIRED: 'No existen cambios para guardar.',
     LABORATORY_LICENSE_READ_ONLY: 'La licencia no puede modificarse desde esta pantalla.',
     LABORATORY_FIELD_UNKNOWN: 'La solicitud contiene campos no permitidos.',
     LABORATORY_TEXT_INVALID: 'Uno de los textos supera la longitud permitida.',
-    LABORATORY_BOOLEAN_INVALID: 'Una opciÃ³n contiene un valor no vÃ¡lido.',
-    LABORATORY_INTEGER_INVALID: 'Un valor numÃ©rico no es vÃ¡lido.',
+    LABORATORY_BOOLEAN_INVALID: 'Una opción contiene un valor no válido.',
+    LABORATORY_INTEGER_INVALID: 'Un valor numérico no es válido.',
     LABORATORY_LOGO_REQUIRED: 'Seleccione una imagen para el logo.',
     LABORATORY_LOGO_TYPE_INVALID: 'Use una imagen PNG, JPEG o WebP.',
-    BIO_NEXUS_REQUEST_TIMEOUT: 'La solicitud tardÃ³ demasiado.'
+    BIO_NEXUS_REQUEST_TIMEOUT: 'La solicitud tardó demasiado.'
   };
   return messages[error?.message] || error?.message || fallback;
 }
