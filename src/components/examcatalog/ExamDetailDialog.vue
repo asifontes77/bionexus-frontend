@@ -32,7 +32,7 @@ const dialog = ref(null); const exam = ref(null); const group = ref(null);
 const tax = computed(() => props.taxes.find((item) => Number(item.id) === Number(exam.value?.tax_id)) ?? null);
 const taxLabel = computed(() => tax.value ? `${tax.value.description} - ${Number(tax.value.value || 0).toFixed(2)} %` : "Impuesto no disponible");
 const hasWorksheet = computed(() => typeof exam.value?.work_sheet === "string" && exam.value.work_sheet.trim() !== "");
-const hasResultFormat = computed(() => { const value = exam.value?.format_vue ?? exam.value?.format; if (value === null || value === undefined || value === "") return false; if (typeof value === "string") { try { return Boolean(JSON.parse(value)); } catch { return value.trim() !== ""; } } return typeof value === "object"; });
+const hasResultFormat = computed(() => { const value = exam.value?.format_grid; if (value === null || value === undefined || value === "") return false; if (typeof value === "string") { try { return Boolean(JSON.parse(value)); } catch { return value.trim() !== ""; } } return typeof value === "object"; });
 function money(value) { return Number(value || 0).toFixed(2); }
 async function show(record, selectedGroup) { exam.value = record; group.value = selectedGroup; dialog.value?.open(); await nextTick();  }
 function handleClosed() { exam.value = null; group.value = null; }
