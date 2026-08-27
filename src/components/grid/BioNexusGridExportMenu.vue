@@ -68,7 +68,7 @@
             <BioNexusActionIcon action="cancel" />
             <span>Cancelar</span>
           </button>
-          <button type="submit" class="bio-nexus-action bio-nexus-action-primary" :disabled="selectedColumnIds.length === 0">
+          <button type="submit" class="bio-nexus-action bio-nexus-action-primary" :disabled="selectedColumnIds.length === 0" @click="confirmExport">
             <BioNexusActionIcon action="save" />
             <span>Exportar</span>
           </button>
