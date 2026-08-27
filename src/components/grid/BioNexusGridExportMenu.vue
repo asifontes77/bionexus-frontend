@@ -79,7 +79,7 @@
 
 <script setup>
 import BioNexusCheckbox from "@/components/ui/BioNexusCheckbox.vue";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
 import BioNexusDialog from "@/components/ui/BioNexusDialog.vue";
 
@@ -119,7 +119,14 @@ function clearAll() {
   selectedColumnIds.value = [];
 }
 
+
+watch([format, orientation, selectedColumnIds], () => {
+  errorMessage.value = "";
+}, { deep: true });
+
 function confirmExport() {
+  errorMessage.value = "";
+
   if (!selectedColumnIds.value.length) {
     errorMessage.value = "Selecciona al menos una columna.";
     return;
