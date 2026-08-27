@@ -68,7 +68,7 @@
             <BioNexusActionIcon action="cancel" />
             <span>Cancelar</span>
           </button>
-          <button type="submit" class="bio-nexus-action bio-nexus-action-primary" :disabled="selectedColumnIds.length === 0" @click="confirmExport">
+          <button type="submit" class="bio-nexus-action bio-nexus-action-primary" :disabled="selectedColumnIds.length === 0" @click.prevent="confirmExport">
             <BioNexusActionIcon action="save" />
             <span>Exportar</span>
           </button>
@@ -82,12 +82,14 @@ import BioNexusCheckbox from "@/components/ui/BioNexusCheckbox.vue";
 import { ref, watch } from "vue";
 import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
 import BioNexusDialog from "@/components/ui/BioNexusDialog.vue";
+import { useBioNexusToast } from "@/composables/useBioNexusToast.js";
 
 const props = defineProps({
   disabled: { type: Boolean, default: false },
   columnProvider: { type: Function, required: true },
 });
 const emit = defineEmits(["export"]);
+const toast = useBioNexusToast();
 const dialog = ref(null);
 const format = ref("excel");
 const orientation = ref("portrait");
@@ -137,6 +139,7 @@ function confirmExport() {
     const maximumColumns = orientation.value === "landscape" ? 10 : 6;
     if (selectedColumnIds.value.length > maximumColumns) {
       errorMessage.value = `El PDF en ${orientation.value === "landscape" ? "horizontal" : "vertical"} admite hasta ${maximumColumns} columnas legibles. Reduce la seleccion o cambia la orientacion.`;
+      toast.warning(errorMessage.value);
       return;
     }
   }
