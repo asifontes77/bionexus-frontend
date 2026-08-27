@@ -11,6 +11,21 @@ const certificateFile = path.join(repositoryRoot, 'local.crt')
 const hasCertificates = fs.existsSync(certificateKey) && fs.existsSync(certificateFile)
 
 export default defineConfig({
+  build: {
+    rolldownOptions: {
+      output: {
+        codeSplitting: {
+          groups: [
+            { name: "vendor-vue", test: /node_modules\/(?:vue|vue-router|pinia)\// },
+            { name: "vendor-ag-grid-core", test: /node_modules\/ag-grid-community\// },
+            { name: "vendor-ag-grid-vue", test: /node_modules\/(?:ag-grid-vue3|@ag-grid-community\/locale)\// },
+            { name: "vendor-permission-tree", test: /node_modules\/vue3-tree-vue\// },
+          ],
+        },
+      },
+    },
+  },
+
   plugins: [
     vue({
       features: {
