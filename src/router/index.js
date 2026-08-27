@@ -10,6 +10,18 @@ const UserAuthorizationView=()=>import("@/views/UserAuthorizationView.vue");
 const ParasiticformsView=()=>import("@/views/ParasiticformsView.vue");
 const TypePaymentView=()=>import("@/views/TypePaymentView.vue");
 const ExamCatalogView=()=>import("@/views/ExamCatalogView.vue");
+const applicationViewLoaders=[MigrationHomeView,RolesPermissionsView,UserAuthorizationView,ExamCatalogView,ParasiticformsView,TypePaymentView];
+let applicationRoutesPrefetched=false;
+function scheduleAuthorizedRoutePrefetch(){
+  if(applicationRoutesPrefetched)return;
+  const connection=globalThis.navigator?.connection;
+  if(connection?.saveData||/2g/.test(connection?.effectiveType||""))return;
+  applicationRoutesPrefetched=true;
+  const preload=()=>Promise.allSettled(applicationViewLoaders.map(load=>load()));
+  if(typeof globalThis.requestIdleCallback==="function")globalThis.requestIdleCallback(preload,{timeout:2500});
+  else globalThis.setTimeout(preload,600);
+}
+
 
 const routes = [
   {
@@ -171,4 +183,6 @@ router.afterEach((to) => {
     typeof to.meta.title === "string" ? `${to.meta.title} | Bio Nexus` : "Bio Nexus";
 });
 
+
+router.afterEach((to)=>{if(to.path!=="/login")scheduleAuthorizedRoutePrefetch()});
 export default router;
