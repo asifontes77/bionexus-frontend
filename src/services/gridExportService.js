@@ -1,8 +1,25 @@
-import ExcelJS from "exceljs";
-import pdfMake from "pdfmake/build/pdfmake";
-import pdfFonts from "pdfmake/build/vfs_fonts";
+let excelJsPromise;
+let pdfMakePromise;
 
-pdfMake.vfs = pdfFonts?.pdfMake?.vfs ?? pdfFonts?.vfs ?? pdfMake.vfs;
+async function loadExcelJS() {
+  excelJsPromise ??= import("exceljs").then((module) => module.default ?? module);
+  return excelJsPromise;
+}
+
+async function loadPdfMake() {
+  pdfMakePromise ??= Promise.all([
+    import("pdfmake/build/pdfmake"),
+    import("pdfmake/build/vfs_fonts"),
+  ]).then(([pdfModule, fontModule]) => {
+    const pdfMake = pdfModule.default ?? pdfModule;
+    const pdfFonts = fontModule.default ?? fontModule;
+    pdfMake.vfs = pdfFonts?.pdfMake?.vfs ?? pdfFonts?.vfs ?? pdfMake.vfs;
+    return pdfMake;
+  });
+  return pdfMakePromise;
+}
+
+
 
 const ROUTE_EXPORT_NAMES = Object.freeze({
   "type-payments": "Formas de pago",
@@ -100,6 +117,7 @@ function download(blob, name) {
 }
 
 export async function exportGridToExcel(api, options = {}) {
+  const ExcelJS = await loadExcelJS();
   const { title, fileName } = resolveExportIdentity(options);
   const { headers, rows } = collect(api, options);
   if (!headers.length) throw new Error("No hay columnas visibles para exportar.");
@@ -151,7 +169,8 @@ export async function exportGridToExcel(api, options = {}) {
   download(new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }), fileName + ".xlsx");
 }
 
-export function exportGridToPdf(api, options = {}, orientation = "portrait") {
+export async function exportGridToPdf(api, options = {}, orientation = "portrait") {
+  const pdfMake = await loadPdfMake();
   const { title, fileName } = resolveExportIdentity(options);
   const { headers, rows } = collect(api, options);
   if (!headers.length) throw new Error("No hay columnas visibles para exportar.");

@@ -248,7 +248,7 @@ async function exportGrid(request) {
     await exportGridToExcel(gridApi.value, options);
     return;
   }
-  if (request.format === "pdf") exportGridToPdf(gridApi.value, options, request.orientation);
+  if (request.format === "pdf") await exportGridToPdf(gridApi.value, options, request.orientation);
 }
 
 const gridTheme = themeQuartz.withParams({
