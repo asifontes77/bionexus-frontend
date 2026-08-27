@@ -2,14 +2,14 @@ import { createRouter, createWebHistory } from "vue-router";
 import { useAuthorizationStore } from "@/stores/authorization";
 import { useSessionStore } from "@/stores/session";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout.vue";
-import LoginView from "@/views/LoginView.vue";
-import MigrationHomeView from "@/views/MigrationHomeView.vue";
-import NotFoundView from "@/views/NotFoundView.vue";
-import RolesPermissionsView from "@/views/RolesPermissionsView.vue";
-import UserAuthorizationView from "@/views/UserAuthorizationView.vue";
-import ParasiticformsView from "@/views/ParasiticformsView.vue";
-import TypePaymentView from "@/views/TypePaymentView.vue";
-import ExamCatalogView from "@/views/ExamCatalogView.vue";
+const LoginView=()=>import("@/views/LoginView.vue");
+const MigrationHomeView=()=>import("@/views/MigrationHomeView.vue");
+const NotFoundView=()=>import("@/views/NotFoundView.vue");
+const RolesPermissionsView=()=>import("@/views/RolesPermissionsView.vue");
+const UserAuthorizationView=()=>import("@/views/UserAuthorizationView.vue");
+const ParasiticformsView=()=>import("@/views/ParasiticformsView.vue");
+const TypePaymentView=()=>import("@/views/TypePaymentView.vue");
+const ExamCatalogView=()=>import("@/views/ExamCatalogView.vue");
 
 const routes = [
   {
