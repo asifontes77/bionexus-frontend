@@ -32,6 +32,14 @@ const ROUTE_EXPORT_NAMES = Object.freeze({
   roles: "Roles y permisos",
   users: "Usuarios y autorizacion",
 });
+const PATH_EXPORT_NAMES = Object.freeze({
+  "/security/roles": "Roles y permisos",
+  "/security/users": "Usuarios y autorizacion",
+  "/configuration/exams": "Examenes",
+  "/configuration/parasiticforms": "Formas parasitarias",
+  "/configuration/type-payments": "Formas de pago",
+});
+
 
 function safeFileName(value) {
   return String(value || "exportacion-bio-nexus")
@@ -49,13 +57,14 @@ function resolveExportIdentity(options = {}) {
     .filter(Boolean)
     .at(-1) || "";
   const mappedTitle = ROUTE_EXPORT_NAMES[routeName] || "";
+  const pathTitle = PATH_EXPORT_NAMES[globalThis.location?.pathname] || "";
   const visibleTitle = [
     document.querySelector("main h1")?.textContent,
     document.querySelector("main h2")?.textContent,
     document.querySelector(".page-title")?.textContent,
     document.querySelector(".breadcrumb li:last-child")?.textContent,
   ].map((value) => String(value || "").trim()).find(Boolean) || "";
-  const title = explicitTitle || mappedTitle || visibleTitle || "Exportacion Bio Nexus";
+  const title = explicitTitle || mappedTitle || pathTitle || visibleTitle || "Exportacion Bio Nexus";
   const fileName = safeFileName(options.fileName || title);
   return { title, fileName };
 }

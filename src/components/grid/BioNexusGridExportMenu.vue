@@ -125,6 +125,15 @@ function confirmExport() {
     return;
   }
 
+
+  if (format.value === "pdf") {
+    const maximumColumns = orientation.value === "landscape" ? 10 : 6;
+    if (selectedColumnIds.value.length > maximumColumns) {
+      errorMessage.value = `El PDF en ${orientation.value === "landscape" ? "horizontal" : "vertical"} admite hasta ${maximumColumns} columnas legibles. Reduce la seleccion o cambia la orientacion.`;
+      return;
+    }
+  }
+
   emit("export", {
     format: format.value,
     orientation: format.value === "pdf" ? orientation.value : null,

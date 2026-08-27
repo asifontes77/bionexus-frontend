@@ -224,13 +224,15 @@ const gridApi = shallowRef(null);
 function getExportColumns() {
   if (!gridApi.value) return [];
   const options = props.exportOptions === true ? {} : (props.exportOptions || {});
-  const excluded = new Set(["actions", ...(options.excludeColumns || [])]);
+  const excluded = new Set(["actions", "ag-Grid-SelectionColumn", ...(options.excludeColumns || [])]);
   return gridApi.value.getAllDisplayedColumns()
     .filter((column) => {
       const definition = column.getColDef();
       return !excluded.has(column.getColId())
         && !excluded.has(definition.field)
-        && definition.suppressExport !== true;
+        && definition.suppressExport !== true
+        && definition.checkboxSelection !== true
+        && definition.headerCheckboxSelection !== true;
     })
     .map((column) => ({
       id: column.getColId(),
