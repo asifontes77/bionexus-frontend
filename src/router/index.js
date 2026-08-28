@@ -12,7 +12,8 @@ const TypePaymentView=()=>import("@/views/TypePaymentView.vue");
 const ExamCatalogView=()=>import("@/views/ExamCatalogView.vue");
 const LaboratoryView=()=>import("@/views/LaboratoryView.vue");
 const TaxesView=()=>import("@/views/TaxesView.vue");
-const applicationViewLoaders=[MigrationHomeView,RolesPermissionsView,UserAuthorizationView,ExamCatalogView,ParasiticformsView,TypePaymentView,LaboratoryView,TaxesView];
+const ApplicationSettingsView=()=>import("@/views/ApplicationSettingsView.vue");
+const applicationViewLoaders=[MigrationHomeView,RolesPermissionsView,UserAuthorizationView,ExamCatalogView,ParasiticformsView,TypePaymentView,LaboratoryView,TaxesView,ApplicationSettingsView];
 let applicationRoutesPrefetched=false;
 function scheduleAuthorizedRoutePrefetch(){
   if(applicationRoutesPrefetched)return;
@@ -102,6 +103,11 @@ const routes = [
         },
             },
       {
+        path: "configuration/application-settings",
+        name: "configuration-application-settings",
+        component: ApplicationSettingsView,
+        meta: { requiresAuth: true, permissions: ["application-settings.read"], title: "Configuracion de la aplicacion", description: "Administra formatos, reportes y parametros globales de impresion." },
+      },      {
         path: "configuration/laboratory",
         name: "configuration-laboratory",
         component: LaboratoryView,

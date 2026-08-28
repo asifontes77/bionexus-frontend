@@ -231,6 +231,13 @@ export const navigationItems = [
         permissions: ["tax.read"],
         migrated: true,
       },      {
+        key: "application-settings",
+        label: "Configuracion de la aplicacion",
+        abbreviation: "CA",
+        routeName: "configuration-application-settings",
+        permissions: ["application-settings.read"],
+        migrated: true,
+      },      {
         key: "laboratory",
         label: "Laboratorio",
         abbreviation: "LA",
