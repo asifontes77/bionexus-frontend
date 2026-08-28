@@ -97,11 +97,13 @@ const contextItems = computed(() => {
   if (!row) return [];
   return [
     { key: "edit", label: "Editar", icon: "edit", visible: canUpdate.value, disabled: saving.value, action: () => formDialog.value?.openEdit(row) },
+    { key: "toggle-only-dollars", label: row.only_dollars ? "Desactivar Solo dolares" : "Activar Solo dolares", icon: row.only_dollars ? "deactivate" : "activate", visible: canUpdate.value, disabled: saving.value, action: () => toggleBoolean(row, "only_dollars") },
+    { key: "toggle-always-subtotal", label: row.always_subtotal ? "Desactivar Fijo en subtotal" : "Activar Fijo en subtotal", icon: row.always_subtotal ? "deactivate" : "activate", visible: canUpdate.value, disabled: saving.value, action: () => toggleBoolean(row, "always_subtotal") },
+    { key: "toggle-hide", label: row.hide ? "Mostrar impuesto" : "Ocultar impuesto", icon: row.hide ? "activate" : "deactivate", visible: canUpdate.value, disabled: saving.value, action: () => toggleBoolean(row, "hide") },
     { key: "delete", label: "Eliminar", icon: "delete", visible: canDelete.value, disabled: saving.value, action: () => deleteDialog.value?.open(row) },
   ];
 });
-
-function toggleColumn(field, headerName, width, onLabel = "Si", offLabel = "No") {
+function toggleColumn(field, headerName, width, onLabel = "Si", offLabel = "No", exportOptions = {}) {
   return {
     field,
     headerName,
@@ -112,6 +114,7 @@ function toggleColumn(field, headerName, width, onLabel = "Si", offLabel = "No")
     headerClass: "tax-center-header",
     cellClass: "tax-center-cell",
     cellRenderer: BioNexusGridToggleCell,
+    ...exportOptions,
     cellRendererParams: {
       onLabel,
       offLabel,
@@ -121,12 +124,11 @@ function toggleColumn(field, headerName, width, onLabel = "Si", offLabel = "No")
     },
   };
 }
-
 const columns = computed(() => [
   { field: "description", headerName: "Descripcion", minWidth: 220, flex: 1 },
   { field: "value", headerName: "Porcentaje", width: 150, minWidth: 150, headerClass: "tax-center-header", cellClass: "tax-center-cell", valueFormatter: ({ value }) => `${Number(value).toFixed(2)} %` },
   toggleColumn("only_dollars", "Solo dolares", 170),
-  toggleColumn("always_subtotal", "Fijo en subtotal", 180),
+  toggleColumn("always_subtotal", "Fijo en subtotal", 180, "Si", "No", { exportAlignment: "center", exportHeaderAlignment: "center", cellStyle: { textAlign: "center" } }),
   toggleColumn("hide", "Oculto", 150),
   {
     headerName: "Acciones",
