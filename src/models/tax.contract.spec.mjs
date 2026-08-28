@@ -1,1 +1,15 @@
-import fs from"node:fs";import path from"node:path";import assert from"node:assert/strict";const r=f=>fs.readFileSync(path.join(process.cwd(),f),"utf8"),v=r("src/views/TaxesView.vue"),x=v+r("src/router/index.js")+r("src/config/navigation.js")+r("src/services/taxService.js");for(const p of ["tax.read","tax.create","tax.update","tax.delete"])assert.ok(x.includes(p));for(const f of ["description","value","only_dollars","always_subtotal","hide"])assert.ok(x.includes(f));assert.ok(v.includes("BioNexusDataGrid")&&v.includes("TaxDialog")&&v.includes("TaxDeleteDialog"));assert.ok(x.includes("configuration/taxes")&&x.includes("configuration-taxes"));console.log("Tax frontend contract approved.");
+import fs from "node:fs";
+import path from "node:path";
+import assert from "node:assert/strict";
+const read=(file)=>fs.readFileSync(path.join(process.cwd(),file),"utf8");
+const view=read("src/views/TaxesView.vue");
+for(const permission of ["tax.create","tax.update","tax.delete"]) assert.ok(view.includes(permission));
+for(const field of ["only_dollars","always_subtotal","hide"]) assert.ok(view.includes(`toggleColumn("${field}"`));
+assert.ok(view.includes("BioNexusContextMenu"));
+assert.ok(view.includes('@row-context-menu="openContextMenu"'));
+assert.ok(view.includes("contextItems"));
+assert.ok(view.includes("onToggle: (row) => toggleBoolean(row, field)"));
+assert.ok(view.includes('headerClass: "tax-center-header"'));
+assert.ok(view.includes('cellClass: "tax-center-cell"'));
+assert.ok(view.includes("async function toggleBoolean"));
+console.log("Tax frontend interaction contract approved.");
