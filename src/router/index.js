@@ -11,7 +11,8 @@ const ParasiticformsView=()=>import("@/views/ParasiticformsView.vue");
 const TypePaymentView=()=>import("@/views/TypePaymentView.vue");
 const ExamCatalogView=()=>import("@/views/ExamCatalogView.vue");
 const LaboratoryView=()=>import("@/views/LaboratoryView.vue");
-const applicationViewLoaders=[MigrationHomeView,RolesPermissionsView,UserAuthorizationView,ExamCatalogView,ParasiticformsView,TypePaymentView,LaboratoryView];
+const TaxesView=()=>import("@/views/TaxesView.vue");
+const applicationViewLoaders=[MigrationHomeView,RolesPermissionsView,UserAuthorizationView,ExamCatalogView,ParasiticformsView,TypePaymentView,LaboratoryView,TaxesView];
 let applicationRoutesPrefetched=false;
 function scheduleAuthorizedRoutePrefetch(){
   if(applicationRoutesPrefetched)return;
@@ -112,6 +113,11 @@ const routes = [
         },
       },
       {
+        path: "configuration/taxes",
+        name: "configuration-taxes",
+        component: TaxesView,
+        meta: { requiresAuth: true, permissions: ["tax.read"], title: "Impuestos", description: "Administra los porcentajes y reglas de aplicacion de impuestos." },
+      },      {
         path: "configuration/type-payments",
         name: "type-payments",
         component: TypePaymentView,

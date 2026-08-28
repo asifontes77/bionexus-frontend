@@ -1,0 +1,8 @@
+import { apiRequest } from "@/api/apiClient";
+export function normalizeTax(value){const source=value&&typeof value==="object"?value:{};return{id:Number(source.id),description:String(source.description||""),value:Number(source.value||0),only_dollars:Boolean(source.only_dollars),always_subtotal:Boolean(source.always_subtotal),hide:Boolean(source.hide)}}
+function changes(value){const result=normalizeTax(value);delete result.id;return result}
+export async function getTaxes(){const result=await apiRequest("/api/tax");return Array.isArray(result)?result.map(normalizeTax):[]}
+export async function createTax(value){return normalizeTax(await apiRequest("/api/tax",{method:"POST",body:changes(value)}))}
+export async function updateTax(id,value){if(!Number.isInteger(id)||id<=0)throw new Error("TAX_ID_INVALID");return normalizeTax(await apiRequest(`/api/tax/${id}`,{method:"PATCH",body:changes(value)}))}
+export async function deleteTax(id){if(!Number.isInteger(id)||id<=0)throw new Error("TAX_ID_INVALID");return apiRequest(`/api/tax/${id}`,{method:"DELETE"})}
+export function getTaxErrorMessage(error,fallback){const messages={TAX_ID_INVALID:"El identificador no es valido.",TAX_NOT_FOUND:"El impuesto no existe.",TAX_DESCRIPTION_REQUIRED:"La descripcion es obligatoria.",TAX_DESCRIPTION_TOO_LONG:"La descripcion admite hasta 20 caracteres.",TAX_VALUE_INVALID:"El porcentaje debe estar entre 0 y 100.",TAX_BOOLEAN_INVALID:"Una opcion no es valida.",TAX_UPDATE_REQUIRED:"No existen cambios para guardar.",TAX_FIELD_UNKNOWN:"Existen campos no permitidos."};return messages[error?.message]||error?.message||fallback}

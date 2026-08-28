@@ -224,6 +224,13 @@ export const navigationItems = [
         migrated: false,
       },
       {
+        key: "taxes",
+        label: "Impuestos",
+        abbreviation: "IM",
+        routeName: "configuration-taxes",
+        permissions: ["tax.read"],
+        migrated: true,
+      },      {
         key: "laboratory",
         label: "Laboratorio",
         abbreviation: "LA",
