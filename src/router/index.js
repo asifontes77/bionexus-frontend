@@ -106,7 +106,7 @@ const routes = [
         path: "configuration/application-settings",
         name: "configuration-application-settings",
         component: ApplicationSettingsView,
-        meta: { requiresAuth: true, permissions: ["application-settings.read"], title: "Configuracion de la aplicacion", description: "Administra formatos, reportes y parametros globales de impresion." },
+        meta: { requiresAuth: true, permissions: ["application-settings.read"], title: "Configuración de la aplicación", description: "Administra formatos, reportes y parámetros globales de impresión." },
       },      {
         path: "configuration/laboratory",
         name: "configuration-laboratory",

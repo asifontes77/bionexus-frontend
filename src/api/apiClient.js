@@ -1,3 +1,5 @@
+import { getSessionPolicySocketId } from '@/services/sessionPolicySocket'
+
 const DEFAULT_REQUEST_TIMEOUT_MS = 15000
 const SESSION_STORAGE_KEY = 'bio-nexus.session'
 
@@ -58,6 +60,8 @@ export async function apiRequest(path, options = {}) {
   if (auth) {
     const token = getStoredToken()
     if (token) requestHeaders.set('Authorization', `Bearer ${token}`)
+    const socketId = getSessionPolicySocketId()
+    if (socketId) requestHeaders.set('X-Bio-Nexus-Socket-Id', socketId)
   }
 
   const normalizedTimeoutMs = Number.isFinite(Number(timeoutMs))
@@ -99,6 +103,9 @@ export async function apiRequest(path, options = {}) {
 
   const data = await parseResponse(response)
   if (!response.ok) {
+    if (auth && response.status === 401) {
+      globalThis.dispatchEvent?.(new CustomEvent('bio-nexus:unauthorized', { detail: { path } }))
+    }
     const message =
       data && typeof data === 'object' && data.message
         ? data.message
