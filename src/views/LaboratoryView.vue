@@ -24,7 +24,8 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import BioNexusActionButton from '@/components/ui/BioNexusActionButton.vue'
 import BioNexusTabs from '@/components/ui/BioNexusTabs.vue'
 import LaboratoryBillingPanel from '@/components/laboratory/LaboratoryBillingPanel.vue'
@@ -36,6 +37,7 @@ import { validateLaboratoryRequired } from '@/models/laboratory'
 import { getLaboratory, getLaboratoryErrorMessage, updateLaboratory, uploadLaboratoryLogo } from '@/services/laboratoryService'
 import { useAuthorizationStore } from '@/stores/authorization'
 
+const route = useRoute()
 const authorization = useAuthorizationStore()
 const toast = useBioNexusToast()
 const laboratory = ref(null)
@@ -43,7 +45,7 @@ const original = ref('')
 const loading = ref(false)
 const saving = ref(false)
 const loadError = ref('')
-const activeTab = ref('general')
+const activeTab = ref(typeof route.query.tab === 'string' ? route.query.tab : 'general')
 const tabs = Object.freeze([
   { key: 'logo', label: 'Logo' },
   { key: 'general', label: 'General' },
@@ -93,6 +95,7 @@ async function uploadLogo(file) {
   } catch (error) { toast.error(getLaboratoryErrorMessage(error, 'No fue posible actualizar el logo.')) }
   finally { saving.value = false }
 }
+watch(() => route.query.tab, value => { if (typeof value === 'string') activeTab.value = value })
 onMounted(load)
 </script>
 

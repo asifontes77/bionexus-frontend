@@ -19,7 +19,8 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import ApplicationSettingsPanel from '@/components/application-settings/ApplicationSettingsPanel.vue'
 import BioNexusActionButton from '@/components/ui/BioNexusActionButton.vue'
 import BioNexusTabs from '@/components/ui/BioNexusTabs.vue'
@@ -28,6 +29,7 @@ import { validateApplicationSettings } from '@/models/applicationSettings'
 import { getApplicationSettings, getApplicationSettingsErrorMessage, updateApplicationSettings } from '@/services/applicationSettingsService'
 import { useAuthorizationStore } from '@/stores/authorization'
 
+const route = useRoute()
 const authorization = useAuthorizationStore()
 const toast = useBioNexusToast()
 const settings = ref(null)
@@ -35,7 +37,7 @@ const original = ref('')
 const loading = ref(false)
 const saving = ref(false)
 const loadError = ref('')
-const activeTab = ref('formats')
+const activeTab = ref(typeof route.query.tab === 'string' ? route.query.tab : 'formats')
 const tabs = Object.freeze([
   { key: 'formats', label: 'Formatos' },
   { key: 'session', label: 'Sesión' },
@@ -72,6 +74,7 @@ async function save() {
   } catch (error) { toast.error(getApplicationSettingsErrorMessage(error, 'No fue posible guardar la configuración.')) }
   finally { saving.value = false }
 }
+watch(() => route.query.tab, value => { if (typeof value === 'string') activeTab.value = value })
 onMounted(load)
 </script>
 

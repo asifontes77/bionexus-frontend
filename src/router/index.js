@@ -13,7 +13,8 @@ const ExamCatalogView=()=>import("@/views/ExamCatalogView.vue");
 const LaboratoryView=()=>import("@/views/LaboratoryView.vue");
 const TaxesView=()=>import("@/views/TaxesView.vue");
 const ApplicationSettingsView=()=>import("@/views/ApplicationSettingsView.vue");
-const applicationViewLoaders=[MigrationHomeView,RolesPermissionsView,UserAuthorizationView,ExamCatalogView,ParasiticformsView,TypePaymentView,LaboratoryView,TaxesView,ApplicationSettingsView];
+const ConfigurationModuleView=()=>import("@/views/ConfigurationModuleView.vue");
+const applicationViewLoaders=[MigrationHomeView,RolesPermissionsView,UserAuthorizationView,ExamCatalogView,ParasiticformsView,TypePaymentView,LaboratoryView,TaxesView,ApplicationSettingsView,ConfigurationModuleView];
 let applicationRoutesPrefetched=false;
 function scheduleAuthorizedRoutePrefetch(){
   if(applicationRoutesPrefetched)return;
@@ -67,6 +68,7 @@ const routes = [
           permissions: ["security.roles.read", "security.permissions.read"],
           title: "Roles y permisos",
           description: "Administra los roles del sistema y configura los permisos asignados a cada rol.",
+          breadcrumb: ["Configuración","Seguridad","Roles y permisos"],
         },
       },
       {
@@ -78,6 +80,7 @@ const routes = [
           permissions: ["security.users.read"],
           title: "Usuarios y autorización",
           description: "Administra los usuarios, sus roles y las excepciones individuales de permisos.",
+          breadcrumb: ["Configuración","Seguridad","Usuarios y autorización"],
         },
       },
       {
@@ -87,8 +90,8 @@ const routes = [
         meta: {
           requiresAuth: true,
           permissions: ["exam-catalog.read"],
-          title: "Lista de examenes",
-          description: "Administra grupos, examenes, tarifas, impuestos y disponibilidad del catalogo.",
+          title: "Lista de exámenes",
+          description: "Administra grupos, exámenes, tarifas, impuestos y disponibilidad del catálogo.",
         },
       },
       {
@@ -99,9 +102,80 @@ const routes = [
           requiresAuth: true,
           permissions: ["parasiticforms.read"],
           title: "Formas parasitarias",
-                    description: "Administra las descripciones disponibles y controla cuales permanecen activas en los flujos operativos.",
+                    description: "Administra las descripciónes disponibles y controla cuales permanecen activas en los flujos operativos.",
         },
             },
+      {
+        path: "configuration/catalogs",
+        name: "configuration-catalogs",
+        component: ConfigurationModuleView,
+        meta: { requiresAuth: true, title: "Catálogos", description: "Organiza los catálogos y parámetros reutilizados por los procesos del laboratorio.", breadcrumb: ["Configuración", "Catálogos"], sections: [
+          { title: "Lista de exámenes", description: "Grupos, exámenes, tarifas y disponibilidad.", routeName: "configuration-exams", permission: "exam-catalog.read", status: "available" },
+          { title: "Ordenar exámenes", description: "Orden de presentación del catálogo.", status: "pending" },
+          { title: "Rutinas de exámenes", description: "Agrupaciones frecuentes de exámenes.", status: "pending" },
+          { title: "Antibióticos", description: "Catalogo para antibiogramas.", status: "pending" },
+          { title: "Gérmenes", description: "Catalogo de microorganismos.", status: "pending" },
+          { title: "Formas parasitarias", description: "Descripciones parasitológicas disponibles.", routeName: "configuration-parasiticforms", permission: "parasiticforms.read", status: "available" },
+          { title: "Grupos de hojas de trabajo", description: "Organizacion de hojas de trabajo.", status: "pending" },
+          { title: "Pruebas especiales", description: "Laboratorios y pruebas de referencia.", status: "pending" },
+          { title: "Formas de pago", description: "Disponibilidad por moneda y estado.", routeName: "type-payments", permission: "typepayment.read", status: "available" }
+        ] },
+      },
+      {
+        path: "configuration/laboratory-module", name: "configuration-laboratory-module", component: ConfigurationModuleView,
+        meta: { requiresAuth: true, permissions: ["laboratory.read"], title: "Laboratorio", description: "Identidad institucional, comunicaciones y licencia del laboratorio.", breadcrumb: ["Configuración", "Laboratorio"], sections: [
+          { title: "Identidad", description: "Logo, razon social, RIF, domicilio, telefonos y datos de contacto.", routeName: "configuration-laboratory", status: "available" },
+          { title: "Comunicaciones", description: "Correo saliente y entrega electrónica de resultados.", routeName: "configuration-laboratory", query: { tab: "email" }, status: "available" },
+          { title: "Licencia", description: "Activacion, vigencia y módulos habilitados.", status: "last" }
+        ] },
+      },
+      {
+        path: "configuration/patient-care", name: "configuration-patient-care", component: ConfigurationModuleView,
+        meta: { requiresAuth: true, title: "Atención al paciente", description: "Configuración de documentos y preferencias propias de la admision.", breadcrumb: ["Configuración", "Atención al paciente"], sections: [
+          { title: "Comprobante del paciente", description: "Emision, correlativo, filas y plantilla independiente de la factura.", status: "pending" }
+        ] },
+      },
+      {
+        path: "configuration/sampling", name: "configuration-sampling", component: ConfigurationModuleView,
+        meta: { requiresAuth: true, title: "Toma de muestras", description: "Etiquetado, impresora térmica y plantilla de identificación de muestras.", breadcrumb: ["Configuración", "Toma de muestras"], sections: [
+          { title: "Etiquetado", description: "Emision automatica, correlativo y cantidad de copias.", status: "pending" },
+          { title: "Impresora de etiquetas", description: "Conexion, tamano, orientacion y prueba de impresión.", status: "pending" },
+          { title: "Plantilla de etiqueta", description: "Paciente, muestra, exámenes y códigos.", status: "pending" }
+        ] },
+      },
+      {
+        path: "configuration/billing-module", name: "configuration-billing-module", component: ConfigurationModuleView,
+        meta: { requiresAuth: true, title: "Facturación", description: "Emision fiscal, impuestos, plantillas e impresión calibrada.", breadcrumb: ["Configuración", "Facturación"], sections: [
+          { title: "General", description: "Activacion, numeración y reglas generales de emisión.", routeName: "configuration-laboratory", query: { tab: "billing" }, permission: "laboratory.read", status: "available" },
+          { title: "Impuestos", description: "Porcentajes y reglas fiscales aplicadas a los exámenes.", routeName: "configuration-taxes", permission: "tax.read", status: "available" },
+          { title: "Plantillas de factura", description: "Factura completa y formulario preimpreso.", status: "pending" },
+          { title: "Impresion y calibración", description: "Papel, margenes, desplazamientos y perfiles de impresora.", status: "pending" }
+        ] },
+      },
+      {
+        path: "configuration/documents", name: "configuration-documents", component: ConfigurationModuleView,
+        meta: { requiresAuth: true, title: "Documentos y plantillas", description: "Catalogo central de formatos editables del laboratorio.", breadcrumb: ["Configuración", "Documentos y plantillas"], sections: [
+          { title: "Comprobante", description: "Plantilla del comprobante del paciente.", status: "pending" },
+          { title: "Factura", description: "Plantilla fiscal completa o preimpresa.", status: "pending" },
+          { title: "Etiqueta de muestra", description: "Plantilla para tubos y muestras.", status: "pending" },
+          { title: "Informe de resultados", description: "Formato de entrega de resultados.", status: "future" }
+        ] },
+      },
+      {
+        path: "configuration/system-module", name: "configuration-system-module", component: ConfigurationModuleView,
+        meta: { requiresAuth: true, permissions: ["application-settings.read"], title: "Sistema", description: "Sesión, formatos regionales y preferencias técnicas.", breadcrumb: ["Configuración", "Sistema"], sections: [
+          { title: "Sesión y seguridad", description: "Duracion renovable, inactividad y cuenta regresiva.", routeName: "configuration-application-settings", query: { tab: "session" }, status: "available" },
+          { title: "Formatos regionales", description: "Fecha, hora, moneda y separadores.", status: "pending" },
+          { title: "Preferencias técnicas", description: "Parametros generales no asociados a un proceso funcional.", status: "pending" }
+        ] },
+      },
+      {
+        path: "configuration/security-module", name: "configuration-security-module", component: ConfigurationModuleView,
+        meta: { requiresAuth: true, permissions: ["security.roles.read", "security.permissions.read", "security.users.read"], title: "Seguridad", description: "Roles, permisos, usuarios y autorización efectiva.", breadcrumb: ["Configuración", "Seguridad"], sections: [
+          { title: "Roles y permisos", description: "Catalogo de roles y permisos asignados.", routeName: "security-roles", permission: "security.roles.read", status: "available" },
+          { title: "Usuarios y autorización", description: "Usuarios, roles y excepciones individuales.", routeName: "security-users", permission: "security.users.read", status: "available" }
+        ] },
+      },
       {
         path: "configuration/application-settings",
         name: "configuration-application-settings",
@@ -122,7 +196,7 @@ const routes = [
         path: "configuration/taxes",
         name: "configuration-taxes",
         component: TaxesView,
-        meta: { requiresAuth: true, permissions: ["tax.read"], title: "Impuestos", description: "Administra los porcentajes y reglas de aplicacion de impuestos." },
+        meta: { requiresAuth: true, permissions: ["tax.read"], title: "Impuestos", description: "Administra los porcentajes y reglas de aplicación de impuestos." },
       },      {
         path: "configuration/type-payments",
         name: "type-payments",
@@ -131,7 +205,7 @@ const routes = [
           requiresAuth: true,
           permission: "typepayment.read",
           title: "Formas de pago",
-          description: "Administra las descripciones, disponibilidad por moneda y estado de los formas de pago.",
+          description: "Administra las descripciónes, disponibilidad por moneda y estado de los formas de pago.",
         },
       },
     ],
