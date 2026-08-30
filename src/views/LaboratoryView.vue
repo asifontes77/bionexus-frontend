@@ -15,8 +15,8 @@
 
     <div v-if="loading" class="bio-nexus-empty-state">Cargando configuración...</div>
     <template v-else-if="laboratory">
-      <LaboratoryLogoPanel v-show="activeTab === 'logo'" id="laboratory-panel-logo" role="tabpanel" aria-labelledby="laboratory-tab-logo" :model="laboratory" :disabled="!canUpdate || saving" @upload="uploadLogo" />
-      <LaboratoryGeneralPanel v-show="activeTab === 'general'" id="laboratory-panel-general" role="tabpanel" aria-labelledby="laboratory-tab-general" :model="laboratory" :disabled="!canUpdate || saving" />
+      <LaboratoryLogoPanel v-show="activeTab === 'logo'" id="laboratory-panel-logo" role="tabpanel" aria-labelledby="laboratory-tab-logo" :model="laboratory" :errors="identityErrors" :disabled="!canUpdate || saving" @upload="uploadLogo" />
+      <LaboratoryGeneralPanel v-show="activeTab === 'general'" id="laboratory-panel-general" role="tabpanel" aria-labelledby="laboratory-tab-general" :model="laboratory" :errors="identityErrors" :disabled="!canUpdate || saving" />
       <LaboratoryBillingPanel v-show="activeTab === 'billing'" id="laboratory-panel-billing" role="tabpanel" aria-labelledby="laboratory-tab-billing" :model="laboratory" :disabled="!canUpdate || saving" />
       <LaboratoryEmailPanel v-show="activeTab === 'email'" id="laboratory-panel-email" role="tabpanel" aria-labelledby="laboratory-tab-email" :model="laboratory" :disabled="!canUpdate || saving" />
     </template>
@@ -33,7 +33,7 @@ import LaboratoryEmailPanel from '@/components/laboratory/LaboratoryEmailPanel.v
 import LaboratoryGeneralPanel from '@/components/laboratory/LaboratoryGeneralPanel.vue'
 import LaboratoryLogoPanel from '@/components/laboratory/LaboratoryLogoPanel.vue'
 import { useBioNexusToast } from '@/composables/useBioNexusToast'
-import { validateLaboratoryRequired } from '@/models/laboratory'
+import { validateLaboratoryIdentity } from '@/models/laboratory'
 import { getLaboratory, getLaboratoryErrorMessage, updateLaboratory, uploadLaboratoryLogo } from '@/services/laboratoryService'
 import { useAuthorizationStore } from '@/stores/authorization'
 
@@ -45,6 +45,7 @@ const original = ref('')
 const loading = ref(false)
 const saving = ref(false)
 const loadError = ref('')
+const identityErrors = ref({})
 const activeTab = ref(typeof route.query.tab === 'string' ? route.query.tab : 'general')
 const tabs = Object.freeze([
   { key: 'logo', label: 'Logo' },
@@ -59,6 +60,7 @@ function snapshot() { original.value = JSON.stringify(laboratory.value) }
 function discard() {
   if (!original.value || saving.value) return
   laboratory.value = JSON.parse(original.value)
+  identityErrors.value = {}
   toast.info('Los cambios pendientes fueron descartados.')
 }
 async function load() {
@@ -72,12 +74,14 @@ async function load() {
 }
 async function save() {
   if (!dirty.value || saving.value) return
-  const errors = validateLaboratoryRequired(laboratory.value)
-  if (errors.length) { toast.error(errors.join(' ')); return }
+  identityErrors.value = validateLaboratoryIdentity(laboratory.value)
+  const errors = Object.values(identityErrors.value)
+  if (errors.length) { activeTab.value = errors.some((_, index) => Object.keys(identityErrors.value)[index].startsWith('max_')) ? 'logo' : 'general'; toast.error('Revise los campos señalados antes de guardar.'); return }
   saving.value = true
   try {
     laboratory.value = await updateLaboratory(laboratory.value.id, laboratory.value)
     snapshot()
+    identityErrors.value = {}
     toast.success('La configuración fue actualizada.')
   } catch (error) { toast.error(getLaboratoryErrorMessage(error, 'No fue posible guardar.')) }
   finally { saving.value = false }

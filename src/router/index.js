@@ -11,10 +11,11 @@ const ParasiticformsView=()=>import("@/views/ParasiticformsView.vue");
 const TypePaymentView=()=>import("@/views/TypePaymentView.vue");
 const ExamCatalogView=()=>import("@/views/ExamCatalogView.vue");
 const LaboratoryView=()=>import("@/views/LaboratoryView.vue");
+const LaboratoryIdentityView=()=>import("@/views/LaboratoryIdentityView.vue");
 const TaxesView=()=>import("@/views/TaxesView.vue");
 const ApplicationSettingsView=()=>import("@/views/ApplicationSettingsView.vue");
 const ConfigurationModuleView=()=>import("@/views/ConfigurationModuleView.vue");
-const applicationViewLoaders=[MigrationHomeView,RolesPermissionsView,UserAuthorizationView,ExamCatalogView,ParasiticformsView,TypePaymentView,LaboratoryView,TaxesView,ApplicationSettingsView,ConfigurationModuleView];
+const applicationViewLoaders=[MigrationHomeView,RolesPermissionsView,UserAuthorizationView,ExamCatalogView,ParasiticformsView,TypePaymentView,LaboratoryView,TaxesView,ApplicationSettingsView,ConfigurationModuleView,LaboratoryIdentityView];
 let applicationRoutesPrefetched=false;
 function scheduleAuthorizedRoutePrefetch(){
   if(applicationRoutesPrefetched)return;
@@ -124,8 +125,8 @@ const routes = [
       {
         path: "configuration/laboratory-module", name: "configuration-laboratory-module", component: ConfigurationModuleView,
         meta: { requiresAuth: true, permissions: ["laboratory.read"], title: "Laboratorio", description: "Identidad institucional, comunicaciones y licencia del laboratorio.", breadcrumb: ["Configuración", "Laboratorio"], sections: [
-          { title: "Identidad", description: "Logo, razon social, RIF, domicilio, telefonos y datos de contacto.", routeName: "configuration-laboratory", status: "available" },
-          { title: "Comunicaciones", description: "Correo saliente y entrega electrónica de resultados.", routeName: "configuration-laboratory", query: { tab: "email" }, status: "available" },
+          { title: "Identidad", description: "Logo, razón social, RIF, domicilio, teléfonos y datos de contacto.", routeName: "configuration-laboratory", status: "available" },
+          { title: "Comunicaciones", description: "Correo saliente y entrega electrónica de resultados.", routeName: "configuration-laboratory-communications", status: "available" },
           { title: "Licencia", description: "Activacion, vigencia y módulos habilitados.", status: "last" }
         ] },
       },
@@ -146,7 +147,7 @@ const routes = [
       {
         path: "configuration/billing-module", name: "configuration-billing-module", component: ConfigurationModuleView,
         meta: { requiresAuth: true, title: "Facturación", description: "Emision fiscal, impuestos, plantillas e impresión calibrada.", breadcrumb: ["Configuración", "Facturación"], sections: [
-          { title: "General", description: "Activacion, numeración y reglas generales de emisión.", routeName: "configuration-laboratory", query: { tab: "billing" }, permission: "laboratory.read", status: "available" },
+          { title: "General", description: "Activación, numeración y reglas generales de emisión.", routeName: "configuration-billing-general", permission: "laboratory.read", status: "available" },
           { title: "Impuestos", description: "Porcentajes y reglas fiscales aplicadas a los exámenes.", routeName: "configuration-taxes", permission: "tax.read", status: "available" },
           { title: "Plantillas de factura", description: "Factura completa y formulario preimpreso.", status: "pending" },
           { title: "Impresion y calibración", description: "Papel, margenes, desplazamientos y perfiles de impresora.", status: "pending" }
@@ -184,13 +185,26 @@ const routes = [
       },      {
         path: "configuration/laboratory",
         name: "configuration-laboratory",
-        component: LaboratoryView,
+        component: LaboratoryIdentityView,
         meta: {
           requiresAuth: true,
           permissions: ["laboratory.read"],
-          title: "Laboratorio",
-          description: "Administra la identidad, impresión, impuestos y correo del laboratorio.",
+          title: "Identidad del laboratorio",
+          description: "Administra la imagen y los datos institucionales visibles en documentos y comunicaciones.",
+          breadcrumb: ["Configuración", "Laboratorio", "Identidad"],
         },
+      },
+      {
+        path: "configuration/laboratory/communications",
+        name: "configuration-laboratory-communications",
+        component: LaboratoryView,
+        meta: { requiresAuth: true, permissions: ["laboratory.read"], title: "Comunicaciones", description: "Administra el correo saliente y la entrega electrónica de resultados.", initialTab: "email", breadcrumb: ["Configuración", "Laboratorio", "Comunicaciones"] },
+      },
+      {
+        path: "configuration/billing/general",
+        name: "configuration-billing-general",
+        component: LaboratoryView,
+        meta: { requiresAuth: true, permissions: ["laboratory.read"], title: "Facturación general", description: "Administra las reglas generales de facturación y toma de muestras.", initialTab: "billing", breadcrumb: ["Configuración", "Facturación", "General"] },
       },
       {
         path: "configuration/taxes",

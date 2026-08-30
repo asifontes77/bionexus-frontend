@@ -27,11 +27,12 @@ export async function updateLaboratory(id, changes) {
   return normalizeLaboratory(await apiRequest(`/api/laboratory/${id}`, { method: 'PATCH', body: normalizeLaboratoryChanges(changes) }));
 }
 
-export async function uploadLaboratoryLogo(file) {
+export async function uploadLaboratoryLogo(file, laboratoryId = 1) {
+  if (!Number.isInteger(laboratoryId) || laboratoryId <= 0) throw new Error('LABORATORY_ID_INVALID');
   if (typeof File === 'undefined' || !(file instanceof File)) throw new Error('LABORATORY_LOGO_REQUIRED');
   const body = new FormData();
   body.append('file', file);
-  return normalizeLaboratory(await apiRequest('/api/laboratory/upload', { method: 'POST', body, preserveBody: true }));
+  return normalizeLaboratory(await apiRequest(`/api/laboratory/${laboratoryId}/upload`, { method: 'POST', body, preserveBody: true }));
 }
 
 export function getLaboratoryErrorMessage(error, fallback) {
@@ -44,6 +45,18 @@ export function getLaboratoryErrorMessage(error, fallback) {
     LABORATORY_TEXT_INVALID: 'Uno de los textos supera la longitud permitida.',
     LABORATORY_BOOLEAN_INVALID: 'Una opción contiene un valor no válido.',
     LABORATORY_INTEGER_INVALID: 'Un valor numérico no es válido.',
+    LABORATORY_EMAIL_INVALID: 'Ingrese un correo válido.',
+    LABORATORY_URL_INVALID: 'Ingrese una URL completa que comience con http:// o https://.',
+    LABORATORY_RIF_INVALID: 'Ingrese un RIF válido.',
+    LABORATORY_PHONE_INVALID: 'Ingrese un teléfono válido.',
+    LABORATORY_PHONE_MASK_INVALID: 'La máscara telefónica debe contener marcadores #.',
+    LABORATORY_LOGO_DIMENSION_INVALID: 'Las dimensiones del logo deben estar entre 0 y 200 px.',
+    LABORATORY_QR_INVALID: 'La configuración QR no es válida.',
+    LABORATORY_QR_FIELD_UNKNOWN: 'La configuración QR contiene campos no permitidos.',
+    LABORATORY_QR_ACTIVE_INVALID: 'El estado del QR no es válido.',
+    LABORATORY_QR_TEXT_INVALID: 'Un texto del QR supera la longitud permitida.',
+    LABORATORY_QR_EMAIL_INVALID: 'Ingrese un correo de contacto válido.',
+    LABORATORY_QR_PHONE_INVALID: 'Ingrese un teléfono de contacto válido.',
     LABORATORY_LOGO_REQUIRED: 'Seleccione una imagen para el logo.',
     LABORATORY_LOGO_TYPE_INVALID: 'Use una imagen PNG, JPEG o WebP.',
     BIO_NEXUS_REQUEST_TIMEOUT: 'La solicitud tardó demasiado.'

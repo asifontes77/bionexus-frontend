@@ -127,11 +127,12 @@ export async function replaceUserPermissionOverrides(userId, overrides) {
 
   return normalizePermissionOverrides(response);
 }
-export async function uploadUserAsset(file, assetType) {
+export async function uploadUserAsset(file, assetType, userId) {
   if (!["photos", "signatures"].includes(assetType)) throw new Error("Tipo de imagen de usuario invalido.");
+  if (!Number.isInteger(userId) || userId <= 0) throw new Error("Usuario invalido para cargar imagen.");
   const formData = new FormData();
   formData.append("file", file, file.name);
-  const response = await apiRequest(`/api/users/upload/${assetType}`, {
+  const response = await apiRequest(`/api/users/${userId}/upload/${assetType}`, {
     method: "POST",
     body: formData,
     preserveBody: true,
@@ -139,7 +140,8 @@ export async function uploadUserAsset(file, assetType) {
   return typeof response === "string" ? response : response?.filename ?? response?.message ?? response;
 }
 export async function verifyUserEmail(email, userId = null) {
-  const encodedEmail = encodeURIComponent(email.trim());
+  const normalizedEmail = typeof email === "string" ? email.trim().toLowerCase() : "";
+  const encodedEmail = encodeURIComponent(normalizedEmail);
   const path = Number.isInteger(userId) && userId > 0
     ? `/api/users/verify-id/${userId}/${encodedEmail}`
     : `/api/users/verify/${encodedEmail}`;

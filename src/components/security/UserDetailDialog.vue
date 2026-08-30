@@ -87,7 +87,7 @@ function close() {
 }
 
 defineExpose({ open, close });
-function assetUrl(value) { return value ? `/api/public/images/${value.split("/").map(encodeURIComponent).join("/")}` : ""; }
+function assetUrl(value) { if (!value) return ""; const normalized = value.includes("/") ? value : `images/${value}`; return `/api/public/${normalized.split("/").filter(Boolean).map(encodeURIComponent).join("/")}`; }
 </script>
 
 <style scoped>
