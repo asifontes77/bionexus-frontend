@@ -2,6 +2,8 @@ import { getSessionPolicySocketId } from '@/services/sessionPolicySocket'
 
 const DEFAULT_REQUEST_TIMEOUT_MS = 15000
 const SESSION_STORAGE_KEY = 'bio-nexus.session'
+const RENEW_PATH = '/api/users/session/renew'
+let unauthorizedRenewalPromise = null
 
 function getStoredToken() {
   try {
@@ -37,6 +39,24 @@ export class ApiError extends Error {
   }
 }
 
+async function renewStoredSession() {
+  if (unauthorizedRenewalPromise) return unauthorizedRenewalPromise
+  const token = getStoredToken()
+  if (!token) return null
+  unauthorizedRenewalPromise = fetch(RENEW_PATH, { method: 'POST', headers: { Authorization: `Bearer ${token}` } })
+    .then(async (response) => {
+      const data = await parseResponse(response)
+      if (!response.ok || !data?.token) return null
+      const stored = JSON.parse(localStorage.getItem(SESSION_STORAGE_KEY) || '{}')
+      localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify({ ...stored, token: data.token, user: data.user ?? stored.user ?? null, renewedAt: new Date().toISOString() }))
+      globalThis.dispatchEvent?.(new CustomEvent('bio-nexus:session-renewed', { detail: data }))
+      return data.token
+    })
+    .catch(() => null)
+    .finally(() => { unauthorizedRenewalPromise = null })
+  return unauthorizedRenewalPromise
+}
+
 export async function apiRequest(path, options = {}) {
   const {
     auth = true,
@@ -46,6 +66,7 @@ export async function apiRequest(path, options = {}) {
     preserveBody = false,
     timeoutMs = DEFAULT_REQUEST_TIMEOUT_MS,
     signal: externalSignal,
+    retryAfterRenewal = true,
     ...requestOptions
   } = options
 
@@ -104,6 +125,10 @@ export async function apiRequest(path, options = {}) {
   const data = await parseResponse(response)
   if (!response.ok) {
     if (auth && response.status === 401) {
+      if (retryAfterRenewal && path !== RENEW_PATH) {
+        const renewedToken = await renewStoredSession()
+        if (renewedToken) return apiRequest(path, { ...options, retryAfterRenewal: false })
+      }
       globalThis.dispatchEvent?.(new CustomEvent('bio-nexus:unauthorized', { detail: { path } }))
     }
     const message =

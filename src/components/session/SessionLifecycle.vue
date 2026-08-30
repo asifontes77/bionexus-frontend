@@ -109,7 +109,6 @@ async function performRenewal() {
   if (renewPromise) return renewPromise
   renewPromise = renewSession().then((response) => {
     session.applyRenewal(response)
-    lastActivityAt = Date.now()
     return response
   }).finally(() => { renewPromise = null })
   return renewPromise
@@ -129,6 +128,8 @@ async function continueSession() {
   renewing.value = true
   try {
     await performRenewal()
+    lastActivityAt = Date.now()
+    countdown.value = 0
     if (dialog.value?.open) dialog.value.close()
   } catch { await expireSession() }
   finally { renewing.value = false }
@@ -148,12 +149,14 @@ async function monitor() {
     return
   }
   if (inactiveSeconds >= inactivityLimitSeconds) {
-    if (policy.countdownSeconds > 0) {
-      countdown.value = policy.countdownSeconds
-      dialog.value?.showModal()
-      await nextTick()
-      continueButton.value?.focus()
+    if (policy.countdownSeconds === 0) {
+      await expireSession()
+      return
     }
+    countdown.value = policy.countdownSeconds
+    dialog.value?.showModal()
+    await nextTick()
+    continueButton.value?.focus()
     return
   }
   if (session.expiresAt > 0 && session.expiresAt - now <= RENEW_WINDOW_MS) {
@@ -161,11 +164,15 @@ async function monitor() {
   }
 }
 
-function unauthorized() { expireSession() }
+function unauthorized() { void expireSession() }
+function applyExternalRenewal(event) {
+  if (!event?.detail?.token) return
+  session.applyRenewal(event.detail)
+}
 
-watch(() => session.token, async (token) => {
+watch(() => session.token, async (token, previousToken) => {
   if (!token) { disconnectSessionPolicySocket(); disconnectAuthorizationEventsSocket(); return }
-  lastActivityAt = Date.now()
+  if (!previousToken) lastActivityAt = Date.now()
   await loadPolicy()
   connectSessionPolicySocket(token, applyRemotePolicy)
   connectAuthorizationEventsSocket(token, applyAuthorizationUpdate)
@@ -174,6 +181,7 @@ watch(() => session.token, async (token) => {
 onMounted(async () => {
   ACTIVITY_EVENTS.forEach((eventName) => globalThis.addEventListener(eventName, registerActivity, { passive: true }))
   globalThis.addEventListener('bio-nexus:unauthorized', unauthorized)
+  globalThis.addEventListener('bio-nexus:session-renewed', applyExternalRenewal)
   globalThis.addEventListener('bio-nexus:session-policy-local', applyLocalPolicy)
   if (session.isAuthenticated) { await loadPolicy(); connectSessionPolicySocket(session.token, applyRemotePolicy); connectAuthorizationEventsSocket(session.token, applyAuthorizationUpdate) }
   timer = globalThis.setInterval(monitor, MONITOR_INTERVAL_MS)
@@ -182,6 +190,7 @@ onMounted(async () => {
 onBeforeUnmount(() => {
   ACTIVITY_EVENTS.forEach((eventName) => globalThis.removeEventListener(eventName, registerActivity))
   globalThis.removeEventListener('bio-nexus:unauthorized', unauthorized)
+  globalThis.removeEventListener('bio-nexus:session-renewed', applyExternalRenewal)
   globalThis.removeEventListener('bio-nexus:session-policy-local', applyLocalPolicy)
   globalThis.clearInterval(timer)
 })
