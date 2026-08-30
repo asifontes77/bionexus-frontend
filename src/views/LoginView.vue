@@ -23,30 +23,41 @@
       <form
         v-if="!licenseRequired"
         class="login-form"
+        novalidate
         @submit.prevent="submitLogin"
       >
-        <label for="username">Nombre de usuario</label>
-        <input
-          id="username"
-          v-model.trim="username"
-          name="username"
-          type="text"
-          autocomplete="username"
-          required
-          :disabled="loading"
-          @keydown.space.prevent
-        />
+        <BioNexusFormField label="Nombre de usuario" field-id="username" :error="errors.username" required>
+          <input
+            id="username"
+            ref="usernameInput"
+            v-model.trim="username"
+            class="bio-nexus-field"
+            name="username"
+            type="text"
+            autocomplete="username"
+            maxlength="100"
+            :aria-invalid="Boolean(errors.username)"
+            :aria-describedby="errors.username ? 'username-error' : undefined"
+            :disabled="loading"
+            @input="delete errors.username"
+            @keydown.space.prevent
+          />
+        </BioNexusFormField>
 
-        <label for="password">Contraseña</label>
-        <input
-          id="password"
-          v-model="password"
-          name="password"
-          type="password"
-          autocomplete="current-password"
-          required
-          :disabled="loading"
-        />
+        <BioNexusFormField label="Contraseña" field-id="password" :error="errors.password" required>
+          <input
+            id="password"
+            v-model="password"
+            class="bio-nexus-field"
+            name="password"
+            type="password"
+            autocomplete="current-password"
+            :aria-invalid="Boolean(errors.password)"
+            :aria-describedby="errors.password ? 'password-error' : undefined"
+            :disabled="loading"
+            @input="delete errors.password"
+          />
+        </BioNexusFormField>
 
         <p v-if="message" class="login-message" role="alert">
           {{ message }}
@@ -57,7 +68,7 @@
         </button>
       </form>
 
-      <form v-else class="login-form" @submit.prevent="submitLicense">
+      <form v-else class="login-form" novalidate @submit.prevent="submitLicense">
         <label for="license">Licencia</label>
         <input
           id="license"
@@ -95,7 +106,8 @@
 </template>
 
 <script setup>
-import { computed, ref } from "vue";
+import { computed, nextTick, onMounted, reactive, ref } from "vue";
+import BioNexusFormField from "@/components/ui/BioNexusFormField.vue";
 import bioNexusLogo from "@/assets/bionexus_logo.png";
 import { BIO_NEXUS_BRAND } from "@/config/brand";
 import { useRoute, useRouter } from "vue-router";
@@ -115,6 +127,8 @@ const password = ref("");
 const license = ref("");
 const loading = ref(false);
 const message = ref("");
+const errors = reactive({});
+const usernameInput = ref(null);
 const licenseRequired = ref(false);
 const licenseRegistered = ref(false);
 
@@ -124,8 +138,15 @@ const canSubmitLogin = computed(
 
 const canSubmitLicense = computed(() => license.value !== "");
 
+function validateLogin() {
+  delete errors.username; delete errors.password;
+  if (!username.value) errors.username = "El nombre de usuario es obligatorio.";
+  if (!password.value) errors.password = "La contraseña es obligatoria.";
+  return !errors.username && !errors.password;
+}
+
 async function submitLogin() {
-  if (!canSubmitLogin.value || loading.value) return;
+  if (loading.value || !validateLogin()) return;
 
   loading.value = true;
   message.value = "";
@@ -150,11 +171,12 @@ async function submitLogin() {
       force: true
     });
 
-    const redirect =
-      typeof route.query.redirect === "string" ? route.query.redirect : "/";
+    const requestedRedirect = typeof route.query.redirect === "string" ? route.query.redirect : "/";
+    const redirect = requestedRedirect.startsWith("/") && !requestedRedirect.startsWith("//") ? requestedRedirect : "/";
 
     await router.replace(redirect);
   } catch (error) {
+    password.value = "";
     authorizationStore.clear();
     sessionStore.clear();
 
@@ -201,6 +223,17 @@ async function submitLicense() {
     loading.value = false;
   }
 }
+
+onMounted(async () => {
+  if (route.query.reason === "session-expired") {
+    message.value = "La sesión finalizó por inactividad. Ingresa nuevamente para continuar.";
+    const query = { ...route.query };
+    delete query.reason;
+    await router.replace({ name: "login", query });
+  }
+  await nextTick();
+  usernameInput.value?.focus();
+});
 
 function returnToLogin() {
   licenseRequired.value = false;
