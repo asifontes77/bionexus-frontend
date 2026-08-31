@@ -134,7 +134,7 @@ const gridContext = { canSend: () => canSend.value, isBusy: () => busy.value, pr
 const columns = [
   { field: "patient_position", headerName: "Sec. / #", valueGetter: ({ data }) => `${data?.patient_position ?? ""} / ${data?.id ?? ""}`, minWidth: 105, maxWidth: 135, flex: 0 },
   { field: "name", headerName: "Paciente", minWidth: 180, flex: 1.35 },
-  { headerName: "Edad", valueGetter: ({ data }) => `${data?.age ?? ""} ${data?.month_year ?? ""}`.trim(), minWidth: 90, maxWidth: 120, flex: 0 },
+  { headerName: "Edad", valueGetter: ({ data }) => formatPatientAge(data), minWidth: 90, maxWidth: 120, flex: 0 },
   { field: "admission_time", headerName: "Hora ingreso", minWidth: 110, maxWidth: 140, flex: 0 },
   { field: "phone", headerName: "Tel\u00e9fono", minWidth: 120, flex: 0.8 },
   { field: "email", headerName: "Correo", minWidth: 190, flex: 1.3 },
@@ -147,6 +147,19 @@ const columns = [
   },
 ];
 
+function normalizeAgeUnit(value) {
+  const normalized = String(value ?? "").trim().toLowerCase();
+  if (!normalized) return "";
+  if (normalized.includes("mes")) return normalized.startsWith("mes") ? "meses" : normalized;
+  if (normalized.includes("d\u00eda") || normalized.includes("dia")) return "d\u00edas";
+  if (normalized.includes("a") || normalized.includes("?")) return "a\u00f1os";
+  return normalized;
+}
+function formatPatientAge(data) {
+  const age = data?.age ?? "";
+  const unit = normalizeAgeUnit(data?.month_year);
+  return `${age} ${unit}`.trim();
+}
 function getRowId({ data }) { return String(data.id); }
 function syncSelection() { selected.value = gridApi.value?.getSelectedRows?.() ?? []; }
 function onGridReady(event) {

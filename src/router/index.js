@@ -93,7 +93,7 @@ const routes = [
           requiresAuth: true,
           permissions: ["patient-results-email.read"],
           title: "Entrega de resultados por correo",
-          description: "Consulta pacientes aprobados y realiza entregas electrÃ³nicas controladas.",
+          description: "Consulta pacientes aprobados y realiza entregas electr\u00f3nicas controladas.",
           breadcrumb: ["Rutina diaria", "Entrega de resultados por correo"],
         },
       },
