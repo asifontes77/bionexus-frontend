@@ -64,3 +64,18 @@ export function validateLaboratoryIdentity(value) {
   return errors;
 }
 export function validateLaboratoryRequired(value) { return Object.values(validateLaboratoryIdentity(value)); }
+
+export function validateLaboratoryEmail(value, requirePassword = false) {
+  const settings = objectOr(value);
+  const errors = {};
+  if (typeof settings.isGmail !== 'boolean') errors.isGmail = 'Seleccione un modo de correo vÃ¡lido.';
+  if (String(settings.user ?? '').trim() === '') errors.user = 'El usuario SMTP es obligatorio.';
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(settings.from ?? '').trim())) errors.from = 'Ingrese un remitente vÃ¡lido.';
+  if (requirePassword && String(settings.pass ?? '').trim() === '') errors.pass = 'Escriba la contraseÃ±a para probar una configuraciÃ³n nueva.';
+  if (!settings.isGmail) {
+    if (String(settings.host ?? '').trim() === '') errors.host = 'El host SMTP es obligatorio.';
+    const port = Number(settings.port);
+    if (!Number.isInteger(port) || port < 1 || port > 65535) errors.port = 'Ingrese un puerto entre 1 y 65535.';
+  }
+  return errors;
+}

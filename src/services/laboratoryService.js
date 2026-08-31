@@ -27,6 +27,11 @@ export async function updateLaboratory(id, changes) {
   return normalizeLaboratory(await apiRequest(`/api/laboratory/${id}`, { method: 'PATCH', body: normalizeLaboratoryChanges(changes) }));
 }
 
+export async function testLaboratoryEmailConnection(id, sendEmail) {
+  if (!Number.isInteger(id) || id <= 0) throw new Error('LABORATORY_ID_INVALID');
+  return apiRequest(`/api/laboratory/${id}/email/test-connection`, { method: 'POST', body: { sendEmail } });
+}
+
 export async function uploadLaboratoryLogo(file, laboratoryId = 1) {
   if (!Number.isInteger(laboratoryId) || laboratoryId <= 0) throw new Error('LABORATORY_ID_INVALID');
   if (typeof File === 'undefined' || !(file instanceof File)) throw new Error('LABORATORY_LOGO_REQUIRED');
@@ -57,6 +62,14 @@ export function getLaboratoryErrorMessage(error, fallback) {
     LABORATORY_QR_TEXT_INVALID: 'Un texto del QR supera la longitud permitida.',
     LABORATORY_QR_EMAIL_INVALID: 'Ingrese un correo de contacto válido.',
     LABORATORY_QR_PHONE_INVALID: 'Ingrese un teléfono de contacto válido.',
+    LABORATORY_EMAIL_SETTINGS_REQUIRED: 'Complete la configuraciÃ³n de correo.',
+    LABORATORY_EMAIL_SETTINGS_INVALID: 'La configuraciÃ³n de correo no es vÃ¡lida.',
+    LABORATORY_EMAIL_USER_REQUIRED: 'El usuario SMTP es obligatorio.',
+    LABORATORY_EMAIL_FROM_INVALID: 'Ingrese un remitente vÃ¡lido.',
+    LABORATORY_EMAIL_HOST_REQUIRED: 'El host SMTP es obligatorio.',
+    LABORATORY_EMAIL_PORT_INVALID: 'Ingrese un puerto SMTP vÃ¡lido.',
+    LABORATORY_EMAIL_PASSWORD_REQUIRED: 'Escriba la contraseÃ±a para probar la conexiÃ³n.',
+    LABORATORY_EMAIL_CONNECTION_FAILED: 'No fue posible verificar la conexiÃ³n. Revise servidor, puerto y credenciales.',
     LABORATORY_LOGO_REQUIRED: 'Seleccione una imagen para el logo.',
     LABORATORY_LOGO_TYPE_INVALID: 'Use una imagen PNG, JPEG o WebP.',
     BIO_NEXUS_REQUEST_TIMEOUT: 'La solicitud tardó demasiado.'

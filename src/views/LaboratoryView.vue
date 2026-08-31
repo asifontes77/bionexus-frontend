@@ -18,7 +18,7 @@
       <LaboratoryLogoPanel v-show="activeTab === 'logo'" id="laboratory-panel-logo" role="tabpanel" aria-labelledby="laboratory-tab-logo" :model="laboratory" :errors="identityErrors" :disabled="!canUpdate || saving" @upload="uploadLogo" />
       <LaboratoryGeneralPanel v-show="activeTab === 'general'" id="laboratory-panel-general" role="tabpanel" aria-labelledby="laboratory-tab-general" :model="laboratory" :errors="identityErrors" :disabled="!canUpdate || saving" />
       <LaboratoryBillingPanel v-show="activeTab === 'billing'" id="laboratory-panel-billing" role="tabpanel" aria-labelledby="laboratory-tab-billing" :model="laboratory" :disabled="!canUpdate || saving" />
-      <LaboratoryEmailPanel v-show="activeTab === 'email'" id="laboratory-panel-email" role="tabpanel" aria-labelledby="laboratory-tab-email" :model="laboratory" :disabled="!canUpdate || saving" />
+      <LaboratoryEmailPanel v-show="activeTab === 'email'" id="laboratory-panel-email" role="tabpanel" aria-labelledby="laboratory-tab-email" :model="laboratory" :errors="emailErrors" :disabled="!canUpdate || saving || testingEmail" :testing="testingEmail" :can-test="canUpdate" @test-connection="testConnection" />
     </template>
   </section>
 </template>
@@ -33,8 +33,8 @@ import LaboratoryEmailPanel from '@/components/laboratory/LaboratoryEmailPanel.v
 import LaboratoryGeneralPanel from '@/components/laboratory/LaboratoryGeneralPanel.vue'
 import LaboratoryLogoPanel from '@/components/laboratory/LaboratoryLogoPanel.vue'
 import { useBioNexusToast } from '@/composables/useBioNexusToast'
-import { validateLaboratoryIdentity } from '@/models/laboratory'
-import { getLaboratory, getLaboratoryErrorMessage, updateLaboratory, uploadLaboratoryLogo } from '@/services/laboratoryService'
+import { validateLaboratoryEmail, validateLaboratoryIdentity } from '@/models/laboratory'
+import { getLaboratory, getLaboratoryErrorMessage, testLaboratoryEmailConnection, updateLaboratory, uploadLaboratoryLogo } from '@/services/laboratoryService'
 import { useAuthorizationStore } from '@/stores/authorization'
 
 const route = useRoute()
@@ -46,6 +46,8 @@ const loading = ref(false)
 const saving = ref(false)
 const loadError = ref('')
 const identityErrors = ref({})
+const emailErrors = ref({})
+const testingEmail = ref(false)
 const activeTab = ref(typeof route.query.tab === 'string' ? route.query.tab : 'general')
 const tabs = Object.freeze([
   { key: 'logo', label: 'Logo' },
@@ -61,6 +63,7 @@ function discard() {
   if (!original.value || saving.value) return
   laboratory.value = JSON.parse(original.value)
   identityErrors.value = {}
+  emailErrors.value = {}
   toast.info('Los cambios pendientes fueron descartados.')
 }
 async function load() {
@@ -75,6 +78,8 @@ async function load() {
 async function save() {
   if (!dirty.value || saving.value) return
   identityErrors.value = validateLaboratoryIdentity(laboratory.value)
+  emailErrors.value = validateLaboratoryEmail(laboratory.value.sendEmail)
+  if (Object.keys(emailErrors.value).length) { activeTab.value = 'email'; toast.error('Revise la configuraciÃ³n de correo antes de guardar.'); return }
   const errors = Object.values(identityErrors.value)
   if (errors.length) { activeTab.value = errors.some((_, index) => Object.keys(identityErrors.value)[index].startsWith('max_')) ? 'logo' : 'general'; toast.error('Revise los campos señalados antes de guardar.'); return }
   saving.value = true
@@ -85,6 +90,17 @@ async function save() {
     toast.success('La configuración fue actualizada.')
   } catch (error) { toast.error(getLaboratoryErrorMessage(error, 'No fue posible guardar.')) }
   finally { saving.value = false }
+}
+async function testConnection() {
+  if (!laboratory.value || testingEmail.value) return
+  emailErrors.value = validateLaboratoryEmail(laboratory.value.sendEmail)
+  if (Object.keys(emailErrors.value).length) { toast.error('Revise la configuraciÃ³n de correo antes de probar.'); return }
+  testingEmail.value = true
+  try {
+    const result = await testLaboratoryEmailConnection(laboratory.value.id, laboratory.value.sendEmail)
+    toast.success(result?.mode === 'gmail' ? 'ConexiÃ³n con Gmail verificada.' : 'ConexiÃ³n SMTP verificada.')
+  } catch (error) { toast.error(getLaboratoryErrorMessage(error, 'No fue posible verificar la conexiÃ³n.')) }
+  finally { testingEmail.value = false }
 }
 async function uploadLogo(file) {
   if (!authorization.hasPermission('laboratory.upload-logo')) {

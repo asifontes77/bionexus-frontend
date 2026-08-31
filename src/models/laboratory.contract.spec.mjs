@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { normalizeLaboratory, normalizeLaboratoryChanges, validateLaboratoryRequired } from './laboratory.js';
+import { normalizeLaboratory, normalizeLaboratoryChanges, validateLaboratoryEmail, validateLaboratoryRequired } from './laboratory.js';
 const laboratory = normalizeLaboratory({ id: 1, license: 'secret', sendEmail: { user: 'lab@example.com', pass: 'secret' }, settingQR: null });
 assert.equal(laboratory.license, undefined);
 assert.equal(laboratory.sendEmail.pass, '');
@@ -11,4 +11,7 @@ assert.equal(changes.unknown, undefined);
 assert.equal(changes.sendEmail.pass, '');
 assert.equal(validateLaboratoryRequired({}).length, 7);
 assert.equal(validateLaboratoryRequired({ business_name: 'A', name: 'B', address: 'C', email: 'a@b.com', rif: 'J-12345678-9', phone_1: '+58 424 123 4567', mask_phone: '###' }).length, 0);
+assert.deepEqual(validateLaboratoryEmail({ isGmail: false, host: '', port: 0, secure: false, user: '', pass: '', from: 'invalid' }), { user: 'El usuario SMTP es obligatorio.', from: 'Ingrese un remitente vÃ¡lido.', host: 'El host SMTP es obligatorio.', port: 'Ingrese un puerto entre 1 y 65535.' });
+assert.deepEqual(validateLaboratoryEmail({ isGmail: true, user: 'mail@example.com', pass: '', from: 'mail@example.com' }), {});
+assert.deepEqual(validateLaboratoryEmail({ isGmail: true, user: 'mail@example.com', pass: '', from: 'mail@example.com' }, true), { pass: 'Escriba la contraseÃ±a para probar una configuraciÃ³n nueva.' });
 console.log('Laboratory frontend contract approved.');
