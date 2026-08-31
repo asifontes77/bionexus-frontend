@@ -27,7 +27,6 @@
       :column-defs="columns"
       :default-col-def="defaultColDef"
       :components="gridComponents"
-      :context="gridContext"
       :get-row-id="getRowId"
       :row-selection="rowSelection"
       :search-enabled="true"
@@ -80,14 +79,16 @@
 </template>
 
 <script setup>
-import { computed, onBeforeUnmount, ref } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import { useAuthorizationStore } from "@/stores/authorization";
 import BioNexusDataGrid from "@/components/grid/BioNexusDataGrid.vue";
 import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
 import BioNexusFormField from "@/components/ui/BioNexusFormField.vue";
 import BioNexusContextMenu from "@/components/ui/BioNexusContextMenu.vue";
 import PatientResultsEmailSendDialog from "@/components/patients/PatientResultsEmailSendDialog.vue";
-import PatientResultsEmailRowAction from "@/components/patients/PatientResultsEmailRowAction.vue";
+import BioNexusGridActionsCell from "@/components/grid/BioNexusGridActionsCell.vue";
+import BioNexusOptionFilter from "@/components/grid/BioNexusOptionFilter.vue";
+import PatientResultsEmailStatusCell from "@/components/patients/PatientResultsEmailStatusCell.vue";
 import { useBioNexusToast } from "@/composables/useBioNexusToast";
 import { buildPatientResultHtml } from "@/services/patientResultReportBuilder";
 import {
@@ -100,8 +101,9 @@ import {
 
 const authorization = useAuthorizationStore();
 const toast = useBioNexusToast();
-const dateFrom = ref("");
-const dateTo = ref("");
+const initialDateRange = createInitialDateRange();
+const dateFrom = ref(initialDateRange.dateFrom);
+const dateTo = ref(initialDateRange.dateTo);
 const rows = ref([]);
 const selected = ref([]);
 const search = ref("");
@@ -116,37 +118,64 @@ const contextMenuState = ref({ open: false, x: 0, y: 0, row: null });
 const busy = computed(() => loading.value || sending.value);
 const canSend = computed(() => authorization.hasPermission("patient-results-email.send"));
 const rangeValid = computed(() => Boolean(dateFrom.value && dateTo.value && dateFrom.value <= dateTo.value));
-const contextMenuItems = computed(() => [{
-  key: "send", label: "Enviar resultados por correo", icon: "send",
-  disabled: !canSend.value || busy.value || Boolean(contextMenuState.value.row?.email_status),
-}]);
+const contextMenuItems = computed(() => {
+  const row = contextMenuState.value.row;
+  const count = selected.value.length;
+  const multiple = count > 1;
+  return [{ key: "send", label: multiple ? `Enviar seleccionados (${count})` : (row?.email_status ? "Reenviar resultados" : "Enviar resultados"), icon: "send", disabled: !canSend.value || busy.value }];
+});
 const sentCount = computed(() => rows.value.filter((row) => row.email_status).length);
 const rowSelection = computed(() => ({
   mode: "multiRow",
   checkboxes: canSend.value,
   headerCheckbox: canSend.value,
   enableClickSelection: canSend.value,
-  isRowSelectable: (node) => canSend.value && !Boolean(node.data?.email_status),
+  isRowSelectable: () => canSend.value && !busy.value,
 }));
 const defaultColDef = { minWidth: 90, flex: 1 };
-const gridComponents = { patientResultsEmailRowAction: PatientResultsEmailRowAction };
-const gridContext = { canSend: () => canSend.value, isBusy: () => busy.value, prepareSingleSend };
+const gridComponents = { BioNexusGridActionsCell, PatientResultsEmailStatusCell };
 const columns = [
-  { field: "patient_position", headerName: "Sec. / #", valueGetter: ({ data }) => `${data?.patient_position ?? ""} / ${data?.id ?? ""}`, minWidth: 105, maxWidth: 135, flex: 0 },
+  { field: "patient_position", headerName: "Nro. de ingreso", minWidth: 125, maxWidth: 150, flex: 0 },
+  { colId: "admission", headerName: "Ingreso", valueGetter: ({ data }) => formatAdmission(data), minWidth: 190, maxWidth: 220, flex: 0, headerClass: "results-email-centered-header", cellClass: "results-email-centered-cell" },
   { field: "name", headerName: "Paciente", minWidth: 180, flex: 1.35 },
   { headerName: "Edad", valueGetter: ({ data }) => formatPatientAge(data), minWidth: 90, maxWidth: 120, flex: 0 },
-  { field: "admission_time", headerName: "Hora ingreso", minWidth: 110, maxWidth: 140, flex: 0 },
   { field: "phone", headerName: "Tel\u00e9fono", minWidth: 120, flex: 0.8 },
   { field: "email", headerName: "Correo", minWidth: 190, flex: 1.3 },
-  { field: "email_status", headerName: "Estado", valueFormatter: ({ value }) => value ? "Enviado" : "Pendiente", minWidth: 105, maxWidth: 125, flex: 0 },
+  { field: "email_status", headerName: "Estado", minWidth: 125, maxWidth: 145, flex: 0, headerClass: "results-email-centered-header", cellClass: "results-email-centered-cell", filter: BioNexusOptionFilter, filterParams: { options: [{ value: false, label: "Pendiente" }, { value: true, label: "Enviado" }] }, cellRenderer: "PatientResultsEmailStatusCell" },
   {
-    colId: "actions", headerName: "Acciones", width: 92, minWidth: 92, maxWidth: 92, flex: 0,
+    colId: "actions", headerName: "Acciones", width: 110, minWidth: 110, maxWidth: 110, flex: 0,
     pinned: "right", lockPinned: true, suppressMovable: true,
-    sortable: false, filter: false, resizable: false, suppressExport: true,
-    cellRenderer: "patientResultsEmailRowAction",
+    sortable: false, filter: false, resizable: false, suppressExport: true, suppressHeaderMenuButton: true,
+    headerClass: "bio-nexus-grid-actions-header", cellClass: "bio-nexus-grid-actions-cell",
+    cellRenderer: "BioNexusGridActionsCell",
+    cellRendererParams: {
+      actions: [{ key: "send", label: "Enviar resultados por correo", icon: "send", variant: "subtle", disabled: () => !canSend.value || busy.value, onClick: prepareSingleSend }],
+    },
   },
 ];
 
+function toIsoLocalDate(value) {
+  const year = value.getFullYear();
+  const month = String(value.getMonth() + 1).padStart(2, "0");
+  const day = String(value.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+function createInitialDateRange() {
+  const end = new Date();
+  const start = new Date(end);
+  start.setDate(start.getDate() - 6);
+  return { dateFrom: toIsoLocalDate(start), dateTo: toIsoLocalDate(end) };
+}
+function formatAdmission(data) {
+  const match = String(data?.admission_date ?? "").match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!match) return "";
+  const time = String(data?.admission_time ?? "").slice(0, 8);
+  const parts = time.split(":");
+  let hour = Number(parts[0]);
+  const suffix = hour >= 12 ? "PM" : "AM";
+  hour = hour % 12 || 12;
+  return `${match[3]}-${match[2]}-${match[1]} ${String(hour).padStart(2, "0")}:${parts[1] ?? "00"} ${suffix}`;
+}
 function normalizeAgeUnit(value) {
   const normalized = String(value ?? "").trim().toLowerCase();
   if (!normalized) return "";
@@ -167,7 +196,7 @@ function onGridReady(event) {
   event.api.addEventListener("selectionChanged", syncSelection);
 }
 function prepareSingleSend(row) {
-  if (!row || !canSend.value || busy.value || row.email_status) return;
+  if (!row || !canSend.value || busy.value) return;
   selected.value = [row];
   gridApi.value?.deselectAll?.();
   gridApi.value?.getRowNode?.(String(row.id))?.setSelected?.(true);
@@ -181,7 +210,7 @@ function closeContextMenu() { contextMenuState.value = { open: false, x: 0, y: 0
 function handleContextMenuSelect(item) {
   const row = contextMenuState.value.row;
   closeContextMenu();
-  if (item?.key === "send") prepareSingleSend(row);
+  if (item?.key === "send") { if (selected.value.length > 1) sendDialog.value?.open(); else prepareSingleSend(row); }
 }
 async function loadCandidates() {
   if (!rangeValid.value || busy.value) return;
@@ -227,7 +256,7 @@ function messageFor(error) {
   const code = String(error?.message || "");
   const messages = {
     PATIENT_RESULTS_EMAIL_DATE_RANGE_INVALID: "El rango de fechas no es vÃ¡lido.",
-    PATIENT_RESULTS_EMAIL_DATE_RANGE_TOO_LARGE: "El rango no puede superar 31 dÃ­as.",
+
     PATIENT_RESULTS_EMAIL_ALREADY_SENT: "Los resultados ya fueron enviados.",
     PATIENT_RESULTS_EMAIL_CONTENT_EMPTY: "El informe no contiene resultados visibles.",
     PATIENT_RESULTS_EMAIL_PDF_EMPTY: "No fue posible generar un PDF con contenido.",
@@ -239,6 +268,7 @@ function messageFor(error) {
   };
   return messages[code] || "No fue posible completar la operaci\u00f3n.";
 }
+onMounted(() => loadCandidates());
 onBeforeUnmount(() => gridApi.value?.removeEventListener?.("selectionChanged", syncSelection));
 </script>
 
@@ -295,6 +325,15 @@ onBeforeUnmount(() => gridApi.value?.removeEventListener?.("selectionChanged", s
 }
 .results-email-grid {
   min-width: 0;
+}
+.results-email-grid :deep(.results-email-centered-header .ag-header-cell-label),
+.results-email-grid :deep(.results-email-centered-cell),
+.results-email-grid :deep(.bio-nexus-grid-actions-header .ag-header-cell-label),
+.results-email-grid :deep(.bio-nexus-grid-actions-cell) { justify-content: center; }
+.results-email-grid :deep(.ag-pinned-right-header),
+.results-email-grid :deep(.ag-pinned-right-cols-container) {
+  border-left: 1px solid var(--bio-nexus-color-border-strong);
+  box-shadow: calc(var(--bio-nexus-space-1) * -1) 0 var(--bio-nexus-space-3) var(--bio-nexus-shadow-panel-soft);
 }
 @media (max-width: 860px) {
   .results-email-filter {

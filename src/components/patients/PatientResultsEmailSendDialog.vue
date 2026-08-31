@@ -19,6 +19,8 @@ const props = defineProps({ records: { type: Array, default: () => [] }, sending
 const emit = defineEmits(["confirm"]);
 const confirming = ref(false);
 const locked = computed(() => props.sending || confirming.value);
+const initialCount = computed(() => props.records.filter((record) => !record.email_status).length);
+const resendCount = computed(() => props.records.filter((record) => Boolean(record.email_status)).length);
 watch(() => props.sending, (value) => { if (!value) confirming.value = false; });
 const dialog = ref(null); const errorMessage = ref("");
 function open() { confirming.value = false; errorMessage.value = ""; dialog.value?.open(); }
