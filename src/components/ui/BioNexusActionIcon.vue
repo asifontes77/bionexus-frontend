@@ -26,6 +26,7 @@ const actionIcons = Object.freeze({
   catalog: "category",
   discard: "undo",
   search: "search",
+  send: "send",
   clear: "filter_alt_off",
 });
 const iconName = computed(() => actionIcons[props.action] || "bolt");

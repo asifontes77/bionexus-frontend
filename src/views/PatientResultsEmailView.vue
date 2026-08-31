@@ -6,10 +6,13 @@
         <p>Seleccione la fecha de ingreso para consultar pacientes con resultados aprobados.</p>
       </div>
       <div class="results-email-filter-controls">
-        <BioNexusFormField label="Fecha de ingreso" field-id="results-email-date" required>
-          <input id="results-email-date" v-model="date" class="bio-nexus-field" type="date" :disabled="busy" />
+        <BioNexusFormField label="Desde" field-id="results-email-date-from" required>
+          <input id="results-email-date-from" v-model="dateFrom" class="bio-nexus-field" type="date" :disabled="busy" />
         </BioNexusFormField>
-        <button type="button" class="bio-nexus-action bio-nexus-action-primary" :disabled="busy || !date" @click="loadCandidates">
+        <BioNexusFormField label="Hasta" field-id="results-email-date-to" required>
+          <input id="results-email-date-to" v-model="dateTo" class="bio-nexus-field" type="date" :min="dateFrom" :disabled="busy" />
+        </BioNexusFormField>
+        <button type="button" class="bio-nexus-action bio-nexus-action-primary" :disabled="busy || !rangeValid" @click="loadCandidates">
           <BioNexusActionIcon action="search" />
           <span>{{ loading ? "Consultando..." : "Consultar" }}</span>
         </button>
@@ -30,13 +33,14 @@
       :quick-filter-text="search"
       :refresh-enabled="true"
       :refreshing="loading"
-      :refresh-disabled="busy || !date"
+      :refresh-disabled="busy || !rangeValid"
       :export-options="false"
       :min-grid-height="340"
       :max-grid-height="620"
       empty-text="Seleccione una fecha y consulte los pacientes aprobados."
       @grid-ready="onGridReady"
       @refresh="loadCandidates"
+      @row-context-menu="openContextMenu"
     >
       <template #stats>
         <div class="results-email-stats" aria-label="Resumen de resultados">
@@ -59,6 +63,16 @@
       </template>
     </BioNexusDataGrid>
 
+    <BioNexusContextMenu
+      ref="contextMenu"
+      :open="contextMenuState.open"
+      :x="contextMenuState.x"
+      :y="contextMenuState.y"
+      :items="contextMenuItems"
+      @close="closeContextMenu"
+      @select="handleContextMenuSelect"
+    />
+
     <PatientResultsEmailSendDialog ref="sendDialog" :records="selected" :sending="sending" @confirm="sendSelected" />
   </main>
 </template>
@@ -69,6 +83,7 @@ import { useAuthorizationStore } from "@/stores/authorization";
 import BioNexusDataGrid from "@/components/grid/BioNexusDataGrid.vue";
 import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
 import BioNexusFormField from "@/components/ui/BioNexusFormField.vue";
+import BioNexusContextMenu from "@/components/ui/BioNexusContextMenu.vue";
 import PatientResultsEmailSendDialog from "@/components/patients/PatientResultsEmailSendDialog.vue";
 import { useBioNexusToast } from "@/composables/useBioNexusToast";
 import { buildPatientResultHtml } from "@/services/patientResultReportBuilder";
@@ -82,7 +97,8 @@ import {
 
 const authorization = useAuthorizationStore();
 const toast = useBioNexusToast();
-const date = ref("");
+const dateFrom = ref("");
+const dateTo = ref("");
 const rows = ref([]);
 const selected = ref([]);
 const search = ref("");
@@ -91,9 +107,16 @@ const sending = ref(false);
 const errorMessage = ref("");
 const sendDialog = ref(null);
 const gridApi = ref(null);
+const contextMenu = ref(null);
+const contextMenuState = ref({ open: false, x: 0, y: 0, row: null });
 
 const busy = computed(() => loading.value || sending.value);
 const canSend = computed(() => authorization.hasPermission("patient-results-email.send"));
+const rangeValid = computed(() => Boolean(dateFrom.value && dateTo.value && dateFrom.value <= dateTo.value));
+const contextMenuItems = computed(() => [{
+  key: "send", label: "Enviar resultados por correo", icon: "send",
+  disabled: !canSend.value || busy.value || Boolean(contextMenuState.value.row?.email_status),
+}]);
 const sentCount = computed(() => rows.value.filter((row) => row.email_status).length);
 const rowSelection = computed(() => ({
   mode: "multiRow",
@@ -111,6 +134,21 @@ const columns = [
   { field: "phone", headerName: "Tel\u00e9fono", minWidth: 120, flex: 0.8 },
   { field: "email", headerName: "Correo", minWidth: 190, flex: 1.3 },
   { field: "email_status", headerName: "Estado", valueFormatter: ({ value }) => value ? "Enviado" : "Pendiente", minWidth: 105, maxWidth: 125, flex: 0 },
+  {
+    colId: "actions", headerName: "Acciones", width: 92, minWidth: 92, maxWidth: 92, flex: 0,
+    sortable: false, filter: false, resizable: false, suppressExport: true,
+    cellRenderer: (params) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "results-email-row-action";
+      button.title = params.data?.email_status ? "Resultados enviados" : "Enviar resultados por correo";
+      button.setAttribute("aria-label", button.title);
+      button.disabled = !canSend.value || busy.value || Boolean(params.data?.email_status);
+      button.innerHTML = '<span class="material-symbols-rounded" aria-hidden="true">send</span>';
+      button.addEventListener("click", (event) => { event.preventDefault(); event.stopPropagation(); prepareSingleSend(params.data); });
+      return button;
+    },
+  },
 ];
 
 function getRowId({ data }) { return String(data.id); }
@@ -119,13 +157,30 @@ function onGridReady(event) {
   gridApi.value = event.api;
   event.api.addEventListener("selectionChanged", syncSelection);
 }
+function prepareSingleSend(row) {
+  if (!row || !canSend.value || busy.value || row.email_status) return;
+  selected.value = [row];
+  gridApi.value?.deselectAll?.();
+  gridApi.value?.getRowNode?.(String(row.id))?.setSelected?.(true);
+  sendDialog.value?.open();
+}
+async function openContextMenu({ event, row }) {
+  contextMenuState.value = { open: true, x: event.clientX, y: event.clientY, row };
+  await contextMenu.value?.positionMenu?.();
+}
+function closeContextMenu() { contextMenuState.value = { open: false, x: 0, y: 0, row: null }; }
+function handleContextMenuSelect(item) {
+  const row = contextMenuState.value.row;
+  closeContextMenu();
+  if (item?.key === "send") prepareSingleSend(row);
+}
 async function loadCandidates() {
-  if (!date.value || busy.value) return;
+  if (!rangeValid.value || busy.value) return;
   loading.value = true;
   errorMessage.value = "";
   selected.value = [];
   try {
-    rows.value = await getPatientResultsEmailCandidates(date.value);
+    rows.value = await getPatientResultsEmailCandidates(dateFrom.value, dateTo.value);
   } catch (error) {
     errorMessage.value = messageFor(error);
     rows.value = [];
@@ -162,6 +217,8 @@ async function sendSelected() {
 function messageFor(error) {
   const code = String(error?.message || "");
   const messages = {
+    PATIENT_RESULTS_EMAIL_DATE_RANGE_INVALID: "El rango de fechas no es vÃ¡lido.",
+    PATIENT_RESULTS_EMAIL_DATE_RANGE_TOO_LARGE: "El rango no puede superar 31 dÃ­as.",
     PATIENT_RESULTS_EMAIL_ALREADY_SENT: "Los resultados ya fueron enviados.",
     PATIENT_RESULTS_EMAIL_NOT_APPROVED: "No existen resultados aprobados.",
     PATIENT_RESULTS_EMAIL_CONFIGURATION_INVALID: "La configuraci\u00f3n de correo no est\u00e1 completa.",
@@ -254,4 +311,9 @@ onBeforeUnmount(() => gridApi.value?.removeEventListener?.("selectionChanged", s
     gap: var(--bio-nexus-space-1);
   }
 }
+
+.results-email-view :deep(.results-email-row-action) { display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;margin:auto;border:1px solid var(--bio-nexus-color-border-strong);border-radius:var(--bio-nexus-radius-sm);background:var(--bio-nexus-color-surface);color:var(--bio-nexus-color-primary-strong);cursor:pointer; }
+.results-email-view :deep(.results-email-row-action:hover:not(:disabled)) { border-color:var(--bio-nexus-color-primary);background:var(--bio-nexus-color-info-soft); }
+.results-email-view :deep(.results-email-row-action:disabled) { opacity:.45;cursor:not-allowed; }
+.results-email-view :deep(.results-email-row-action .material-symbols-rounded) { font-size:18px; }
 </style>

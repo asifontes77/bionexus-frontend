@@ -1,7 +1,8 @@
 import { apiRequest } from "@/api/apiClient";
 
-export function getPatientResultsEmailCandidates(date) {
-  return apiRequest(`/api/patients/results-email?date=${encodeURIComponent(date)}`);
+export function getPatientResultsEmailCandidates(dateFrom, dateTo) {
+  const query = new URLSearchParams({ dateFrom, dateTo });
+  return apiRequest(`/api/patients/results-email?${query.toString()}`);
 }
 
 export function getValidatedPatientResults(id) {
