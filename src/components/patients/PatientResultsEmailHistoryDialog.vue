@@ -1,5 +1,5 @@
 <template>
-  <BioNexusDialog ref="dialog" class="patient-results-history-dialog" size="wide" kicker="Trazabilidad" title="Historial de envios de resultados">
+  <BioNexusDialog ref="dialog" size="wide" body-class="patient-results-history-dialog-body" kicker="Trazabilidad" title="Historial de envios de resultados">
     <section class="history-dialog-body">
       <div class="history-scope-note">Muestra los intentos registrados entre <strong>{{ rangeLabel }}</strong>.</div>
       <div v-if="loading" class="bio-nexus-message">Consultando historial...</div>
@@ -76,9 +76,27 @@ defineExpose({ open });
 .history-grid { width: 100%; min-width: 0; }
 .history-grid :deep(.history-centered-header .ag-header-cell-label),
 .history-grid :deep(.history-centered-cell) { justify-content: center; text-align: center; }
-.patient-results-history-dialog :deep(.bio-nexus-dialog-body) { width: min(1460px, calc(100vw - 96px)); max-width: calc(100vw - 96px); min-width: 0; }
-.patient-results-history-dialog :deep(.bio-nexus-dialog-content) { min-width: 0; overflow: hidden; }
+</style>
+<style>
+.patient-results-history-dialog-body {
+  box-sizing: border-box;
+  width: min(1460px, calc(100vw - 96px)) !important;
+  max-width: calc(100vw - 96px) !important;
+  min-width: 0 !important;
+}
+.patient-results-history-dialog-body .bio-nexus-dialog-content,
+.patient-results-history-dialog-body .history-dialog-body,
+.patient-results-history-dialog-body .history-grid {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
 @media (max-width: 760px) {
-  .patient-results-history-dialog :deep(.bio-nexus-dialog-body) { width: calc(100vw - 32px); max-width: calc(100vw - 32px); }
+  .patient-results-history-dialog-body {
+    width: calc(100vw - 32px) !important;
+    max-width: calc(100vw - 32px) !important;
+  }
 }
 </style>
