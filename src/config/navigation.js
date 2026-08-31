@@ -53,10 +53,11 @@ export const navigationItems = [
         key: "results-email",
         label: "Entrega de resultados por email",
         abbreviation: "CE",
+        routeName: "patient-results-email",
         legacyRouteName: "ResultsByEmail",
         legacyPath: "/email",
-        roles: ["user", "admin"],
-        migrated: false,
+        permissions: ["patient-results-email.read"],
+        migrated: true,
       },
       {
         key: "special-test-results",

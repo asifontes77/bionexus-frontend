@@ -4,6 +4,7 @@ import { useSessionStore } from "@/stores/session";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout.vue";
 const LoginView=()=>import("@/views/LoginView.vue");
 const MigrationHomeView=()=>import("@/views/MigrationHomeView.vue");
+const PatientResultsEmailView=()=>import("@/views/PatientResultsEmailView.vue");
 const NotFoundView=()=>import("@/views/NotFoundView.vue");
 const RolesPermissionsView=()=>import("@/views/RolesPermissionsView.vue");
 const UserAuthorizationView=()=>import("@/views/UserAuthorizationView.vue");
@@ -15,7 +16,7 @@ const LaboratoryIdentityView=()=>import("@/views/LaboratoryIdentityView.vue");
 const TaxesView=()=>import("@/views/TaxesView.vue");
 const ApplicationSettingsView=()=>import("@/views/ApplicationSettingsView.vue");
 const ConfigurationModuleView=()=>import("@/views/ConfigurationModuleView.vue");
-const applicationViewLoaders=[MigrationHomeView,RolesPermissionsView,UserAuthorizationView,ExamCatalogView,ParasiticformsView,TypePaymentView,LaboratoryView,TaxesView,ApplicationSettingsView,ConfigurationModuleView,LaboratoryIdentityView];
+const applicationViewLoaders=[MigrationHomeView,PatientResultsEmailView,RolesPermissionsView,UserAuthorizationView,ExamCatalogView,ParasiticformsView,TypePaymentView,LaboratoryView,TaxesView,ApplicationSettingsView,ConfigurationModuleView,LaboratoryIdentityView];
 let applicationRoutesPrefetched=false;
 function scheduleAuthorizedRoutePrefetch(){
   if(applicationRoutesPrefetched)return;
@@ -82,6 +83,18 @@ const routes = [
           title: "Usuarios y autorización",
           description: "Administra los usuarios, sus roles y las excepciones individuales de permisos.",
           breadcrumb: ["Configuración","Seguridad","Usuarios y autorización"],
+        },
+      },
+      {
+        path: "daily/results-email",
+        name: "patient-results-email",
+        component: PatientResultsEmailView,
+        meta: {
+          requiresAuth: true,
+          permissions: ["patient-results-email.read"],
+          title: "Entrega de resultados por correo",
+          description: "Consulta pacientes aprobados y realiza entregas electrÃ³nicas controladas.",
+          breadcrumb: ["Rutina diaria", "Entrega de resultados por correo"],
         },
       },
       {
