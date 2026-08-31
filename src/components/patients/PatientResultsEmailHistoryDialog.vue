@@ -4,7 +4,7 @@
       <div class="history-scope-note">Muestra los intentos registrados entre <strong>{{ rangeLabel }}</strong>.</div>
       <div v-if="loading" class="bio-nexus-message">Consultando historial...</div>
       <div v-if="errorMessage" class="bio-nexus-message bio-nexus-message-error" role="alert">{{ errorMessage }}</div>
-      <div v-else class="history-grid-frame">
+      <div v-else class="history-grid-frame" :style="gridFrameStyle">
         <BioNexusDataGrid
         class="history-grid"
         :row-data="rows"
@@ -35,6 +35,11 @@ const loading = ref(false);
 const errorMessage = ref("");
 const search = ref("");
 const rangeLabel = ref("");
+const gridFrameStyle = {
+  width: "calc(100vw - 224px)",
+  maxWidth: "calc(100vw - 224px)",
+  marginInline: "auto",
+};
 const components = { BioNexusOptionFilter };
 const centeredHeader = "history-centered-header";
 const centeredCell = "history-centered-cell";
@@ -72,13 +77,13 @@ function close() { dialog.value?.close(); }
 defineExpose({ open });
 </script>
 <style scoped>
-.history-dialog-body { box-sizing: border-box; width: 100%; max-width: 100%; min-width: 0; padding-inline: 16px; overflow: hidden; }
+.history-dialog-body { box-sizing: border-box; width: 100%; max-width: 100%; min-width: 0; overflow: hidden; }
 .history-scope-note { margin-bottom: var(--bio-nexus-space-3); color: var(--bio-nexus-color-text-muted); font-size: var(--bio-nexus-font-size-sm); }
 .history-grid { width: 100%; min-width: 0; }
 .history-grid :deep(.history-centered-header .ag-header-cell-label),
 .history-grid :deep(.history-centered-cell) { justify-content: center; text-align: center; }
 
-.history-grid-frame { box-sizing: border-box; width: 100%; max-width: 100%; min-width: 0; margin: 0; overflow: hidden; }
+.history-grid-frame { box-sizing: border-box; min-width: 0; overflow: hidden; }
 .history-grid-frame .history-grid {
   box-sizing: border-box;
   width: 100%;
@@ -93,6 +98,13 @@ defineExpose({ open });
   width: 100% !important;
   max-width: 100% !important;
   min-width: 0 !important;
+}
+
+@media (max-width: 760px) {
+  .history-grid-frame {
+    width: calc(100vw - 64px) !important;
+    max-width: calc(100vw - 64px) !important;
+  }
 }
 </style>
 <style>
