@@ -142,7 +142,7 @@ const rowSelection = computed(() => ({
 const defaultColDef = { minWidth: 90, flex: 1 };
 const gridComponents = { BioNexusGridActionsCell, PatientResultsEmailStatusCell };
 const columns = [
-  { field: "patient_position", headerName: "Nro. de ingreso", minWidth: 125, maxWidth: 150, flex: 0 },
+  { field: "patient_position", headerName: "Nro. de ingreso", minWidth: 125, maxWidth: 150, flex: 0, headerClass: "results-email-centered-header", cellClass: "results-email-centered-cell" },
   { colId: "admission", headerName: "Ingreso", valueGetter: ({ data }) => formatAdmission(data), minWidth: 190, maxWidth: 220, flex: 0, headerClass: "results-email-centered-header", cellClass: "results-email-centered-cell" },
   { field: "name", headerName: "Paciente", minWidth: 180, flex: 1.35 },
   { headerName: "Edad", valueGetter: ({ data }) => formatPatientAge(data), minWidth: 90, maxWidth: 120, flex: 0 },
