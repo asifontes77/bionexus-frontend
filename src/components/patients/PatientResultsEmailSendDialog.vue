@@ -7,7 +7,7 @@
     </section>
     <template #footer>
       <button type="button" class="bio-nexus-action bio-nexus-action-secondary" :disabled="locked" @click="close"><BioNexusActionIcon action="cancel" />Cancelar</button>
-      <button type="button" class="bio-nexus-action bio-nexus-action-primary" :disabled="locked || records.length === 0" :aria-busy="locked" @click="confirm"><BioNexusActionIcon action="send" />{{ locked ? "Enviando..." : actionLabel }}</button>
+      <button type="button" class="bio-nexus-action bio-nexus-action-primary send-dialog-submit" :class="{ 'send-dialog-submit-busy': locked }" :disabled="locked || records.length === 0" :aria-disabled="locked || records.length === 0" :aria-busy="locked" @click="confirm"><BioNexusActionIcon action="send" />{{ locked ? "Enviando..." : actionLabel }}</button>
     </template>
   </BioNexusDialog>
 </template>
@@ -35,4 +35,18 @@ defineExpose({ open, close, closeAfterOperation, setError });
 <style scoped>
 .send-dialog-body { display: grid; gap: var(--bio-nexus-space-3); }
 .send-dialog-body p { margin: 0; color: var(--bio-nexus-color-text-secondary); line-height: 1.5; }
+
+.send-dialog-submit:disabled,
+.send-dialog-submit.send-dialog-submit-busy {
+  cursor: wait;
+  opacity: 0.58;
+  filter: saturate(0.45);
+  box-shadow: none;
+  pointer-events: none;
+}
+.send-dialog-submit:disabled:hover,
+.send-dialog-submit.send-dialog-submit-busy:hover {
+  transform: none;
+  box-shadow: none;
+}
 </style>
