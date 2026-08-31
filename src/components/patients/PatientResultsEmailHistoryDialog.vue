@@ -72,25 +72,27 @@ function close() { dialog.value?.close(); }
 defineExpose({ open });
 </script>
 <style scoped>
-.history-dialog-body { box-sizing: border-box; width: 100%; min-width: 0; overflow: hidden; }
+.history-dialog-body { box-sizing: border-box; width: 100%; max-width: 100%; min-width: 0; padding-inline: 16px; overflow: hidden; }
 .history-scope-note { margin-bottom: var(--bio-nexus-space-3); color: var(--bio-nexus-color-text-muted); font-size: var(--bio-nexus-font-size-sm); }
 .history-grid { width: 100%; min-width: 0; }
 .history-grid :deep(.history-centered-header .ag-header-cell-label),
 .history-grid :deep(.history-centered-cell) { justify-content: center; text-align: center; }
 
-.history-grid-frame {
-  box-sizing: border-box;
-  width: calc(100% - 32px);
-  max-width: calc(100% - 32px);
-  min-width: 0;
-  margin-inline: auto;
-  overflow: hidden;
-}
+.history-grid-frame { box-sizing: border-box; width: 100%; max-width: 100%; min-width: 0; margin: 0; overflow: hidden; }
 .history-grid-frame .history-grid {
   box-sizing: border-box;
   width: 100%;
   max-width: 100%;
   min-width: 0;
+}
+
+.history-grid-frame :deep(.bio-nexus-data-grid),
+.history-grid-frame :deep(.bio-nexus-grid-shell),
+.history-grid-frame :deep(.ag-root-wrapper) {
+  box-sizing: border-box;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
 }
 </style>
 <style>
