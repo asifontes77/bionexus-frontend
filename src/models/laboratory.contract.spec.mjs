@@ -10,5 +10,5 @@ assert.equal(changes.license, undefined);
 assert.equal(changes.unknown, undefined);
 assert.equal(changes.sendEmail.pass, '');
 assert.equal(validateLaboratoryRequired({}).length, 7);
-assert.equal(validateLaboratoryRequired({ business_name: 'A', name: 'B', address: 'C', email: 'a@b.com', rif: 'J', phone_1: '1', mask_phone: '###' }).length, 0);
+assert.equal(validateLaboratoryRequired({ business_name: 'A', name: 'B', address: 'C', email: 'a@b.com', rif: 'J-12345678-9', phone_1: '+58 424 123 4567', mask_phone: '###' }).length, 0);
 console.log('Laboratory frontend contract approved.');

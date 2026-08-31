@@ -27,7 +27,7 @@ export function normalizeLaboratoryChanges(value) {
 export function validateLaboratoryIdentity(value) {
   const source = objectOr(value);
   const errors = {};
-  const required = [['business_name', 'La razón social es obligatoria.'], ['name', 'El nombre del laboratorio es obligatorio.'], ['address', 'El domicilio es obligatorio.'], ['email', 'El correo es obligatorio.'], ['rif', 'El RIF es obligatorio.'], ['phone_1', 'El teléfono principal es obligatorio.'], ['mask_phone', 'La máscara de teléfono es obligatoria.']];
+  const required = [['business_name', 'La razÃ³n social es obligatoria.'], ['name', 'El nombre del laboratorio es obligatorio.'], ['address', 'El domicilio es obligatorio.'], ['email', 'El correo es obligatorio.'], ['rif', 'El RIF es obligatorio.'], ['phone_1', 'El telÃ©fono principal es obligatorio.'], ['mask_phone', 'La mÃ¡scara de telÃ©fono es obligatoria.']];
   required.forEach(([field, message]) => { if (String(source[field] ?? '').trim() === '') errors[field] = message; });
   const email = String(source.email ?? '').trim();
   const url = String(source.url ?? '').trim();
@@ -35,24 +35,32 @@ export function validateLaboratoryIdentity(value) {
   const phone1 = String(source.phone_1 ?? '').trim();
   const phone2 = String(source.phone_2 ?? '').trim();
   const mask = String(source.mask_phone ?? '').trim();
-  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.email = 'Ingrese un correo válido.';
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.email = 'Ingrese un correo vÃ¡lido.';
   if (url && !/^https?:\/\/[^\s]+$/i.test(url)) errors.url = 'Ingrese una URL completa que comience con http:// o https://.';
-  if (rif && !/^[VEJG]-?\d{7,9}-?\d$/i.test(rif)) errors.rif = 'Ingrese un RIF válido, por ejemplo J-12345678-9.';
-  if (phone1 && !/^[+\d][\d\s()-]{5,19}$/.test(phone1)) errors.phone_1 = 'Ingrese un teléfono válido.';
-  if (phone2 && !/^[+\d][\d\s()-]{5,19}$/.test(phone2)) errors.phone_2 = 'Ingrese un teléfono válido.';
-  if (mask && !mask.includes('#')) errors.mask_phone = 'La máscara debe contener marcadores #.';
-  const height = Number(source.max_height_logo);
-  const width = Number(source.max_width_logo);
-  if (!Number.isInteger(height) || height < 20 || height > 200) errors.max_height_logo = 'La altura debe estar entre 20 y 200 px.';
-  if (!Number.isInteger(width) || width < 20 || width > 200) errors.max_width_logo = 'El ancho debe estar entre 20 y 200 px.';
-  const qr = objectOr(source.settingQR);
-  const allowedQr = ['activeQR', 'fn', 'email', 'phone', 'bioanalista', 'codigo'];
-  if (Object.keys(qr).some(field => !allowedQr.includes(field))) errors.settingQR = 'La configuración QR contiene campos no permitidos.';
-  if (typeof qr.activeQR !== 'boolean') errors['settingQR.activeQR'] = 'El estado del QR no es válido.';
-  const qrMaximums = { fn: 100, email: 100, phone: 20, bioanalista: 100, codigo: 50 };
-  Object.entries(qrMaximums).forEach(([field, maximum]) => { if (typeof qr[field] !== 'string' || qr[field].length > maximum) errors['settingQR.' + field] = 'El valor no puede superar ' + maximum + ' caracteres.'; });
-  if (qr.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(qr.email.trim())) errors['settingQR.email'] = 'Ingrese un correo de contacto válido.';
-  if (qr.phone && !/^[+\d][\d\s()-]{5,19}$/.test(qr.phone.trim())) errors['settingQR.phone'] = 'Ingrese un teléfono de contacto válido.';
+  if (rif && !/^[VEJG]-?\d{7,9}-?\d$/i.test(rif)) errors.rif = 'Ingrese un RIF vÃ¡lido, por ejemplo J-12345678-9.';
+  if (phone1 && !/^[+\d][\d\s()-]{5,19}$/.test(phone1)) errors.phone_1 = 'Ingrese un telÃ©fono vÃ¡lido.';
+  if (phone2 && !/^[+\d][\d\s()-]{5,19}$/.test(phone2)) errors.phone_2 = 'Ingrese un telÃ©fono vÃ¡lido.';
+  if (mask && !mask.includes('#')) errors.mask_phone = 'La mÃ¡scara debe contener marcadores #.';
+  if (Object.prototype.hasOwnProperty.call(source, 'max_height_logo')) {
+    const height = Number(source.max_height_logo);
+    if (!Number.isInteger(height) || height < 20 || height > 200) errors.max_height_logo = 'La altura debe estar entre 20 y 200 px.';
+  }
+  if (Object.prototype.hasOwnProperty.call(source, 'max_width_logo')) {
+    const width = Number(source.max_width_logo);
+    if (!Number.isInteger(width) || width < 20 || width > 200) errors.max_width_logo = 'El ancho debe estar entre 20 y 200 px.';
+  }
+  if (Object.prototype.hasOwnProperty.call(source, 'settingQR')) {
+    const qr = objectOr(source.settingQR);
+    const allowedQr = ['activeQR', 'fn', 'email', 'phone', 'bioanalista', 'codigo'];
+    if (Object.keys(qr).some(field => !allowedQr.includes(field))) errors.settingQR = 'La configuraciÃ³n QR contiene campos no permitidos.';
+    if (Object.prototype.hasOwnProperty.call(qr, 'activeQR') && typeof qr.activeQR !== 'boolean') errors['settingQR.activeQR'] = 'El estado del QR no es vÃ¡lido.';
+    const maximums = { fn: 100, email: 100, phone: 20, bioanalista: 100, codigo: 50 };
+    Object.entries(maximums).forEach(([field, maximum]) => {
+      if (Object.prototype.hasOwnProperty.call(qr, field) && (typeof qr[field] !== 'string' || qr[field].length > maximum)) errors['settingQR.' + field] = 'El valor no puede superar ' + maximum + ' caracteres.';
+    });
+    if (qr.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(qr.email.trim())) errors['settingQR.email'] = 'Ingrese un correo de contacto vÃ¡lido.';
+    if (qr.phone && !/^[+\d][\d\s()-]{5,19}$/.test(qr.phone.trim())) errors['settingQR.phone'] = 'Ingrese un telÃ©fono de contacto vÃ¡lido.';
+  }
   return errors;
 }
 export function validateLaboratoryRequired(value) { return Object.values(validateLaboratoryIdentity(value)); }
