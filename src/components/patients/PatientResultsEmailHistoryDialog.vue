@@ -4,9 +4,10 @@
       <div class="history-scope-note">Muestra los intentos registrados entre <strong>{{ rangeLabel }}</strong>.</div>
       <div v-if="loading" class="bio-nexus-message">Consultando historial...</div>
       <div v-if="errorMessage" class="bio-nexus-message bio-nexus-message-error" role="alert">{{ errorMessage }}</div>
-      <div v-else class="history-grid-frame" :style="gridFrameStyle">
-        <BioNexusDataGrid
+      <BioNexusDataGrid
+        v-else
         class="history-grid"
+        style="box-sizing: border-box; width: auto; max-width: none; min-width: 0; margin-inline: 16px; justify-self: stretch; align-self: stretch;"
         :row-data="rows"
         :column-defs="columns"
         :components="components"
@@ -17,8 +18,7 @@
         :quick-filter-text="search"
         :export-options="false"
         empty-text="No existen intentos en el rango consultado."
-        />
-      </div>
+      />
     </section>
     <template #footer><button type="button" class="bio-nexus-action bio-nexus-action-secondary" @click="close">Cerrar</button></template>
   </BioNexusDialog>
@@ -35,25 +35,20 @@ const loading = ref(false);
 const errorMessage = ref("");
 const search = ref("");
 const rangeLabel = ref("");
-const gridFrameStyle = {
-  width: "calc(100vw - 224px)",
-  maxWidth: "calc(100vw - 224px)",
-  marginInline: "auto",
-};
 const components = { BioNexusOptionFilter };
 const centeredHeader = "history-centered-header";
 const centeredCell = "history-centered-cell";
 const columns = [
-  { field: "requestedAt", headerName: "Solicitado", valueFormatter: ({ value }) => formatDateTime(value), minWidth: 158, maxWidth: 178 },
-  { field: "patientPosition", headerName: "Nro. ingreso", minWidth: 116, maxWidth: 130, headerClass: centeredHeader, cellClass: centeredCell },
-  { field: "patientName", headerName: "Paciente", minWidth: 180, flex: 1.1 },
-  { field: "recipientEmail", headerName: "Destinatario", minWidth: 190, flex: 1.1 },
-  { field: "deliveryType", headerName: "Tipo", valueFormatter: ({ value }) => value === "resend" ? "Reenv\u00edo" : "Env\u00edo", filter: BioNexusOptionFilter, filterParams: { options: [{ value: "send", label: "Env\u00edo" }, { value: "resend", label: "Reenv\u00edo" }] }, minWidth: 112, maxWidth: 130, headerClass: centeredHeader, cellClass: centeredCell },
-  { field: "status", headerName: "Resultado", valueFormatter: ({ value }) => ({ started: "En proceso", success: "Exitoso", failed: "Fallido" }[value] || value), filter: BioNexusOptionFilter, filterParams: { options: [{ value: "started", label: "En proceso" }, { value: "success", label: "Exitoso" }, { value: "failed", label: "Fallido" }] }, minWidth: 120, maxWidth: 140, headerClass: centeredHeader, cellClass: centeredCell },
-  { field: "requestedByName", headerName: "Solicitado por", minWidth: 150 },
-  { field: "completedByName", headerName: "Completado por", minWidth: 150 },
-  { field: "pdfSizeBytes", headerName: "PDF bytes", minWidth: 105, maxWidth: 120, headerClass: centeredHeader, cellClass: centeredCell },
-  { field: "errorCode", headerName: "Error", minWidth: 150, flex: 1 },
+  { field: "requestedAt", headerName: "Solicitado", valueFormatter: ({ value }) => formatDateTime(value), minWidth: 118, flex: 1.15 },
+  { field: "patientPosition", headerName: "Nro. ingreso", minWidth: 82, flex: 0.75, headerClass: centeredHeader, cellClass: centeredCell },
+  { field: "patientName", headerName: "Paciente", minWidth: 120, flex: 1.2 },
+  { field: "recipientEmail", headerName: "Destinatario", minWidth: 130, flex: 1.25 },
+  { field: "deliveryType", headerName: "Tipo", valueFormatter: ({ value }) => value === "resend" ? "Reenv\u00edo" : "Env\u00edo", filter: BioNexusOptionFilter, filterParams: { options: [{ value: "send", label: "Env\u00edo" }, { value: "resend", label: "Reenv\u00edo" }] }, minWidth: 78, flex: 0.75, headerClass: centeredHeader, cellClass: centeredCell },
+  { field: "status", headerName: "Resultado", valueFormatter: ({ value }) => ({ started: "En proceso", success: "Exitoso", failed: "Fallido" }[value] || value), filter: BioNexusOptionFilter, filterParams: { options: [{ value: "started", label: "En proceso" }, { value: "success", label: "Exitoso" }, { value: "failed", label: "Fallido" }] }, minWidth: 82, flex: 0.8, headerClass: centeredHeader, cellClass: centeredCell },
+  { field: "requestedByName", headerName: "Solicitado por", minWidth: 105, flex: 1 },
+  { field: "completedByName", headerName: "Completado por", minWidth: 105, flex: 1 },
+  { field: "pdfSizeBytes", headerName: "PDF bytes", minWidth: 78, flex: 0.7, headerClass: centeredHeader, cellClass: centeredCell },
+  { field: "errorCode", headerName: "Error", minWidth: 82, flex: 0.8 },
 ];
 function displayDate(value) {
   const match = String(value || "").match(/^(\d{4})-(\d{2})-(\d{2})/);
@@ -83,37 +78,9 @@ defineExpose({ open });
 .history-grid :deep(.history-centered-header .ag-header-cell-label),
 .history-grid :deep(.history-centered-cell) { justify-content: center; text-align: center; }
 
-.history-grid-frame { box-sizing: border-box; min-width: 0; overflow: hidden; }
-.history-grid-frame .history-grid {
-  box-sizing: border-box;
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-}
-
-.history-grid-frame :deep(.bio-nexus-data-grid),
-.history-grid-frame :deep(.bio-nexus-grid-shell),
-.history-grid-frame :deep(.ag-root-wrapper) {
-  box-sizing: border-box;
-  width: 100% !important;
-  max-width: 100% !important;
-  min-width: 0 !important;
-}
-
-@media (max-width: 760px) {
-  .history-grid-frame {
-    width: calc(100vw - 64px) !important;
-    max-width: calc(100vw - 64px) !important;
-  }
-}
 </style>
 <style>
-.patient-results-history-dialog-body {
-  box-sizing: border-box;
-  width: min(1460px, calc(100vw - 96px)) !important;
-  max-width: calc(100vw - 96px) !important;
-  min-width: 0 !important;
-}
+
 .patient-results-history-dialog-body .bio-nexus-dialog-content,
 .patient-results-history-dialog-body .history-dialog-body,
 .patient-results-history-dialog-body .history-grid {
@@ -123,10 +90,13 @@ defineExpose({ open });
   max-width: 100%;
   overflow: hidden;
 }
-@media (max-width: 760px) {
-  .patient-results-history-dialog-body {
-    width: calc(100vw - 32px) !important;
-    max-width: calc(100vw - 32px) !important;
-  }
+
+.patient-results-history-dialog-body {
+  box-sizing: border-box;
+  width: auto !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  overflow: hidden;
 }
 </style>
