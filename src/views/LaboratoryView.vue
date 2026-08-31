@@ -5,7 +5,7 @@
       <span>{{ loadError }}</span>
     </div>
 
-    <div class="laboratory-navigation">
+    <div v-if="!isCommunicationsRoute" class="laboratory-navigation">
       <BioNexusTabs v-model="activeTab" :tabs="tabs" aria-label="Secciones de Laboratorio" id-prefix="laboratory" />
       <div class="laboratory-actions">
         <BioNexusActionButton v-if="dirty" variant="secondary" :disabled="saving" @click="discard">Descartar</BioNexusActionButton>
@@ -15,10 +15,10 @@
 
     <div v-if="loading" class="bio-nexus-empty-state">Cargando configuración...</div>
     <template v-else-if="laboratory">
-      <LaboratoryLogoPanel v-show="activeTab === 'logo'" id="laboratory-panel-logo" role="tabpanel" aria-labelledby="laboratory-tab-logo" :model="laboratory" :errors="identityErrors" :disabled="!canUpdate || saving" @upload="uploadLogo" />
-      <LaboratoryGeneralPanel v-show="activeTab === 'general'" id="laboratory-panel-general" role="tabpanel" aria-labelledby="laboratory-tab-general" :model="laboratory" :errors="identityErrors" :disabled="!canUpdate || saving" />
-      <LaboratoryBillingPanel v-show="activeTab === 'billing'" id="laboratory-panel-billing" role="tabpanel" aria-labelledby="laboratory-tab-billing" :model="laboratory" :disabled="!canUpdate || saving" />
-      <LaboratoryEmailPanel v-show="activeTab === 'email'" id="laboratory-panel-email" role="tabpanel" aria-labelledby="laboratory-tab-email" :model="laboratory" :errors="emailErrors" :disabled="!canUpdate || saving || testingEmail" :testing="testingEmail" :can-test="canUpdate" @test-connection="testConnection" />
+      <LaboratoryLogoPanel v-if="!isCommunicationsRoute" v-show="activeTab === 'logo'" id="laboratory-panel-logo" role="tabpanel" aria-labelledby="laboratory-tab-logo" :model="laboratory" :errors="identityErrors" :disabled="!canUpdate || saving" @upload="uploadLogo" />
+      <LaboratoryGeneralPanel v-if="!isCommunicationsRoute" v-show="activeTab === 'general'" id="laboratory-panel-general" role="tabpanel" aria-labelledby="laboratory-tab-general" :model="laboratory" :errors="identityErrors" :disabled="!canUpdate || saving" />
+      <LaboratoryBillingPanel v-if="!isCommunicationsRoute" v-show="activeTab === 'billing'" id="laboratory-panel-billing" role="tabpanel" aria-labelledby="laboratory-tab-billing" :model="laboratory" :disabled="!canUpdate || saving" />
+      <LaboratoryEmailPanel v-if="isCommunicationsRoute || activeTab === 'email'" v-show="isCommunicationsRoute || activeTab === 'email'" id="laboratory-panel-email" role="tabpanel" aria-labelledby="laboratory-tab-email" :model="laboratory" :errors="emailErrors" :disabled="!canUpdate || saving || testingEmail" :testing="testingEmail" :saving="saving" :dirty="dirty" :can-update="canUpdate" @discard="discard" @save="save" @test-connection="testConnection" />
     </template>
   </section>
 </template>
@@ -48,7 +48,7 @@ const loadError = ref('')
 const identityErrors = ref({})
 const emailErrors = ref({})
 const testingEmail = ref(false)
-const activeTab = ref(typeof route.query.tab === 'string' ? route.query.tab : 'general')
+const activeTab = ref(typeof route.query.tab === 'string' ? route.query.tab : (typeof route.meta.initialTab === 'string' ? route.meta.initialTab : 'general'))
 const tabs = Object.freeze([
   { key: 'logo', label: 'Logo' },
   { key: 'general', label: 'General' },
@@ -56,6 +56,7 @@ const tabs = Object.freeze([
   { key: 'email', label: 'Envío por correo' }
 ])
 const canUpdate = computed(() => authorization.hasPermission('laboratory.update'))
+const isCommunicationsRoute = computed(() => route.name === 'configuration-laboratory-communications')
 const dirty = computed(() => laboratory.value !== null && JSON.stringify(laboratory.value) !== original.value)
 
 function snapshot() { original.value = JSON.stringify(laboratory.value) }
@@ -79,7 +80,7 @@ async function save() {
   if (!dirty.value || saving.value) return
   identityErrors.value = validateLaboratoryIdentity(laboratory.value)
   emailErrors.value = validateLaboratoryEmail(laboratory.value.sendEmail)
-  if (Object.keys(emailErrors.value).length) { activeTab.value = 'email'; toast.error('Revise la configuraciÃ³n de correo antes de guardar.'); return }
+  if (Object.keys(emailErrors.value).length) { activeTab.value = 'email'; toast.error('Revise la configuraci\u00f3n de correo antes de guardar.'); return }
   const errors = Object.values(identityErrors.value)
   if (errors.length) { activeTab.value = errors.some((_, index) => Object.keys(identityErrors.value)[index].startsWith('max_')) ? 'logo' : 'general'; toast.error('Revise los campos señalados antes de guardar.'); return }
   saving.value = true
@@ -94,12 +95,12 @@ async function save() {
 async function testConnection() {
   if (!laboratory.value || testingEmail.value) return
   emailErrors.value = validateLaboratoryEmail(laboratory.value.sendEmail)
-  if (Object.keys(emailErrors.value).length) { toast.error('Revise la configuraciÃ³n de correo antes de probar.'); return }
+  if (Object.keys(emailErrors.value).length) { toast.error('Revise la configuraci\u00f3n de correo antes de probar.'); return }
   testingEmail.value = true
   try {
     const result = await testLaboratoryEmailConnection(laboratory.value.id, laboratory.value.sendEmail)
-    toast.success(result?.mode === 'gmail' ? 'ConexiÃ³n con Gmail verificada.' : 'ConexiÃ³n SMTP verificada.')
-  } catch (error) { toast.error(getLaboratoryErrorMessage(error, 'No fue posible verificar la conexiÃ³n.')) }
+    toast.success(result?.mode === 'gmail' ? 'Conexi\u00f3n con Gmail verificada.' : 'Conexi\u00f3n SMTP verificada.')
+  } catch (error) { toast.error(getLaboratoryErrorMessage(error, 'No fue posible verificar la conexi\u00f3n.')) }
   finally { testingEmail.value = false }
 }
 async function uploadLogo(file) {
@@ -115,7 +116,9 @@ async function uploadLogo(file) {
   } catch (error) { toast.error(getLaboratoryErrorMessage(error, 'No fue posible actualizar el logo.')) }
   finally { saving.value = false }
 }
-watch(() => route.query.tab, value => { if (typeof value === 'string') activeTab.value = value })
+watch(() => [route.name, route.query.tab, route.meta.initialTab], ([, queryTab, initialTab]) => {
+  activeTab.value = typeof queryTab === 'string' ? queryTab : (typeof initialTab === 'string' ? initialTab : 'general')
+}, { immediate: true })
 onMounted(load)
 </script>
 
