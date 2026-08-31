@@ -244,13 +244,13 @@ async function sendSelected() {
         failures.push(`${candidate.patient_position ?? candidate.id}: ${messageFor(error)}`);
       }
     }
-    sendDialog.value?.close();
     await loadCandidates();
-    if (success) toast.success(`${success} entrega${success === 1 ? "" : "s"} confirmada${success === 1 ? "" : "s"}.`);
-    if (failures.length) toast.error(`${failures.length} entrega${failures.length === 1 ? "" : "s"} no completada${failures.length === 1 ? "" : "s"}. Revise los pacientes pendientes.`);
   } finally {
     sending.value = false;
+    sendDialog.value?.closeAfterOperation();
   }
+  if (success) toast.success(`${success} entrega${success === 1 ? "" : "s"} confirmada${success === 1 ? "" : "s"}.`);
+  if (failures.length) toast.error(`${failures.length} entrega${failures.length === 1 ? "" : "s"} no completada${failures.length === 1 ? "" : "s"}. Revise los pacientes pendientes.`);
 }
 function messageFor(error) {
   const code = String(error?.message || "");
