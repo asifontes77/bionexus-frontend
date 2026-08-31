@@ -26,6 +26,8 @@
       :row-data="rows"
       :column-defs="columns"
       :default-col-def="defaultColDef"
+      :components="gridComponents"
+      :context="gridContext"
       :get-row-id="getRowId"
       :row-selection="rowSelection"
       :search-enabled="true"
@@ -85,6 +87,7 @@ import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
 import BioNexusFormField from "@/components/ui/BioNexusFormField.vue";
 import BioNexusContextMenu from "@/components/ui/BioNexusContextMenu.vue";
 import PatientResultsEmailSendDialog from "@/components/patients/PatientResultsEmailSendDialog.vue";
+import PatientResultsEmailRowAction from "@/components/patients/PatientResultsEmailRowAction.vue";
 import { useBioNexusToast } from "@/composables/useBioNexusToast";
 import { buildPatientResultHtml } from "@/services/patientResultReportBuilder";
 import {
@@ -126,6 +129,8 @@ const rowSelection = computed(() => ({
   isRowSelectable: (node) => canSend.value && !Boolean(node.data?.email_status),
 }));
 const defaultColDef = { minWidth: 90, flex: 1 };
+const gridComponents = { patientResultsEmailRowAction: PatientResultsEmailRowAction };
+const gridContext = { canSend: () => canSend.value, isBusy: () => busy.value, prepareSingleSend };
 const columns = [
   { field: "patient_position", headerName: "Sec. / #", valueGetter: ({ data }) => `${data?.patient_position ?? ""} / ${data?.id ?? ""}`, minWidth: 105, maxWidth: 135, flex: 0 },
   { field: "name", headerName: "Paciente", minWidth: 180, flex: 1.35 },
@@ -136,18 +141,9 @@ const columns = [
   { field: "email_status", headerName: "Estado", valueFormatter: ({ value }) => value ? "Enviado" : "Pendiente", minWidth: 105, maxWidth: 125, flex: 0 },
   {
     colId: "actions", headerName: "Acciones", width: 92, minWidth: 92, maxWidth: 92, flex: 0,
+    pinned: "right", lockPinned: true, suppressMovable: true,
     sortable: false, filter: false, resizable: false, suppressExport: true,
-    cellRenderer: (params) => {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = "results-email-row-action";
-      button.title = params.data?.email_status ? "Resultados enviados" : "Enviar resultados por correo";
-      button.setAttribute("aria-label", button.title);
-      button.disabled = !canSend.value || busy.value || Boolean(params.data?.email_status);
-      button.innerHTML = '<span class="material-symbols-rounded" aria-hidden="true">send</span>';
-      button.addEventListener("click", (event) => { event.preventDefault(); event.stopPropagation(); prepareSingleSend(params.data); });
-      return button;
-    },
+    cellRenderer: "patientResultsEmailRowAction",
   },
 ];
 
@@ -220,6 +216,8 @@ function messageFor(error) {
     PATIENT_RESULTS_EMAIL_DATE_RANGE_INVALID: "El rango de fechas no es vÃ¡lido.",
     PATIENT_RESULTS_EMAIL_DATE_RANGE_TOO_LARGE: "El rango no puede superar 31 dÃ­as.",
     PATIENT_RESULTS_EMAIL_ALREADY_SENT: "Los resultados ya fueron enviados.",
+    PATIENT_RESULTS_EMAIL_CONTENT_EMPTY: "El informe no contiene resultados visibles.",
+    PATIENT_RESULTS_EMAIL_PDF_EMPTY: "No fue posible generar un PDF con contenido.",
     PATIENT_RESULTS_EMAIL_NOT_APPROVED: "No existen resultados aprobados.",
     PATIENT_RESULTS_EMAIL_CONFIGURATION_INVALID: "La configuraci\u00f3n de correo no est\u00e1 completa.",
     PATIENT_RESULTS_EMAIL_ADDRESS_INVALID: "El correo del paciente no es v\u00e1lido.",
@@ -312,8 +310,4 @@ onBeforeUnmount(() => gridApi.value?.removeEventListener?.("selectionChanged", s
   }
 }
 
-.results-email-view :deep(.results-email-row-action) { display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;margin:auto;border:1px solid var(--bio-nexus-color-border-strong);border-radius:var(--bio-nexus-radius-sm);background:var(--bio-nexus-color-surface);color:var(--bio-nexus-color-primary-strong);cursor:pointer; }
-.results-email-view :deep(.results-email-row-action:hover:not(:disabled)) { border-color:var(--bio-nexus-color-primary);background:var(--bio-nexus-color-info-soft); }
-.results-email-view :deep(.results-email-row-action:disabled) { opacity:.45;cursor:not-allowed; }
-.results-email-view :deep(.results-email-row-action .material-symbols-rounded) { font-size:18px; }
 </style>

@@ -37,15 +37,23 @@ export async function buildPatientResultHtml(patient, laboratory, getApprover) {
   const maximumRows = Math.max(1, Number(laboratory.maximum_rows_report) || 34);
   let content = "", body = "", remaining = maximumRows, approverId = null, page = "";
   async function openPage(id) { const user = await getApprover(id); page = approverBlock(header, user); body = ""; remaining = maximumRows; }
-  function closePage(pageBreak = false) { content += replaceAllToken(page, "[body]", body); if (pageBreak) content += '<div style="page-break-after: always;"></div>'; }
+  function closePage(pageBreak = false) {
+    const pageContent = page.includes("[body]") ? replaceAllToken(page, "[body]", body) : `${page}${body}`;
+    content += pageContent;
+    if (pageBreak) content += '<div style="page-break-after: always;"></div>';
+  }
   for (const exam of exams) {
     const id = Number(exam.approved_id);
     const size = Math.max(1, Number(exam.size) || 1);
     if (approverId === null) { approverId = id; await openPage(id); }
     if (id !== approverId || remaining - size < 1) { closePage(true); approverId = id; await openPage(id); }
-    body += String(exam.result ?? "").replace(/<p>/g, '<p style="font-size: 10px;">');
+    const result = String(exam.result ?? "").trim();
+    if (!result) continue;
+    body += result.replace(/<p>/g, '<p style="font-size: 10px;">');
     remaining -= size;
   }
   closePage(false);
-  return `<div style="padding:20px;background:white;">${content}</div>`;
+  const visibleText = content.replace(/<[^>]*>/g, " ").replace(/&nbsp;/gi, " ").trim();
+  if (visibleText.length < 20) throw new Error("PATIENT_RESULTS_EMAIL_CONTENT_EMPTY");
+  return `<div style="padding:20px;background:white;color:#111;">${content}</div>`;
 }
