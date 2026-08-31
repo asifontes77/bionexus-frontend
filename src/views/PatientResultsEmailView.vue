@@ -51,6 +51,10 @@
         </div>
       </template>
       <template #actions>
+        <button type="button" class="bio-nexus-action bio-nexus-action-secondary" :disabled="busy" @click="historyDialog?.open(dateFrom, dateTo)">
+          <BioNexusActionIcon action="history" />
+          <span>Historial</span>
+        </button>
         <button
           v-if="canSend"
           type="button"
@@ -75,6 +79,7 @@
     />
 
     <PatientResultsEmailSendDialog ref="sendDialog" :records="selected" :sending="sending" @confirm="sendSelected" />
+    <PatientResultsEmailHistoryDialog ref="historyDialog" />
   </main>
 </template>
 
@@ -86,6 +91,7 @@ import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
 import BioNexusFormField from "@/components/ui/BioNexusFormField.vue";
 import BioNexusContextMenu from "@/components/ui/BioNexusContextMenu.vue";
 import PatientResultsEmailSendDialog from "@/components/patients/PatientResultsEmailSendDialog.vue";
+import PatientResultsEmailHistoryDialog from "@/components/patients/PatientResultsEmailHistoryDialog.vue";
 import BioNexusGridActionsCell from "@/components/grid/BioNexusGridActionsCell.vue";
 import BioNexusOptionFilter from "@/components/grid/BioNexusOptionFilter.vue";
 import PatientResultsEmailStatusCell from "@/components/patients/PatientResultsEmailStatusCell.vue";
@@ -111,6 +117,7 @@ const loading = ref(false);
 const sending = ref(false);
 const errorMessage = ref("");
 const sendDialog = ref(null);
+const historyDialog = ref(null);
 const gridApi = ref(null);
 const contextMenu = ref(null);
 const contextMenuState = ref({ open: false, x: 0, y: 0, row: null });
@@ -141,7 +148,7 @@ const columns = [
   { headerName: "Edad", valueGetter: ({ data }) => formatPatientAge(data), minWidth: 90, maxWidth: 120, flex: 0 },
   { field: "phone", headerName: "Tel\u00e9fono", minWidth: 120, flex: 0.8 },
   { field: "email", headerName: "Correo", minWidth: 190, flex: 1.3 },
-  { field: "email_status", headerName: "Estado", minWidth: 125, maxWidth: 145, flex: 0, headerClass: "results-email-centered-header", cellClass: "results-email-centered-cell", filter: BioNexusOptionFilter, filterParams: { options: [{ value: false, label: "Pendiente" }, { value: true, label: "Enviado" }] }, cellRenderer: "PatientResultsEmailStatusCell" },
+  { field: "email_status", headerName: "Estado", minWidth: 125, maxWidth: 145, flex: 0, headerClass: "results-email-centered-header", cellClass: "results-email-centered-cell", filter: BioNexusOptionFilter, filterParams: { getValue: (node) => Boolean(node.data?.email_status), options: [{ value: false, label: "Pendiente" }, { value: true, label: "Enviado" }] }, cellRenderer: "PatientResultsEmailStatusCell" },
   {
     colId: "actions", headerName: "Acciones", width: 110, minWidth: 110, maxWidth: 110, flex: 0,
     pinned: "right", lockPinned: true, suppressMovable: true,

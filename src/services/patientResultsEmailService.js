@@ -24,3 +24,8 @@ export function sendPatientResultsEmail(id, resultHtml) {
     timeoutMs: 60000,
   });
 }
+
+export function getPatientResultsEmailHistory(dateFrom, dateTo) {
+  const query = new URLSearchParams({ dateFrom, dateTo });
+  return apiRequest(`/api/patients/results-email-history?${query.toString()}`);
+}
