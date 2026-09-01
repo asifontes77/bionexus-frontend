@@ -1,5 +1,7 @@
 import { apiRequest } from "@/api/apiClient";
 import { normalizeExam, normalizeExamGroup, normalizeExamGroups, normalizeExams, normalizeTaxes, normalizeExamSearchResults } from "@/models/examCatalog";
+export async function reorderExamGroups(ids) { return apiRequest("/api/examgroup/reorder", { method: "PATCH", body: { ids } }); }
+export async function reorderExams(groupId, ids) { return apiRequest("/api/examlists/reorder", { method: "PATCH", body: { groupId, ids } }); }
 export async function getExamGroups() { return normalizeExamGroups(await apiRequest("/api/examgroup/all")); }
 export async function getExamsByGroup(groupId) { return normalizeExams(await apiRequest(`/api/examlists/group/${groupId}`)); }
 export async function getExam(examId) { return normalizeExam(await apiRequest(`/api/examlists/${examId}`)); }

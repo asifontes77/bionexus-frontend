@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import { useAuthorizationStore } from "@/stores/authorization";
 import { useSessionStore } from "@/stores/session";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout.vue";
+import ExamOrderingView from "@/views/ExamOrderingView.vue";
 const LoginView=()=>import("@/views/LoginView.vue");
 const MigrationHomeView=()=>import("@/views/MigrationHomeView.vue");
 const PatientResultsEmailView=()=>import("@/views/PatientResultsEmailView.vue");
@@ -119,13 +120,14 @@ const routes = [
                     description: "Administra las descripciónes disponibles y controla cuales permanecen activas en los flujos operativos.",
         },
             },
+      { path: "configuration/exams-order", name: "configuration-exams-order", component: ExamOrderingView, meta: { requiresAuth: true, permissions: ["exam-catalog.read"], title: "Ordenar exámenes", description: "Define el orden de grupos y exámenes.", breadcrumb: ["Configuración", "Catálogos", "Ordenar exámenes"] } },
       {
         path: "configuration/catalogs",
         name: "configuration-catalogs",
         component: ConfigurationModuleView,
         meta: { requiresAuth: true, title: "Catálogos", description: "Organiza los catálogos y parámetros reutilizados por los procesos del laboratorio.", breadcrumb: ["Configuración", "Catálogos"], sections: [
           { title: "Lista de exámenes", description: "Grupos, exámenes, tarifas y disponibilidad.", routeName: "configuration-exams", permission: "exam-catalog.read", status: "available" },
-          { title: "Ordenar exámenes", description: "Orden de presentación del catálogo.", status: "pending" },
+          { title: "Ordenar exámenes", description: "Orden de presentación del catálogo.", routeName: "configuration-exams-order", permission: "exam-catalog.read", status: "available" },
           { title: "Rutinas de exámenes", description: "Agrupaciones frecuentes de exámenes.", status: "pending" },
           { title: "Antibióticos", description: "Catalogo para antibiogramas.", status: "pending" },
           { title: "Gérmenes", description: "Catalogo de microorganismos.", status: "pending" },
