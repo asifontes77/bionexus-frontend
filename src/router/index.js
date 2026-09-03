@@ -122,6 +122,7 @@ const routes = [
         },
             },
       { path: "configuration/routines", name: "configuration-routines", component: RoutinesView, meta: { requiresAuth: true, permissions: ["routines.read"], title: "Rutinas de exámenes", description: "Administra agrupaciones frecuentes y el orden de sus exámenes.", breadcrumb: ["Configuración", "Catálogos", "Rutinas de exámenes"] } },
+      { path: "configuration/germs", name: "configuration-germs", component: GermsView, meta: { requiresAuth: true, permissions: ["germs.read"], title: "Gérmenes", description: "Administra el catálogo de microorganismos para antibiogramas.", breadcrumb: ["Configuración", "Catálogos", "Gérmenes"] } },
       { path: "configuration/antibiotics", name: "configuration-antibiotics", component: AntibioticsView, meta: { requiresAuth: true, permissions: ["antibiotic.read"], title: "Antibióticos", description: "Administra el catálogo disponible para antibiogramas.", breadcrumb: ["Configuración", "Catálogos", "Antibióticos"] } },
       { path: "configuration/exams-order", name: "configuration-exams-order", component: ExamOrderingView, meta: { requiresAuth: true, permissions: ["exam-catalog.read"], title: "Ordenar exámenes", description: "Define el orden de grupos y exámenes.", breadcrumb: ["Configuración", "Catálogos", "Ordenar exámenes"] } },
       {
@@ -133,7 +134,7 @@ const routes = [
           { title: "Ordenar exámenes", description: "Orden de presentación del catálogo.", routeName: "configuration-exams-order", permission: "exam-catalog.read", status: "available" },
           { title: "Rutinas de exámenes", description: "Agrupaciones frecuentes de exámenes.", routeName: "configuration-routines", permission: "routines.read", status: "available" },
           { title: "Antibióticos", description: "Catálogo para antibiogramas.", routeName: "configuration-antibiotics", permission: "antibiotic.read", status: "available" },
-          { title: "Gérmenes", description: "Catalogo de microorganismos.", status: "pending" },
+          { title: "Gérmenes", description: "Catálogo de microorganismos.", routeName: "configuration-germs", permission: "germs.read", status: "available" },
           { title: "Formas parasitarias", description: "Descripciones parasitológicas disponibles.", routeName: "configuration-parasiticforms", permission: "parasiticforms.read", status: "available" },
           { title: "Grupos de hojas de trabajo", description: "Organizacion de hojas de trabajo.", status: "pending" },
           { title: "Pruebas especiales", description: "Laboratorios y pruebas de referencia.", status: "pending" },
@@ -254,6 +255,7 @@ const routes = [
 ];
 
 import AntibioticsView from "@/views/AntibioticsView.vue";
+import GermsView from "@/views/GermsView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

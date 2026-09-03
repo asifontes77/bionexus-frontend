@@ -28,6 +28,7 @@ const routeHierarchy = Object.freeze({
   'configuration-exams': ['Configuración', 'Catálogos', 'Lista de exámenes'],
   'configuration-parasiticforms': ['Configuración', 'Catálogos', 'Formas parasitarias'],
   'configuration-antibiotics': ['Configuración', 'Catálogos', 'Antibióticos'],
+  'configuration-germs': ['Configuración', 'Catálogos', 'Gérmenes'],
   'type-payments': ['Configuración', 'Catálogos', 'Formas de pago'],
   'configuration-laboratory-module': ['Configuración', 'Laboratorio'],
   'configuration-laboratory-communications': ['Configuración', 'Laboratorio', 'Comunicaciones'],

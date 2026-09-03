@@ -2,6 +2,7 @@ const moduleLabels = Object.freeze({
   general: "General",
   parasiticforms: "Formas parasitarias",
   antibiotic: "Antibióticos",
+  germs: "Gérmenes",
   patients: "Pacientes",
   security: "Seguridad y autorizaci\u00f3n",
   typepayment: "Formas de pago",
@@ -10,6 +11,10 @@ const moduleLabels = Object.freeze({
 const permissionLabels = Object.freeze({
   "parasiticforms.change-status": "Cambiar estado",
   "antibiotic.read": "Consultar",
+  "germs.read": "Consultar",
+  "germs.create": "Crear",
+  "germs.update": "Actualizar",
+  "germs.change-status": "Cambiar estado",
   "antibiotic.create": "Crear",
   "antibiotic.update": "Actualizar",
   "antibiotic.change-status": "Cambiar estado",

@@ -30,6 +30,7 @@ const ROUTE_EXPORT_NAMES = Object.freeze({
   "type-payments": "Formas de pago",
   parasiticforms: "Formas parasitarias",
   antibiotics: "Antibióticos",
+  germs: "Gérmenes",
   roles: "Roles y permisos",
   users: "Usuarios y autorizacion",
 });
@@ -39,6 +40,7 @@ const PATH_EXPORT_NAMES = Object.freeze({
   "/configuration/exams": "Examenes",
   "/configuration/parasiticforms": "Formas parasitarias",
   "/configuration/antibiotics": "Antibióticos",
+  "/configuration/germs": "Gérmenes",
   "/configuration/type-payments": "Formas de pago",
 });
 
