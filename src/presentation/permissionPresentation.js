@@ -1,5 +1,6 @@
 const moduleLabels = Object.freeze({
   general: "General",
+  "sample-types": "Tipos de muestra",
   parasiticforms: "Formas parasitarias",
   antibiotic: "Antibióticos",
   germs: "Gérmenes",
