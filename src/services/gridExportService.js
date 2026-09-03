@@ -29,6 +29,7 @@ async function loadPdfMake() {
 const ROUTE_EXPORT_NAMES = Object.freeze({
   "type-payments": "Formas de pago",
   parasiticforms: "Formas parasitarias",
+  antibiotics: "Antibióticos",
   roles: "Roles y permisos",
   users: "Usuarios y autorizacion",
 });
@@ -37,6 +38,7 @@ const PATH_EXPORT_NAMES = Object.freeze({
   "/security/users": "Usuarios y autorizacion",
   "/configuration/exams": "Examenes",
   "/configuration/parasiticforms": "Formas parasitarias",
+  "/configuration/antibiotics": "Antibióticos",
   "/configuration/type-payments": "Formas de pago",
 });
 
