@@ -17,7 +17,8 @@ const LaboratoryIdentityView=()=>import("@/views/LaboratoryIdentityView.vue");
 const TaxesView=()=>import("@/views/TaxesView.vue");
 const ApplicationSettingsView=()=>import("@/views/ApplicationSettingsView.vue");
 const ConfigurationModuleView=()=>import("@/views/ConfigurationModuleView.vue");
-const applicationViewLoaders=[MigrationHomeView,PatientResultsEmailView,RolesPermissionsView,UserAuthorizationView,ExamCatalogView,ParasiticformsView,TypePaymentView,LaboratoryView,TaxesView,ApplicationSettingsView,ConfigurationModuleView,LaboratoryIdentityView];
+const RoutinesView=()=>import("@/views/RoutinesView.vue");
+const applicationViewLoaders=[MigrationHomeView,PatientResultsEmailView,RolesPermissionsView,UserAuthorizationView,ExamCatalogView,ParasiticformsView,TypePaymentView,LaboratoryView,TaxesView,ApplicationSettingsView,ConfigurationModuleView,LaboratoryIdentityView,RoutinesView];
 let applicationRoutesPrefetched=false;
 function scheduleAuthorizedRoutePrefetch(){
   if(applicationRoutesPrefetched)return;
@@ -120,6 +121,7 @@ const routes = [
                     description: "Administra las descripciónes disponibles y controla cuales permanecen activas en los flujos operativos.",
         },
             },
+      { path: "configuration/routines", name: "configuration-routines", component: RoutinesView, meta: { requiresAuth: true, permissions: ["routines.read"], title: "Rutinas de exámenes", description: "Administra agrupaciones frecuentes y el orden de sus exámenes.", breadcrumb: ["Configuración", "Catálogos", "Rutinas de exámenes"] } },
       { path: "configuration/exams-order", name: "configuration-exams-order", component: ExamOrderingView, meta: { requiresAuth: true, permissions: ["exam-catalog.read"], title: "Ordenar exámenes", description: "Define el orden de grupos y exámenes.", breadcrumb: ["Configuración", "Catálogos", "Ordenar exámenes"] } },
       {
         path: "configuration/catalogs",
@@ -128,7 +130,7 @@ const routes = [
         meta: { requiresAuth: true, title: "Catálogos", description: "Organiza los catálogos y parámetros reutilizados por los procesos del laboratorio.", breadcrumb: ["Configuración", "Catálogos"], sections: [
           { title: "Lista de exámenes", description: "Grupos, exámenes, tarifas y disponibilidad.", routeName: "configuration-exams", permission: "exam-catalog.read", status: "available" },
           { title: "Ordenar exámenes", description: "Orden de presentación del catálogo.", routeName: "configuration-exams-order", permission: "exam-catalog.read", status: "available" },
-          { title: "Rutinas de exámenes", description: "Agrupaciones frecuentes de exámenes.", status: "pending" },
+          { title: "Rutinas de exámenes", description: "Agrupaciones frecuentes de exámenes.", routeName: "configuration-routines", permission: "routines.read", status: "available" },
           { title: "Antibióticos", description: "Catalogo para antibiogramas.", status: "pending" },
           { title: "Gérmenes", description: "Catalogo de microorganismos.", status: "pending" },
           { title: "Formas parasitarias", description: "Descripciones parasitológicas disponibles.", routeName: "configuration-parasiticforms", permission: "parasiticforms.read", status: "available" },
