@@ -1,3 +1,14 @@
-<template><BioNexusDialog ref="dialog" size="compact" kicker="Estado del registro" :title="target?.annulled?'Activar antibi&oacute;tico':'Inactivar antibi&oacute;tico'" @close="reset"><section class="state-body"><p><strong>{{target?.germen}}</strong></p><p>{{target?.annulled?'El antibi&oacute;tico volver&aacute; a estar disponible en antibiogramas.':'El registro permanecer&aacute; visible, pero no estara disponible en nuevos antibiogramas.'}}</p><div v-if="errorMessage" class="bio-nexus-message bio-nexus-message-error">{{errorMessage}}</div></section><template #footer><button class="bio-nexus-action bio-nexus-action-secondary" :disabled="saving" @click="close">Cancelar</button><button class="bio-nexus-action bio-nexus-action-primary" :disabled="saving||!target" @click="confirm"><BioNexusActionIcon :action="target?.annulled?'activate':'deactivate'"/>{{saving?'Guardando...':target?.annulled?'Activar':'Inactivar'}}</button></template></BioNexusDialog></template>
-<script setup>import{ref}from"vue";import BioNexusDialog from"@/components/ui/BioNexusDialog.vue";import BioNexusActionIcon from"@/components/ui/BioNexusActionIcon.vue";const props=defineProps({saving:Boolean}),emit=defineEmits(["confirm"]),dialog=ref(null),target=ref(null),errorMessage=ref("");function open(row){target.value=row;errorMessage.value="";dialog.value?.open()}function close(){dialog.value?.close()}function confirm(){if(target.value&&!props.saving)emit("confirm",target.value)}function reset(){target.value=null;errorMessage.value=""}function setError(value){errorMessage.value=String(value||"")}function clearError(){errorMessage.value=""}defineExpose({open,close,setError,clearError})</script>
-<style scoped>.state-body{display:grid;gap:var(--bio-nexus-space-3);color:var(--bio-nexus-color-text-secondary);font-family:var(--bio-nexus-font-family);font-size:var(--bio-nexus-font-size-md)}.state-body p{margin:0;line-height:1.55}.state-body strong{color:var(--bio-nexus-color-text);font-weight:var(--bio-nexus-font-weight-medium)}</style>
+<template><BioNexusStateDialog ref="stateDialog" :saving="saving" @confirm="record => emit('confirm', record)" /></template>
+<script setup>
+import { ref } from "vue";
+import BioNexusStateDialog from "@/components/ui/BioNexusStateDialog.vue";
+const props = defineProps({ saving: { type: Boolean, default: false } });
+const emit = defineEmits(["confirm"]);
+const stateDialog = ref(null);
+const configuration = { activateTitle: "Activar germen", deactivateTitle: "Inactivar germen", activateMessage: "El germen volverá a estar disponible en antibiogramas.", deactivateMessage: "El registro permanecerá visible, pero no estará disponible en nuevos antibiogramas.", label: record => record?.germen || "Registro seleccionado" };
+function open(record) { stateDialog.value?.open(record, configuration); }
+function close() { stateDialog.value?.close(); }
+function clearError() { stateDialog.value?.clearError(); }
+function setError(value) { stateDialog.value?.setError(value); }
+defineExpose({ open, close, clearError, setError });
+</script>

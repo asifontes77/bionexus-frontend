@@ -17,7 +17,9 @@ const LaboratoryIdentityView=()=>import("@/views/LaboratoryIdentityView.vue");
 const TaxesView=()=>import("@/views/TaxesView.vue");
 const ApplicationSettingsView=()=>import("@/views/ApplicationSettingsView.vue");
 const ConfigurationModuleView=()=>import("@/views/ConfigurationModuleView.vue");
+const SampleTypesView=()=>import("@/views/SampleTypesView.vue");
 const RoutinesView=()=>import("@/views/RoutinesView.vue");
+const WorksheetGroupsView=()=>import("@/views/WorksheetGroupsView.vue");
 const applicationViewLoaders=[MigrationHomeView,PatientResultsEmailView,RolesPermissionsView,UserAuthorizationView,ExamCatalogView,ParasiticformsView,TypePaymentView,LaboratoryView,TaxesView,ApplicationSettingsView,ConfigurationModuleView,LaboratoryIdentityView,RoutinesView];
 let applicationRoutesPrefetched=false;
 function scheduleAuthorizedRoutePrefetch(){
@@ -121,6 +123,19 @@ const routes = [
                     description: "Administra las descripciónes disponibles y controla cuales permanecen activas en los flujos operativos.",
         },
             },
+      { path: "configuration/worksheet-groups", name: "configuration-worksheet-groups", component: WorksheetGroupsView, meta: { requiresAuth: true, permissions: ["worksheet-groups.read"], title: "Grupos de hojas de trabajo", description: "Administra los grupos y examenes asociados a las hojas de trabajo.", breadcrumb: ["Configuracion", "Catalogos", "Grupos de hojas de trabajo"] } },
+      {
+        path: "configuration/sample-types",
+        name: "configuration-sample-types",
+        component: SampleTypesView,
+        meta: {
+          requiresAuth: true,
+          permissions: ["sample-types.read"],
+          title: "Tipos de muestra",
+          description: "Administra los tipos de muestra disponibles para la atenci\u00f3n y el procesamiento.",
+          breadcrumb: ["Configuraci\u00f3n", "Cat\u00e1logos", "Tipos de muestra"],
+        },
+      },
       { path: "configuration/routines", name: "configuration-routines", component: RoutinesView, meta: { requiresAuth: true, permissions: ["routines.read"], title: "Rutinas de exámenes", description: "Administra agrupaciones frecuentes y el orden de sus exámenes.", breadcrumb: ["Configuración", "Catálogos", "Rutinas de exámenes"] } },
       { path: "configuration/germs", name: "configuration-germs", component: GermsView, meta: { requiresAuth: true, permissions: ["germs.read"], title: "Gérmenes", description: "Administra el catálogo de microorganismos para antibiogramas.", breadcrumb: ["Configuración", "Catálogos", "Gérmenes"] } },
       { path: "configuration/antibiotics", name: "configuration-antibiotics", component: AntibioticsView, meta: { requiresAuth: true, permissions: ["antibiotic.read"], title: "Antibióticos", description: "Administra el catálogo disponible para antibiogramas.", breadcrumb: ["Configuración", "Catálogos", "Antibióticos"] } },
@@ -136,7 +151,8 @@ const routes = [
           { title: "Antibióticos", description: "Catálogo para antibiogramas.", routeName: "configuration-antibiotics", permission: "antibiotic.read", status: "available" },
           { title: "Gérmenes", description: "Catálogo de microorganismos.", routeName: "configuration-germs", permission: "germs.read", status: "available" },
           { title: "Formas parasitarias", description: "Descripciones parasitológicas disponibles.", routeName: "configuration-parasiticforms", permission: "parasiticforms.read", status: "available" },
-          { title: "Grupos de hojas de trabajo", description: "Organizacion de hojas de trabajo.", status: "pending" },
+          { title: "Tipos de muestra", description: "Cat\u00e1logo de muestras para la atenci\u00f3n y el procesamiento.", routeName: "configuration-sample-types", permission: "sample-types.read", status: "available" },
+      { title: "Grupos de hojas de trabajo", description: "Organizacion de hojas de trabajo.", routeName: "configuration-worksheet-groups", permission: "worksheet-groups.read", status: "available" },
           { title: "Pruebas especiales", description: "Laboratorios y pruebas de referencia.", status: "pending" },
           { title: "Formas de pago", description: "Disponibilidad por moneda y estado.", routeName: "type-payments", permission: "typepayment.read", status: "available" }
         ] },

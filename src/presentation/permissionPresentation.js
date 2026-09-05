@@ -1,11 +1,14 @@
 const moduleLabels = Object.freeze({
   general: "General",
+  "worksheet-groups": "Grupos de hojas de trabajo",
+  "worksheet-group-items": "Elementos de grupos de hojas de trabajo",
   parasiticforms: "Formas parasitarias",
   antibiotic: "Antibióticos",
   germs: "Gérmenes",
   patients: "Pacientes",
   security: "Seguridad y autorizaci\u00f3n",
   typepayment: "Formas de pago",
+  "sample-types": "Tipos de muestra",
 });
 
 const permissionLabels = Object.freeze({
