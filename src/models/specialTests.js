@@ -1,0 +1,7 @@
+﻿function id(value){const parsed=Number(value);return Number.isInteger(parsed)&&parsed>0?parsed:0}
+function text(value){return typeof value==='string'?value.trim():''}
+export function normalizeSpecialTestItem(value={}){return{id:id(value.id),specialTestLabId:id(value.specialTestLabId),exam_list_Id:id(value.exam_list_Id),description:text(value.description)}}
+export function normalizeSpecialTestLab(value={}){const items=Array.isArray(value.specialTestItems)?value.specialTestItems.map(normalizeSpecialTestItem).filter(x=>x.id>0):[];return{id:id(value.id),description:text(value.description),details:text(value.details),address:text(value.address),phone_1:text(value.phone_1),phone_2:text(value.phone_2),email:text(value.email).toLowerCase(),annulled:Boolean(value.annulled),specialTestItems:items,itemCount:items.length,isActive:!Boolean(value.annulled)}}
+export function normalizeSpecialTestLabs(value){return(Array.isArray(value)?value:[]).map(normalizeSpecialTestLab).filter(x=>x.id>0)}
+export function normalizeSpecialTestLabPayload(value={}){return{description:text(value.description),details:text(value.details),address:text(value.address),phone_1:text(value.phone_1),phone_2:text(value.phone_2),email:text(value.email).toLowerCase(),examIds:Array.isArray(value.examIds)?value.examIds.map(id).filter(value=>value>0):[]}}
+export function normalizeSpecialTestItemPayload(value={}){return{specialTestLabId:id(value.specialTestLabId),exam_list_Id:id(value.exam_list_Id),description:text(value.description)}}

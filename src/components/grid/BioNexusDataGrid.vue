@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <section
     class="bio-nexus-data-grid"
     :class="{
@@ -754,7 +754,7 @@ function handleCellContextMenu(params) {
 .bio-nexus-grid-toolbar-stats,
 .bio-nexus-grid-toolbar-actions { display: inline-flex; align-items: center; gap: 14px; white-space: nowrap; }
 .bio-nexus-grid-toolbar > .bio-nexus-action,
-.bio-nexus-grid-toolbar :global(.bio-nexus-grid-export-trigger) { min-height: 44px; }
+.bio-nexus-grid-toolbar .bio-nexus-grid-export-trigger { min-height: 44px; }
 .bio-nexus-grid-toolbar > .bio-nexus-action svg { width: 20px; height: 20px; }
 
 @media (max-width: 980px) {
@@ -798,7 +798,7 @@ function handleCellContextMenu(params) {
 }
 
 
-.bio-nexus-grid-toolbar :global(.bio-nexus-form-field-label) {
+.bio-nexus-grid-toolbar .bio-nexus-form-field-label {
   color: var(--bio-nexus-color-text-secondary);
   font-family: inherit;
   font-size: var(--bio-nexus-font-size-sm);
@@ -807,7 +807,7 @@ function handleCellContextMenu(params) {
 }
 
 
-.bio-nexus-grid-toolbar :global(input.bio-nexus-field::placeholder) {
+.bio-nexus-grid-toolbar input.bio-nexus-field::placeholder {
   color: var(--bio-nexus-color-text-muted);
   font-family: inherit;
   font-size: inherit;
@@ -817,13 +817,13 @@ function handleCellContextMenu(params) {
 
 
 /* Compact toolbar controls with one exact theme contract. */
-.bio-nexus-grid-toolbar :global(.bio-nexus-form-field-control) {
+.bio-nexus-grid-toolbar .bio-nexus-form-field-control {
   min-height: 38px;
   padding-block-start: 5px;
 }
 
 
-.bio-nexus-grid-toolbar :global(input.bio-nexus-field::placeholder) {
+.bio-nexus-grid-toolbar input.bio-nexus-field::placeholder {
   color: var(--bio-nexus-color-text-muted) !important;
   font-family: var(--bio-nexus-font-family) !important;
   font-size: var(--bio-nexus-font-size-md) !important;
@@ -832,7 +832,7 @@ function handleCellContextMenu(params) {
   opacity: 1;
 }
 
-.bio-nexus-grid-toolbar :global(.bio-nexus-form-field-label) {
+.bio-nexus-grid-toolbar .bio-nexus-form-field-label {
   color: var(--bio-nexus-color-text-muted);
   font-family: var(--bio-nexus-font-family);
   font-size: var(--bio-nexus-font-size-xs);
@@ -841,7 +841,7 @@ function handleCellContextMenu(params) {
 
 
 
-.bio-nexus-grid-toolbar :global(input.bio-nexus-field::placeholder) {
+.bio-nexus-grid-toolbar input.bio-nexus-field::placeholder {
   color: var(--bio-nexus-color-text-muted) !important;
   font-family: var(--bio-nexus-font-family) !important;
   font-size: var(--bio-nexus-font-size-md) !important;
@@ -870,7 +870,7 @@ function handleCellContextMenu(params) {
 
 
 /* Native Mostrar remains compact inside BioNexusFormField. */
-.bio-nexus-grid-toolbar :global(#bio-nexus-grid-page-size.bio-nexus-field) {
+.bio-nexus-grid-toolbar #bio-nexus-grid-page-size.bio-nexus-field {
   box-sizing: border-box !important;
   width: 100% !important;
   min-height: 38px !important;
@@ -913,7 +913,7 @@ function handleCellContextMenu(params) {
   opacity: 1 !important;
 }
 
-.bio-nexus-grid-toolbar :global(.bio-nexus-form-field-label) {
+.bio-nexus-grid-toolbar .bio-nexus-form-field-label {
   color: var(--bio-nexus-color-text-muted);
   font-family: var(--bio-nexus-font-family);
   font-size: var(--bio-nexus-font-size-xs);

@@ -1,4 +1,4 @@
-const moduleLabels = Object.freeze({
+﻿const moduleLabels = Object.freeze({
   general: "General",
   "worksheet-groups": "Grupos de hojas de trabajo",
   "worksheet-group-items": "Elementos de grupos de hojas de trabajo",
@@ -9,9 +9,19 @@ const moduleLabels = Object.freeze({
   security: "Seguridad y autorizaci\u00f3n",
   typepayment: "Formas de pago",
   "sample-types": "Tipos de muestra",
+  "special-tests": "Laboratorios de referencia",
+  "special-test-items": "Pruebas asociadas",
 });
 
 const permissionLabels = Object.freeze({
+  "special-tests.read": "Consultar",
+  "special-tests.create": "Crear",
+  "special-tests.update": "Actualizar",
+  "special-tests.change-status": "Cambiar estado",
+  "special-test-items.read": "Consultar",
+  "special-test-items.create": "Crear",
+  "special-test-items.update": "Actualizar",
+  "special-test-items.delete": "Eliminar",
   "parasiticforms.change-status": "Cambiar estado",
   "antibiotic.read": "Consultar",
   "germs.read": "Consultar",
@@ -45,6 +55,14 @@ const permissionLabels = Object.freeze({
 });
 
 const permissionDescriptions = Object.freeze({
+  "special-tests.read": "Permite consultar los laboratorios de referencia.",
+  "special-tests.create": "Permite registrar laboratorios de referencia.",
+  "special-tests.update": "Permite actualizar los laboratorios de referencia.",
+  "special-tests.change-status": "Permite activar o inactivar laboratorios de referencia.",
+  "special-test-items.read": "Permite consultar las pruebas asociadas a cada laboratorio.",
+  "special-test-items.create": "Permite asociar pruebas a un laboratorio.",
+  "special-test-items.update": "Permite actualizar las pruebas asociadas.",
+  "special-test-items.delete": "Permite eliminar pruebas asociadas.",
   "parasiticforms.change-status":
     "Permite cambiar el estado de las formas parasitarias.",
   "parasiticforms.create":
