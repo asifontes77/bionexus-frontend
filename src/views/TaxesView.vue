@@ -72,8 +72,11 @@ import TaxDeleteDialog from "@/components/tax/TaxDeleteDialog.vue";
 import { useBioNexusToast } from "@/composables/useBioNexusToast";
 import { createTax, deleteTax, getTaxes, getTaxErrorMessage, updateTax } from "@/services/taxService";
 import { useAuthorizationStore } from "@/stores/authorization";
+import { formatRegionalNumber } from "@/services/regionalFormatter";
+import { useRegionalSettingsStore } from "@/stores/regionalSettings";
 
 const authorization = useAuthorizationStore();
+const regionalSettings = useRegionalSettingsStore();
 const toast = useBioNexusToast();
 const rows = ref([]);
 const loading = ref(false);
@@ -126,7 +129,7 @@ function toggleColumn(field, headerName, width, onLabel = "Si", offLabel = "No",
 }
 const columns = computed(() => [
   { field: "description", headerName: "Descripcion", minWidth: 220, flex: 1 },
-  { field: "value", headerName: "Porcentaje", width: 150, minWidth: 150, headerClass: "tax-center-header", cellClass: "tax-center-cell", valueFormatter: ({ value }) => `${Number(value).toFixed(2)} %` },
+  { field: "value", headerName: "Porcentaje", width: 150, minWidth: 150, headerClass: "tax-center-header", cellClass: "tax-center-cell", valueFormatter: ({ value }) => `${formatRegionalNumber(value, regionalSettings.settings, { minimumFractionDigits: regionalSettings.settings.monetary_decimals, maximumFractionDigits: regionalSettings.settings.monetary_decimals })} %` },
   toggleColumn("only_dollars", "Solo dolares", 170),
   toggleColumn("always_subtotal", "Fijo en subtotal", 180, "Si", "No", { exportAlignment: "center", exportHeaderAlignment: "center", cellStyle: { textAlign: "center" } }),
   toggleColumn("hide", "Oculto", 150),

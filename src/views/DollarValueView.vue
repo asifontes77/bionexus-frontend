@@ -111,8 +111,11 @@ import BioNexusFormField from "@/components/ui/BioNexusFormField.vue";
 import { useBioNexusToast } from "@/composables/useBioNexusToast";
 import { dollarValueError, getCurrentDollarValue, getDollarValueAutomation, getDollarValueHistory, publishDollarValue, runDollarValueAutomation, saveDollarValueAutomation } from "@/services/dollarValueService";
 import { useAuthorizationStore } from "@/stores/authorization";
+import { useRegionalSettingsStore } from "@/stores/regionalSettings";
+import { formatRegionalAmount, formatRegionalDateTime } from "@/services/regionalFormatter";
 
 const authorizationStore = useAuthorizationStore();
+const regionalSettingsStore = useRegionalSettingsStore();
 const toast = useBioNexusToast();
 const current = ref(null);
 const history = ref([]);
@@ -152,15 +155,8 @@ function getRowId({ data }) {
   return String(data.id);
 }
 
-function formatAmount(value) {
-  return new Intl.NumberFormat("es-VE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value);
-}
-
-function formatDate(value) {
-  const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? "" : new Intl.DateTimeFormat("es-VE", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: true }).format(date);
-}
-
+function formatAmount(value) { return formatRegionalAmount(value, regionalSettingsStore.settings); }
+function formatDate(value) { return formatRegionalDateTime(value, regionalSettingsStore.settings); }
 async function load() {
   if (loading.value || saving.value) return;
   loading.value = true;

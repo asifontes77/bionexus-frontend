@@ -1,0 +1,14 @@
+import assert from "node:assert/strict";
+import fs from "node:fs";
+const r=(p)=>fs.readFileSync(new URL("../"+p,import.meta.url),"utf8");
+const h=r("components/patients/PatientResultsEmailHistoryDialog.vue");
+const g=r("components/grid/BioNexusDataGrid.vue");
+const e=r("services/gridExportService.js");
+const f=r("services/regionalFormatter.js");
+for(const x of ["formatRegionalDateTime","formatRegionalFunctionalDate","useRegionalSettingsStore"]) assert.ok(h.includes(x),"HISTORY_"+x);
+assert.ok(!h.includes('toLocaleString("es-VE")'),"HISTORY_DIRECT");
+assert.equal((g.match(/regionalSettings: regionalSettingsStore.settings/g)||[]).length,1,"GRID_SETTINGS");
+assert.equal((e.match(/formatRegionalDateTime\(new Date\(\), options\.regionalSettings\)/g)||[]).length,2,"EXPORT_DATES");
+assert.ok(!e.includes('new Date().toLocaleString("es-VE")'),"EXPORT_DIRECT");
+assert.ok(f.includes("formatRegionalFunctionalDate"),"FUNCTIONAL_DATE");
+console.log("[OK] Historial y exportaciones usan la capa regional central.");

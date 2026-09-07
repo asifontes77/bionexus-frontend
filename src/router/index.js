@@ -203,9 +203,8 @@ const routes = [
       {
         path: "configuration/system-module", name: "configuration-system-module", component: ConfigurationModuleView,
         meta: { requiresAuth: true, permissions: ["application-settings.read"], title: "Sistema", description: "Sesión, formatos regionales y preferencias técnicas.", breadcrumb: ["Configuración", "Sistema"], sections: [
-          { title: "Sesión y seguridad", description: "Duracion renovable, inactividad y cuenta regresiva.", routeName: "configuration-application-settings", query: { tab: "session" }, status: "available" },
+          { title: "Configuración de la aplicación", description: "Formatos regionales, sesión e impresora.", routeName: "configuration-application-settings", query: { tab: "regional" }, status: "available" },
           { title: "Valor del d\u00f3lar", description: "Cotizaci\u00f3n vigente e historial de publicaciones.", routeName: "configuration-dollar-value", permission: "dollar-value.read", status: "available" },
-          { title: "Formatos regionales", description: "Fecha, hora, moneda y separadores.", status: "pending" },
           { title: "Preferencias técnicas", description: "Parametros generales no asociados a un proceso funcional.", status: "pending" }
         ] },
       },
@@ -221,7 +220,7 @@ const routes = [
         path: "configuration/application-settings",
         name: "configuration-application-settings",
         component: ApplicationSettingsView,
-        meta: { requiresAuth: true, permissions: ["application-settings.read"], title: "Configuración de la aplicación", description: "Administra formatos, reportes y parámetros globales de impresión." },
+        meta: { requiresAuth: true, permissions: ["application-settings.read"], title: "Configuración de la aplicación", description: "Administra formatos, reportes y parámetros globales de impresión.", breadcrumb: ["Configuración", "Sistema", "Configuración de la aplicación"] },
       },      {
         path: "configuration/laboratory",
         name: "configuration-laboratory",

@@ -37,9 +37,9 @@ const original = ref('')
 const loading = ref(false)
 const saving = ref(false)
 const loadError = ref('')
-const activeTab = ref(typeof route.query.tab === 'string' ? route.query.tab : 'formats')
+const activeTab = ref(typeof route.query.tab === 'string' ? route.query.tab : 'regional')
 const tabs = Object.freeze([
-  { key: 'formats', label: 'Formatos' },
+  { key: 'regional', label: 'Formatos regionales' },
   { key: 'session', label: 'Sesión' },
   { key: 'printer', label: 'Impresora' }
 ])
@@ -70,6 +70,7 @@ async function save() {
     settings.value = await updateApplicationSettings(settings.value)
     snapshot()
     globalThis.dispatchEvent(new CustomEvent('bio-nexus:session-policy-local', { detail: settings.value }))
+    globalThis.dispatchEvent(new CustomEvent('bio-nexus:regional-settings-local', { detail: settings.value }))
     toast.success('La configuración de la aplicación fue actualizada.')
   } catch (error) { toast.error(getApplicationSettingsErrorMessage(error, 'No fue posible guardar la configuración.')) }
   finally { saving.value = false }

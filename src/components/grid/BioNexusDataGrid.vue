@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <section
     class="bio-nexus-data-grid"
     :class="{
@@ -105,10 +105,13 @@ import { AG_GRID_LOCALE_ES } from "@ag-grid-community/locale";
 import BioNexusGridExportMenu from "@/components/grid/BioNexusGridExportMenu.vue";
 import BioNexusFormField from "@/components/ui/BioNexusFormField.vue";
 import { exportGridToExcel, exportGridToPdf } from "@/services/gridExportService.js";
+import { useRegionalSettingsStore } from "@/stores/regionalSettings";
 
 ModuleRegistry.registerModules([
   AllCommunityModule,
 ]);
+
+const regionalSettingsStore = useRegionalSettingsStore();
 
 const props = defineProps({
   rowData: {
@@ -243,6 +246,7 @@ async function exportGrid(request) {
   const options = {
     ...(props.exportOptions === true ? {} : (props.exportOptions || {})),
     selectedColumnIds: request.selectedColumnIds,
+    regionalSettings: regionalSettingsStore.settings,
   };
   if (request.format === "excel") {
     await exportGridToExcel(gridApi.value, options);

@@ -16,7 +16,7 @@
         :search-enabled="true"
         v-model:search-model-value="search"
         :quick-filter-text="search"
-        :export-options="false"
+        :export-options="{ title: 'Historial de envios de resultados', fileName: 'historial-envios-resultados' }"
         empty-text="No existen intentos en el rango consultado."
       />
     </section>
@@ -29,6 +29,9 @@ import BioNexusDialog from "@/components/ui/BioNexusDialog.vue";
 import BioNexusDataGrid from "@/components/grid/BioNexusDataGrid.vue";
 import BioNexusOptionFilter from "@/components/grid/BioNexusOptionFilter.vue";
 import { getPatientResultsEmailHistory } from "@/services/patientResultsEmailService";
+import { formatRegionalDateTime, formatRegionalFunctionalDate } from "@/services/regionalFormatter";
+import { useRegionalSettingsStore } from "@/stores/regionalSettings";
+const regionalSettings = useRegionalSettingsStore();
 const dialog = ref(null);
 const rows = ref([]);
 const loading = ref(false);
@@ -50,15 +53,8 @@ const columns = [
   { field: "pdfSizeBytes", headerName: "PDF bytes", minWidth: 78, flex: 0.7, headerClass: centeredHeader, cellClass: centeredCell },
   { field: "errorCode", headerName: "Error", minWidth: 82, flex: 0.8 },
 ];
-function displayDate(value) {
-  const match = String(value || "").match(/^(\d{4})-(\d{2})-(\d{2})/);
-  return match ? `${match[3]}-${match[2]}-${match[1]}` : String(value || "");
-}
-function formatDateTime(value) {
-  if (!value) return "";
-  const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? String(value) : date.toLocaleString("es-VE", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: true });
-}
+function displayDate(value) { return formatRegionalFunctionalDate(value, regionalSettings.settings); }
+function formatDateTime(value) { return value ? formatRegionalDateTime(value, regionalSettings.settings) : ''; }
 async function open(dateFrom, dateTo) {
   rangeLabel.value = `${displayDate(dateFrom)} y ${displayDate(dateTo)}`;
   dialog.value?.open();

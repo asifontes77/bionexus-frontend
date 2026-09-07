@@ -7,10 +7,10 @@
       </div>
       <div class="results-email-filter-controls">
         <BioNexusFormField label="Desde" field-id="results-email-date-from" required>
-          <input id="results-email-date-from" v-model="dateFrom" class="bio-nexus-field" type="date" :disabled="busy" />
+          <BioNexusRegionalDateInput id="results-email-date-from" v-model="dateFrom" required :disabled="busy" />
         </BioNexusFormField>
         <BioNexusFormField label="Hasta" field-id="results-email-date-to" required>
-          <input id="results-email-date-to" v-model="dateTo" class="bio-nexus-field" type="date" :min="dateFrom" :disabled="busy" />
+          <BioNexusRegionalDateInput id="results-email-date-to" v-model="dateTo" required :min="dateFrom" :disabled="busy" />
         </BioNexusFormField>
         <button type="button" class="bio-nexus-action bio-nexus-action-primary" :disabled="busy || !rangeValid" @click="loadCandidates">
           <BioNexusActionIcon action="search" />
@@ -89,6 +89,7 @@ import { useAuthorizationStore } from "@/stores/authorization";
 import BioNexusDataGrid from "@/components/grid/BioNexusDataGrid.vue";
 import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
 import BioNexusFormField from "@/components/ui/BioNexusFormField.vue";
+import BioNexusRegionalDateInput from "@/components/regional/BioNexusRegionalDateInput.vue";
 import BioNexusContextMenu from "@/components/ui/BioNexusContextMenu.vue";
 import PatientResultsEmailSendDialog from "@/components/patients/PatientResultsEmailSendDialog.vue";
 import PatientResultsEmailHistoryDialog from "@/components/patients/PatientResultsEmailHistoryDialog.vue";
@@ -97,6 +98,8 @@ import BioNexusOptionFilter from "@/components/grid/BioNexusOptionFilter.vue";
 import PatientResultsEmailStatusCell from "@/components/patients/PatientResultsEmailStatusCell.vue";
 import { useBioNexusToast } from "@/composables/useBioNexusToast";
 import { buildPatientResultHtml } from "@/services/patientResultReportBuilder";
+import { formatRegionalDateTime } from "@/services/regionalFormatter";
+import { useRegionalSettingsStore } from "@/stores/regionalSettings";
 import {
   getPatientResultApprover,
   getPatientResultLaboratory,
@@ -107,6 +110,7 @@ import {
 
 const authorization = useAuthorizationStore();
 const toast = useBioNexusToast();
+const regionalSettings = useRegionalSettingsStore();
 const initialDateRange = createInitialDateRange();
 const dateFrom = ref(initialDateRange.dateFrom);
 const dateTo = ref(initialDateRange.dateTo);
@@ -174,14 +178,10 @@ function createInitialDateRange() {
   return { dateFrom: toIsoLocalDate(start), dateTo: toIsoLocalDate(end) };
 }
 function formatAdmission(data) {
-  const match = String(data?.admission_date ?? "").match(/^(\d{4})-(\d{2})-(\d{2})/);
-  if (!match) return "";
-  const time = String(data?.admission_time ?? "").slice(0, 8);
-  const parts = time.split(":");
-  let hour = Number(parts[0]);
-  const suffix = hour >= 12 ? "PM" : "AM";
-  hour = hour % 12 || 12;
-  return `${match[3]}-${match[2]}-${match[1]} ${String(hour).padStart(2, "0")}:${parts[1] ?? "00"} ${suffix}`;
+  const date = String(data?.admission_date ?? "").match(/^(\d{4}-\d{2}-\d{2})/)?.[1];
+  if (!date) return "";
+  const time = String(data?.admission_time ?? "00:00:00").slice(0, 8) || "00:00:00";
+  return formatRegionalDateTime(`${date}T${time}`, regionalSettings.settings);
 }
 function normalizeAgeUnit(value) {
   const normalized = String(value ?? "").trim().toLowerCase();
@@ -244,7 +244,7 @@ async function sendSelected() {
     for (const candidate of [...selected.value]) {
       try {
         const patient = await getValidatedPatientResults(candidate.id);
-        const html = await buildPatientResultHtml(patient, laboratory, getPatientResultApprover);
+        const html = await buildPatientResultHtml(patient, laboratory, getPatientResultApprover, regionalSettings.settings);
         await sendPatientResultsEmail(candidate.id, html);
         success += 1;
       } catch (error) {

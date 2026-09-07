@@ -25,15 +25,18 @@
   </BioNexusDialog>
 </template>
 <script setup>
+import { formatRegionalMoney, formatRegionalNumber } from "@/services/regionalFormatter";
+import { useRegionalSettingsStore } from "@/stores/regionalSettings";
 import { computed, nextTick, ref } from "vue";
 import BioNexusDialog from "@/components/ui/BioNexusDialog.vue";
 const props = defineProps({ taxes: { type: Array, default: () => [] } });
 const dialog = ref(null); const exam = ref(null); const group = ref(null);
+const regionalSettings = useRegionalSettingsStore();
 const tax = computed(() => props.taxes.find((item) => Number(item.id) === Number(exam.value?.tax_id)) ?? null);
-const taxLabel = computed(() => tax.value ? `${tax.value.description} - ${Number(tax.value.value || 0).toFixed(2)} %` : "Impuesto no disponible");
+const taxLabel = computed(() => { const digits = Number(regionalSettings.settings.monetary_decimals) || 0; return tax.value ? tax.value.description + " - " + formatRegionalNumber(tax.value.value || 0, regionalSettings.settings, { minimumFractionDigits: digits, maximumFractionDigits: digits }) + " %" : "Impuesto no disponible"; });
 const hasWorksheet = computed(() => typeof exam.value?.work_sheet === "string" && exam.value.work_sheet.trim() !== "");
 const hasResultFormat = computed(() => { const value = exam.value?.format_grid; if (value === null || value === undefined || value === "") return false; if (typeof value === "string") { try { return Boolean(JSON.parse(value)); } catch { return value.trim() !== ""; } } return typeof value === "object"; });
-function money(value) { return Number(value || 0).toFixed(2); }
+function money(value) { return formatRegionalMoney(value, regionalSettings.settings); }
 async function show(record, selectedGroup) { exam.value = record; group.value = selectedGroup; dialog.value?.open(); await nextTick();  }
 function handleClosed() { exam.value = null; group.value = null; }
 function close() { dialog.value?.close(); exam.value = null; group.value = null; }

@@ -1,3 +1,4 @@
+import { formatRegionalDateTime } from '@/services/regionalFormatter';
 let excelJsPromise;
 let pdfMakePromise;
 
@@ -166,7 +167,7 @@ export async function exportGridToExcel(api, options = {}) {
 
   sheet.mergeCells(2, 1, 2, lastColumn);
   const dateCell = sheet.getCell(2, 1);
-  dateCell.value = new Date().toLocaleString("es-VE");
+  dateCell.value = formatRegionalDateTime(new Date(), options.regionalSettings);
   dateCell.font = { size: 10, color: { argb: "FF607080" } };
   dateCell.alignment = { vertical: "middle", horizontal: "left" };
 
@@ -230,7 +231,7 @@ export async function exportGridToPdf(api, options = {}, orientation = "portrait
     info: { title, creator: "Bio Nexus" },
     content: [
       { text: title, style: "title" },
-      { text: new Date().toLocaleString("es-VE"), style: "date" },
+      { text: formatRegionalDateTime(new Date(), options.regionalSettings), style: "date" },
       { table: { headerRows: 1, widths: headers.map(() => "*"), body }, layout: gridLayout },
     ],
     footer: (current, total) => ({ text: current + " / " + total, alignment: "center", fontSize: 8, color: "#607080" }),

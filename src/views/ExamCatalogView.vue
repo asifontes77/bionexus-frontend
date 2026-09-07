@@ -27,6 +27,8 @@
   </section>
 </template>
 <script setup>
+import { formatRegionalMoney } from "@/services/regionalFormatter";
+import { useRegionalSettingsStore } from "@/stores/regionalSettings";
 import { computed, nextTick, onMounted, ref, defineAsyncComponent } from "vue";
 import BioNexusDataGrid from "@/components/grid/BioNexusDataGrid.vue";
 import BioNexusGridActionsCell from "@/components/grid/BioNexusGridActionsCell.vue";
@@ -52,7 +54,8 @@ const gridRows=computed(()=>{const q=examSearch.value.trim().toLowerCase();retur
 const defaultColDef=Object.freeze({sortable:true,filter:true,resizable:true,suppressHeaderMenuButton:true});
 const gridComponents=Object.freeze({BioNexusGridActionsCell,BioNexusGridToggleCell});
 const rowSelection=Object.freeze({mode:"multiRow",enableClickSelection:true,checkboxes:true,headerCheckbox:true,selectAll:"filtered"});
-const money=p=>({field:p,headerName:"Precio "+p.slice(-1),width:125,type:"numericColumn",cellClass:"exam-price-cell",headerClass:"exam-price-header",valueFormatter:x=>Number(x.value||0).toFixed(2)});
+const regionalSettings=useRegionalSettingsStore();
+const money=p=>({field:p,headerName:"Precio "+p.slice(-1),width:125,type:"numericColumn",cellClass:"exam-price-cell",headerClass:"exam-price-header",valueFormatter:x=>formatRegionalMoney(x.value,regionalSettings.settings)});
 const columnDefs=computed(()=>[
   {field:"description",headerName:"Descripción",minWidth:280,width:330,pinned:"left",lockPinned:true,suppressMovable:true,checkboxSelection:true,headerCheckboxSelection:true,cellClass:"exam-description-pinned"},
   {field:"abbreviation",headerName:"Abreviatura",width:130},

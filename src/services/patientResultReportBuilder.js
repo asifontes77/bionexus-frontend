@@ -1,3 +1,5 @@
+import { formatRegionalFunctionalDate } from "@/services/regionalFormatter";
+
 function replaceAllToken(value, token, replacement) {
   return String(value ?? "").split(token).join(String(replacement ?? ""));
 }
@@ -16,7 +18,7 @@ function approverBlock(template, user) {
   html = replaceAllToken(html, "[Label_bionalista]", `${user.name ?? ""}<br>${user.college_number ?? user.collegeNumber ?? ""}`);
   return replaceAllToken(html, "[firma]", assetUrl(user.url_signature ?? user.signature));
 }
-export async function buildPatientResultHtml(patient, laboratory, getApprover) {
+export async function buildPatientResultHtml(patient, laboratory, getApprover, regionalSettings = {}) {
   const exams = Array.isArray(patient?.exams) ? patient.exams.filter((exam) => Number(exam.approved_id) > 0) : [];
   if (!exams.length) throw new Error("PATIENT_RESULTS_EMAIL_NOT_APPROVED");
   let header = String(laboratory?.head_html ?? "");
@@ -32,7 +34,7 @@ export async function buildPatientResultHtml(patient, laboratory, getApprover) {
   header = replaceAllToken(header, "[Nombre]", patient.name);
   header = replaceAllToken(header, "[Edad]", `${patient.age ?? ""} ${patient.month_year ?? ""}`.trim());
   header = replaceAllToken(header, "[CI]", patient.document_number);
-  header = replaceAllToken(header, "[Fecha]", patient.admission_date);
+  header = replaceAllToken(header, "[Fecha]", formatRegionalFunctionalDate(patient.admission_date, regionalSettings));
   header = replaceAllToken(header, "[alto_body]", "680px");
   const maximumRows = Math.max(1, Number(laboratory.maximum_rows_report) || 34);
   let content = "", body = "", remaining = maximumRows, approverId = null, page = "";
