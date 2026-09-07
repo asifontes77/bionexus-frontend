@@ -21,7 +21,8 @@ const SampleTypesView=()=>import("@/views/SampleTypesView.vue");
 const RoutinesView=()=>import("@/views/RoutinesView.vue");
 const WorksheetGroupsView=()=>import("@/views/WorksheetGroupsView.vue");
 const SpecialTestsView=()=>import("@/views/SpecialTestsView.vue");
-const applicationViewLoaders=[MigrationHomeView,PatientResultsEmailView,RolesPermissionsView,UserAuthorizationView,ExamCatalogView,ParasiticformsView,TypePaymentView,LaboratoryView,TaxesView,ApplicationSettingsView,ConfigurationModuleView,LaboratoryIdentityView,RoutinesView,SpecialTestsView];
+const DollarValueView=()=>import("@/views/DollarValueView.vue");
+const applicationViewLoaders=[MigrationHomeView,PatientResultsEmailView,RolesPermissionsView,UserAuthorizationView,ExamCatalogView,ParasiticformsView,TypePaymentView,LaboratoryView,TaxesView,ApplicationSettingsView,ConfigurationModuleView,LaboratoryIdentityView,RoutinesView,SpecialTestsView,DollarValueView];
 let applicationRoutesPrefetched=false;
 function scheduleAuthorizedRoutePrefetch(){
   if(applicationRoutesPrefetched)return;
@@ -203,6 +204,7 @@ const routes = [
         path: "configuration/system-module", name: "configuration-system-module", component: ConfigurationModuleView,
         meta: { requiresAuth: true, permissions: ["application-settings.read"], title: "Sistema", description: "Sesión, formatos regionales y preferencias técnicas.", breadcrumb: ["Configuración", "Sistema"], sections: [
           { title: "Sesión y seguridad", description: "Duracion renovable, inactividad y cuenta regresiva.", routeName: "configuration-application-settings", query: { tab: "session" }, status: "available" },
+          { title: "Valor del d\u00f3lar", description: "Cotizaci\u00f3n vigente e historial de publicaciones.", routeName: "configuration-dollar-value", permission: "dollar-value.read", status: "available" },
           { title: "Formatos regionales", description: "Fecha, hora, moneda y separadores.", status: "pending" },
           { title: "Preferencias técnicas", description: "Parametros generales no asociados a un proceso funcional.", status: "pending" }
         ] },
@@ -214,6 +216,7 @@ const routes = [
           { title: "Usuarios y autorización", description: "Usuarios, roles y excepciones individuales.", routeName: "security-users", permission: "security.users.read", status: "available" }
         ] },
       },
+      { path: "configuration/dollar-value", name: "configuration-dollar-value", component: DollarValueView, meta: { requiresAuth: true, permissions: ["dollar-value.read"], title: "Valor del d\u00f3lar", description: "Consulta la cotizaci\u00f3n vigente y publica nuevos valores conservando el historial.", breadcrumb: ["Configuraci\u00f3n", "Sistema", "Valor del d\u00f3lar"] } },
       {
         path: "configuration/application-settings",
         name: "configuration-application-settings",

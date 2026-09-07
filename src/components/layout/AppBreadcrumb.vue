@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <nav class="app-breadcrumb" aria-label="Ruta de navegaci\u00f3n">
     <template v-for="(item, index) in items" :key="item.key">
       <span v-if="index" class="app-breadcrumb-separator" aria-hidden="true">/</span>
@@ -25,6 +25,7 @@ const catalogRouteNames = new Set([
 const routeByLabel = Object.freeze({
   "Bio Nexus": { name: "dashboard" },
   "Cat\u00e1logos": { name: "configuration-catalogs" },
+  "Sistema": { name: "configuration-system-module" },
 });
 const labels = computed(() => {
   const currentName = String(route.name || "");
