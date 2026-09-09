@@ -26,10 +26,11 @@ export const navigationItems = [
         key: "patient-admission",
         label: "Ingreso de pacientes",
         abbreviation: "IP",
+        routeName: "patient-admission",
         legacyRouteName: "PatientAdmission",
         legacyPath: "/admission",
         roles: ["user", "admin"],
-        migrated: false,
+        migrated: true,
       },
       {
         key: "worksheet",

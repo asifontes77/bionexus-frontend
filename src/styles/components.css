@@ -129,6 +129,21 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
+.bio-nexus-panel-heading-copy {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+.bio-nexus-panel-title {
+  margin: 0;
+  overflow: hidden;
+  color: var(--bio-nexus-color-primary-strong);
+  font-family: var(--bio-nexus-font-family);
+  font-size: var(--bio-nexus-font-size-lg);
+  font-weight: var(--bio-nexus-font-weight-bold);
+  line-height: 1.2;
+  text-overflow: ellipsis;
+}
 
 .bio-nexus-panel-count,
 .security-panel-heading > span,

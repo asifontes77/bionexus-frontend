@@ -3,6 +3,7 @@
     class="bio-nexus-data-grid"
     :class="{
       'bio-nexus-data-grid-fill': fill,
+      'bio-nexus-data-grid-no-toolbar': !toolbarVisible,
     }"
     :style="[gridContainerStyle, adaptiveGridHeightStyle]"
   >
@@ -447,6 +448,9 @@ function handleCellContextMenu(params) {
 .bio-nexus-data-grid-fill {
   height: 100%;
   min-height: 0;
+}
+.bio-nexus-data-grid-no-toolbar {
+  grid-template-rows: minmax(0, 1fr);
 }
 
 .bio-nexus-ag-grid {
