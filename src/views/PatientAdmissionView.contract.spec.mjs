@@ -1,0 +1,15 @@
+import assert from "node:assert/strict";
+import fs from "node:fs";
+const view=fs.readFileSync(new URL("./PatientAdmissionView.vue",import.meta.url),"utf8");
+const router=fs.readFileSync(new URL("../router/index.js",import.meta.url),"utf8");
+const navigation=fs.readFileSync(new URL("../config/navigation.js",import.meta.url),"utf8");
+const service=fs.readFileSync(new URL("../services/patientAdmissionService.js",import.meta.url),"utf8");
+for(const token of ["Registro e información del paciente","document_number","birth_date","client_id","observation","BioNexusRegionalDateInput","getAdmissionPatientByDocument","getAdmissionClients"]) assert.ok(view.includes(token),token);
+assert.equal((router.match(/const\s+PatientAdmissionView/g)||[]).length,1);
+assert.equal((router.match(/name:\s*"patient-admission"/g)||[]).length,1);
+assert.equal((router.match(/component:\s*PatientAdmissionView/g)||[]).length,1);
+assert.ok(navigation.includes('routeName: "patient-admission"'));
+assert.ok(navigation.includes('migrated: true'));
+assert.ok(service.includes('/api/patients/ci/'));
+assert.ok(service.includes('/api/client/all'));
+console.log("Patient Admission foundation contract: PASS");

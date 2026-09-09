@@ -1,4 +1,4 @@
-﻿import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHistory } from "vue-router";
 import { useAuthorizationStore } from "@/stores/authorization";
 import { useSessionStore } from "@/stores/session";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout.vue";
@@ -6,6 +6,7 @@ import ExamOrderingView from "@/views/ExamOrderingView.vue";
 const LoginView=()=>import("@/views/LoginView.vue");
 const MigrationHomeView=()=>import("@/views/MigrationHomeView.vue");
 const PatientResultsEmailView=()=>import("@/views/PatientResultsEmailView.vue");
+const PatientAdmissionView=()=>import("@/views/PatientAdmissionView.vue");
 const NotFoundView=()=>import("@/views/NotFoundView.vue");
 const RolesPermissionsView=()=>import("@/views/RolesPermissionsView.vue");
 const UserAuthorizationView=()=>import("@/views/UserAuthorizationView.vue");
@@ -89,6 +90,17 @@ const routes = [
           title: "Usuarios y autorización",
           description: "Administra los usuarios, sus roles y las excepciones individuales de permisos.",
           breadcrumb: ["Configuración","Seguridad","Usuarios y autorización"],
+        },
+      },
+      {
+        path: "daily/patient-admission",
+        name: "patient-admission",
+        component: PatientAdmissionView,
+        meta: {
+          requiresAuth: true,
+          title: "Ingreso de pacientes",
+          description: "Registra la informacion del paciente antes de seleccionar examenes y formas de pago.",
+          breadcrumb: ["Rutina diaria", "Ingreso de pacientes"],
         },
       },
       {
