@@ -6,6 +6,7 @@ export async function getExamGroups() { return normalizeExamGroups(await apiRequ
 export async function getExamsByGroup(groupId) { return normalizeExams(await apiRequest(`/api/examlists/group/${groupId}`)); }
 export async function getExam(examId) { return normalizeExam(await apiRequest(`/api/examlists/${examId}`)); }
 export async function searchExamCatalog(term, limit = 20) { const query = encodeURIComponent(String(term || "").trim()); return normalizeExamSearchResults(await apiRequest(`/api/examlists/search?q=${query}&limit=${limit}`)); }
+export async function getCatalogTariffs() { return apiRequest("/api/tariffs"); }
 export async function getTaxes() { return normalizeTaxes(await apiRequest("/api/tax")); }
 export async function createExamGroup(values) { return normalizeExamGroup(await apiRequest("/api/examgroup", { method: "POST", body: values })); }
 export async function updateExamGroup(groupId, changes) { return normalizeExamGroup(await apiRequest(`/api/examgroup/${groupId}`, { method: "PATCH", body: changes })); }

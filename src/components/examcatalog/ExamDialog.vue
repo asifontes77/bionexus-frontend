@@ -7,7 +7,7 @@
         <BioNexusFormField label="Impuesto" field-id="exam-tax"><select id="exam-tax" v-model.number="draft.tax_id" class="bio-nexus-field"><option v-for="tax in taxes" :key="tax.id" :value="tax.id">{{ tax.description }} ({{ percentage(tax.value) }}%)</option></select></BioNexusFormField>
         <BioNexusCheckbox v-model="draft.special_test" class="exam-check" label="Prueba especial" />
       </div>
-      <section class="exam-price-panel"><h4>Tarifas</h4><div class="exam-price-grid"><BioNexusFormField v-for="number in 6" :key="number" :label="'Precio ' + number" :field-id="'exam-cost-' + number"><input :id="'exam-cost-' + number" v-model.trim="draft['cost' + number]" class="bio-nexus-field" type="text" inputmode="decimal" :placeholder="moneyPlaceholder" /></BioNexusFormField></div></section>
+      <section class="exam-price-panel"><h4>Tarifas</h4><div class="exam-price-grid"><BioNexusFormField v-for="tariff in tariffFields" :key="tariff.id" :label="tariff.name + ' (USD)'" :field-id="'exam-cost-' + tariff.position"><input :id="'exam-cost-' + tariff.position" v-model.trim="draft['cost' + tariff.position]" class="bio-nexus-field" type="text" inputmode="decimal" :placeholder="moneyPlaceholder" /></BioNexusFormField></div></section>
       <div v-if="errorMessage" class="bio-nexus-message bio-nexus-message-error" role="alert">{{ errorMessage }}</div>
     </section>
     <template #footer>
@@ -26,10 +26,11 @@ import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
 import BioNexusDialog from "@/components/ui/BioNexusDialog.vue";
 import BioNexusFormField from "@/components/ui/BioNexusFormField.vue";
 
-const props = defineProps({ saving: { type: Boolean, default: false }, canCreate: { type: Boolean, default: false }, canUpdate: { type: Boolean, default: false }, taxes: { type: Array, default: () => [] }, group: { type: Object, default: null } });
+const props = defineProps({ saving: { type: Boolean, default: false }, canCreate: { type: Boolean, default: false }, canUpdate: { type: Boolean, default: false }, taxes: { type: Array, default: () => [] }, tariffs: { type: Array, default: () => [] }, group: { type: Object, default: null } });
 const emit = defineEmits(["submit"]);
 const dialog = ref(null), firstInput = ref(null), mode = ref("create"), current = ref(null), errorMessage = ref(""), attempted = ref(false), original = ref("");
 const regionalSettings = useRegionalSettingsStore();
+const tariffFields = computed(() => props.tariffs.filter(t => Number(t.position) >= 1 && Number(t.position) <= 6).sort((a,b) => Number(a.position) - Number(b.position)));
 const moneyPlaceholder = computed(() => formatRegionalAmount(0, regionalSettings.settings));
 const draft = reactive({ description: "", abbreviation: "", tax_id: 1, special_test: false, cost1: "", cost2: "", cost3: "", cost4: "", cost5: "", cost6: "" });
 function price(number) { return parseRegionalNumber(draft["cost" + number], regionalSettings.settings); }
