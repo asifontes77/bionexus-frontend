@@ -16,6 +16,7 @@ const ExamCatalogView=()=>import("@/views/ExamCatalogView.vue");
 const LaboratoryView=()=>import("@/views/LaboratoryView.vue");
 const LaboratoryIdentityView=()=>import("@/views/LaboratoryIdentityView.vue");
 const TaxesView=()=>import("@/views/TaxesView.vue");
+const TariffsView=()=>import("@/views/TariffsView.vue");
 const ApplicationSettingsView=()=>import("@/views/ApplicationSettingsView.vue");
 const ConfigurationModuleView=()=>import("@/views/ConfigurationModuleView.vue");
 const SampleTypesView=()=>import("@/views/SampleTypesView.vue");
@@ -23,7 +24,7 @@ const RoutinesView=()=>import("@/views/RoutinesView.vue");
 const WorksheetGroupsView=()=>import("@/views/WorksheetGroupsView.vue");
 const SpecialTestsView=()=>import("@/views/SpecialTestsView.vue");
 const DollarValueView=()=>import("@/views/DollarValueView.vue");
-const applicationViewLoaders=[MigrationHomeView,PatientResultsEmailView,RolesPermissionsView,UserAuthorizationView,ExamCatalogView,ParasiticformsView,TypePaymentView,LaboratoryView,TaxesView,ApplicationSettingsView,ConfigurationModuleView,LaboratoryIdentityView,RoutinesView,SpecialTestsView,DollarValueView];
+const applicationViewLoaders=[MigrationHomeView,PatientResultsEmailView,RolesPermissionsView,UserAuthorizationView,ExamCatalogView,ParasiticformsView,TypePaymentView,LaboratoryView,TaxesView,TariffsView,ApplicationSettingsView,ConfigurationModuleView,LaboratoryIdentityView,RoutinesView,SpecialTestsView,DollarValueView];
 let applicationRoutesPrefetched=false;
 function scheduleAuthorizedRoutePrefetch(){
   if(applicationRoutesPrefetched)return;
@@ -161,6 +162,7 @@ const routes = [
         component: ConfigurationModuleView,
         meta: { requiresAuth: true, title: "Catálogos", description: "Organiza los catálogos y parámetros reutilizados por los procesos del laboratorio.", breadcrumb: ["Configuración", "Catálogos"], sections: [
           { title: "Lista de exámenes", description: "Grupos, exámenes, tarifas y disponibilidad.", routeName: "configuration-exams", permission: "exam-catalog.read", status: "available" },
+          { title: "Tarifas", description: "Tarifas configurables, estado y predeterminación.", routeName: "configuration-tariffs", permission: "tariffs.read", status: "available" },
           { title: "Ordenar exámenes", description: "Orden de presentación del catálogo.", routeName: "configuration-exams-order", permission: "exam-catalog.read", status: "available" },
           { title: "Rutinas de exámenes", description: "Agrupaciones frecuentes de exámenes.", routeName: "configuration-routines", permission: "routines.read", status: "available" },
           { title: "Antibióticos", description: "Catálogo para antibiogramas.", routeName: "configuration-antibiotics", permission: "antibiotic.read", status: "available" },
@@ -256,6 +258,12 @@ const routes = [
         name: "configuration-billing-general",
         component: LaboratoryView,
         meta: { requiresAuth: true, permissions: ["laboratory.read"], title: "Facturación general", description: "Administra las reglas generales de facturación y toma de muestras.", initialTab: "billing", breadcrumb: ["Configuración", "Facturación", "General"] },
+      },
+      {
+        path: "configuration/tariffs",
+        name: "configuration-tariffs",
+        component: TariffsView,
+        meta: { requiresAuth: true, permissions: ["tariffs.read"], title: "Tarifas", description: "Administra las tarifas, su disponibilidad y la tarifa predeterminada.", breadcrumb: ["Configuración", "Catálogos", "Tarifas"] },
       },
       {
         path: "configuration/taxes",
