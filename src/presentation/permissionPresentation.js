@@ -8,6 +8,8 @@
   patients: "Pacientes",
   security: "Seguridad y autorizaci\u00f3n",
   typepayment: "Formas de pago",
+  currencies: "Monedas",
+  routines: "Rutinas de exámenes",
   "sample-types": "Tipos de muestra",
   "special-tests": "Laboratorios de referencia",
   "special-test-items": "Pruebas asociadas",

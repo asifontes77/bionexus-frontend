@@ -19,30 +19,7 @@
               <BioNexusFormField label="Primer día de la semana" field-id="app-first-day"><select id="app-first-day" v-model="model.first_day_of_week" class="bio-nexus-field" :disabled="disabled"><option value="monday">Lunes</option><option value="sunday">Domingo</option></select></BioNexusFormField>
             </div>
           </section>
-          <section class="regional-section" aria-labelledby="regional-local-title">
-            <div class="regional-section-heading"><span class="regional-section-icon"><BioNexusIcon name="payments" :size="20" :weight="500" /></span><div><h4 id="regional-local-title">Moneda local</h4><p>Configura la moneda operativa y la ubicación de su símbolo.</p></div></div>
-            <div class="regional-section-grid regional-section-grid-three">
-              <BioNexusFormField label="Moneda local" field-id="app-currency"><select id="app-currency" v-model="model.currency_code" class="bio-nexus-field" :disabled="disabled"><option value="VES">Bolívar venezolano (VES)</option></select></BioNexusFormField>
-              <BioNexusFormField label="Símbolo monetario local" field-id="app-currency-symbol"><input id="app-currency-symbol" v-model.trim="model.currency_symbol" class="bio-nexus-field" maxlength="12" :disabled="disabled"></BioNexusFormField>
-              <BioNexusFormField label="Posición del símbolo local" field-id="app-symbol-position"><select id="app-symbol-position" v-model="model.currency_symbol_position" class="bio-nexus-field" :disabled="disabled"><option value="before">Antes del monto</option><option value="after">Después del monto</option></select></BioNexusFormField>
-            </div>
-          </section>
-          <section class="regional-section" aria-labelledby="regional-base-title">
-            <div class="regional-section-heading"><span class="regional-section-icon"><BioNexusIcon name="price_change" :size="20" :weight="500" /></span><div><h4 id="regional-base-title">Moneda base de precios</h4><p>Personaliza cómo se presenta el dólar sin alterar la moneda interna de las tarifas.</p></div></div>
-            <div class="regional-section-grid regional-section-grid-three">
-              <BioNexusFormField label="Moneda base" field-id="app-price-base"><input id="app-price-base" value="Dólar estadounidense (USD)" class="bio-nexus-field calculated-field" readonly aria-readonly="true" tabindex="-1" /></BioNexusFormField>
-              <BioNexusFormField label="Símbolo monetario base" field-id="app-base-currency-symbol"><input id="app-base-currency-symbol" v-model.trim="model.base_currency_symbol" class="bio-nexus-field" maxlength="12" :disabled="disabled"></BioNexusFormField>
-              <BioNexusFormField label="Posición del símbolo base" field-id="app-base-symbol-position"><select id="app-base-symbol-position" v-model="model.base_currency_symbol_position" class="bio-nexus-field" :disabled="disabled"><option value="before">Antes del monto</option><option value="after">Después del monto</option></select></BioNexusFormField>
-            </div>
-          </section>
-          <section class="regional-section" aria-labelledby="regional-number-title">
-            <div class="regional-section-heading"><span class="regional-section-icon"><BioNexusIcon name="123" :size="20" :weight="500" /></span><div><h4 id="regional-number-title">Presentación numérica y financiera</h4><p>Define la moneda destacada, la precisión y el separador decimal.</p></div></div>
-            <div class="regional-section-grid regional-section-grid-three">
-              <BioNexusFormField label="Visualización financiera principal" field-id="app-financial-primary"><select id="app-financial-primary" v-model="model.financial_primary_currency" class="bio-nexus-field" :disabled="disabled"><option value="VES">Bolívar venezolano (VES)</option><option value="USD">Dólar estadounidense (USD)</option></select></BioNexusFormField>
-              <BioNexusFormField label="Decimales monetarios" field-id="app-monetary-decimals"><input id="app-monetary-decimals" v-model.number="model.monetary_decimals" class="bio-nexus-field" type="number" min="0" max="4" :disabled="disabled"></BioNexusFormField>
-              <BioNexusFormField label="Separador decimal" field-id="app-decimal-separator"><select id="app-decimal-separator" v-model="model.decimal_separator" class="bio-nexus-field" :disabled="disabled"><option value=",">Coma (1.234,56)</option><option value=".">Punto (1,234.56)</option></select></BioNexusFormField>
-            </div>
-          </section>
+          <section class="regional-section" aria-labelledby="regional-money-title"><div class="regional-section-heading"><span class="regional-section-icon"><BioNexusIcon name="payments" :size="20" :weight="500" /></span><div><h4 id="regional-money-title">Presentación monetaria</h4><p>Los símbolos, posiciones y decimales se administran únicamente en el catálogo Monedas.</p></div></div><div class="regional-section-grid regional-section-grid-three"><BioNexusFormField label="Moneda local" field-id="app-local-currency"><input id="app-local-currency" :value="localCurrency ? localCurrency.name + ' (' + localCurrency.code + ')' : 'No configurada'" class="bio-nexus-field calculated-field" readonly></BioNexusFormField><BioNexusFormField label="Moneda base" field-id="app-base-currency"><input id="app-base-currency" :value="baseCurrency ? baseCurrency.name + ' (' + baseCurrency.code + ')' : 'No configurada'" class="bio-nexus-field calculated-field" readonly></BioNexusFormField><BioNexusFormField label="Visualización financiera principal" field-id="app-financial-primary"><select id="app-financial-primary" v-model.number="model.financial_primary_currency_id" class="bio-nexus-field" :disabled="disabled"><option v-for="currency in currencies.filter(x=>x.isActive)" :key="currency.id" :value="currency.id">{{currency.name}} ({{currency.code}})</option></select></BioNexusFormField><BioNexusFormField label="Separador decimal" field-id="app-decimal-separator"><select id="app-decimal-separator" v-model="model.decimal_separator" class="bio-nexus-field" :disabled="disabled"><option value=",">Coma (1.234,56)</option><option value=".">Punto (1,234.56)</option></select></BioNexusFormField></div></section>
         </div>
       </article>
       <article class="bio-nexus-panel regional-preview-panel">
@@ -65,7 +42,10 @@ import { computed } from 'vue'
 import BioNexusFormField from '@/components/ui/BioNexusFormField.vue'
 import BioNexusIcon from '@/components/ui/BioNexusIcon.vue'
 import { formatDualMoney, formatRegionalMoney, formatRegionalNumber, formatUsdPrice } from '@/services/regionalFormatter'
-const props=defineProps({model:{type:Object,required:true},activeTab:{type:String,required:true},disabled:{type:Boolean,default:false}})
+const props=defineProps({model:{type:Object,required:true},currencies:{type:Array,default:()=>[]},activeTab:{type:String,required:true},disabled:{type:Boolean,default:false}})
+const localCurrency=computed(()=>props.currencies.find(x=>x.isLocal&&x.isActive)||null)
+const baseCurrency=computed(()=>props.currencies.find(x=>x.isBase&&x.isActive)||null)
+const primaryCurrency=computed(()=>props.currencies.find(x=>Number(x.id)===Number(props.model.financial_primary_currency_id))||localCurrency.value)
 const sampleDate=new Date(2026,8,6,20,15,0)
 const timeoutCombinationValid=computed(()=>{const sessionSeconds=Number(props.model.session_timeout_minutes)*60,inactivitySeconds=Number(props.model.inactivity_timeout_minutes)*60,countdownSeconds=Number(props.model.countdown_seconds);return Number.isFinite(sessionSeconds)&&Number.isFinite(inactivitySeconds)&&Number.isFinite(countdownSeconds)&&inactivitySeconds+countdownSeconds<=sessionSeconds})
 const dateParts=computed(()=>{const parts={day:'06',month:'09',year:'2026'};if(props.model.date_format==='yyyy-MM-dd')return parts.year+'-'+parts.month+'-'+parts.day;if(props.model.date_format==='dd-MM-yyyy')return parts.day+'-'+parts.month+'-'+parts.year;return parts.day+'/'+parts.month+'/'+parts.year})
@@ -77,7 +57,7 @@ const decimalSeparator=computed(()=>props.model.decimal_separator==='.'?'.':',')
 const groupSeparator=computed(()=>props.model.decimal_separator==='.'?',':'.')
 const previewUsd=computed(()=>formatUsdPrice(10,props.model))
 const previewCurrency=computed(()=>formatRegionalMoney(8375.60,props.model))
-const previewDual=computed(()=>formatDualMoney(10,837.56,props.model,props.model.financial_primary_currency))
+const previewDual=computed(()=>formatDualMoney(10,837.56,props.model,primaryCurrency.value?.code))
 const firstDayLabel=computed(()=>props.model.first_day_of_week==='sunday'?'Domingo':'Lunes')
 </script>
 <style scoped>

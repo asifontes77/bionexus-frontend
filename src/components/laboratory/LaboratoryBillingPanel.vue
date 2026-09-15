@@ -1,13 +1,13 @@
-<template>
+﻿<template>
   <section class="bio-nexus-panel laboratory-panel">
-    <div class="bio-nexus-panel-heading"><div><p class="bio-nexus-panel-eyebrow">Documentos e impresiÃ³n</p><h3>Factura, comprobante y toma de muestra</h3></div></div>
+    <div class="bio-nexus-panel-heading"><div><p class="bio-nexus-panel-eyebrow">Documentos e impresión</p><h3>Factura, comprobante y toma de muestra</h3></div></div>
     <div class="document-grid">
       <article v-for="section in sections" :key="section.key" class="bio-nexus-section">
         <div class="bio-nexus-section-heading"><h4 class="bio-nexus-section-title">{{ section.title }}</h4></div>
         <div class="section-body">
           <label class="check"><input v-model="model[section.printField]" type="checkbox" :disabled="disabled"><span>{{ section.printLabel }}</span></label>
           <BioNexusFormField :label="section.numberLabel" :field-id="section.key+'-number'"><input v-model.number="model[section.numberField]" class="bio-nexus-field" type="number" min="0" :disabled="disabled"></BioNexusFormField>
-          <BioNexusFormField v-if="section.rowsField" label="Filas mÃ¡ximas de descripciÃ³n" :field-id="section.key+'-rows'"><input v-model.number="model[section.rowsField]" class="bio-nexus-field" type="number" min="5" max="15" :disabled="disabled"></BioNexusFormField>
+          <BioNexusFormField v-if="section.rowsField" label="Filas máximas de descripción" :field-id="section.key+'-rows'"><input v-model.number="model[section.rowsField]" class="bio-nexus-field" type="number" min="5" max="15" :disabled="disabled"></BioNexusFormField>
         </div>
       </article>
     </div>

@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <label class="tariff-order-check" @click.stop @contextmenu.stop.prevent>
     <input type="checkbox" :checked="selected" aria-label="Seleccionar tarifa para ordenar" @click.stop @change="change" @keydown.stop />
   </label>

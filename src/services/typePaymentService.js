@@ -1,62 +1,7 @@
-import { apiRequest } from "@/api/apiClient";
-import {
-  normalizeTypePayment,
-  normalizeTypePaymentChanges,
-  normalizeTypePaymentDescription,
-  normalizeTypePayments,
-} from "@/models/typePayment";
-
-export async function getTypePayments() {
-  const response = await apiRequest("/api/Typepayment");
-
-  return normalizeTypePayments(response);
-}
-
-export async function createTypePayment(description) {
-  const response = await apiRequest("/api/Typepayment", {
-    method: "POST",
-    body: {
-      description: normalizeTypePaymentDescription(description),
-    },
-  });
-
-  return normalizeTypePayment(response);
-}
-
-export async function updateTypePayment(typePaymentId, changes) {
-  if (!Number.isInteger(typePaymentId) || typePaymentId <= 0) {
-    throw new Error("TYPEPAYMENT_ID_INVALID");
-  }
-
-  const response = await apiRequest(`/api/Typepayment/${typePaymentId}`, {
-    method: "PATCH",
-    body: normalizeTypePaymentChanges(changes),
-  });
-
-  return normalizeTypePayment(response);
-}
-
-export function getTypePaymentErrorMessage(error, fallbackMessage) {
-  const backendMessage =
-    typeof error?.message === "string" ? error.message : "";
-
-  const messages = {
-    TYPEPAYMENT_ID_INVALID:
-      "El identificador de la forma parasitaria no es vÃƒÂ¡lido.",
-    TYPEPAYMENT_NOT_FOUND: "La forma parasitaria seleccionada ya no existe.",
-    TYPEPAYMENT_DESCRIPTION_ALREADY_EXISTS:
-      "Ya existe una forma de pago con la descripcion indicada.",
-    TYPEPAYMENT_DESCRIPTION_REQUIRED: "La descripciÃƒÂ³n es obligatoria.",
-    TYPEPAYMENT_DESCRIPTION_TOO_LONG:
-      "La descripciÃƒÂ³n no puede superar los 50 caracteres.",
-    TYPEPAYMENT_ANNULLED_INVALID:
-      "El estado de la forma parasitaria no es vÃƒÂ¡lido.",
-    TYPEPAYMENT_UPDATE_REQUIRED: "No existen cambios para guardar.",
-    TYPEPAYMENT_PERMISSION_REQUIRED:
-      "La cuenta actual no tiene autorizaciÃƒÂ³n para realizar todos los cambios solicitados.",
-    AUTHORIZATION_CONTEXT_UNAVAILABLE:
-      "No fue posible determinar la autorizaciÃƒÂ³n de la cuenta actual.",
-  };
-
-  return messages[backendMessage] || backendMessage || fallbackMessage;
-}
+﻿import { apiRequest } from "@/api/apiClient";
+import { normalizeTypePayment, normalizeTypePaymentChanges, normalizeTypePaymentPayload, normalizeTypePayments } from "@/models/typePayment";
+export async function getTypePayments(){return normalizeTypePayments(await apiRequest("/api/Typepayment"))}
+export async function reorderTypePayments(ids){return apiRequest("/api/Typepayment/reorder",{method:"PATCH",body:{ids}})}
+export async function createTypePayment(payload){return normalizeTypePayment(await apiRequest("/api/Typepayment",{method:"POST",body:normalizeTypePaymentPayload(payload)}))}
+export async function updateTypePayment(id,changes){const normalizedId=Number(id);if(!Number.isInteger(normalizedId)||normalizedId<=0)throw new Error("TYPEPAYMENT_ID_INVALID");return normalizeTypePayment(await apiRequest(`/api/Typepayment/${normalizedId}`,{method:"PATCH",body:normalizeTypePaymentChanges(changes)}))}
+export function getTypePaymentErrorMessage(error,fallback){const code=String(error?.data?.message??error?.message??"");const messages={TYPEPAYMENT_ID_INVALID:"El identificador de la forma de pago no es válido.",TYPEPAYMENT_NOT_FOUND:"La forma de pago seleccionada ya no existe.",TYPEPAYMENT_CODE_REQUIRED:"El código es obligatorio.",TYPEPAYMENT_CODE_INVALID:"El código debe usar minúsculas, números y guiones.",TYPEPAYMENT_CODE_ALREADY_EXISTS:"Ya existe una forma de pago con ese código.",TYPEPAYMENT_DESCRIPTION_REQUIRED:"La descripción es obligatoria.",TYPEPAYMENT_DESCRIPTION_ALREADY_EXISTS:"Ya existe una forma de pago con esa descripción.",TYPEPAYMENT_CURRENCIES_REQUIRED:"Selecciona al menos una moneda.",TYPEPAYMENT_DEFAULT_CURRENCY_REQUIRED:"Selecciona la moneda predeterminada.",TYPEPAYMENT_DEFAULT_CURRENCY_INVALID:"La moneda predeterminada debe estar entre las monedas disponibles.",TYPEPAYMENT_CURRENCY_NOT_AVAILABLE:"Una moneda seleccionada ya no está disponible.",TYPEPAYMENT_UPDATE_REQUIRED:"No existen cambios para guardar.",TYPEPAYMENT_PERMISSION_REQUIRED:"La cuenta no tiene autorización para realizar todos los cambios.",AUTHORIZATION_CONTEXT_UNAVAILABLE:"No fue posible determinar la autorización de la cuenta."};return messages[code]??code??fallback}

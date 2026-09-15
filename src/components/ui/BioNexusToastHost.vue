@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <Teleport :to="teleportTarget">
     <section data-bio-nexus-toast-host class="bio-nexus-toast-region bio-nexus-toast-top-layer" aria-label="Notificaciones" aria-live="polite" aria-relevant="additions removals">
       <TransitionGroup name="bio-nexus-toast" tag="div" class="bio-nexus-toast-stack">
@@ -16,7 +16,7 @@
               v-if="toast.duration > 0"
               type="button"
               class="bio-nexus-toast-control"
-              :aria-label="toast.paused ? 'Reanudar notificaciÃ³n' : 'Pausar notificaciÃ³n'"
+              :aria-label="toast.paused ? 'Reanudar notificación' : 'Pausar notificación'"
               :title="toast.paused ? 'Reanudar' : 'Pausar'"
               @click="togglePauseStore(toast.id)"
             >
@@ -25,7 +25,7 @@
             <button
               type="button"
               class="bio-nexus-toast-close"
-              aria-label="Cerrar notificaciÃ³n"
+              aria-label="Cerrar notificación"
               title="Cerrar"
               @click="remove(toast.id)"
             >

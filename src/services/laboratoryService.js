@@ -1,4 +1,4 @@
-import { apiRequest } from '@/api/apiClient'
+﻿import { apiRequest } from '@/api/apiClient'
 import { normalizeLaboratory, normalizeLaboratoryChanges } from '@/models/laboratory'
 
 export function updateLaboratoryLicense(license) {
@@ -62,14 +62,14 @@ export function getLaboratoryErrorMessage(error, fallback) {
     LABORATORY_QR_TEXT_INVALID: 'Un texto del QR supera la longitud permitida.',
     LABORATORY_QR_EMAIL_INVALID: 'Ingrese un correo de contacto válido.',
     LABORATORY_QR_PHONE_INVALID: 'Ingrese un teléfono de contacto válido.',
-    LABORATORY_EMAIL_SETTINGS_REQUIRED: 'Complete la configuraciÃ³n de correo.',
-    LABORATORY_EMAIL_SETTINGS_INVALID: 'La configuraciÃ³n de correo no es vÃ¡lida.',
+    LABORATORY_EMAIL_SETTINGS_REQUIRED: 'Complete la configuración de correo.',
+    LABORATORY_EMAIL_SETTINGS_INVALID: 'La configuración de correo no es válida.',
     LABORATORY_EMAIL_USER_REQUIRED: 'El usuario SMTP es obligatorio.',
-    LABORATORY_EMAIL_FROM_INVALID: 'Ingrese un remitente vÃ¡lido.',
+    LABORATORY_EMAIL_FROM_INVALID: 'Ingrese un remitente válido.',
     LABORATORY_EMAIL_HOST_REQUIRED: 'El host SMTP es obligatorio.',
-    LABORATORY_EMAIL_PORT_INVALID: 'Ingrese un puerto SMTP vÃ¡lido.',
-    LABORATORY_EMAIL_PASSWORD_REQUIRED: 'Escriba la contraseÃ±a para probar la conexiÃ³n.',
-    LABORATORY_EMAIL_CONNECTION_FAILED: 'No fue posible verificar la conexiÃ³n. Revise servidor, puerto y credenciales.',
+    LABORATORY_EMAIL_PORT_INVALID: 'Ingrese un puerto SMTP válido.',
+    LABORATORY_EMAIL_PASSWORD_REQUIRED: 'Escriba la contraseña para probar la conexión.',
+    LABORATORY_EMAIL_CONNECTION_FAILED: 'No fue posible verificar la conexión. Revise servidor, puerto y credenciales.',
     LABORATORY_LOGO_REQUIRED: 'Seleccione una imagen para el logo.',
     LABORATORY_LOGO_TYPE_INVALID: 'Use una imagen PNG, JPEG o WebP.',
     BIO_NEXUS_REQUEST_TIMEOUT: 'La solicitud tardó demasiado.'

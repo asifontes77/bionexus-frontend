@@ -14,7 +14,7 @@
     </div>
 
     <div v-if="loading" class="bio-nexus-empty-state">Cargando configuración...</div>
-    <ApplicationSettingsPanel v-else-if="settings" :model="settings" :active-tab="activeTab" :disabled="!canUpdate || saving" />
+    <ApplicationSettingsPanel v-else-if="settings" :model="settings" :currencies="currencies" :active-tab="activeTab" :disabled="!canUpdate || saving" />
   </section>
 </template>
 
@@ -27,12 +27,14 @@ import BioNexusTabs from '@/components/ui/BioNexusTabs.vue'
 import { useBioNexusToast } from '@/composables/useBioNexusToast'
 import { validateApplicationSettings } from '@/models/applicationSettings'
 import { getApplicationSettings, getApplicationSettingsErrorMessage, updateApplicationSettings } from '@/services/applicationSettingsService'
+import { getActiveCurrencies } from '@/services/currencyService'
 import { useAuthorizationStore } from '@/stores/authorization'
 
 const route = useRoute()
 const authorization = useAuthorizationStore()
 const toast = useBioNexusToast()
 const settings = ref(null)
+const currencies = ref([])
 const original = ref('')
 const loading = ref(false)
 const saving = ref(false)
@@ -50,7 +52,7 @@ function snapshot() { original.value = JSON.stringify(settings.value) }
 async function load() {
   loading.value = true
   loadError.value = ''
-  try { settings.value = await getApplicationSettings(); snapshot() }
+  try { [settings.value, currencies.value] = await Promise.all([getApplicationSettings(), getActiveCurrencies()]); snapshot() }
   catch (error) {
     loadError.value = getApplicationSettingsErrorMessage(error, 'No fue posible cargar la configuración.')
     toast.error(loadError.value)

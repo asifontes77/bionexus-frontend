@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <section class="tariffs-page">
     <div v-if="loadError" class="bio-nexus-message bio-nexus-message-error">{{ loadError }}</div>
     <BioNexusDataGrid :row-data="rows" :column-defs="columnDefs" :default-col-def="defaultColDef" :components="gridComponents" :get-row-id="({data}) => String(data.id)" :search-enabled="true" v-model:search-model-value="search" search-placeholder="Buscar tarifa" :refresh-enabled="true" :refreshing="loading" :page-size="10" :page-size-selector="[10,20,50]" :min-grid-height="360" :max-grid-height="620" @refresh="load" @row-context-menu="openContextMenu" @grid-ready="rememberGrid">

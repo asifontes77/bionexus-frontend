@@ -129,7 +129,7 @@ function toggleColumn(field, headerName, width, onLabel = "Si", offLabel = "No",
 }
 const columns = computed(() => [
   { field: "description", headerName: "Descripcion", minWidth: 220, flex: 1 },
-  { field: "value", headerName: "Porcentaje", width: 150, minWidth: 150, headerClass: "tax-center-header", cellClass: "tax-center-cell", valueFormatter: ({ value }) => `${formatRegionalNumber(value, regionalSettings.settings, { minimumFractionDigits: regionalSettings.settings.monetary_decimals, maximumFractionDigits: regionalSettings.settings.monetary_decimals })} %` },
+  { field: "value", headerName: "Porcentaje", width: 150, minWidth: 150, headerClass: "tax-center-header", cellClass: "tax-center-cell", valueFormatter: ({ value }) => `${formatRegionalNumber(value, regionalSettings.settings, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} %` },
   toggleColumn("only_dollars", "Solo dolares", 170),
   toggleColumn("always_subtotal", "Fijo en subtotal", 180, "Si", "No", { exportAlignment: "center", exportHeaderAlignment: "center", cellStyle: { textAlign: "center" } }),
   toggleColumn("hide", "Oculto", 150),

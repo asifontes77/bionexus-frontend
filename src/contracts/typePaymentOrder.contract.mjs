@@ -1,0 +1,17 @@
+﻿import fs from 'node:fs';
+const read=file=>fs.readFileSync(file,'utf8');
+const tariffs=read('src/views/TariffsView.vue');
+const payments=read('src/views/TypePaymentView.vue');
+const tariffSelect=read('src/components/tariffs/TariffOrderSelectCell.vue');
+const paymentSelect=read('src/components/typepayment/TypePaymentOrderSelectCell.vue');
+const dialog=read('src/components/typepayment/TypePaymentDialog.vue');
+const required=['type-payment-order-selected-cell','type-payment-order-select-header','type-payment-order-select-cell','type-payment-position-cell','type-payment-position-number','acceptKeyboardPosition','cancelKeyboardPosition','event.defaultPrevented','SELECCIONADO · ↑ ↓ · ENTER · ESC'];
+for(const token of required)if(!payments.includes(token))throw new Error('PAYMENT_PATTERN_'+token);
+for(const token of ['tariff-order-selected-cell','tariff-order-select-header','tariff-order-select-cell','tariff-position-cell','tariff-position-number','acceptKeyboardPosition','cancelKeyboardPosition','event.defaultPrevented','SELECCIONADO · ↑ ↓ · ENTER · ESC'])if(!tariffs.includes(token))throw new Error('TARIFF_PATTERN_'+token);
+const normalize=value=>value.replace(/^\uFEFF/,'').replace(/\r\n/g,'\n').trim();
+const normalizedPaymentSelect=normalize(paymentSelect).replaceAll('type-payment','tariff').replace('forma de pago','tarifa');
+const normalizedTariffSelect=normalize(tariffSelect);
+if(normalizedPaymentSelect!==normalizedTariffSelect)throw new Error('SELECT_CELL_NOT_EQUIVALENT');
+if(payments.includes('TypePaymentPositionCell'))throw new Error('CUSTOM_POSITION_COMPONENT_REMAINS');
+for(const token of ['margin:14px auto 0','margin-top:9px','margin-top:13px'])if(!dialog.includes(token))throw new Error('FIELD_ALIGNMENT_'+token);
+console.log('[OK] Formas de pago replica el patron real de Tarifas y alinea contra BioNexusFormField.');

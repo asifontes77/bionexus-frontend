@@ -38,10 +38,10 @@ const record = ref(null);
 const error = ref("");
 const form = reactive({ description: "", value: "0", only_dollars: false, always_subtotal: false, hide: false });
 const errors = reactive({ description: "", value: "" });
-const percentagePlaceholder = computed(() => { const digits = Number(regionalSettings.settings.monetary_decimals) || 0; return "0" + (digits > 0 ? regionalSettings.settings.decimal_separator + "0".repeat(digits) : ""); });
+const percentagePlaceholder = computed(() => { const digits = 2; return "0" + (digits > 0 ? regionalSettings.settings.decimal_separator + "0".repeat(digits) : ""); });
 
 function displayPercentage(value) {
-  return formatRegionalNumber(value, regionalSettings.settings, { minimumFractionDigits: regionalSettings.settings.monetary_decimals, maximumFractionDigits: regionalSettings.settings.monetary_decimals });
+  return formatRegionalNumber(value, regionalSettings.settings, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 function reset() {
   mode.value = "create";

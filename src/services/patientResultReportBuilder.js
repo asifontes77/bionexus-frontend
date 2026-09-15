@@ -1,4 +1,4 @@
-import { formatRegionalFunctionalDate } from "@/services/regionalFormatter";
+﻿import { formatRegionalFunctionalDate } from "@/services/regionalFormatter";
 
 function replaceAllToken(value, token, replacement) {
   return String(value ?? "").split(token).join(String(replacement ?? ""));
@@ -23,7 +23,7 @@ export async function buildPatientResultHtml(patient, laboratory, getApprover, r
   if (!exams.length) throw new Error("PATIENT_RESULTS_EMAIL_NOT_APPROVED");
   let header = String(laboratory?.head_html ?? "");
   if (!header.trim()) throw new Error("PATIENT_RESULTS_EMAIL_TEMPLATE_INVALID");
-  let address = `${laboratory.address ?? ""}<br>TelÃ©fonos: ${laboratory.phone_1 ?? ""}`;
+  let address = `${laboratory.address ?? ""}<br>Teléfonos: ${laboratory.phone_1 ?? ""}`;
   if (laboratory.phone_2) address += `  --  ${laboratory.phone_2}`;
   address += `<br>Correo: ${laboratory.email ?? ""}`;
   if (laboratory.url) address += `<br>${laboratory.url}`;

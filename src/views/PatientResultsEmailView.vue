@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <main class="results-email-view">
     <section class="bio-nexus-panel results-email-filter" aria-label="Filtros de entrega de resultados">
       <div class="results-email-filter-copy">
@@ -262,7 +262,7 @@ async function sendSelected() {
 function messageFor(error) {
   const code = String(error?.message || "");
   const messages = {
-    PATIENT_RESULTS_EMAIL_DATE_RANGE_INVALID: "El rango de fechas no es vÃ¡lido.",
+    PATIENT_RESULTS_EMAIL_DATE_RANGE_INVALID: "El rango de fechas no es válido.",
 
     PATIENT_RESULTS_EMAIL_ALREADY_SENT: "Los resultados ya fueron enviados.",
     PATIENT_RESULTS_EMAIL_CONTENT_EMPTY: "El informe no contiene resultados visibles.",

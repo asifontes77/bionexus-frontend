@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <section class="type-payment-page">
     <div v-if="loadError" class="bio-nexus-message bio-nexus-message-error" role="alert">
       <strong>No fue posible cargar los Formas de pago.</strong>
@@ -31,9 +31,9 @@
       :refresh-enabled="true"
       :refreshing="loading"
       :refresh-disabled="saving"
-      @refresh="loadRows"
+      @refresh="loadRows" @grid-ready="rememberGrid"
     >
-      <template #actions>
+      <template #actions><div class="type-payment-grid-actions"><button type="button" class="type-payment-order-button" :disabled="!selectedRow || selectedIndex <= 0 || orderSaving" @click="moveSelected(-1)">↑</button><button type="button" class="type-payment-order-button" :disabled="!selectedRow || selectedIndex >= rows.length - 1 || orderSaving" @click="moveSelected(1)">↓</button><button type="button" class="bio-nexus-action bio-nexus-action-secondary" :disabled="!orderDirty || orderSaving" @click="saveOrder"><BioNexusActionIcon action="save"/>Guardar orden</button></div>
         <button
           v-if="canCreate"
           type="button"
@@ -58,7 +58,7 @@
     />
     </section>
 
-    <TypePaymentDialog ref="formDialog" :saving="saving" :can-create="canCreate" :can-update="canUpdate" @submit="saveForm" />
+    <TypePaymentDialog ref="formDialog" :saving="saving" :can-create="canCreate" :can-update="canUpdate" :currency-options="currencyOptions" @submit="saveForm" />
     <TypePaymentStateDialog ref="stateDialog" :saving="saving" @confirm="saveState" />
   </section>
 </template>
@@ -70,18 +70,22 @@ import BioNexusGridActionsCell from "@/components/grid/BioNexusGridActionsCell.v
 import BioNexusGridToggleCell from "@/components/grid/BioNexusGridToggleCell.vue";
 import BioNexusOptionFilter from "@/components/grid/BioNexusOptionFilter.vue";
 import BioNexusStatusBadgeCell from "@/components/grid/BioNexusStatusBadgeCell.vue";
+import TypePaymentOrderSelectCell from "@/components/typepayment/TypePaymentOrderSelectCell.vue";
 import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
 import TypePaymentDialog from "@/components/typepayment/TypePaymentDialog.vue";
 import TypePaymentStateDialog from "@/components/typepayment/TypePaymentStateDialog.vue";
 import { useBioNexusToast } from "@/composables/useBioNexusToast";
-import { createTypePayment, getTypePaymentErrorMessage, getTypePayments, updateTypePayment } from "@/services/typePaymentService";
+import { getActiveCurrencies } from "@/services/currencyService";
+import { createTypePayment, getTypePaymentErrorMessage, getTypePayments, reorderTypePayments, updateTypePayment } from "@/services/typePaymentService";
 import { useAuthorizationStore } from "@/stores/authorization";
 import BioNexusContextMenu from "@/components/ui/BioNexusContextMenu.vue";
 
 const authorizationStore = useAuthorizationStore();
 const toast = useBioNexusToast();
 const rows = shallowRef([]);
+const currencyCatalog=ref([]);const currencyOptions=computed(()=>currencyCatalog.value);
 const loading = ref(false);
+const orderSaving=ref(false),selectedOrderId=ref(null),orderOriginal=ref(""),keyboardOriginal=ref([]),gridApi=ref(null);
 const saving = ref(false);
 const loadError = ref("");
 const searchText = ref("");
@@ -105,25 +109,14 @@ const filteredRows = computed(() => rows.value.filter((item) => {
   return true;
 }).map((item) => ({ ...item, isActive: !item.annulled })));
 
-const defaultColDef = Object.freeze({ sortable: true, filter: true, resizable: true, suppressHeaderMenuButton: true });
-const gridComponents = Object.freeze({ BioNexusGridActionsCell, BioNexusStatusBadgeCell, BioNexusGridToggleCell });
+const defaultColDef = Object.freeze({ sortable:true, filter:true, resizable:true, suppressHeaderMenuButton:true, cellClassRules:{ "type-payment-order-selected-cell": params => Number(params?.data?.id) === Number(selectedOrderId.value) } });
+const gridComponents = Object.freeze({ BioNexusGridActionsCell, BioNexusStatusBadgeCell, BioNexusGridToggleCell, TypePaymentOrderSelectCell });
+const selectedRow=computed(()=>rows.value.find(row=>row.id===selectedOrderId.value)||null),selectedIndex=computed(()=>selectedRow.value?rows.value.findIndex(row=>row.id===selectedRow.value.id):-1),orderSnapshot=()=>JSON.stringify(rows.value.map(row=>row.id)),orderDirty=computed(()=>orderSnapshot()!==orderOriginal.value);
 const columnDefs = computed(() => [
-  { field: "description", headerName: "Descripcion", minWidth: 210, flex: 1 },
-  { field: "description_1", headerName: "Descripcion auxiliar 1", minWidth: 190, flex: 1 },
-  { field: "description_2", headerName: "Descripcion auxiliar 2", minWidth: 190, flex: 1 },
-  {
-    field: "only_dollars",
-    filter: BioNexusOptionFilter,
-    filterParams: {
-      options: [{"value":true,"label":"Si"},{"value":false,"label":"No"}],
-    },
-    headerName: "Solo dolares",
-    width: 170,
-    headerClass: "type-payment-center-header",
-    cellClass: "type-payment-center-cell",
-    cellRenderer: "BioNexusGridToggleCell",
-    cellRendererParams: { onLabel: "Si", offLabel: "No", ariaLabel: "Solo dolares", disabled: () => !canUpdate.value || saving.value, onToggle: toggleOnlyDollars },
-  },
+  { colId:"order-select", headerName:"Orden", width:72, minWidth:72, maxWidth:72, suppressMovable:true, sortable:false, filter:false, resizable:false, headerClass:"type-payment-order-select-header", cellClass:"type-payment-order-select-cell", cellRenderer:"TypePaymentOrderSelectCell", cellRendererParams:{isSelected:row=>row.id===selectedOrderId.value,onSelect:selectForOrder} },
+  { field:"position", headerName:"Posición", width:120, type:"numericColumn", headerClass:"type-payment-center-header", cellClass:"type-payment-center-cell type-payment-position-cell", cellRenderer:params=>`<span class="type-payment-position-number">${params.value}</span>` },
+  { field: "description", headerName: "Descripción", minWidth: 210, flex: 1.2 },
+  { colId: "currencies", headerName: "Monedas", minWidth: 180, flex: 1, valueGetter: ({ data }) => (data?.currencies ?? []).map((currency) => `${currency.code}${currency.isDefault ? " (pred.)" : ""}`).join(", ") },
   {
     field: "isActive",
     filter: BioNexusOptionFilter,
@@ -162,6 +155,15 @@ const columnDefs = computed(() => [
   },
 ]);
 
+function rememberGrid(event){gridApi.value=event?.api??null;}
+function refreshOrderCells(){gridApi.value?.refreshCells?.({force:true});}
+function selectForOrder(row,checked){if(!row)return;if(checked){selectedOrderId.value=row.id;keyboardOriginal.value=rows.value.map(item=>item.id);}else if(selectedOrderId.value===row.id){selectedOrderId.value=null;keyboardOriginal.value=[];}nextTick(refreshOrderCells);}
+function moveSelected(delta){const index=selectedIndex.value,target=index+delta;if(index<0||target<0||target>=rows.value.length||orderSaving.value)return;const next=[...rows.value];const [row]=next.splice(index,1);next.splice(target,0,row);rows.value=next.map((item,position)=>({...item,position:position+1,displayOrder:position+1}));selectedOrderId.value=row.id;nextTick(()=>{gridApi.value?.refreshCells?.({force:true});gridApi.value?.ensureIndexVisible?.(target,"middle");});}
+function clearKeyboardSelection(){selectedOrderId.value=null;keyboardOriginal.value=[];nextTick(refreshOrderCells);}
+function acceptKeyboardPosition(){if(!selectedRow.value)return;clearKeyboardSelection();toast.success("Posición aceptada. Usa Guardar orden para conservarla.");}
+function cancelKeyboardPosition(){if(!selectedRow.value)return;const byId=new Map(rows.value.map(row=>[row.id,row]));const restored=keyboardOriginal.value.map(id=>byId.get(id)).filter(Boolean);if(restored.length===rows.value.length)rows.value=restored.map((row,position)=>({...row,position:position+1,displayOrder:position+1}));clearKeyboardSelection();toast.success("Movimiento cancelado.");}
+function handleKeyboardOrder(event){if(!selectedRow.value||orderSaving.value||event.defaultPrevented||event.altKey||event.ctrlKey||event.metaKey)return;const target=event.target;if(target instanceof HTMLInputElement||target instanceof HTMLTextAreaElement||target instanceof HTMLSelectElement||target?.isContentEditable)return;if(event.key==="ArrowUp"){event.preventDefault();event.stopPropagation();moveSelected(-1);}else if(event.key==="ArrowDown"){event.preventDefault();event.stopPropagation();moveSelected(1);}else if(event.key==="Enter"){event.preventDefault();event.stopPropagation();acceptKeyboardPosition();}else if(event.key==="Escape"){event.preventDefault();event.stopPropagation();cancelKeyboardPosition();}}
+async function saveOrder(){if(!orderDirty.value||orderSaving.value)return;orderSaving.value=true;try{await reorderTypePayments(rows.value.map(row=>row.id));orderOriginal.value=orderSnapshot();toast.success("Orden de formas de pago guardado correctamente.");}catch(error){toast.error(getTypePaymentErrorMessage(error,"No fue posible guardar el orden."));await loadRows();}finally{orderSaving.value=false;}}
 function getRowId({ data }) {
   return String(data.id);
 }
@@ -205,26 +207,12 @@ function replaceRow(saved) {
 
 async function reconcileRowsSilently() {
   try {
-    rows.value = await getTypePayments();
+    [rows.value,currencyCatalog.value]=await Promise.all([getTypePayments(),getActiveCurrencies()]);
+    rows.value=rows.value.map((row,position)=>({...row,position:position+1}));
+    orderOriginal.value=orderSnapshot();selectedOrderId.value=null;
     return true;
   } catch {
     return false;
-  }
-}
-
-async function toggleOnlyDollars(row) {
-  if (!canUpdate.value || saving.value || !row) return;
-  saving.value = true;
-  closeTypePaymentContextMenu();
-  try {
-    const saved = await updateTypePayment(row.id, { only_dollars: !row.only_dollars });
-    replaceRow(saved);
-    void reconcileRowsSilently();
-    toast.success(saved.only_dollars ? "Solo dolares activado." : "Solo dolares desactivado.");
-  } catch (error) {
-    toast.error(getTypePaymentErrorMessage(error, "No fue posible cambiar Solo dolares."));
-  } finally {
-    saving.value = false;
   }
 }
 
@@ -268,11 +256,11 @@ async function saveForm(payload) {
   try {
     let saved;
     if (payload.mode === "create") {
-      const created = await createTypePayment(payload.values.description);
+      const created = await createTypePayment(payload.values);
       if (!Number.isInteger(created?.id) || created.id <= 0) {
         throw new Error("TYPEPAYMENT_CREATE_RESPONSE_INVALID");
       }
-      saved = await updateTypePayment(created.id, { ...payload.values });
+      saved = created;
     } else {
       saved = await updateTypePayment(payload.record.id, { ...payload.values });
     }
@@ -305,7 +293,9 @@ async function loadRows(options = {}) {
   loading.value = true;
   loadError.value = "";
   try {
-    rows.value = await getTypePayments();
+    [rows.value,currencyCatalog.value]=await Promise.all([getTypePayments(),getActiveCurrencies()]);
+    rows.value=rows.value.map((row,position)=>({...row,position:position+1}));
+    orderOriginal.value=orderSnapshot();selectedOrderId.value=null;
     return true;
   } catch (error) {
     rows.value = [];
@@ -317,13 +307,28 @@ async function loadRows(options = {}) {
   }
 }
 onMounted(() => {
+  globalThis.addEventListener("keydown", handleKeyboardOrder, { capture: true });
   loadRows();
 });
 onBeforeUnmount(() => {
+  globalThis.removeEventListener("keydown", handleKeyboardOrder, { capture: true });
 });
 </script>
 
-<style scoped>
+<style scoped>.type-payment-grid :deep(.type-payment-order-select-header .ag-header-cell-label),.type-payment-grid :deep(.type-payment-center-header .ag-header-cell-label){justify-content:center}
+.type-payment-grid :deep(.type-payment-order-select-cell){display:flex;align-items:center;justify-content:center;padding:0!important}
+.type-payment-grid :deep(.type-payment-center-cell){display:flex;align-items:center;justify-content:center;text-align:center}
+.type-payment-grid :deep(.type-payment-order-selected-cell){background:var(--bio-nexus-color-info-soft)!important}
+.type-payment-grid :deep(.type-payment-order-selected-cell[col-id="order-select"]){box-shadow:inset 5px 0 0 var(--bio-nexus-color-accent)!important}
+.type-payment-grid :deep(.type-payment-order-selected-cell .type-payment-position-number){border:2px solid var(--bio-nexus-color-primary);background:var(--bio-nexus-color-primary);color:#fff;transform:scale(1.06)}
+.type-payment-grid :deep(.type-payment-order-selected-cell[col-id="description"]){padding-right:225px;font-weight:700}
+.type-payment-grid :deep(.type-payment-order-selected-cell[col-id="description"]::after){position:absolute;top:5px;right:12px;content:"SELECCIONADO · ↑ ↓ · ENTER · ESC";color:var(--bio-nexus-color-primary);font-size:9px;font-weight:800;letter-spacing:.04em;white-space:nowrap;pointer-events:none}
+.type-payment-grid :deep(.type-payment-position-cell){display:flex;align-items:center;justify-content:center;text-align:center}
+.type-payment-grid :deep(.type-payment-position-number){box-sizing:border-box;display:grid;place-items:center;width:34px;height:34px;border:1px solid var(--bio-nexus-color-border-strong);border-radius:50%;background:var(--bio-nexus-color-surface);color:var(--bio-nexus-color-text-secondary);font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;transition:background-color .15s ease,border-color .15s ease,color .15s ease,transform .15s ease}
+
+
+
+.type-payment-grid-actions{display:flex;align-items:center;gap:8px}.type-payment-order-button{width:38px;height:38px;border:1px solid var(--bio-nexus-color-border);border-radius:50%;background:var(--bio-nexus-color-surface);color:var(--bio-nexus-color-primary);font-weight:700}.type-payment-order-button:disabled{opacity:.32}
 .type-payment-page { min-width: 0; }
 .type-payment-grid :deep(.bio-nexus-grid-actions-header .ag-header-cell-label),
 .type-payment-grid :deep(.bio-nexus-grid-actions-cell) { justify-content: center; }

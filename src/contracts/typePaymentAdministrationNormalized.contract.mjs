@@ -1,0 +1,10 @@
+﻿import fs from "node:fs";
+const dialog=fs.readFileSync("src/components/typepayment/TypePaymentDialog.vue","utf8");
+const view=fs.readFileSync("src/views/TypePaymentView.vue","utf8");
+for(const token of["currencyOptions","displayOrder"])if(!dialog.includes(token)||!view.includes(token))throw new Error(`MISSING_SHARED_${token}`);
+for(const token of["currencyIds","defaultCurrencyId"])if(!dialog.includes(token))throw new Error(`MISSING_DIALOG_${token}`);
+for(const token of["currencies","isDefault"])if(!view.includes(token))throw new Error(`MISSING_VIEW_${token}`);
+for(const legacy of["description_1","description_2","only_dollars","toggleOnlyDollars"])if(dialog.includes(legacy)||view.includes(legacy))throw new Error(`LEGACY_${legacy}`);
+if(!view.includes("createTypePayment(payload.values)"))throw new Error("CREATE_NOT_ATOMIC");
+if(view.includes("updateTypePayment(created.id"))throw new Error("SECOND_CREATE_CALL_REMAINS");
+console.log("[OK] Administracion Frontend normalizada.");

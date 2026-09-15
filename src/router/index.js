@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from "vue-router";
+﻿import { createRouter, createWebHistory } from "vue-router";
 import { useAuthorizationStore } from "@/stores/authorization";
 import { useSessionStore } from "@/stores/session";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout.vue";
@@ -12,6 +12,7 @@ const RolesPermissionsView=()=>import("@/views/RolesPermissionsView.vue");
 const UserAuthorizationView=()=>import("@/views/UserAuthorizationView.vue");
 const ParasiticformsView=()=>import("@/views/ParasiticformsView.vue");
 const TypePaymentView=()=>import("@/views/TypePaymentView.vue");
+const CurrenciesView=()=>import("@/views/CurrenciesView.vue");
 const ExamCatalogView=()=>import("@/views/ExamCatalogView.vue");
 const LaboratoryView=()=>import("@/views/LaboratoryView.vue");
 const LaboratoryIdentityView=()=>import("@/views/LaboratoryIdentityView.vue");
@@ -171,6 +172,7 @@ const routes = [
           { title: "Tipos de muestra", description: "Cat\u00e1logo de muestras para la atenci\u00f3n y el procesamiento.", routeName: "configuration-sample-types", permission: "sample-types.read", status: "available" },
       { title: "Grupos de hojas de trabajo", description: "Organizacion de hojas de trabajo.", routeName: "configuration-worksheet-groups", permission: "worksheet-groups.read", status: "available" },
           { title: "Laboratorios de referencia", description: "Laboratorios externos y exámenes de referencia asociados.", routeName: "configuration-special-tests", permission: "special-tests.read", status: "available" },
+          { title: "Monedas", description: "Monedas disponibles, presentación y estado.", routeName: "configuration-currencies", permission: "currencies.read", status: "available" },
           { title: "Formas de pago", description: "Disponibilidad por moneda y estado.", routeName: "type-payments", permission: "typepayment.read", status: "available" }
         ] },
       },
@@ -270,7 +272,14 @@ const routes = [
         name: "configuration-taxes",
         component: TaxesView,
         meta: { requiresAuth: true, permissions: ["tax.read"], title: "Impuestos", description: "Administra los porcentajes y reglas de aplicación de impuestos." },
-      },      {
+      },
+      {
+        path: "configuration/currencies",
+        name: "configuration-currencies",
+        component: CurrenciesView,
+        meta: { requiresAuth: true, permissions: ["currencies.read"], title: "Monedas", description: "Administra las monedas disponibles, su presentación y estado.", breadcrumb: ["Configuración", "Catálogos", "Monedas"] },
+      },
+      {
         path: "configuration/type-payments",
         name: "type-payments",
         component: TypePaymentView,

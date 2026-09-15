@@ -1,64 +1,8 @@
-﻿function normalizeId(value) {
-  const parsed = Number(value);
-  return Number.isInteger(parsed) && parsed > 0 ? parsed : 0;
-}
-
-function normalizeText(value) {
-  return typeof value === "string" ? value.trim() : "";
-}
-
-export function normalizeTypePaymentDescription(value) {
-  return normalizeText(value);
-}
-
-export function normalizeTypePayment(value = {}) {
-  const source = value && typeof value === "object" && !Array.isArray(value)
-    ? value
-    : {};
-
-  return {
-    id: normalizeId(source.id),
-    description: normalizeTypePaymentDescription(source.description),
-    description_1: normalizeText(source.description_1 ?? source.description1),
-    description_2: normalizeText(source.description_2 ?? source.description2),
-    only_dollars: Boolean(source.only_dollars ?? source.onlyDollars),
-    annulled: Boolean(source.annulled),
-  };
-}
-
-export function normalizeTypePayments(value) {
-  const items = Array.isArray(value)
-    ? value
-    : Array.isArray(value?.data)
-      ? value.data
-      : [];
-
-  return items
-    .map((item) => normalizeTypePayment(item))
-    .filter((item) => item.id > 0);
-}
-
-export function normalizeTypePaymentChanges(value = {}) {
-  const source = value && typeof value === "object" && !Array.isArray(value)
-    ? value
-    : {};
-  const changes = {};
-
-  if (Object.prototype.hasOwnProperty.call(source, "description")) {
-    changes.description = normalizeTypePaymentDescription(source.description);
-  }
-  if (Object.prototype.hasOwnProperty.call(source, "description_1")) {
-    changes.description_1 = normalizeText(source.description_1);
-  }
-  if (Object.prototype.hasOwnProperty.call(source, "description_2")) {
-    changes.description_2 = normalizeText(source.description_2);
-  }
-  if (Object.prototype.hasOwnProperty.call(source, "only_dollars")) {
-    changes.only_dollars = Boolean(source.only_dollars);
-  }
-  if (Object.prototype.hasOwnProperty.call(source, "annulled")) {
-    changes.annulled = Boolean(source.annulled);
-  }
-
-  return changes;
-}
+﻿function positiveId(value){const id=Number(value);return Number.isInteger(id)&&id>0?id:0}
+function normalizeText(value){return typeof value==="string"?value.trim():""}
+function normalizeCurrency(value={}){const source=value.currency??value;return{id:positiveId(source.id??value.currencyId),code:normalizeText(source.code).toUpperCase(),name:normalizeText(source.name),symbol:normalizeText(source.symbol),symbolPosition:source.symbolPosition??source.symbol_position??"before",decimalPlaces:Number(source.decimalPlaces??source.decimal_places??2),isLocal:Boolean(source.isLocal??source.is_local),isBase:Boolean(source.isBase??source.is_base),isActive:source.isActive??source.is_active??true,isDefault:Boolean(value.isDefault??value.is_default),displayOrder:Number(value.displayOrder??value.display_order??0)}}
+function normalizeField(value={}){return{id:positiveId(value.id),code:normalizeText(value.code),label:normalizeText(value.label),fieldType:normalizeText(value.fieldType??value.field_type),isRequired:Boolean(value.isRequired??value.is_required),displayOrder:Number(value.displayOrder??value.display_order??0),minLength:value.minLength??value.min_length??null,maxLength:value.maxLength??value.max_length??null,inputMask:value.inputMask??value.input_mask??null,validationPattern:value.validationPattern??value.validation_pattern??null,helpText:value.helpText??value.help_text??null,catalogSource:value.catalogSource??value.catalog_source??null,isActive:value.isActive??value.is_active??true}}
+export function normalizeTypePayment(value={}){const source=value&&typeof value==="object"&&!Array.isArray(value)?value:{};const currencies=(Array.isArray(source.currencies)?source.currencies:[]).map(normalizeCurrency).filter(item=>item.id>0).sort((a,b)=>a.displayOrder-b.displayOrder||a.code.localeCompare(b.code));const fields=(Array.isArray(source.fields)?source.fields:[]).map(normalizeField).filter(item=>item.id>0).sort((a,b)=>a.displayOrder-b.displayOrder||a.label.localeCompare(b.label));return{id:positiveId(source.id),code:normalizeText(source.code),description:normalizeText(source.description),displayOrder:Number(source.displayOrder??source.display_order??0),annulled:Boolean(source.annulled),currencies,fields,currencyIds:currencies.map(item=>item.id),defaultCurrencyId:currencies.find(item=>item.isDefault)?.id??currencies[0]?.id??0}}
+export function normalizeTypePayments(value){const rows=Array.isArray(value)?value:Array.isArray(value?.data)?value.data:[];return rows.map(normalizeTypePayment).filter(item=>item.id>0)}
+export function normalizeTypePaymentPayload(value={}){const currencyIds=[...new Set((Array.isArray(value.currencyIds)?value.currencyIds:[]).map(positiveId).filter(Boolean))];const fields=(Array.isArray(value.fields)?value.fields:[]).map((field,index)=>({code:normalizeText(field.code),label:normalizeText(field.label),fieldType:normalizeText(field.fieldType),isRequired:Boolean(field.isRequired),minLength:field.minLength??null,maxLength:field.maxLength??null,inputMask:field.inputMask??null,validationPattern:field.validationPattern??null,helpText:field.helpText??null,catalogSource:field.catalogSource??null,isActive:field.isActive!==false,displayOrder:(index+1)*10}));return{code:normalizeText(value.code).toLowerCase(),description:normalizeText(value.description),displayOrder:Math.max(0,Number(value.displayOrder)||0),currencyIds,defaultCurrencyId:positiveId(value.defaultCurrencyId),fields}}
+export function normalizeTypePaymentChanges(value={}){const payload=normalizeTypePaymentPayload(value),changes={};for(const field of["code","description","displayOrder","currencyIds","defaultCurrencyId","fields","annulled"]){if(Object.prototype.hasOwnProperty.call(value,field))changes[field]=field==="annulled"?Boolean(value[field]):payload[field]}return changes}

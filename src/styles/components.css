@@ -1,4 +1,4 @@
-/* Bio Nexus shared components
+﻿/* Bio Nexus shared components
  * Reusable visual primitives shared by Vue 3 views.
  */
 
@@ -182,6 +182,14 @@
   font-weight: var(--bio-nexus-font-weight-bold);
 }
 
+.bio-nexus-action:disabled,
+.bio-nexus-action[aria-disabled="true"] {
+  cursor: not-allowed !important;
+  opacity: 0.5 !important;
+  filter: grayscale(0.2);
+  box-shadow: none;
+  pointer-events: none;
+}
 .bio-nexus-action-primary {
   border: 1px solid var(--bio-nexus-color-primary);
   color: var(--bio-nexus-color-text-inverse);

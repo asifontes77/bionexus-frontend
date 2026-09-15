@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <section class="dollar-value-page">
     <div v-if="loadError" class="bio-nexus-message bio-nexus-message-error" role="alert">
       <strong>No fue posible cargar la cotizaci&#243;n.</strong>
@@ -183,7 +183,7 @@ async function saveAutomation() {
   try {
     automation.value = await saveDollarValueAutomation({ enabled: Boolean(automation.value.enabled), run_time: automation.value.run_time });
     toast.success("Configuración automática guardada correctamente.");
-  } catch (error) { toast.error(dollarValueError(error, "No fue posible guardar la automatizaciÃ³n.")); }
+  } catch (error) { toast.error(dollarValueError(error, "No fue posible guardar la automatización.")); }
   finally { automationSaving.value = false; }
 }
 
@@ -192,10 +192,10 @@ async function runAutomation() {
   automationRunning.value = true;
   try {
     const result = await runDollarValueAutomation();
-    if (result?.status === "FAILED") throw new Error(result.error || "La consulta automÃ¡tica fallÃ³.");
-    toast.success(result?.status === "UNCHANGED" ? "La cotizaciÃ³n vigente no cambiÃ³." : "CotizaciÃ³n automÃ¡tica actualizada.");
+    if (result?.status === "FAILED") throw new Error(result.error || "La consulta automática falló.");
+    toast.success(result?.status === "UNCHANGED" ? "La cotización vigente no cambió." : "Cotización automática actualizada.");
     await load();
-  } catch (error) { toast.error(dollarValueError(error, "No fue posible ejecutar la actualizaciÃ³n automÃ¡tica.")); }
+  } catch (error) { toast.error(dollarValueError(error, "No fue posible ejecutar la actualización automática.")); }
   finally { automationRunning.value = false; }
 }
 
