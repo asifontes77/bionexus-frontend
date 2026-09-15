@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <dialog ref="dialog" class="bio-nexus-dialog session-expiration-dialog" @cancel.prevent>
     <div class="bio-nexus-dialog-shell">
       <header class="bio-nexus-dialog-header">
@@ -36,6 +36,7 @@ const DEFAULT_POLICY = Object.freeze({ sessionTimeoutMinutes: 30, inactivityTime
 const ACTIVITY_EVENTS = ['pointerdown', 'keydown', 'touchstart', 'wheel']
 const MONITOR_INTERVAL_MS = 1000
 const RENEW_WINDOW_MS = 60000
+const ACTIVE_RENEW_INTERVAL_MS = 60000
 const router = useRouter()
 const toast = useBioNexusToast()
 const session = useSessionStore()
@@ -48,6 +49,7 @@ let policy = { ...DEFAULT_POLICY }
 let lastActivityAt = Date.now()
 let timer = 0
 let renewPromise = null
+let lastActivityRenewalAt = 0
 
 const formattedCountdown = computed(() => {
   const value = Math.max(0, countdown.value)
@@ -69,7 +71,13 @@ function normalizePolicy(value) {
 
 function registerActivity() {
   if (!session.isAuthenticated || dialog.value?.open) return
-  lastActivityAt = Date.now()
+  const now = Date.now()
+  lastActivityAt = now
+  if (renewPromise || now - lastActivityRenewalAt < ACTIVE_RENEW_INTERVAL_MS) return
+  lastActivityRenewalAt = now
+  void performRenewal().catch(async () => {
+    if (!session.isAuthenticated || (session.expiresAt > 0 && Date.now() >= session.expiresAt)) await expireSession()
+  })
 }
 
 async function loadPolicy() {
@@ -172,7 +180,10 @@ function applyExternalRenewal(event) {
 
 watch(() => session.token, async (token, previousToken) => {
   if (!token) { disconnectSessionPolicySocket(); disconnectAuthorizationEventsSocket(); return }
-  if (!previousToken) lastActivityAt = Date.now()
+  if (!previousToken) {
+    lastActivityAt = Date.now()
+    lastActivityRenewalAt = 0
+  }
   await loadPolicy()
   connectSessionPolicySocket(token, applyRemotePolicy)
   connectAuthorizationEventsSocket(token, applyAuthorizationUpdate)

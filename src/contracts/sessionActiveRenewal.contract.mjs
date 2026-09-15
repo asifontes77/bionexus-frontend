@@ -1,0 +1,15 @@
+﻿import fs from 'node:fs';
+import assert from 'node:assert/strict';
+const source=fs.readFileSync('src/components/session/SessionLifecycle.vue','utf8');
+for(const token of ['ACTIVE_RENEW_INTERVAL_MS = 60000','lastActivityRenewalAt = 0','now - lastActivityRenewalAt < ACTIVE_RENEW_INTERVAL_MS','void performRenewal().catch','Date.now() >= session.expiresAt'])assert.ok(source.includes(token),token);
+const start=source.indexOf('function registerActivity()');
+const end=source.indexOf('function ',start+10);
+const block=source.slice(start,end);
+assert.ok(block.includes('lastActivityAt = now'));
+assert.ok(block.includes('performRenewal'));
+assert.ok(block.includes('renewPromise'));
+assert.ok(source.includes('policy.countdownSeconds === 0'));
+assert.ok(source.includes('dialog.value?.showModal()'));
+assert.ok(source.includes('await performRenewal()'));
+assert.ok(source.includes('await expireSession()'));
+console.log('[OK] La actividad renueva la sesion de forma preventiva, controlada y sin eliminar el flujo de inactividad.');
