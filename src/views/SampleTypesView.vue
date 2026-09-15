@@ -50,12 +50,13 @@ const contextItems = computed(() => {
 const defaultColDef = Object.freeze({ sortable: true, filter: true, resizable: true, suppressHeaderMenuButton: true })
 const gridComponents = Object.freeze({ BioNexusGridActionsCell })
 const columnDefs = computed(() => [
-  { field: 'description', headerName: 'Descripcion', minWidth: 280, flex: 1, filter: 'agTextColumnFilter' },
+  { field: 'description', headerName: 'Descripción', minWidth: 280, flex: 1, filter: 'agTextColumnFilter' },
   { colId: 'actions', headerName: 'Acciones', width: 110, minWidth: 110, maxWidth: 110, pinned: 'right', lockPinned: true, suppressMovable: true, sortable: false, filter: false, resizable: false, headerClass: 'bio-nexus-grid-actions-header', cellClass: 'bio-nexus-grid-actions-cell', cellRenderer: BioNexusGridActionsCell, cellRendererParams: { actions: [{ key: 'edit', label: 'Editar', icon: 'edit', visible: () => canUpdate.value, disabled: () => saving.value, onClick: row => formDialog.value?.openEdit(row) }] } }
 ])
 function getRowId({ data }) { return String(data.id) }
 async function openContextMenu({ event, row }) {
   if (!event || !row || !canUpdate.value || saving.value) return
+  event.preventDefault()
   contextState.value = { open: true, x: event.clientX, y: event.clientY, row }
   await nextTick()
   contextMenu.value?.positionMenu?.()

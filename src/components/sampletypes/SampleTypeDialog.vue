@@ -1,7 +1,7 @@
 ﻿<template>
   <BioNexusDialog ref="dialog" size="standard" :kicker="mode === 'create' ? 'Nuevo registro' : 'Editar registro'" :title="mode === 'create' ? 'Crear tipo de muestra' : 'Editar tipo de muestra'" @close="reset">
     <section class="sample-type-form">
-      <BioNexusFormField label="Descripcion" field-id="sample-type-description" :error="descriptionError" :help="`${draft.description.length} de 50 caracteres`" required>
+      <BioNexusFormField label="Descripción" field-id="sample-type-description" :error="descriptionError" :help="`${draft.description.length} de 50 caracteres`" required>
         <input id="sample-type-description" ref="firstInput" v-model="draft.description" class="bio-nexus-field" maxlength="50" autocomplete="off">
       </BioNexusFormField>
       <div v-if="errorMessage" class="bio-nexus-message bio-nexus-message-error" role="alert">{{ errorMessage }}</div>
@@ -31,7 +31,7 @@ const originalDescription = ref('')
 const draft = reactive({ description: '' })
 const normalizedDescription = computed(() => draft.description.trim())
 const hasChanges = computed(() => mode.value === 'edit' && normalizedDescription.value !== originalDescription.value)
-const descriptionError = computed(() => attempted.value && normalizedDescription.value === '' ? 'La descripcion es obligatoria.' : '')
+const descriptionError = computed(() => attempted.value && normalizedDescription.value === '' ? 'La descripción es obligatoria.' : '')
 const saveDisabled = computed(() => {
   if (props.saving) return true
   if (mode.value === 'create') return !props.canCreate
