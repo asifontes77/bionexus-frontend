@@ -55,7 +55,7 @@ export function getLaboratoryErrorMessage(error, fallback) {
     LABORATORY_RIF_INVALID: 'Ingrese un RIF válido.',
     LABORATORY_PHONE_INVALID: 'Ingrese un teléfono válido.',
     LABORATORY_PHONE_MASK_INVALID: 'La máscara telefónica debe contener marcadores #.',
-    LABORATORY_LOGO_DIMENSION_INVALID: 'Las dimensiones del logo deben estar entre 0 y 200 px.',
+    LABORATORY_LOGO_DIMENSION_INVALID: 'Las dimensiones del logo deben estar entre 20 y 200 px.',
     LABORATORY_QR_INVALID: 'La configuración QR no es válida.',
     LABORATORY_QR_FIELD_UNKNOWN: 'La configuración QR contiene campos no permitidos.',
     LABORATORY_QR_ACTIVE_INVALID: 'El estado del QR no es válido.',

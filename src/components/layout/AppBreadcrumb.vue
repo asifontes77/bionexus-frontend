@@ -24,6 +24,8 @@ const catalogRouteNames = new Set([
 ]);
 const routeByLabel = Object.freeze({
   "Bio Nexus": { name: "dashboard" },
+  "Configuración": { name: "dashboard" },
+  "Laboratorio": { name: "configuration-laboratory-module" },
   "Cat\u00e1logos": { name: "configuration-catalogs" },
   "Sistema": { name: "configuration-system-module" },
 });

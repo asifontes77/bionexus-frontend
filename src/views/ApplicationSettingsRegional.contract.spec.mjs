@@ -1,26 +1,8 @@
-import fs from 'node:fs';
-import path from 'node:path';
-
-const root = process.cwd();
-const read = (relativePath) => fs.readFileSync(path.join(root, relativePath), 'utf8');
-const panel = read('src/components/application-settings/ApplicationSettingsPanel.vue');
-const model = read('src/models/applicationSettings.js');
-const view = read('src/views/ApplicationSettingsView.vue');
-const router = read('src/router/index.js');
-
-const fields = ['locale', 'time_zone', 'date_format', 'hour_cycle', 'currency_code', 'currency_symbol', 'currency_symbol_position', 'monetary_decimals', 'first_day_of_week'];
-for (const field of fields) {
-  if (!model.includes(field) || !panel.includes('model.' + field)) throw new Error('REGIONAL_FIELD_MISSING:' + field);
-}
-
-for (const value of ['es-VE', 'America/Caracas', 'dd/MM/yyyy', 'h12', 'VES', 'Bs.', 'before', 'monday']) {
-  if (!model.includes(value)) throw new Error('DEFAULT_MISSING:' + value);
-}
-
-for (const text of ['Formatos regionales', 'VISTA PREVIA', 'Fecha y hora', 'N\u00famero', 'Moneda', 'Decimal:', 'Miles:']) {
-  if (!panel.includes(text)) throw new Error('UI_MISSING:' + text);
-}
-
-if (!router.includes('query: { tab: "regional" }') || !router.includes('status: "available"')) throw new Error('ROUTER_NOT_AVAILABLE');
-if (!view.includes("key: 'regional'") || !view.includes("'bio-nexus:regional-settings-local'")) throw new Error('VIEW_CONTRACT_MISSING');
-console.log('[OK] Contrato regional Frontend aprobado.');
+﻿import fs from 'node:fs';import path from 'node:path';const read=f=>fs.readFileSync(path.join(process.cwd(),f),'utf8');
+const panel=read('src/components/application-settings/ApplicationSettingsPanel.vue'),model=read('src/models/applicationSettings.js'),view=read('src/views/ApplicationSettingsView.vue'),router=read('src/router/index.js');
+for(const field of ['locale','time_zone','date_format','hour_cycle','financial_primary_currency_id','first_day_of_week','decimal_separator'])if(!model.includes(field)||!panel.includes('model.'+field))throw new Error('REGIONAL_FIELD_MISSING:'+field);
+for(const retired of ['currency_code','currency_symbol','currency_symbol_position','monetary_decimals'])if(model.includes(retired)||panel.includes('model.'+retired))throw new Error('RETIRED_MONETARY_FIELD:'+retired);
+for(const text of ['Formatos regionales','VISTA PREVIA','Fecha y hora','Número','Presentación monetaria','Moneda local','Moneda base','Visualización financiera principal','Separador decimal','Decimal:','Miles:'])if(!panel.includes(text))throw new Error('UI_MISSING:'+text);
+if(!panel.includes('Los símbolos, posiciones y decimales se administran únicamente en el catálogo Monedas.'))throw new Error('CURRENCY_RESPONSIBILITY_MISSING');
+if(!router.includes('query: { tab: "regional" }')||!router.includes('status: "available"'))throw new Error('ROUTER_NOT_AVAILABLE');if(!view.includes("key: 'regional'")||!view.includes("'bio-nexus:regional-settings-local'"))throw new Error('VIEW_CONTRACT_MISSING');
+console.log('[OK] Contrato regional vigente usa Monedas como fuente unica.');

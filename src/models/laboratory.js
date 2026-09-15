@@ -38,8 +38,8 @@ export function validateLaboratoryIdentity(value) {
   if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.email = 'Ingrese un correo válido.';
   if (url && !/^https?:\/\/[^\s]+$/i.test(url)) errors.url = 'Ingrese una URL completa que comience con http:// o https://.';
   if (rif && !/^[VEJG]-?\d{7,9}-?\d$/i.test(rif)) errors.rif = 'Ingrese un RIF válido, por ejemplo J-12345678-9.';
-  if (phone1 && !/^[+\d][\d\s()-]{5,19}$/.test(phone1)) errors.phone_1 = 'Ingrese un teléfono válido.';
-  if (phone2 && !/^[+\d][\d\s()-]{5,19}$/.test(phone2)) errors.phone_2 = 'Ingrese un teléfono válido.';
+  if (phone1 && !/^(?:\+?\d{1,3}|\(\+?\d{1,3}\))[\d\s()-]{5,19}$/.test(phone1)) errors.phone_1 = 'Ingrese un teléfono válido.';
+  if (phone2 && !/^(?:\+?\d{1,3}|\(\+?\d{1,3}\))[\d\s()-]{5,19}$/.test(phone2)) errors.phone_2 = 'Ingrese un teléfono válido.';
   if (mask && !mask.includes('#')) errors.mask_phone = 'La máscara debe contener marcadores #.';
   if (Object.prototype.hasOwnProperty.call(source, 'max_height_logo')) {
     const height = Number(source.max_height_logo);
@@ -59,7 +59,7 @@ export function validateLaboratoryIdentity(value) {
       if (Object.prototype.hasOwnProperty.call(qr, field) && (typeof qr[field] !== 'string' || qr[field].length > maximum)) errors['settingQR.' + field] = 'El valor no puede superar ' + maximum + ' caracteres.';
     });
     if (qr.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(qr.email.trim())) errors['settingQR.email'] = 'Ingrese un correo de contacto válido.';
-    if (qr.phone && !/^[+\d][\d\s()-]{5,19}$/.test(qr.phone.trim())) errors['settingQR.phone'] = 'Ingrese un teléfono de contacto válido.';
+    if (qr.phone && !/^(?:\+?\d{1,3}|\(\+?\d{1,3}\))[\d\s()-]{5,19}$/.test(qr.phone.trim())) errors['settingQR.phone'] = 'Ingrese un teléfono de contacto válido.';
   }
   return errors;
 }
