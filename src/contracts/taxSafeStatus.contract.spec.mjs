@@ -1,0 +1,13 @@
+﻿import fs from "node:fs";
+import assert from "node:assert/strict";
+const view = fs.readFileSync("src/views/TaxesView.vue", "utf8");
+const service = fs.readFileSync("src/services/taxService.js", "utf8");
+const state = fs.readFileSync("src/components/tax/TaxStateDialog.vue", "utf8");
+assert.ok(!view.includes("TaxDeleteDialog"), "No debe existir TaxDeleteDialog");
+assert.ok(!view.includes("deleteTax"), "No debe existir deleteTax");
+assert.ok(!service.includes('method:"DELETE"'), "No debe existir DELETE");
+assert.ok(view.includes("TaxStateDialog"), "Debe existir TaxStateDialog");
+assert.ok(view.includes("changeState"), "Debe existir el cambio de estado confirmado");
+assert.ok(view.includes("{hide:!row.hide}"), "El estado debe enviar exclusivamente hide");
+assert.ok(state.includes("BioNexusStateDialog"), "Debe usarse el dialogo compartido de Estado");
+console.log("Tax safe status Frontend contract approved.");

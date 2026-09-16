@@ -271,7 +271,7 @@ const routes = [
         path: "configuration/taxes",
         name: "configuration-taxes",
         component: TaxesView,
-        meta: { requiresAuth: true, permissions: ["tax.read"], title: "Impuestos", description: "Administra los porcentajes y reglas de aplicación de impuestos." },
+        meta: { requiresAuth: true, permissions: ["tax.read"], title: "Impuestos", description: "Administra los porcentajes y reglas de aplicación de impuestos.", breadcrumb: ["Configuración", "Facturación", "Impuestos"] },
       },
       {
         path: "configuration/currencies",

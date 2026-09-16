@@ -1,0 +1,4 @@
+<template><BioNexusStateDialog ref="box" :saving="saving" @confirm="record => emit('confirm',record)"></BioNexusStateDialog></template>
+<script setup>
+import{ref}from"vue";import BioNexusStateDialog from"@/components/ui/BioNexusStateDialog.vue";defineProps({saving:Boolean});const emit=defineEmits(["confirm"]),box=ref(null),configuration={isInactive:record=>record?.hide===true,activateTitle:"Activar impuesto",deactivateTitle:"Inactivar impuesto",activateMessage:"El impuesto volverá a estar disponible en nuevas selecciones operativas.",deactivateMessage:"El registro permanecerá visible en este catálogo, pero no estará disponible en nuevas selecciones operativas.",label:record=>record?.description||"Registro seleccionado"};function open(record){box.value?.open(record,configuration)}function close(){box.value?.close()}function clearError(){box.value?.clearError()}function setError(v){box.value?.setError(v)}defineExpose({open,close,clearError,setError});
+</script>

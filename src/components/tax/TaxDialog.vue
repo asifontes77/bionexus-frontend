@@ -1,77 +1,18 @@
 <template>
-  <BioNexusDialog ref="box" :title="mode === 'create' ? 'Nuevo impuesto' : 'Editar impuesto'" kicker="Configuracion" size="compact" @close="reset">
-    <form class="tax-form" @submit.prevent="submit">
-      <div v-if="error" class="bio-nexus-message bio-nexus-message-error">{{ error }}</div>
-      <BioNexusFormField label="Descripcion" field-id="tax-description" required :error="errors.description">
-        <input id="tax-description" v-model="form.description" class="bio-nexus-field" maxlength="20" :disabled="saving" autofocus>
-      </BioNexusFormField>
-      <BioNexusFormField label="Porcentaje" field-id="tax-value" required :error="errors.value">
-        <input id="tax-value" v-model.trim="form.value" class="bio-nexus-field" type="text" inputmode="decimal" :placeholder="percentagePlaceholder" :disabled="saving">
-      </BioNexusFormField>
-      <div class="tax-options">
-        <label><input v-model="form.only_dollars" type="checkbox" :disabled="saving"> Solo dolares</label>
-        <label><input v-model="form.always_subtotal" type="checkbox" :disabled="saving"> Fijo en subtotal</label>
-        <label><input v-model="form.hide" type="checkbox" :disabled="saving"> Ocultar</label>
-      </div>
-    </form>
-    <template #footer>
-      <BioNexusActionButton variant="secondary" :disabled="saving" @click="close">Cancelar</BioNexusActionButton>
-      <BioNexusActionButton variant="primary" :loading="saving" @click="submit">Guardar</BioNexusActionButton>
-    </template>
+  <BioNexusDialog ref="box" size="standard" :kicker="mode === 'create' ? 'Nuevo registro' : 'Editar registro'" :title="mode === 'create' ? 'Crear impuesto' : 'Editar impuesto'">
+    <section class="tax-dialog-body">
+      <BioNexusFormField label="Descripción" field-id="tax-description" :error="descriptionError" :help="draft.description.length + ' de 20 caracteres'" required><input id="tax-description" ref="firstInput" v-model="draft.description" class="bio-nexus-field" maxlength="20" autocomplete="off" :disabled="saving" @input="syncDirty"></BioNexusFormField>
+      <BioNexusFormField label="Porcentaje" field-id="tax-value" :error="valueError" required><input id="tax-value" v-model.trim="draft.value" class="bio-nexus-field" type="text" inputmode="decimal" :placeholder="percentagePlaceholder" :disabled="saving" @input="syncDirty"></BioNexusFormField>
+      <div class="tax-options"><BioNexusCheckbox v-model="draft.only_dollars" label="Solo d&#243;lares" :disabled="saving" @change="syncDirty" /><BioNexusCheckbox v-model="draft.always_subtotal" label="Fijo en subtotal" :disabled="saving" @change="syncDirty" /></div>
+      <div v-if="errorMessage" class="bio-nexus-message bio-nexus-message-error" role="alert">{{ errorMessage }}</div>
+    </section>
+    <template #footer><button type="button" class="bio-nexus-action bio-nexus-action-secondary" :disabled="saving" @click="close"><BioNexusActionIcon action="cancel"></BioNexusActionIcon><span>Cancelar</span></button><button type="button" class="bio-nexus-action bio-nexus-action-primary tax-dialog-submit" :disabled="submitDisabled" @click="submit"><BioNexusActionIcon action="save"></BioNexusActionIcon><span>{{ saving ? 'Guardando...' : mode === 'create' ? 'Crear' : 'Guardar' }}</span></button></template>
   </BioNexusDialog>
 </template>
-
 <script setup>
-import { computed, reactive, ref } from "vue";
-import BioNexusActionButton from "@/components/ui/BioNexusActionButton.vue";
-import BioNexusDialog from "@/components/ui/BioNexusDialog.vue";
-import BioNexusFormField from "@/components/ui/BioNexusFormField.vue";
-import { formatRegionalNumber, parseRegionalNumber } from "@/services/regionalFormatter";
-import { useRegionalSettingsStore } from "@/stores/regionalSettings";
-
-const props = defineProps({ saving: Boolean });
-const emit = defineEmits(["submit"]);
-const regionalSettings = useRegionalSettingsStore();
-const box = ref(null);
-const mode = ref("create");
-const record = ref(null);
-const error = ref("");
-const form = reactive({ description: "", value: "0", only_dollars: false, always_subtotal: false, hide: false });
-const errors = reactive({ description: "", value: "" });
-const percentagePlaceholder = computed(() => { const digits = 2; return "0" + (digits > 0 ? regionalSettings.settings.decimal_separator + "0".repeat(digits) : ""); });
-
-function displayPercentage(value) {
-  return formatRegionalNumber(value, regionalSettings.settings, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
-function reset() {
-  mode.value = "create";
-  record.value = null;
-  error.value = "";
-  Object.assign(form, { description: "", value: displayPercentage(0), only_dollars: false, always_subtotal: false, hide: false });
-  Object.assign(errors, { description: "", value: "" });
-}
-function openCreate() { reset(); box.value?.open(); }
-function openEdit(value) {
-  reset(); mode.value = "edit"; record.value = value;
-  Object.assign(form, value, { value: displayPercentage(value?.value) });
-  box.value?.open();
-}
-function submit() {
-  if (props.saving) return;
-  const numericValue = parseRegionalNumber(form.value, regionalSettings.settings);
-  errors.description = form.description.trim() ? "" : "La descripcion es obligatoria.";
-  errors.value = numericValue !== null && numericValue >= 0 && numericValue <= 100 ? "" : "Use un porcentaje entre 0 y 100 con separador " + regionalSettings.settings.decimal_separator + ".";
-  if (errors.description || errors.value) return;
-  emit("submit", { mode: mode.value, record: record.value, values: { ...form, description: form.description.trim(), value: numericValue } });
-}
-function close() { box.value?.close(); }
-function setError(value) { error.value = value; }
-function clearError() { error.value = ""; }
-defineExpose({ openCreate, openEdit, close, setError, clearError });
+import{computed,nextTick,reactive,ref}from"vue";import BioNexusCheckbox from"@/components/ui/BioNexusCheckbox.vue";import BioNexusActionIcon from"@/components/ui/BioNexusActionIcon.vue";import BioNexusDialog from"@/components/ui/BioNexusDialog.vue";import BioNexusFormField from"@/components/ui/BioNexusFormField.vue";import{formatRegionalNumber,parseRegionalNumber}from"@/services/regionalFormatter";import{useRegionalSettingsStore}from"@/stores/regionalSettings";
+const props=defineProps({saving:Boolean,canCreate:Boolean,canUpdate:Boolean}),emit=defineEmits(["submit"]),settings=useRegionalSettingsStore(),box=ref(null),firstInput=ref(null),mode=ref("create"),current=ref(null),attempted=ref(false),errorMessage=ref(""),original=ref(""),dirty=ref(false),draft=reactive({description:"",value:"0",only_dollars:false,always_subtotal:false});
+const numericValue=computed(()=>parseRegionalNumber(draft.value,settings.settings)),values=computed(()=>({description:draft.description.trim(),value:numericValue.value,only_dollars:Boolean(draft.only_dollars),always_subtotal:Boolean(draft.always_subtotal)})),signature=computed(()=>JSON.stringify(values.value)),percentagePlaceholder=computed(()=>"0"+settings.settings.decimal_separator+"00"),descriptionError=computed(()=>attempted.value&&!values.value.description?"La descripción es obligatoria.":""),valueError=computed(()=>attempted.value&&(numericValue.value===null||numericValue.value<0||numericValue.value>100)?"Use un porcentaje entre 0 y 100 con separador "+settings.settings.decimal_separator+".":""),submitDisabled=computed(()=>props.saving||(mode.value==="create"?!props.canCreate:!props.canUpdate||!dirty.value));
+function display(v){return formatRegionalNumber(v,settings.settings,{minimumFractionDigits:2,maximumFractionDigits:2})}function syncDirty(){dirty.value=signature.value!==original.value}function assign(row){draft.description=row?.description||"";draft.value=display(row?.value||0);draft.only_dollars=Boolean(row?.only_dollars);draft.always_subtotal=Boolean(row?.always_subtotal)}async function show(){await box.value?.open();await nextTick();original.value=signature.value;dirty.value=false;firstInput.value?.focus()}async function openCreate(){mode.value="create";current.value=null;assign(null);attempted.value=false;errorMessage.value="";await show()}async function openEdit(row){mode.value="edit";current.value=row;assign(row);attempted.value=false;errorMessage.value="";await show()}function submit(){attempted.value=true;if(descriptionError.value||valueError.value||submitDisabled.value)return;emit("submit",{mode:mode.value,record:current.value,values:values.value})}function close(){box.value?.close()}function setError(v){errorMessage.value=String(v||"")}function clearError(){errorMessage.value=""}defineExpose({openCreate,openEdit,close,setError,clearError});
 </script>
-
-<style scoped>
-.tax-form { display: grid; gap: var(--bio-nexus-space-4); padding: var(--bio-nexus-space-4); }
-.tax-options { display: grid; gap: var(--bio-nexus-space-2); }
-.tax-options label { display: flex; align-items: center; gap: var(--bio-nexus-space-2); min-height: 34px; color: var(--bio-nexus-color-text-secondary); font-weight: var(--bio-nexus-font-weight-bold); }
-</style>
+<style scoped>.tax-dialog-body{display:grid;grid-template-columns:minmax(0,2fr) minmax(150px,1fr);gap:var(--bio-nexus-space-3)}.tax-options,.bio-nexus-message{grid-column:1/-1}.tax-options{display:flex;gap:var(--bio-nexus-space-4);flex-wrap:wrap}.tax-options label{display:inline-flex;align-items:center;gap:var(--bio-nexus-space-2);min-height:34px;color:var(--bio-nexus-color-text-secondary);font-weight:var(--bio-nexus-font-weight-bold)}.tax-dialog-submit:disabled{opacity:.58!important;cursor:not-allowed!important}@media(max-width:620px){.tax-dialog-body{grid-template-columns:1fr}}</style>

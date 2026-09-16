@@ -28,6 +28,8 @@ const routeByLabel = Object.freeze({
   "Laboratorio": { name: "configuration-laboratory-module" },
   "Cat\u00e1logos": { name: "configuration-catalogs" },
   "Sistema": { name: "configuration-system-module" },
+  "Facturación": { name: "configuration-billing-module" },
+
 });
 const labels = computed(() => {
   const currentName = String(route.name || "");

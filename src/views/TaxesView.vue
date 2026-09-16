@@ -10,13 +10,14 @@
       <BioNexusDataGrid
         v-else
         class="tax-grid"
-        :row-data="rows"
+        :row-data="gridRows"
         :column-defs="columns"
         :default-col-def="defaults"
         :components="components"
         :get-row-id="getRowId"
         :search-enabled="true"
         v-model:search-model-value="search"
+        :quick-filter-text="search"
         search-placeholder="Buscar impuesto"
         :refresh-enabled="true"
         :refreshing="loading"
@@ -54,8 +55,9 @@
       />
     </section>
 
-    <TaxDialog ref="formDialog" :saving="saving" @submit="save" />
-    <TaxDeleteDialog ref="deleteDialog" :saving="saving" @confirm="remove" />
+    <TaxDialog ref="formDialog" :saving="saving" :can-create="canCreate" :can-update="canUpdate" @submit="save" />
+    <TaxStateDialog ref="stateDialog" :saving="saving" @confirm="changeState" />
+
   </section>
 </template>
 
@@ -68,9 +70,10 @@ import BioNexusOptionFilter from "@/components/grid/BioNexusOptionFilter.vue";
 import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
 import BioNexusContextMenu from "@/components/ui/BioNexusContextMenu.vue";
 import TaxDialog from "@/components/tax/TaxDialog.vue";
-import TaxDeleteDialog from "@/components/tax/TaxDeleteDialog.vue";
+import TaxStateDialog from "@/components/tax/TaxStateDialog.vue";
+
 import { useBioNexusToast } from "@/composables/useBioNexusToast";
-import { createTax, deleteTax, getTaxes, getTaxErrorMessage, updateTax } from "@/services/taxService";
+import { createTax, getTaxes, getTaxErrorMessage, updateTax } from "@/services/taxService";
 import { useAuthorizationStore } from "@/stores/authorization";
 import { formatRegionalNumber } from "@/services/regionalFormatter";
 import { useRegionalSettingsStore } from "@/stores/regionalSettings";
@@ -84,13 +87,16 @@ const saving = ref(false);
 const loadError = ref("");
 const search = ref("");
 const formDialog = ref(null);
-const deleteDialog = ref(null);
+const stateDialog = ref(null);
+
 const contextMenu = ref(null);
 const contextState = ref({ open: false, x: 0, y: 0, row: null });
 
+const gridRows = computed(() => rows.value.map((row) => ({ ...row, isActive: !row.hide, searchValue: [row.description, formatRegionalNumber(row.value, regionalSettings.settings, { minimumFractionDigits: 2, maximumFractionDigits: 2 }), row.only_dollars ? "Si" : "No", row.always_subtotal ? "Si" : "No", row.hide ? "Inactivo" : "Activo"].join(" ") })));
 const canCreate = computed(() => authorization.hasPermission("tax.create"));
 const canUpdate = computed(() => authorization.hasPermission("tax.update"));
-const canDelete = computed(() => authorization.hasPermission("tax.delete"));
+const canChangeStatus = computed(() => authorization.hasPermission("tax.change-status"));
+
 const defaults = Object.freeze({ sortable: true, filter: true, resizable: true, suppressHeaderMenuButton: true });
 const components = Object.freeze({ BioNexusGridActionsCell, BioNexusGridToggleCell });
 const yesNo = Object.freeze([{ value: true, label: "Si" }, { value: false, label: "No" }]);
@@ -102,8 +108,8 @@ const contextItems = computed(() => {
     { key: "edit", label: "Editar", icon: "edit", visible: canUpdate.value, disabled: saving.value, action: () => formDialog.value?.openEdit(row) },
     { key: "toggle-only-dollars", label: row.only_dollars ? "Desactivar Solo dolares" : "Activar Solo dolares", icon: row.only_dollars ? "deactivate" : "activate", visible: canUpdate.value, disabled: saving.value, action: () => toggleBoolean(row, "only_dollars") },
     { key: "toggle-always-subtotal", label: row.always_subtotal ? "Desactivar Fijo en subtotal" : "Activar Fijo en subtotal", icon: row.always_subtotal ? "deactivate" : "activate", visible: canUpdate.value, disabled: saving.value, action: () => toggleBoolean(row, "always_subtotal") },
-    { key: "toggle-hide", label: row.hide ? "Mostrar impuesto" : "Ocultar impuesto", icon: row.hide ? "activate" : "deactivate", visible: canUpdate.value, disabled: saving.value, action: () => toggleBoolean(row, "hide") },
-    { key: "delete", label: "Eliminar", icon: "delete", visible: canDelete.value, disabled: saving.value, action: () => deleteDialog.value?.open(row) },
+    { key: "change-status", label: row.hide ? "Activar" : "Inactivar", icon: row.hide ? "activate" : "deactivate", visible: canChangeStatus.value, disabled: saving.value, action: () => stateDialog.value?.open(row) },
+
   ];
 });
 function toggleColumn(field, headerName, width, onLabel = "Si", offLabel = "No", exportOptions = {}) {
@@ -128,11 +134,12 @@ function toggleColumn(field, headerName, width, onLabel = "Si", offLabel = "No",
   };
 }
 const columns = computed(() => [
+  { colId: "searchValue", valueGetter: ({ data }) => data?.searchValue || "", hide: true, suppressColumnsToolPanel: true, filter: false, sortable: false },
   { field: "description", headerName: "Descripcion", minWidth: 220, flex: 1 },
   { field: "value", headerName: "Porcentaje", width: 150, minWidth: 150, headerClass: "tax-center-header", cellClass: "tax-center-cell", valueFormatter: ({ value }) => `${formatRegionalNumber(value, regionalSettings.settings, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} %` },
   toggleColumn("only_dollars", "Solo dolares", 170),
   toggleColumn("always_subtotal", "Fijo en subtotal", 180, "Si", "No", { exportAlignment: "center", exportHeaderAlignment: "center", cellStyle: { textAlign: "center" } }),
-  toggleColumn("hide", "Oculto", 150),
+  { colId:"isActive",headerName:"Estado",width:150,filter:BioNexusOptionFilter,filterParams:{options:[{value:true,label:"Activo"},{value:false,label:"Inactivo"}]},valueGetter:({data})=>!data?.hide,headerClass:"tax-center-header",cellClass:"tax-center-cell",valueFormatter:({value})=>value?"Activo":"Inactivo",cellRenderer:BioNexusGridToggleCell,cellRendererParams:{onLabel:"Activo",offLabel:"Inactivo",ariaLabel:"Estado",disabled:()=>!canChangeStatus.value||saving.value,onToggle:row=>stateDialog.value?.open(row)} },
   {
     headerName: "Acciones",
     colId: "actions",
@@ -151,7 +158,7 @@ const columns = computed(() => [
     cellRendererParams: {
       actions: [
         { key: "edit", label: "Editar", icon: "edit", visible: () => canUpdate.value, disabled: () => saving.value, onClick: (row) => formDialog.value?.openEdit(row) },
-        { key: "delete", label: "Eliminar", icon: "delete", visible: () => canDelete.value, disabled: () => saving.value, onClick: (row) => deleteDialog.value?.open(row) },
+
       ],
     },
   },
@@ -164,7 +171,7 @@ function replace(value) {
   rows.value = next.sort((left, right) => left.description.localeCompare(right.description));
 }
 async function openContextMenu({ event, row }) {
-  if (!event || !row || (!canUpdate.value && !canDelete.value)) return;
+  if (!event || !row || !canUpdate.value) return;
   event.preventDefault();
   contextState.value = { open: true, x: event.clientX, y: event.clientY, row };
   await nextTick();
@@ -196,6 +203,7 @@ async function toggleBoolean(row, field) {
   catch (error) { toast.error(getTaxErrorMessage(error, "No fue posible actualizar el impuesto.")); }
   finally { saving.value = false; }
 }
+async function changeState(row) { if(!canChangeStatus.value||saving.value||!row)return;saving.value=true;stateDialog.value?.clearError();try{const saved=await updateTax(row.id,{hide:!row.hide});replace(saved);stateDialog.value?.close();toast.success(row.hide?"Impuesto activado correctamente.":"Impuesto inactivado correctamente.")}catch(error){stateDialog.value?.setError(getTaxErrorMessage(error,"No fue posible cambiar el estado del impuesto."))}finally{saving.value=false} }
 async function save(payload) {
   if (saving.value) return;
   saving.value = true;
@@ -209,20 +217,6 @@ async function save(payload) {
   catch (error) { formDialog.value?.setError(getTaxErrorMessage(error, "No fue posible guardar el impuesto.")); }
   finally { saving.value = false; }
 }
-async function remove(record) {
-  if (saving.value || !record) return;
-  saving.value = true;
-  deleteDialog.value?.clearError();
-  try {
-    await deleteTax(record.id);
-    rows.value = rows.value.filter((row) => row.id !== record.id);
-    deleteDialog.value?.close();
-    toast.success("Impuesto eliminado correctamente.");
-  }
-  catch (error) { deleteDialog.value?.setError(getTaxErrorMessage(error, "No fue posible eliminar el impuesto.")); }
-  finally { saving.value = false; }
-}
-
 onMounted(load);
 </script>
 
