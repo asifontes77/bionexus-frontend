@@ -16,6 +16,11 @@ export async function updateSampleType(id, values) {
   return normalizeSampleType(await apiRequest(`${SAMPLE_TYPES_PATH}/${id}`, { method: 'PATCH', body: normalizeSampleTypePayload(values) }))
 }
 
+export async function changeSampleTypeStatus(id, annulled) {
+  if (!Number.isInteger(id) || id <= 0) throw new Error('SAMPLE_TYPE_ID_INVALID')
+  if (typeof annulled !== 'boolean') throw new Error('SAMPLE_TYPE_ANNULLED_INVALID')
+  return normalizeSampleType(await apiRequest(`${SAMPLE_TYPES_PATH}/${id}`, { method: 'PATCH', body: { annulled } }))
+}
 export function sampleTypeError(error, fallback) {
   const messages = {
     SAMPLE_TYPE_ID_INVALID: 'El identificador no es valido.',
@@ -24,6 +29,7 @@ export function sampleTypeError(error, fallback) {
     SAMPLE_TYPE_DESCRIPTION_TOO_LONG: 'La descripción admite hasta 50 caracteres.',
     SAMPLE_TYPE_DESCRIPTION_ALREADY_EXISTS: 'Ya existe un tipo de muestra con esa descripción.',
     SAMPLE_TYPE_UPDATE_REQUIRED: 'No existen cambios para guardar.',
+    SAMPLE_TYPE_ANNULLED_INVALID: 'El estado indicado no es valido.',
     SAMPLE_TYPE_FIELD_UNKNOWN: 'Existen campos no permitidos.',
     SAMPLE_TYPE_PERMISSION_REQUIRED: 'La cuenta no tiene permiso para realizar esta operacion.'
   }

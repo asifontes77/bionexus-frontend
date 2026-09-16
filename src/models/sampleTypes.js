@@ -11,7 +11,7 @@ export function normalizeSampleType(value = {}) {
   const id = positiveId(value.id)
   const description = normalizedText(value.description)
   if (id === null || description === '') return null
-  return { id, description }
+  return { id, description, annulled: Boolean(value.annulled) }
 }
 
 function extractRows(value, depth = 0, visited = new Set()) {
