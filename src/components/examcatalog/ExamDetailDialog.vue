@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <BioNexusDialog ref="dialog" size="wide" kicker="Detalle del catálogo" title="Ver examen" :subtitle="exam?.description || ''" close-on-backdrop @close="handleClosed">
 <section v-if="exam" class="exam-detail-content">
         <section class="exam-detail-summary">
@@ -11,7 +11,7 @@
         </section>
         <section class="exam-detail-section">
           <h3>Tarifas</h3>
-          <div class="exam-price-grid"><article v-for="tariff in tariffFields" :key="tariff.id"><span>{{ tariff.name }} (USD)</span><strong>{{ money(exam[`cost${tariff.position}`]) }}</strong></article></div>
+          <div class="exam-price-grid"><article v-for="tariff in tariffFields" :key="tariff.id"><span>{{ tariff.name }} ({{ baseCurrencySymbol }})</span><strong>{{ money(exam[`cost${tariff.position}`]) }}</strong></article></div>
         </section>
         <section class="exam-detail-section">
           <h3>Configuración del resultado</h3>
@@ -32,6 +32,7 @@ import BioNexusDialog from "@/components/ui/BioNexusDialog.vue";
 const props = defineProps({ taxes: { type: Array, default: () => [] }, tariffs: { type: Array, default: () => [] } });
 const dialog = ref(null); const exam = ref(null); const group = ref(null);
 const regionalSettings = useRegionalSettingsStore();
+const baseCurrencySymbol = computed(() => String(regionalSettings.settings.base_currency_symbol || 'USD').trim() || 'USD');
 const tariffFields = computed(() => props.tariffs.filter(t => Number(t.position) >= 1 && Number(t.position) <= 6).sort((a,b) => Number(a.position) - Number(b.position)));
 const tax = computed(() => props.taxes.find((item) => Number(item.id) === Number(exam.value?.tax_id)) ?? null);
 const taxLabel = computed(() => { const digits = Number(regionalSettings.settings.monetary_decimals) || 0; return tax.value ? tax.value.description + " - " + formatRegionalNumber(tax.value.value || 0, regionalSettings.settings, { minimumFractionDigits: digits, maximumFractionDigits: digits }) + " %" : "Impuesto no disponible"; });

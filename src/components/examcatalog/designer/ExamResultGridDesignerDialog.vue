@@ -1,5 +1,5 @@
 ﻿<template>
-  <BioNexusDialog ref="dialog" size="fullscreen" kicker="Laboratorio experimental" title="Disenador matricial de resultados" :subtitle="exam?.description || ''" body-flush body-scroll="hidden" :prevent-close="dirty" @before-close="requestClose" @close="handleClosed">
+  <BioNexusDialog ref="dialog" size="fullscreen" kicker="Diseño de resultados" title="Disenador matricial de resultados" :subtitle="exam?.description || ''" body-flush body-scroll="hidden" :prevent-close="dirty" @before-close="requestClose" @close="handleClosed">
     <template #header-actions><span class="pilot-badge">Formato en Bio Nexus</span></template>
     <section class="grid-designer-shell">
       <nav class="grid-designer-toolbar" aria-label="Herramientas del disenador matricial">
@@ -31,7 +31,7 @@
           <button type="button" class="row-template" @click="applyRowFormat('observation')" :disabled="!canApplyRowStructure"><b>Observaciones</b><small>Etiqueta y area amplia de captura</small><i><span></span><span class="span-3"></span></i></button>
           <button type="button" class="row-template antibiogram-template" @click="applyAntibiogramModule" :disabled="!canApplyRowStructure"><b>Antibiograma</b><small>Bloque dinamico de cultivo, microorganismos, sensibilidad y MIC</small><i><span class="span-4"></span></i></button><span>Doble clic para editar una celda.</span><span>Arrastra encabezados para ajustar ancho y alto.</span><span>Selecciona un rango para combinar o dar formato.</span>
           <section class="field-summary"><strong>Campos del reporte</strong><article v-for="field in fieldList" :key="field.key" class="field-summary-item" role="button" tabindex="0" :title="'Ir a '+field.cell" @click="selectReportFieldCell(field)" @keydown.enter.prevent="selectReportFieldCell(field)" @keydown.space.prevent="selectReportFieldCell(field)"><b>{{ field.label }}</b><small>{{ field.key }} | {{ field.source==='formula' ? 'Calculado' : 'Manual' }} | {{ field.cell }}</small><code v-if="field.source==='formula'">{{ field.formula }}</code></article><span v-if="fieldList.length===0">Aun no hay campos configurados.</span></section>
-          <small class="local-note">Persistencia temporal por examen en este navegador. No modifica bionexus.</small>
+          <small class="local-note">Diseñador matricial aprobado para configurar el formato de resultados del examen.</small>
         </aside>
         <div class="grid-sheet-frame"><div ref="sheetHost" class="grid-sheet-host bio-nexus-grid-sheet-scroll"></div></div>
       </section>

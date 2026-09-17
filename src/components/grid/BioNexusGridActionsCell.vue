@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="bio-nexus-grid-action-list" role="group" aria-label="Acciones de la fila">
     <button
       v-for="action in visibleActions"
@@ -11,7 +11,7 @@
       :aria-label="action.tooltip || action.label"
       @pointerdown.stop
       @mousedown.prevent.stop
-      @click.stop="runAction(action)"
+      @click.stop="runAction(action, $event)"
     >
       <BioNexusIcon :name="resolveIcon(action)" :size="20" />
     </button>
@@ -78,7 +78,9 @@ function isDisabled(action) {
     : action.disabled === true;
 }
 
-function runAction(action) {
+function runAction(action, event) {
+  event?.preventDefault?.();
+  event?.stopPropagation?.();
   if (!isDisabled(action) && typeof action.onClick === "function") {
     action.onClick(props.params.data);
   }
