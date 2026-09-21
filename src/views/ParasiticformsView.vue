@@ -115,7 +115,7 @@ const dataGrid = ref(null);
 
 const canCreate = computed(() => authorizationStore.hasPermission("parasiticforms.create"));
 const canUpdateDescription = computed(() => authorizationStore.hasPermission("parasiticforms.update"));
-const canChangeStatus = computed(() => authorizationStore.hasPermission("parasiticforms.change-status"));
+const canChangeStatus = computed(() => authorizationStore.hasPermission("parasiticforms.update"));
 const gridRows = computed(() => parasiticforms.value.map((record) => ({ ...record, isActive: !record.annulled })));
 const visibleGridRows = computed(() => {
   const search = searchText.value.trim().toLocaleLowerCase();

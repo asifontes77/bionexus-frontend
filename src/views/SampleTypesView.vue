@@ -25,7 +25,7 @@ import { useBioNexusToast } from '@/composables/useBioNexusToast'
 import { changeSampleTypeStatus, createSampleType, getSampleTypes, sampleTypeError, updateSampleType } from '@/services/sampleTypesService'
 import { useAuthorizationStore } from '@/stores/authorization'
 const authorization=useAuthorizationStore(),toast=useBioNexusToast(),rows=ref([]),loading=ref(false),saving=ref(false),loadError=ref(''),searchText=ref(''),formDialog=ref(null),stateDialog=ref(null),contextMenu=ref(null),contextState=ref({open:false,x:0,y:0,row:null})
-const canCreate=computed(()=>authorization.hasPermission('sample-types.create')),canUpdate=computed(()=>authorization.hasPermission('sample-types.update')),canChangeStatus=computed(()=>authorization.hasPermission('sample-types.change-status'))
+const canCreate=computed(()=>authorization.hasPermission('sample-types.create')),canUpdate=computed(()=>authorization.hasPermission('sample-types.update')),canChangeStatus=computed(()=>authorization.hasPermission('sample-types.update'))
 const contextItems=computed(()=>{const row=contextState.value.row;if(!row||(!canUpdate.value&&!canChangeStatus.value))return[];return[{key:'edit',label:'Editar',icon:'edit',visible:canUpdate.value,disabled:saving.value,action:()=>formDialog.value?.openEdit(row)},{key:'state',label:row.annulled?'Activar':'Inactivar',icon:row.annulled?'activate':'deactivate',visible:canChangeStatus.value,disabled:saving.value,action:()=>stateDialog.value?.open(row)}]})
 const defaultColDef=Object.freeze({sortable:true,filter:true,resizable:true,suppressHeaderMenuButton:true}),gridComponents=Object.freeze({BioNexusGridActionsCell,BioNexusGridToggleCell})
 const columnDefs=computed(()=>[

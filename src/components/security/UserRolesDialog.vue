@@ -3,7 +3,7 @@
     <template #toolbar>
       <section class="user-roles-toolbar">
         <BioNexusFormField label="Buscar rol" field-id="user-role-search">
-          <input id="user-role-search" v-model="searchText" class="bio-nexus-field" type="search" autocomplete="off" placeholder="Codigo, nombre o descripcion" />
+          <input id="user-role-search" v-model="searchText" class="bio-nexus-field" type="search" autocomplete="off" placeholder="Nombre o descripción" />
         </BioNexusFormField>
         <span><strong>{{ draftRoleIds.length }}</strong> seleccionados</span>
       </section>
@@ -19,7 +19,7 @@
         <div v-else class="role-assignment-list">
           <label v-for="role in filteredRoles" :key="role.id" class="role-assignment-option" :class="{ 'role-assignment-option-selected': isSelected(role.id), 'role-assignment-option-disabled': !role.isActive || user?.hidden }">
             <BioNexusCheckbox :checked="isSelected(role.id)" :disabled="!role.isActive || !canEdit || !canAssign || saving" stop-propagation @change="emit('toggle-role', role)" />
-            <span class="role-assignment-copy"><strong>{{ role.name }}</strong><small>{{ role.code }} - {{ role.description || "Sin descripcion" }}</small></span>
+            <span class="role-assignment-copy"><strong>{{ role.name }}</strong><small>{{ role.description || "Sin descripción" }}</small></span>
             <span class="bio-nexus-badge" :class="role.isActive ? 'bio-nexus-badge-success' : 'bio-nexus-badge-warning'">{{ role.isActive ? "Activo" : "Inactivo" }}</span>
           </label>
         </div>

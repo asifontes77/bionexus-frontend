@@ -1,7 +1,6 @@
 <template>
   <BioNexusDialog ref="dialog" size="standard" dialog-class="role-create-dialog" kicker="Nuevo registro" title="Crear rol" @close="handleClosed">
     <form id="role-create-form" class="role-dialog-form" novalidate @submit.prevent="emit('submit')">
-      <BioNexusFormField label="Codigo" field-id="create-role-code" :error="createRoleCodeError" help="Letras minusculas, numeros, puntos, guiones y guiones bajos." required><input id="create-role-code" v-model.trim="createRoleForm.code" class="bio-nexus-field" type="text" maxlength="60" autocomplete="off" placeholder="Ejemplo: supervisor" :disabled="creatingRole" :aria-invalid="createRoleCodeError ? 'true' : undefined" required /></BioNexusFormField>
       <BioNexusFormField label="Nombre" field-id="create-role-name" :error="createRoleNameError" required><input id="create-role-name" v-model.trim="createRoleForm.name" class="bio-nexus-field" type="text" maxlength="100" autocomplete="off" placeholder="Nombre visible del rol" :disabled="creatingRole" :aria-invalid="createRoleNameError ? 'true' : undefined" required /></BioNexusFormField>
       <BioNexusFormField class="dialog-field-wide" label="Descripcion" field-id="create-role-description" :help="`${createRoleForm.description.length} de 250 caracteres`" wide><textarea id="create-role-description" v-model="createRoleForm.description" class="bio-nexus-field" maxlength="250" rows="4" placeholder="Descripcion opcional" :disabled="creatingRole"></textarea></BioNexusFormField>
       <div v-if="createRoleError" class="dialog-field-wide bio-nexus-inline-message bio-nexus-message-error" role="alert">{{ createRoleError }}</div>
@@ -18,7 +17,7 @@ import { ref } from "vue";
 import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
 import BioNexusDialog from "@/components/ui/BioNexusDialog.vue";
 import BioNexusFormField from "@/components/ui/BioNexusFormField.vue";
-const props = defineProps({ creatingRole: Boolean, canCreateRoles: Boolean, createRoleForm: { type: Object, required: true }, createRoleCodeError: String, createRoleNameError: String, createRoleError: String, createRoleMessage: String });
+const props = defineProps({ creatingRole: Boolean, canCreateRoles: Boolean, createRoleForm: { type: Object, required: true }, createRoleNameError: String, createRoleError: String, createRoleMessage: String });
 const emit = defineEmits(["close", "submit"]);
 const dialog = ref(null);
 function showModal() { dialog.value?.open(); }

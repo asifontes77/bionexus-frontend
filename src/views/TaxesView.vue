@@ -95,7 +95,7 @@ const contextState = ref({ open: false, x: 0, y: 0, row: null });
 const gridRows = computed(() => rows.value.map((row) => ({ ...row, isActive: !row.hide, searchValue: [row.description, formatRegionalNumber(row.value, regionalSettings.settings, { minimumFractionDigits: 2, maximumFractionDigits: 2 }), row.only_dollars ? "Si" : "No", row.always_subtotal ? "Si" : "No", row.hide ? "Inactivo" : "Activo"].join(" ") })));
 const canCreate = computed(() => authorization.hasPermission("tax.create"));
 const canUpdate = computed(() => authorization.hasPermission("tax.update"));
-const canChangeStatus = computed(() => authorization.hasPermission("tax.change-status"));
+const canChangeStatus = computed(() => authorization.hasPermission("tax.update"));
 
 const defaults = Object.freeze({ sortable: true, filter: true, resizable: true, suppressHeaderMenuButton: true });
 const components = Object.freeze({ BioNexusGridActionsCell, BioNexusGridToggleCell });

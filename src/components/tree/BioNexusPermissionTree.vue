@@ -107,7 +107,7 @@
         v-if="selectable"
         #item-prepend-icon="slotValue"
       >
-        <BioNexusCheckbox v-if="getItemType(slotValue) === 'permission'" class="permission-tree-checkbox" :checked="isPermissionSelected(getPermissionId(slotValue))" :disabled="disabled || !getPermissionActive(slotValue)" stop-propagation @change="togglePermission(slotValue)" />
+        <BioNexusCheckbox v-if="getItemType(slotValue) === 'permission'" class="permission-tree-checkbox" :checked="isPermissionSelected(getPermission(slotValue))" :disabled="disabled || !getPermissionActive(slotValue)" stop-propagation @change="togglePermission(slotValue)" />
       </template>
     </Vue3TreeVue>
   </div>
@@ -254,7 +254,7 @@ const treeItems = computed(() =>
         "module:" +
         String(moduleItem.key),
       name: moduleItem.label,
-      expanded: true,
+      expanded: false,
       meta: {
         type: "module",
         module: moduleItem,
@@ -381,9 +381,19 @@ function getPermissionActive(slotValue) {
   );
 }
 
-function isPermissionSelected(permissionId) {
-  return selectedIdSet.value.has(
-    String(permissionId),
+function getPermissionSelectionIds(permission) {
+  if (!permission || typeof permission !== "object") return [permission];
+  if (Array.isArray(permission.activeMemberIds)) return permission.activeMemberIds;
+  if (Array.isArray(permission.memberIds)) return permission.memberIds;
+  return [permission.id];
+}
+
+function isPermissionSelected(permission) {
+  const permissionIds = getPermissionSelectionIds(permission).filter(
+    (permissionId) => permissionId !== null && permissionId !== undefined && permissionId !== "",
+  );
+  return permissionIds.length > 0 && permissionIds.every((permissionId) =>
+    selectedIdSet.value.has(String(permissionId)),
   );
 }
 
@@ -402,9 +412,7 @@ function getSelectedCount(slotValue) {
   return getActivePermissions(
     slotValue,
   ).filter((permission) =>
-    isPermissionSelected(
-      permission.id,
-    ),
+    isPermissionSelected(permission),
   ).length;
 }
 
@@ -752,5 +760,26 @@ function toggleModule(slotValue) {
   .permission-tree-module-heading strong {
     max-width: 100%;
   }
+}
+
+
+/* Las descripciones deben ser legibles completas en Asignar permisos y Ver catalogo. */
+.permission-tree-permission-copy {
+  min-width: 0;
+  max-width: none;
+  white-space: normal;
+}
+
+.permission-tree-permission-copy strong,
+.permission-tree-permission-copy small,
+.permission-tree-copy small {
+  display: block;
+  min-width: 0;
+  max-width: none;
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: normal;
 }
 </style>

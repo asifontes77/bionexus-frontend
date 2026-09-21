@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <section class="exam-catalog-page">
     <ExamGlobalSearch ref="globalSearch" v-model="globalSearchText" @select="locateGlobalResult" />
     <div v-if="loadError" class="bio-nexus-message bio-nexus-message-error"><strong>No fue posible cargar el catalogo.</strong><span>{{ loadError }}</span></div>
@@ -48,7 +48,7 @@ import { adjustExamPrices, bulkUpdateExams, createExam, createExamGroup, examCat
 import { useAuthorizationStore } from "@/stores/authorization";
 const auth=useAuthorizationStore(),toast=useBioNexusToast();
 const groups=ref([]),exams=ref([]),taxes=ref([]),tariffs=ref([]),selectedGroup=ref(null),selectedRows=ref([]),loadingGroups=ref(false),loadingExams=ref(false),saving=ref(false),loadError=ref(""),groupSearch=ref(""),examSearch=ref(""),globalSearchText=ref(""),groupsCollapsed=ref(false),groupDialog=ref(null),examDialog=ref(null),stateDialog=ref(null),bulkStateDialog=ref(null),detailDialog=ref(null),worksheetDialog=ref(null),resultGridDesignerDialog=ref(null),priceAdjustmentDialog=ref(null),globalSearch=ref(null),contextMenu=ref(null),gridApi=ref(null),contextMenuState=ref({open:false,x:0,y:0,type:"",row:null});
-const canCreate=computed(()=>auth.hasPermission("exam-catalog.create")),canUpdate=computed(()=>auth.hasPermission("exam-catalog.update")),canChangeStatus=computed(()=>auth.hasPermission("exam-catalog.change-status"));
+const canCreate=computed(()=>auth.hasPermission("exam-catalog.create")),canUpdate=computed(()=>auth.hasPermission("exam-catalog.update")),canChangeStatus=computed(()=>auth.hasPermission("exam-catalog.update"));
 const selectedGroupTitle=computed(()=>selectedGroup.value?`${selectedGroup.value.description} (${exams.value.length} ${exams.value.length===1?'examen':'exámenes'})`:"Seleccióna un grupo");
 const filteredGroups=computed(()=>{const q=groupSearch.value.trim().toLowerCase();return q?groups.value.filter(g=>g.description.toLowerCase().includes(q)):groups.value});
 const gridRows=computed(()=>{const q=examSearch.value.trim().toLowerCase();return exams.value.filter(x=>!q||[x.description,x.abbreviation,x.special_test?"especial":"",x.annulled?"inactivo":"activo"].some(v=>String(v).toLowerCase().includes(q))).map(x=>({...x,isActive:!x.annulled,isSpecial:Boolean(x.special_test)}))});

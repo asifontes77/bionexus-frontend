@@ -2,22 +2,7 @@
 <BioNexusDialog ref="dialog" size="standard" kicker="Editar rol" :title="selectedRole?.name || &quot;Rol&quot;" @close="handleDialogClosed">
 
         <div class="dialog-body role-dialog-form">
-                    <BioNexusFormField
-            label="Código"
-            field-id="edit-role-code"
-            help="El código identifica al rol y no puede modificarse."
-            disabled
-          >
-            <input
-              id="edit-role-code"
-              :value="selectedRole?.code || ''"
-              class="bio-nexus-field"
-              type="text"
-              aria-disabled="true"
-              aria-describedby="edit-role-code-help"
-              disabled
-            />
-          </BioNexusFormField>
+
 
                     <BioNexusFormField
             label="Nombre"

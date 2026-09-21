@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <section class="tariffs-page">
     <div v-if="loadError" class="bio-nexus-message bio-nexus-message-error">{{ loadError }}</div>
     <BioNexusDataGrid :row-data="rows" :column-defs="columnDefs" :default-col-def="defaultColDef" :components="gridComponents" :get-row-id="({data}) => String(data.id)" :search-enabled="true" v-model:search-model-value="search" search-placeholder="Buscar tarifa" :refresh-enabled="true" :refreshing="loading" :page-size="10" :page-size-selector="[10,20,50]" :min-grid-height="360" :max-grid-height="620" @refresh="load" @row-context-menu="openContextMenu" @grid-ready="rememberGrid">
@@ -44,8 +44,8 @@ const draft = reactive({ code:"", name:"", description:"" });
 const originalDraft = ref("");
 const canCreate = computed(() => auth.hasPermission("tariffs.create"));
 const canUpdate = computed(() => auth.hasPermission("tariffs.update"));
-const canChangeStatus = computed(() => auth.hasPermission("tariffs.change-status"));
-const canSetDefault = computed(() => auth.hasPermission("tariffs.set-default"));
+const canChangeStatus = computed(() => auth.hasPermission("tariffs.update"));
+const canSetDefault = computed(() => auth.hasPermission("tariffs.update"));
 const rows = computed(() => { const q=search.value.trim().toLowerCase(); return tariffs.value.filter(x => !q || [x.code,x.name,x.description,x.isDefault?'predeterminada':'',x.isActive?'activa':'inactiva'].some(v => String(v||'').toLowerCase().includes(q))); });
 const activeCount = computed(() => tariffs.value.filter(x => x.isActive).length);
 const draftSignature = computed(() => JSON.stringify({name:draft.name.trim(),description:draft.description.trim()}));

@@ -1,8 +1,5 @@
 <template>
   <BioNexusDialog ref="dialog" size="wide" dialog-class="role-permissions-dialog" body-class="role-permissions-dialog-body" kicker="Asignacion de permisos" :title="selectedRole?.name || 'Rol'" @close="handleClosed">
-    <template #header-actions>
-      <span v-if="selectedRole?.code" class="role-dialog-code">({{ selectedRole.code }})</span>
-    </template>
     <template #toolbar>
       <section class="role-permissions-toolbar">
         <BioNexusFormField label="Buscar permiso" field-id="role-permission-search">

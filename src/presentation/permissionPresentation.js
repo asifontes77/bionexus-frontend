@@ -1,49 +1,50 @@
-﻿const moduleLabels = Object.freeze({
-  general: "General",
+const moduleLabels = Object.freeze({
+  "patient-history": "Historia de pacientes",
+  "application-settings": "Configuración de la aplicación",
+  "dollar-value": "Valor del dólar",
+  "exam-catalog": "Catálogo de exámenes",
+  "security": "Seguridad y autorización",
+  "security-roles": "Administración de roles",
+  "security-users": "Administración de usuarios",
+  "laboratory": "Laboratorio",
+  "patient-admission": "Ingreso de pacientes",
+  "patient-results-email": "Laboratorio",
+  "type-payment": "Formas de pago",
   "worksheet-groups": "Grupos de hojas de trabajo",
-  "worksheet-group-items": "Elementos de grupos de hojas de trabajo",
+  "worksheet-group-items": "Grupos de hojas de trabajo",
+  "special-tests": "Laboratorios de referencia",
+  "special-test-items": "Laboratorios de referencia",
+  "tariffs": "Tarifas",
+  "tax": "Impuestos",
+  general: "General",
   parasiticforms: "Formas parasitarias",
   antibiotic: "Antibióticos",
   germs: "Gérmenes",
-  patients: "Pacientes",
-  security: "Seguridad y autorizaci\u00f3n",
   typepayment: "Formas de pago",
   currencies: "Monedas",
   routines: "Rutinas de exámenes",
   "sample-types": "Tipos de muestra",
-  "special-tests": "Laboratorios de referencia",
-  "special-test-items": "Pruebas asociadas",
 });
 
-const permissionLabels = Object.freeze({
+const permissionLabels = Object.freeze({  "patients.cancel": "Autorizar anulaciones de ingresos",
+  "patient-admission.close": "Registrar ingreso completo",
+  "patient-results-email.read": "Consultar correo de resultados",
+  "patient-results-email.send": "Enviar correo de resultados",
   "special-tests.read": "Consultar",
   "special-tests.create": "Crear",
   "special-tests.update": "Actualizar",
-  "special-tests.change-status": "Cambiar estado",
-  "special-test-items.read": "Consultar",
-  "special-test-items.create": "Crear",
-  "special-test-items.update": "Actualizar",
-  "special-test-items.delete": "Eliminar",
-  "parasiticforms.change-status": "Cambiar estado",
+  "worksheet-groups.read": "Consultar",
+  "worksheet-groups.create": "Crear",
+  "worksheet-groups.update": "Actualizar",
   "antibiotic.read": "Consultar",
+  "antibiotic.create": "Crear",
+  "antibiotic.update": "Actualizar",
   "germs.read": "Consultar",
   "germs.create": "Crear",
   "germs.update": "Actualizar",
-  "germs.change-status": "Cambiar estado",
-  "antibiotic.create": "Crear",
-  "antibiotic.update": "Actualizar",
-  "antibiotic.change-status": "Cambiar estado",
-  "parasiticforms.create": "Crear",
   "parasiticforms.read": "Consultar",
+  "parasiticforms.create": "Crear",
   "parasiticforms.update": "Actualizar",
-  "antibiotic.read":
-    "Permite consultar el catálogo de antibióticos.",
-  "antibiotic.create":
-    "Permite crear antibióticos.",
-  "antibiotic.update":
-    "Permite actualizar la descripción y las siglas de antibióticos.",
-  "antibiotic.change-status":
-    "Permite activar o inactivar antibióticos.",
   "security.permissions.read": "Consultar permisos",
   "security.roles.assign-permissions": "Asignar permisos a roles",
   "security.roles.create": "Crear roles",
@@ -56,23 +57,25 @@ const permissionLabels = Object.freeze({
   "security.users.update": "Actualizar usuarios",
 });
 
-const permissionDescriptions = Object.freeze({
-  "special-tests.read": "Permite consultar los laboratorios de referencia.",
+const permissionDescriptions = Object.freeze({  "patients.cancel": "Permite autorizar la anulacion de un ingreso de paciente y registrar la devolucion de sus pagos asociados.",
+  "patient-admission.close": "Permite registrar de forma atómica el paciente, sus exámenes y formas de pago.",
+  "antibiotic.read": "Permite consultar el catálogo de antibióticos.",
+  "antibiotic.create": "Permite registrar antibióticos.",
+  "antibiotic.update": "Permite actualizar antibióticos y cambiar su estado.",
+  "germs.read": "Permite consultar el catálogo de gérmenes.",
+  "germs.create": "Permite registrar gérmenes.",
+  "germs.update": "Permite actualizar gérmenes y cambiar su estado.",
+  "parasiticforms.read": "Permite consultar formas parasitarias.",
+  "parasiticforms.create": "Permite registrar formas parasitarias.",
+  "parasiticforms.update": "Permite actualizar formas parasitarias y cambiar su estado.",
+  "patient-results-email.read": "Permite consultar la entrega de resultados por correo.",
+  "patient-results-email.send": "Permite enviar o reenviar resultados aprobados por correo.",
+  "special-tests.read": "Permite consultar laboratorios de referencia y sus pruebas asociadas.",
   "special-tests.create": "Permite registrar laboratorios de referencia.",
-  "special-tests.update": "Permite actualizar los laboratorios de referencia.",
-  "special-tests.change-status": "Permite activar o inactivar laboratorios de referencia.",
-  "special-test-items.read": "Permite consultar las pruebas asociadas a cada laboratorio.",
-  "special-test-items.create": "Permite asociar pruebas a un laboratorio.",
-  "special-test-items.update": "Permite actualizar las pruebas asociadas.",
-  "special-test-items.delete": "Permite eliminar pruebas asociadas.",
-  "parasiticforms.change-status":
-    "Permite cambiar el estado de las formas parasitarias.",
-  "parasiticforms.create":
-    "Permite registrar nuevas formas parasitarias.",
-  "parasiticforms.read":
-    "Permite consultar las formas parasitarias.",
-  "parasiticforms.update":
-    "Permite actualizar las formas parasitarias.",
+  "special-tests.update": "Permite actualizar el laboratorio, cambiar su estado y administrar sus pruebas asociadas.",
+  "worksheet-groups.read": "Permite consultar grupos de hojas de trabajo y sus elementos.",
+  "worksheet-groups.create": "Permite registrar grupos de hojas de trabajo.",
+  "worksheet-groups.update": "Permite actualizar el grupo, cambiar su estado y administrar sus elementos.",
   "security.permissions.read":
     "Permite consultar el cat\u00e1logo de permisos.",
   "security.roles.assign-permissions":
@@ -93,6 +96,44 @@ const permissionDescriptions = Object.freeze({
     "Permite consultar usuarios y su autorizaci\u00f3n.",
   "security.users.update":
     "Permite actualizar los usuarios.",
+});
+
+const hiddenPermissionCodes = new Set([  "antibiotic.change-status",
+  "currencies.change-status",
+  "exam-catalog.change-status",
+  "germs.change-status",
+  "parasiticforms.change-status",
+  "sample-types.change-status",
+  "special-tests.change-status",
+  "tariffs.change-status",
+  "tariffs.set-default",
+  "tax.change-status",
+  "typepayment.change-status",
+  "worksheet-groups.change-status",
+]);
+
+const hiddenPermissionPrefixes = Object.freeze([
+  "special-test-items.",
+  "worksheet-group-items.",
+]);
+
+function isPermissionVisible(value) {
+  const code = getPermissionCode(value);
+  return !hiddenPermissionCodes.has(code) && !hiddenPermissionPrefixes.some((prefix) => code.startsWith(prefix));
+}
+
+
+const visualPermissionConsolidations = Object.freeze({
+  "security-roles": Object.freeze([
+    Object.freeze({ key: "security.roles.read", name: "Consultar", description: "Permite consultar los roles y el catalogo de permisos.", codes: Object.freeze(["security.roles.read", "security.permissions.read"]) }),
+    Object.freeze({ key: "security.roles.create", name: "Crear", description: "Permite crear nuevos roles.", codes: Object.freeze(["security.roles.create"]) }),
+    Object.freeze({ key: "security.roles.update", name: "Actualizar", description: "Permite actualizar roles y administrar sus permisos.", codes: Object.freeze(["security.roles.update", "security.roles.assign-permissions"]) }),
+  ]),
+  "security-users": Object.freeze([
+    Object.freeze({ key: "security.users.read", name: "Consultar", description: "Permite consultar usuarios y su autorizacion.", codes: Object.freeze(["security.users.read"]) }),
+    Object.freeze({ key: "security.users.create", name: "Crear", description: "Permite crear nuevos usuarios.", codes: Object.freeze(["security.users.create"]) }),
+    Object.freeze({ key: "security.users.update", name: "Actualizar", description: "Permite actualizar usuarios, asignar roles y administrar excepciones de permisos.", codes: Object.freeze(["security.users.update", "security.users.assign-roles", "security.users.assign-permissions"]) }),
+  ]),
 });
 
 function normalizeText(value) {
@@ -132,6 +173,13 @@ export function getPermissionModule(value) {
   const code = getPermissionCode(value);
   const separatorIndex = code.indexOf(".");
   const codeModule = separatorIndex > 0 ? code.slice(0, separatorIndex) : "";
+
+  if (code === "patients.cancel") return "patient-history";
+  if (codeModule === "worksheet-group-items") return "worksheet-groups";
+  if (codeModule === "patient-results-email") return "laboratory";
+  if (codeModule === "special-test-items") return "special-tests";
+  if (code.startsWith("security.users.")) return "security-users";
+  if (code.startsWith("security.roles.") || code.startsWith("security.permissions.")) return "security-roles";
 
   if (value && typeof value === "object") {
     const explicitModule = normalizeText(value.module).toLowerCase();
@@ -213,32 +261,52 @@ export function presentPermission(permission) {
 }
 
 export function groupPermissionsForPresentation(permissions) {
+  const visiblePermissions = (Array.isArray(permissions) ? permissions : [])
+    .filter((permission) => isPermissionVisible(permission))
+    .map((permission) => presentPermission(permission));
+  const byCode = new Map(visiblePermissions.map((permission) => [permission.technicalCode, permission]));
+  const consumedCodes = new Set();
   const groups = new Map();
 
-  for (const sourcePermission of Array.isArray(permissions) ? permissions : []) {
-    const permission = presentPermission(sourcePermission);
+  function ensureGroup(moduleKey, moduleLabel) {
+    if (!groups.has(moduleKey)) groups.set(moduleKey, { key: moduleKey, label: moduleLabel, permissions: [] });
+    return groups.get(moduleKey);
+  }
 
-    if (!groups.has(permission.moduleKey)) {
-      groups.set(permission.moduleKey, {
-        key: permission.moduleKey,
-        label: permission.moduleLabel,
-        permissions: [],
+  for (const [moduleKey, definitions] of Object.entries(visualPermissionConsolidations)) {
+    for (const definition of definitions) {
+      const members = definition.codes.map((code) => byCode.get(code)).filter(Boolean);
+      if (members.length === 0) continue;
+      members.forEach((member) => consumedCodes.add(member.technicalCode));
+      const activeMembers = members.filter((member) => member.isActive);
+      const primary = members[0];
+      ensureGroup(moduleKey, moduleLabels[moduleKey] || primary.moduleLabel).permissions.push({
+        ...primary,
+        id: primary.id,
+        technicalCode: definition.key,
+        displayName: definition.name,
+        displayDescription: definition.description,
+        moduleKey,
+        moduleLabel: moduleLabels[moduleKey] || primary.moduleLabel,
+        memberIds: members.map((member) => member.id),
+        activeMemberIds: activeMembers.map((member) => member.id),
+        isActive: activeMembers.length === members.length,
       });
     }
+  }
 
-    groups.get(permission.moduleKey).permissions.push(permission);
+  for (const permission of visiblePermissions) {
+    if (consumedCodes.has(permission.technicalCode)) continue;
+    ensureGroup(permission.moduleKey, permission.moduleLabel).permissions.push({
+      ...permission,
+      memberIds: [permission.id],
+      activeMemberIds: permission.isActive ? [permission.id] : [],
+    });
   }
 
   return Array.from(groups.values())
-    .map((group) => ({
-      ...group,
-      permissions: group.permissions.sort((left, right) =>
-        left.displayName.localeCompare(right.displayName, "es"),
-      ),
-    }))
-    .sort((left, right) =>
-      left.label.localeCompare(right.label, "es"),
-    );
+    .map((group) => ({ ...group, permissions: group.permissions.sort((left, right) => left.displayName.localeCompare(right.displayName, "es")) }))
+    .sort((left, right) => left.label.localeCompare(right.label, "es"));
 }
 
 export function formatPermissionCode(value) {

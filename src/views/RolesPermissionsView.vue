@@ -69,7 +69,7 @@
       </section>
     </template>
 
-    <RoleCreateDialog ref="createRoleDialog" :creating-role="creatingRole" :can-create-roles="canCreateRoles" :create-role-form="createRoleForm" :create-role-code-error="createRoleCodeError" :create-role-name-error="createRoleNameError" :create-role-error="createRoleError" :create-role-message="createRoleMessage" @close="closeCreateRoleDialog" @submit="submitCreateRoleDialog" />
+    <RoleCreateDialog ref="createRoleDialog" :creating-role="creatingRole" :can-create-roles="canCreateRoles" :create-role-form="createRoleForm" :create-role-name-error="createRoleNameError" :create-role-error="createRoleError" :create-role-message="createRoleMessage" @close="closeCreateRoleDialog" @submit="submitCreateRoleDialog" />
 
     <RoleDetailDialog ref="roleDetailDialog" :selected-role="selectedRole" @close="closeRoleDetailDialog" />
 
@@ -77,7 +77,7 @@
 
     <RolePermissionsDialog ref="rolePermissionsDialog" :selected-role="selectedRole" :permission-search-text="permissionSearchText" :draft-permission-ids="draftPermissionIds" :assigned-permissions-loading="assignedPermissionsLoading" :assigned-permissions-error="assignedPermissionsError" :inactive-assigned-permissions="inactiveAssignedPermissions" :filtered-permission-modules="filteredPermissionModules" :can-assign-permissions="canAssignPermissions" :saving-permissions="savingPermissions" :save-permissions-error="savePermissionsError" :save-permissions-message="savePermissionsMessage" :has-permission-changes="hasPermissionChanges" @update:permission-search-text="permissionSearchText = $event" @toggle-permission="togglePermission" @toggle-module-permissions="toggleModulePermissions" @close="closeRolePermissionsDialog" @submit="submitRolePermissionsDialog" />
 
-    <PermissionCatalogDialog ref="permissionCatalogDialog" :catalog-search-text="catalogSearchText" :filtered-catalog-permissions="filteredCatalogPermissions" @update:catalog-search-text="catalogSearchText = $event" @close="closePermissionCatalogDialog" />
+    <PermissionCatalogDialog ref="permissionCatalogDialog" :catalog-search-text="catalogSearchText" :filtered-catalog-modules="filteredCatalogModules" @update:catalog-search-text="catalogSearchText = $event" @close="closePermissionCatalogDialog" />
   </section>
 </template>
 
@@ -166,7 +166,6 @@ const createRoleError = ref("");
 const createRoleMessage = ref("");
 const createRoleValidationAttempted = ref(false);
 const createRoleForm = ref({
-  code: "",
   name: "",
   description: "",
 });
@@ -197,20 +196,18 @@ const presentedPermissions = computed(() =>
   }),
 );
 
-const filteredCatalogPermissions = computed(() => {
+const filteredCatalogModules = computed(() => {
   const search = catalogSearchText.value.trim().toLowerCase();
-
-  if (search === "") {
-    return presentedPermissions.value;
-  }
-
-  return presentedPermissions.value.filter((permission) =>
-    [
-      permission.moduleLabel,
-      permission.displayName,
-      permission.displayDescription,
-    ].some((value) => value.toLowerCase().includes(search)),
-  );
+  if (search === "") return permissionModules.value;
+  return permissionModules.value
+    .map((module) => ({
+      ...module,
+      permissions: module.permissions.filter((permission) =>
+        [module.label, permission.displayName, permission.displayDescription]
+          .some((value) => String(value || "").toLowerCase().includes(search)),
+      ),
+    }))
+    .filter((module) => module.permissions.length > 0);
 });
 
 const gridComponents = {
@@ -294,15 +291,6 @@ const roleActions = computed(() => [
 ]);
 
 const roleColumnDefs = computed(() => [
-  {
-    field: "code",
-    headerName: "Código",
-    sort: "asc",
-    minWidth: 135,
-    maxWidth: 200,
-    flex: 0.75,
-    cellClass: "bio-nexus-grid-code-cell",
-  },
   {
     field: "name",
     headerName: "Nombre",
@@ -420,17 +408,6 @@ const inactiveAssignedPermissions = computed(() =>
   ),
 );
 
-const createRoleCodeError = computed(() => {
-  if (!createRoleValidationAttempted.value) {
-    return "";
-  }
-
-  if (createRoleForm.value.code.trim() === "") {
-    return "El campo Código es requerido.";
-  }
-
-  return "";
-});
 
 const createRoleNameError = computed(() => {
   if (!createRoleValidationAttempted.value) {
@@ -445,15 +422,12 @@ const createRoleNameError = computed(() => {
 });
 
 const hasCreateRoleFieldErrors = computed(
-  () =>
-    createRoleCodeError.value !== "" ||
-    createRoleNameError.value !== "",
+  () => createRoleNameError.value !== "",
 );
 const canSubmitCreateRole = computed(
   () =>
     canCreateRoles.value &&
     !creatingRole.value &&
-    createRoleForm.value.code.trim() !== "" &&
     createRoleForm.value.name.trim() !== "",
 );
 
@@ -569,9 +543,23 @@ function getRoleErrorMessage(error, fallbackMessage) {
   );
 }
 
+function createInternalRoleCode(name) {
+  const baseCode = String(name || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLocaleLowerCase("es-VE")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 52) || "rol";
+  const existingCodes = new Set(roles.value.map((role) => role.code));
+  if (!existingCodes.has(baseCode)) return baseCode;
+  let suffix = 2;
+  while (existingCodes.has(baseCode + "-" + suffix)) suffix += 1;
+  return (baseCode + "-" + suffix).slice(0, 60);
+}
+
 function resetCreateRoleForm() {
   createRoleForm.value = {
-    code: "",
     name: "",
     description: "",
   };
@@ -611,34 +599,41 @@ function normalizePermissionIds(permissionIds) {
   ).sort((left, right) => left - right);
 }
 
-function isPermissionSelected(permissionId) {
-  return draftPermissionIds.value.includes(permissionId);
+function getPermissionMemberIds(permission) {
+  const memberIds = Array.isArray(permission?.memberIds) && permission.memberIds.length > 0
+    ? permission.memberIds
+    : [permission?.id];
+  return normalizePermissionIds(memberIds);
+}
+
+function getPermissionActiveMemberIds(permission) {
+  const activeMemberIds = Array.isArray(permission?.activeMemberIds)
+    ? permission.activeMemberIds
+    : permission?.isActive ? getPermissionMemberIds(permission) : [];
+  return normalizePermissionIds(activeMemberIds);
+}
+
+function isPermissionSelected(permission) {
+  const memberIds = getPermissionActiveMemberIds(permission);
+  return memberIds.length > 0 && memberIds.every((permissionId) =>
+    draftPermissionIds.value.includes(permissionId),
+  );
 }
 
 function togglePermission(permission) {
-  if (
-    !canAssignPermissions.value ||
-    !permission.isActive ||
-    savingPermissions.value
-  ) {
-    return;
-  }
-
+  if (!canAssignPermissions.value || !permission.isActive || savingPermissions.value) return;
   savePermissionsError.value = "";
   savePermissionsMessage.value = "";
-
-  if (isPermissionSelected(permission.id)) {
-    draftPermissionIds.value =
-      draftPermissionIds.value.filter(
-        (permissionId) => permissionId !== permission.id,
-      );
-
+  const memberIds = getPermissionActiveMemberIds(permission);
+  if (isPermissionSelected(permission)) {
+    draftPermissionIds.value = draftPermissionIds.value.filter(
+      (permissionId) => !memberIds.includes(permissionId),
+    );
     return;
   }
-
   draftPermissionIds.value = normalizePermissionIds([
     ...draftPermissionIds.value,
-    permission.id,
+    ...memberIds,
   ]);
 }
 
@@ -849,12 +844,12 @@ function closePermissionCatalogDialog() {
 }
 
 function getActiveModulePermissions(module) {
-  return module.permissions.filter((permission) => permission.isActive);
+  return module.permissions.filter((permission) => getPermissionActiveMemberIds(permission).length > 0);
 }
 
 function getSelectedModulePermissionCount(module) {
   return getActiveModulePermissions(module).filter((permission) =>
-    isPermissionSelected(permission.id),
+    isPermissionSelected(permission),
   ).length;
 }
 
@@ -864,7 +859,7 @@ function areAllModulePermissionsSelected(module) {
   return (
     activePermissions.length > 0 &&
     activePermissions.every((permission) =>
-      isPermissionSelected(permission.id),
+      isPermissionSelected(permission),
     )
   );
 }
@@ -872,8 +867,8 @@ function areAllModulePermissionsSelected(module) {
 function toggleModulePermissions(module) {
   if (!canAssignPermissions.value || savingPermissions.value) return;
 
-  const activePermissionIds = getActiveModulePermissions(module).map(
-    (permission) => permission.id,
+  const activePermissionIds = normalizePermissionIds(
+    getActiveModulePermissions(module).flatMap((permission) => getPermissionActiveMemberIds(permission)),
   );
 
   if (activePermissionIds.length === 0) return;
@@ -1026,7 +1021,7 @@ async function createRole() {
 
   try {
     const createdRole = await createAuthorizationRole({
-      code: createRoleForm.value.code,
+      code: createInternalRoleCode(createRoleForm.value.name),
       name: createRoleForm.value.name,
       description:
         normalizeOptionalText(

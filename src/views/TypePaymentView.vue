@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <section class="type-payment-page">
     <div v-if="loadError" class="bio-nexus-message bio-nexus-message-error" role="alert">
       <strong>No fue posible cargar los Formas de pago.</strong>
@@ -104,7 +104,7 @@ const typePaymentContextMenuItems = computed(() => {
 const contextMenu = reactive({ visible: false, x: 0, y: 0, row: null });
 const canCreate = computed(() => authorizationStore.hasPermission("typepayment.create"));
 const canUpdate = computed(() => authorizationStore.hasPermission("typepayment.update"));
-const canChangeStatus = computed(() => authorizationStore.hasPermission("typepayment.change-status"));
+const canChangeStatus = computed(() => authorizationStore.hasPermission("typepayment.update"));
 const filteredRows = computed(() => rows.value.filter((item) => {
   return true;
 }).map((item) => ({ ...item, isActive: !item.annulled })));

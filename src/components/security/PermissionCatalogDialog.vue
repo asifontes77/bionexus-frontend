@@ -5,11 +5,11 @@
         <BioNexusFormField label="Buscar permiso" field-id="catalog-permission-search">
           <input id="catalog-permission-search" :value="catalogSearchText" class="bio-nexus-field" type="search" autocomplete="off" :placeholder="'Nombre, descripci\u00f3n o m\u00f3dulo'" @input="emit('update:catalogSearchText', $event.target.value)" />
         </BioNexusFormField>
-        <span><strong>{{ filteredCatalogPermissions.length }}</strong> permisos</span>
+        <span><strong>{{ filteredCatalogModules.length }}</strong> permisos</span>
       </section>
     </template>
     <section class="catalog-grid-body" @wheel.stop>
-      <BioNexusPermissionTree class="catalog-tree" :permissions="filteredCatalogPermissions" :search-text="catalogSearchText" empty-text="No existen permisos que coincidan con la b\u00fasqueda." />
+      <BioNexusPermissionTree class="catalog-tree" :modules="filteredCatalogModules" :search-text="catalogSearchText" empty-text="No existen permisos que coincidan con la b\u00fasqueda." />
     </section>
     <template #footer>
       <button type="button" class="bio-nexus-action bio-nexus-action-secondary" @click="close"><BioNexusActionIcon action="close" />Cerrar</button>
@@ -17,12 +17,13 @@
   </BioNexusDialog>
 </template>
 <script setup>
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
 import BioNexusDialog from "@/components/ui/BioNexusDialog.vue";
 import BioNexusFormField from "@/components/ui/BioNexusFormField.vue";
 import BioNexusPermissionTree from "@/components/tree/BioNexusPermissionTree.vue";
-const props = defineProps({ catalogSearchText: String, filteredCatalogPermissions: Array });
+const props = defineProps({ catalogSearchText: String, filteredCatalogModules: Array });
+const catalogPermissionCount = computed(() => (props.filteredCatalogModules || []).reduce((total, module) => total + (module.permissions?.length || 0), 0));
 const emit = defineEmits(["close", "update:catalogSearchText"]);
 const dialog = ref(null);
 function showModal() { dialog.value?.open(); }

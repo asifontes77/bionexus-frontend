@@ -3,7 +3,6 @@
     <section v-if="selectedRole" class="role-summary-card">
       <div class="role-summary-heading">
         <div>
-          <span class="role-summary-code">{{ selectedRole.code }}</span>
           <h4>{{ selectedRole.name }}</h4>
           <p>{{ selectedRole.isSystem ? "Rol de sistema" : "Rol configurable" }}</p>
         </div>

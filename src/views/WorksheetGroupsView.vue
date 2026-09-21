@@ -26,13 +26,13 @@ import { createWorksheetGroup, createWorksheetItem, deleteWorksheetItem, getWork
 import { useAuthorizationStore } from '@/stores/authorization'
 import { useBioNexusToast } from '@/composables/useBioNexusToast'
 const authorization=useAuthorizationStore(),toast=useBioNexusToast(),rows=ref([]),exams=ref([]),loading=ref(false),saving=ref(false),loadError=ref(''),searchText=ref(''),formDialog=ref(null),stateDialog=ref(null),contextMenu=ref(null),contextState=ref({open:false,x:0,y:0,row:null})
-const canCreate=computed(()=>authorization.hasPermission('worksheet-groups.create')),canUpdate=computed(()=>authorization.hasPermission('worksheet-groups.update')),canState=computed(()=>authorization.hasPermission('worksheet-groups.change-status')),canItemCreate=computed(()=>authorization.hasPermission('worksheet-group-items.create')),canItemUpdate=computed(()=>authorization.hasPermission('worksheet-group-items.update')),canItemDelete=computed(()=>authorization.hasPermission('worksheet-group-items.delete')),canManageItems=computed(()=>canItemCreate.value||canItemUpdate.value||canItemDelete.value)
+const canCreate=computed(()=>authorization.hasPermission('worksheet-groups.create')),canUpdate=computed(()=>authorization.hasPermission('worksheet-groups.update')),canState=computed(()=>authorization.hasPermission('worksheet-groups.update')),canItemCreate=computed(()=>authorization.hasPermission('worksheet-groups.update')),canItemUpdate=computed(()=>authorization.hasPermission('worksheet-groups.update')),canItemDelete=computed(()=>authorization.hasPermission('worksheet-groups.update')),canManageItems=computed(()=>canItemCreate.value||canItemUpdate.value||canItemDelete.value)
 const defaultColDef=Object.freeze({sortable:true,filter:true,resizable:true,suppressHeaderMenuButton:true}),gridComponents=Object.freeze({BioNexusGridActionsCell,BioNexusGridToggleCell})
 const actions=[{key:'edit',label:'Editar',icon:'edit',visible:()=>canUpdate.value||canManageItems.value,disabled:()=>saving.value,onClick:openEdit}]
 const columnDefs=computed(()=>[
-  {field: "description", headerName: "Descripción",minWidth:240,flex:1,filter:'agTextColumnFilter'},
+  {field: "description", headerName: "DescripciÃ³n",minWidth:240,flex:1,filter:'agTextColumnFilter'},
   {field:'details',headerName:'Detalles',minWidth:280,flex:1.2,filter:'agTextColumnFilter'},
-  {field: "itemCount", headerName: "Exámenes",width:125,headerClass:'worksheet-center-header',cellClass:'worksheet-center'},
+  {field: "itemCount", headerName: "ExÃ¡menes",width:125,headerClass:'worksheet-center-header',cellClass:'worksheet-center'},
   {
     field:'isActive',
     headerName:'Estado',

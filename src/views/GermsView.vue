@@ -1,13 +1,13 @@
 <template>
   <section class="germs-page">
     <div v-if="loadError" class="bio-nexus-message bio-nexus-message-error" role="alert">
-      <strong>No fue posible cargar los gérmenes.</strong>
+      <strong>No fue posible cargar los gÃ©rmenes.</strong>
       <span>{{ loadError }}</span>
     </div>
 
     <section class="bio-nexus-administrative-directory germs-directory">
-      <div v-if="loading" class="bio-nexus-empty-state">Cargando gérmenes...</div>
-      <div v-else-if="rows.length === 0" class="bio-nexus-empty-state">No existen gérmenes registrados.</div>
+      <div v-if="loading" class="bio-nexus-empty-state">Cargando gÃ©rmenes...</div>
+      <div v-else-if="rows.length === 0" class="bio-nexus-empty-state">No existen gÃ©rmenes registrados.</div>
 
       <BioNexusDataGrid
         v-else
@@ -28,7 +28,7 @@
         :page-size-selector="[10, 20, 50, 100]"
         :min-grid-height="300"
         :max-grid-height="560"
-        empty-text="No existen gérmenes que coincidan con los filtros."
+        empty-text="No existen gÃ©rmenes que coincidan con los filtros."
         @refresh="loadRows"
         @row-context-menu="openContextMenu"
       >
@@ -76,13 +76,13 @@ const contextState = ref({ open: false, x: 0, y: 0, row: null });
 
 const canCreate = computed(() => authorizationStore.hasPermission("germs.create"));
 const canUpdate = computed(() => authorizationStore.hasPermission("germs.update"));
-const canChangeStatus = computed(() => authorizationStore.hasPermission("germs.change-status"));
+const canChangeStatus = computed(() => authorizationStore.hasPermission("germs.update"));
 const gridRows = computed(() => rows.value.map((row) => ({ ...row, isActive: !row.annulled })));
 const defaultColDef = Object.freeze({ sortable: true, filter: true, resizable: true, suppressHeaderMenuButton: true });
 const gridComponents = Object.freeze({ BioNexusGridActionsCell, BioNexusGridToggleCell });
 
 const columnDefs = computed(() => [
-  { field: "germen", headerName: "Descripción", minWidth: 280, flex: 1, filter: "agTextColumnFilter" },
+  { field: "germen", headerName: "DescripciÃ³n", minWidth: 280, flex: 1, filter: "agTextColumnFilter" },
   {
     field: "isActive",
     headerName: "Estado",
@@ -135,9 +135,9 @@ function replaceRow(saved) { const next = rows.value.map((row) => row.id === sav
 async function openContextMenu({ event, row }) { if (!event || !row || (!canUpdate.value && !canChangeStatus.value)) return; event.preventDefault(); contextState.value = { open: true, x: event.clientX, y: event.clientY, row }; await nextTick(); contextMenu.value?.positionMenu?.(); }
 function closeContextMenu() { contextState.value = { open: false, x: 0, y: 0, row: null }; }
 async function runContextAction(item) { const action = item?.action; closeContextMenu(); if (typeof action === "function") await action(); }
-async function loadRows() { if (loading.value || saving.value) return; loading.value = true; loadError.value = ""; try { rows.value = await getGerms(); } catch (error) { rows.value = []; loadError.value = germError(error, "No fue posible consultar los gérmenes."); toast.error(loadError.value); } finally { loading.value = false; } }
-async function saveForm(payload) { if (saving.value) return; saving.value = true; formDialog.value?.clearError(); try { const saved = payload.mode === "create" ? await createGerm(payload.values) : await updateGerm(payload.record.id, payload.values); if (!saved) throw new Error("El Backend no devolvió un registro válido."); replaceRow(saved); formDialog.value?.close(); toast.success(payload.mode === "create" ? "Germen creado correctamente." : "Germen actualizado correctamente."); } catch (error) { formDialog.value?.setError(germError(error, "No fue posible guardar el germen.")); } finally { saving.value = false; } }
-async function saveState(row) { if (saving.value || !canChangeStatus.value) return; saving.value = true; stateDialog.value?.clearError(); try { const saved = await updateGerm(row.id, { annulled: !row.annulled }); if (!saved) throw new Error("El Backend no devolvió un registro válido."); replaceRow(saved); stateDialog.value?.close(); toast.success(saved.annulled ? "Germen inactivado correctamente." : "Germen activado correctamente."); } catch (error) { stateDialog.value?.setError(germError(error, "No fue posible cambiar el estado.")); } finally { saving.value = false; } }
+async function loadRows() { if (loading.value || saving.value) return; loading.value = true; loadError.value = ""; try { rows.value = await getGerms(); } catch (error) { rows.value = []; loadError.value = germError(error, "No fue posible consultar los gÃ©rmenes."); toast.error(loadError.value); } finally { loading.value = false; } }
+async function saveForm(payload) { if (saving.value) return; saving.value = true; formDialog.value?.clearError(); try { const saved = payload.mode === "create" ? await createGerm(payload.values) : await updateGerm(payload.record.id, payload.values); if (!saved) throw new Error("El Backend no devolviÃ³ un registro vÃ¡lido."); replaceRow(saved); formDialog.value?.close(); toast.success(payload.mode === "create" ? "Germen creado correctamente." : "Germen actualizado correctamente."); } catch (error) { formDialog.value?.setError(germError(error, "No fue posible guardar el germen.")); } finally { saving.value = false; } }
+async function saveState(row) { if (saving.value || !canChangeStatus.value) return; saving.value = true; stateDialog.value?.clearError(); try { const saved = await updateGerm(row.id, { annulled: !row.annulled }); if (!saved) throw new Error("El Backend no devolviÃ³ un registro vÃ¡lido."); replaceRow(saved); stateDialog.value?.close(); toast.success(saved.annulled ? "Germen inactivado correctamente." : "Germen activado correctamente."); } catch (error) { stateDialog.value?.setError(germError(error, "No fue posible cambiar el estado.")); } finally { saving.value = false; } }
 onMounted(loadRows);
 </script>
 
