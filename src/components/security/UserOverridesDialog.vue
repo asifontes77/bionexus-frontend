@@ -8,7 +8,7 @@
         <BioNexusFormField label="Estado" field-id="user-override-filter">
           <select id="user-override-filter" v-model="statusFilter" class="bio-nexus-field">
             <option value="all">Todos</option>
-            <option value="inherited">Segun roles</option>
+            <option value="inherited">Según roles</option>
             <option value="allow">Permitir</option>
             <option value="deny">Denegar</option>
           </select>
@@ -21,29 +21,29 @@
       <div v-else-if="errorMessage" class="bio-nexus-message bio-nexus-message-error" role="alert">{{ errorMessage }}</div>
       <template v-else-if="authorization">
         <details class="override-explanation">
-          <summary><span>Que cambia una excepcion individual?</span><small>Segun roles conserva la herencia; Permitir concede; Denegar bloquea.</small></summary>
+          <summary><span>¿Qué cambia una excepción individual?</span><small>Según roles conserva la herencia; Permitir concede; Denegar bloquea.</small></summary>
           <div class="override-explanation-body">
-            <p>Cada permiso parte del resultado heredado de los roles. Una excepcion cambia solamente ese permiso para este usuario.</p>
+            <p>Cada permiso parte del resultado heredado de los roles. Una excepción cambia solamente ese permiso para este usuario.</p>
             <dl>
-              <div><dt>Segun roles</dt><dd>Conserva el resultado heredado de los roles asignados.</dd></div>
-              <div><dt>Permitir</dt><dd>Concede el permiso directamente, aunque ningun rol activo lo otorgue.</dd></div>
+              <div><dt>Según roles</dt><dd>Conserva el resultado heredado de los roles asignados.</dd></div>
+              <div><dt>Permitir</dt><dd>Concede el permiso directamente, aunque ningún rol activo lo otorgue.</dd></div>
               <div><dt>Denegar</dt><dd>Bloquea el permiso directamente y prevalece sobre los roles.</dd></div>
             </dl>
           </div>
         </details>
         <div v-if="user?.hidden" class="bio-nexus-message bio-nexus-message-warning" role="status">Los usuarios inactivos permanecen visibles para consulta, pero no pueden modificarse.</div>
         <div v-else-if="!canAssign" class="bio-nexus-empty-state">La cuenta actual puede consultar las excepciones, pero no modificarlas.</div>
-        <div v-if="inactiveOverrideCount > 0" class="bio-nexus-message bio-nexus-message-warning" role="status">Las excepciones inactivas se conservan para consulta y se retiraran al guardar.</div>
+        <div v-if="inactiveOverrideCount > 0" class="bio-nexus-message bio-nexus-message-warning" role="status">Las excepciones inactivas se conservan para consulta y se retirarán al guardar.</div>
         <div v-if="filteredModules.length === 0" class="bio-nexus-empty-state">No existen permisos que coincidan con los filtros.</div>
         <BioNexusPermissionTree class="user-override-tree" :modules="filteredModules" :search-text="searchText" empty-text="No existen permisos que coincidan con los filtros.">
           <template #permission-action="{ permission }">
             <div class="override-tree-action" :class="{ 'override-tree-action-disabled': !permission.isActive || user?.hidden }">
-              <select :value="getEffect(permission.id)" :aria-label="`Excepcion para ${permission.displayName}`" :disabled="!permission.isActive || !canEdit || !canAssign || saving" @change="emit('set-override', permission, $event.target.value)">
-                <option value="">Segun roles</option>
+              <select :value="getEffect(permission.id)" :aria-label="`Excepción para ${permission.displayName}`" :disabled="!permission.isActive || !canEdit || !canAssign || saving" @change="emit('set-override', permission, $event.target.value)">
+                <option value="">Según roles</option>
                 <option :value="PermissionEffect.Allow">Permitir</option>
                 <option :value="PermissionEffect.Deny">Denegar</option>
               </select>
-              <span class="bio-nexus-badge" :class="getBadgeClass(permission.id)">{{ getLabel(permission.id) }}</span>
+              <span class="bio-nexus-badge" :class="getBadgeClass(permission)">{{ getLabel(permission) }}</span>
             </div>
           </template>
         </BioNexusPermissionTree>
@@ -51,7 +51,7 @@
         <div v-if="saveMessage" class="bio-nexus-inline-message bio-nexus-message-success" role="status">{{ saveMessage }}</div>
       </template>
     </section>
-    <template #footer-status><span class="dialog-pending-status">{{ hasChanges ? "Existen cambios pendientes." : "Las excepciones estan sincronizadas." }}</span></template>
+    <template #footer-status><span class="dialog-pending-status">{{ hasChanges ? "Existen cambios pendientes." : "Las excepciones están sincronizadas." }}</span></template>
     <template #footer>
       <button type="button" class="bio-nexus-action bio-nexus-action-secondary" :disabled="saving" @click="cancel"><BioNexusActionIcon action="cancel" />Cancelar</button>
       <button v-if="canAssign" type="button" class="bio-nexus-action bio-nexus-action-primary" :disabled="!canEdit || !hasChanges || saving" @click="emit('save')"><BioNexusActionIcon action="assignPermissions" />{{ saving ? "Guardando..." : "Guardar excepciones" }}</button>
@@ -72,8 +72,35 @@ const dialog = ref(null); const searchText = ref(""); const statusFilter = ref("
 const modules = computed(() => groupPermissionsForPresentation(props.permissions));
 function getEffect(permissionId) { return props.draftOverrides.find((item) => item.permissionId === permissionId)?.effect || ""; }
 const filteredModules = computed(() => { const search = searchText.value.trim().toLowerCase(); return modules.value.map((module) => ({ ...module, permissions: module.permissions.filter((permission) => { const effect = getEffect(permission.id); const matchesEffect = statusFilter.value === "all" || (statusFilter.value === "inherited" && effect === "") || effect === statusFilter.value; const matchesSearch = search === "" || [module.label, permission.displayName, permission.displayDescription].some((value) => value.toLowerCase().includes(search)); return matchesEffect && matchesSearch; }) })).filter((module) => module.permissions.length > 0); });
-function getLabel(permissionId) { const effect = getEffect(permissionId); if (effect === PermissionEffect.Allow) return "Permitir"; if (effect === PermissionEffect.Deny) return "Denegar"; return "Segun roles"; }
-function getBadgeClass(permissionId) { const effect = getEffect(permissionId); if (effect === PermissionEffect.Allow) return "bio-nexus-badge-success"; if (effect === PermissionEffect.Deny) return "bio-nexus-badge-danger"; return "bio-nexus-badge-neutral"; }
+const inheritedPermissionIds = computed(() => new Set(
+  (props.authorization?.inheritedPermissions ?? [])
+    .map((permission) => permission.id)
+    .filter((permissionId) => Number.isInteger(permissionId) && permissionId > 0),
+));
+function getPermissionMemberIds(permission) {
+  const memberIds = Array.isArray(permission?.activeMemberIds) && permission.activeMemberIds.length > 0
+    ? permission.activeMemberIds
+    : Array.isArray(permission?.memberIds) && permission.memberIds.length > 0
+      ? permission.memberIds
+      : [permission?.id];
+  return memberIds.filter((permissionId) => Number.isInteger(permissionId) && permissionId > 0);
+}
+function isAllowedByRoles(permission) {
+  const permissionIds = getPermissionMemberIds(permission);
+  return permissionIds.length > 0 && permissionIds.every((permissionId) => inheritedPermissionIds.value.has(permissionId));
+}
+function getLabel(permission) {
+  const effect = getEffect(permission.id);
+  if (effect === PermissionEffect.Allow) return "Permitido por excepción";
+  if (effect === PermissionEffect.Deny) return "Denegado por excepción";
+  return isAllowedByRoles(permission) ? "Permitido por roles" : "Denegado por roles";
+}
+function getBadgeClass(permission) {
+  const effect = getEffect(permission.id);
+  if (effect === PermissionEffect.Allow) return "bio-nexus-badge-success";
+  if (effect === PermissionEffect.Deny) return "bio-nexus-badge-danger";
+  return isAllowedByRoles(permission) ? "bio-nexus-badge-success" : "bio-nexus-badge-neutral";
+}
 function open() { searchText.value = ""; statusFilter.value = "all"; dialog.value?.open(); }
 function close() { dialog.value?.close(); }
 function cancel() { if (props.saving) return; emit("cancel"); searchText.value = ""; statusFilter.value = "all"; close(); }
@@ -92,7 +119,7 @@ defineExpose({ open, close });
 .override-explanation-body dl { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--bio-nexus-space-2); }
 .override-explanation-body dl > div { padding: var(--bio-nexus-space-2); border: 1px solid var(--bio-nexus-color-border); border-radius: var(--bio-nexus-radius-sm); background: var(--bio-nexus-color-surface); }
 .user-override-tree { width: 100%; min-width: 0; }
-.override-tree-action { display: grid; grid-template-columns: 170px 100px; align-items: center; gap: var(--bio-nexus-space-2); min-width: 282px; }
+.override-tree-action { display: grid; grid-template-columns: 170px minmax(150px, auto); align-items: center; gap: var(--bio-nexus-space-2); min-width: 342px; }
 .override-tree-action-disabled { opacity: .68; }
 .override-tree-action select { width: 100%; min-height: 34px; padding-inline: var(--bio-nexus-space-2); border: 1px solid var(--bio-nexus-color-border-strong); border-radius: var(--bio-nexus-radius-md); background: var(--bio-nexus-color-surface); color: var(--bio-nexus-color-text); }
 .dialog-pending-status { color: var(--bio-nexus-color-text-muted); font-size: var(--bio-nexus-font-size-sm); }

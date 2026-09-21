@@ -247,43 +247,53 @@ const normalizedModules = computed(() => {
     );
 });
 
-const treeItems = computed(() =>
-  normalizedModules.value.map(
-    (moduleItem) => ({
-      id:
-        "module:" +
-        String(moduleItem.key),
+const moduleNodeCache = new Map();
+
+const treeItems = computed(() => {
+  const visibleModuleIds = new Set();
+  const items = normalizedModules.value.map((moduleItem) => {
+    const moduleId = "module:" + String(moduleItem.key);
+    visibleModuleIds.add(moduleId);
+    const children = moduleItem.permissions
+      .slice()
+      .sort((left, right) =>
+        left.displayName.localeCompare(right.displayName, "es-VE"),
+      )
+      .map((permission) => ({
+        id: "permission:" + String(permission.id),
+        name: permission.displayName,
+        meta: {
+          type: "permission",
+          permission,
+          description: permission.displayDescription,
+        },
+      }));
+
+    const existingNode = moduleNodeCache.get(moduleId);
+    if (existingNode) {
+      existingNode.name = moduleItem.label;
+      existingNode.meta = { type: "module", module: moduleItem };
+      existingNode.children = children;
+      return existingNode;
+    }
+
+    const moduleNode = {
+      id: moduleId,
       name: moduleItem.label,
       expanded: false,
-      meta: {
-        type: "module",
-        module: moduleItem,
-      },
-      children:
-        moduleItem.permissions
-          .slice()
-          .sort((left, right) =>
-            left.displayName.localeCompare(
-              right.displayName,
-              "es-VE",
-            ),
-          )
-          .map((permission) => ({
-            id:
-              "permission:" +
-              String(permission.id),
-            name:
-              permission.displayName,
-            meta: {
-              type: "permission",
-              permission,
-              description:
-                permission.displayDescription,
-            },
-          })),
-    }),
-  ),
-);
+      meta: { type: "module", module: moduleItem },
+      children,
+    };
+    moduleNodeCache.set(moduleId, moduleNode);
+    return moduleNode;
+  });
+
+  for (const moduleId of moduleNodeCache.keys()) {
+    if (!visibleModuleIds.has(moduleId)) moduleNodeCache.delete(moduleId);
+  }
+
+  return items;
+});
 
 function groupPermissions(permissions) {
   const grouped = new Map();

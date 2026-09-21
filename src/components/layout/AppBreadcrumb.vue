@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <nav class="app-breadcrumb" aria-label="Ruta de navegaci\u00f3n">
     <template v-for="(item, index) in items" :key="item.key">
       <span v-if="index" class="app-breadcrumb-separator" aria-hidden="true">/</span>
@@ -28,6 +28,7 @@ const routeByLabel = Object.freeze({
   "Laboratorio": { name: "configuration-laboratory-module" },
   "Cat\u00e1logos": { name: "configuration-catalogs" },
   "Sistema": { name: "configuration-system-module" },
+  "Seguridad": { name: "configuration-security-module" },
   "Facturación": { name: "configuration-billing-module" },
 
 });
