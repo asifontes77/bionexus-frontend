@@ -860,3 +860,96 @@
 .bio-nexus-action-danger { border-color: var(--bio-nexus-color-danger); background: linear-gradient(180deg, color-mix(in srgb, var(--bio-nexus-color-danger) 82%, white), var(--bio-nexus-color-danger)); color: #fff; }
 .bio-nexus-action-danger :is(svg,.bio-nexus-icon,.material-symbols-rounded) { color: currentColor; }
 .bio-nexus-action-danger:disabled { border-color: var(--bio-nexus-color-border); background: var(--bio-nexus-color-surface-soft); color: var(--bio-nexus-color-text-muted); }
+/* BIO NEXUS SECTION PANEL START */
+.bio-nexus-section-panel {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--bio-nexus-color-border);
+  border-radius: var(--bio-nexus-radius-md);
+  background: var(--bio-nexus-color-surface);
+  box-shadow: var(--bio-nexus-shadow-sm);
+}
+.bio-nexus-section-panel-heading {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--bio-nexus-space-3);
+  min-height: 58px;
+  padding: var(--bio-nexus-space-3) var(--bio-nexus-space-4);
+  border-bottom: 1px solid var(--bio-nexus-color-border);
+  background: var(--bio-nexus-color-surface-soft);
+}
+.bio-nexus-section-panel-icon {
+  display: inline-grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--bio-nexus-color-primary-strong);
+  background: var(--bio-nexus-color-selection-soft);
+}
+.bio-nexus-section-panel-copy {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+.bio-nexus-section-panel-title {
+  margin: 0;
+  color: var(--bio-nexus-color-primary-strong);
+  font: var(--bio-nexus-font-weight-bold) var(--bio-nexus-font-size-lg)/1.25 var(--bio-nexus-font-family);
+}
+.bio-nexus-section-panel-description {
+  margin: 0;
+  color: var(--bio-nexus-color-text-muted);
+  font-size: var(--bio-nexus-font-size-sm);
+  line-height: 1.35;
+}
+.bio-nexus-section-panel-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--bio-nexus-space-2);
+}
+.bio-nexus-section-panel-body {
+  min-width: 0;
+  padding: var(--bio-nexus-space-4);
+}
+.bio-nexus-section-panel-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--bio-nexus-space-2);
+  padding: var(--bio-nexus-space-3) var(--bio-nexus-space-4);
+  border-top: 1px solid var(--bio-nexus-color-border);
+  background: var(--bio-nexus-color-surface-soft);
+}
+.bio-nexus-section-panel-accent {
+  border-inline-start: 4px solid var(--bio-nexus-color-accent);
+}
+.bio-nexus-section-panel-accent .bio-nexus-section-panel-icon {
+  color: var(--bio-nexus-color-accent-strong);
+  background: var(--bio-nexus-color-accent-soft);
+}
+.bio-nexus-section-panel-soft {
+  background: var(--bio-nexus-color-surface-soft);
+}
+.bio-nexus-section-panel-compact .bio-nexus-section-panel-heading {
+  min-height: 50px;
+  padding: var(--bio-nexus-space-2) var(--bio-nexus-space-3);
+}
+.bio-nexus-section-panel-compact .bio-nexus-section-panel-body {
+  padding: var(--bio-nexus-space-3);
+}
+@media (max-width: 720px) {
+  .bio-nexus-section-panel-heading {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  .bio-nexus-section-panel-actions {
+    grid-column: 1 / -1;
+    justify-content: stretch;
+  }
+  .bio-nexus-section-panel-actions > * {
+    flex: 1 1 auto;
+  }
+}
+/* BIO NEXUS SECTION PANEL END */
