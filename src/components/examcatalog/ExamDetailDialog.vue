@@ -1,11 +1,11 @@
-﻿<template>
-  <BioNexusDialog ref="dialog" size="wide" kicker="Detalle del catálogo" title="Ver examen" :subtitle="exam?.description || ''" close-on-backdrop @close="handleClosed">
+<template>
+  <BioNexusDialog ref="dialog" size="wide" kicker="Detalle del catálogo" title="Ver examen" :subtitle="exam?.description || ''" @close="handleClosed">
 <section v-if="exam" class="exam-detail-content">
         <section class="exam-detail-summary">
           <article class="wide"><span>Descripción</span><strong>{{ exam.description || "Sin descripcion" }}</strong></article>
           <article><span>Abreviatura</span><strong>{{ exam.abbreviation || "Sin abreviatura" }}</strong></article>
           <article class="wide"><span>Grupo</span><strong>{{ group?.description || "Sin grupo" }}</strong></article>
-          <article><span>Estado</span><strong :class="exam.annulled ? 'inactive' : 'active'">{{ exam.annulled ? "Inactivo" : "Activo" }}</strong></article>
+          <article><span>Estado</span><strong :class="exam.annulled ? 'inactive' : 'active'">{{ exam.annulled ? "Desactivado" : "Activo" }}</strong></article>
           <article><span>Prueba especial</span><strong>{{ exam.special_test ? "Si" : "No" }}</strong></article>
           <article><span>Tipo de impuesto</span><strong>{{ taxLabel }}</strong></article>
         </section>
@@ -21,7 +21,7 @@
           </div>
         </section>
       </section>
-    <template #footer><button type="button" class="bio-nexus-action bio-nexus-action-secondary" @click="close">Cerrar</button></template>
+    <template #footer><BioNexusActionButton variant="secondary" icon="close" @click="close">Cerrar</BioNexusActionButton></template>
   </BioNexusDialog>
 </template>
 <script setup>
@@ -29,6 +29,7 @@ import { formatRegionalNumber, formatUsdPrice } from "@/services/regionalFormatt
 import { useRegionalSettingsStore } from "@/stores/regionalSettings";
 import { computed, nextTick, ref } from "vue";
 import BioNexusDialog from "@/components/ui/BioNexusDialog.vue";
+import BioNexusActionButton from "@/components/ui/BioNexusActionButton.vue";
 const props = defineProps({ taxes: { type: Array, default: () => [] }, tariffs: { type: Array, default: () => [] } });
 const dialog = ref(null); const exam = ref(null); const group = ref(null);
 const regionalSettings = useRegionalSettingsStore();
@@ -42,7 +43,7 @@ function money(value) { return formatUsdPrice(value, regionalSettings.settings);
 async function show(record, selectedGroup) { exam.value = record; group.value = selectedGroup; dialog.value?.open(); await nextTick();  }
 function handleClosed() { exam.value = null; group.value = null; }
 function close() { dialog.value?.close(); exam.value = null; group.value = null; }
-function onBackdropClick(event) { if (event.target === dialog.value) close(); }
+
 defineExpose({ show, close });
 </script>
 <style scoped>.exam-detail-content{display:grid;align-content:start;gap:18px}

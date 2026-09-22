@@ -37,13 +37,10 @@
           <button
             v-if="canCreate"
             type="button"
-            class="bio-nexus-action bio-nexus-action-primary"
+            class="bio-nexus-action bio-nexus-action-primary bio-nexus-grid-icon-action"
             :disabled="loading || saving"
             @click="openCreate"
-          >
-            <BioNexusActionIcon action="create" />
-            <span>Nueva forma</span>
-          </button>
+           title="Nueva forma" aria-label="Nueva forma"><BioNexusActionIcon action="create" /></button>
         </template>
       </BioNexusDataGrid>
 
@@ -108,7 +105,7 @@ const parasiticContextMenuItems = computed(() => {
   if (!record) return [];
   return [
     { key: "edit", icon: "edit", label: "Editar", visible: canUpdateDescription.value, disabled: saving.value, action: () => openEdit(record) },
-    { key: "toggle-status", icon: record.annulled ? "activate" : "deactivate", label: record.annulled ? "Activar" : "Inactivar", visible: canChangeStatus.value, disabled: saving.value, action: () => openState(record) },
+    { key: "toggle-status", icon: record.annulled ? "activate" : "deactivate", label: record.annulled ? "Activar" : "Desactivar", visible: canChangeStatus.value, disabled: saving.value, action: () => openState(record) },
   ];
 });
 const dataGrid = ref(null);
@@ -123,7 +120,7 @@ const visibleGridRows = computed(() => {
   return gridRows.value.filter((record) =>
     [
       record.description,
-      record.isActive ? "Activo" : "Inactivo",
+      record.isActive ? "Activo" : "Desactivado",
     ]
       .filter((value) => typeof value === "string")
       .some((value) => value.toLocaleLowerCase().includes(search)),
@@ -156,7 +153,7 @@ const columnDefs = computed(() => [
     filterParams: {
       options: [
         { value: true, label: "Activo" },
-        { value: false, label: "Inactivo" },
+        { value: false, label: "Desactivado" },
       ],
     },
     headerClass: "bio-nexus-grid-toggle-header",
@@ -164,7 +161,7 @@ const columnDefs = computed(() => [
     cellRenderer: BioNexusGridToggleCell,
     cellRendererParams: {
       onLabel: "Activo",
-      offLabel: "Inactivo",
+      offLabel: "Desactivado",
       ariaLabel: "Estado",
       disabled: () => !canChangeStatus.value || saving.value,
       onToggle: (row) => openState(row),
@@ -251,7 +248,7 @@ async function saveState(record) {
     if (!updated) throw new Error("El backend no devolvio un registro valido.");
     replaceRecord(updated);
     stateDialog.value?.close();
-    toast.success(updated.annulled ? "La forma parasitaria fue inactivada correctamente." : "La forma parasitaria fue activada correctamente.");
+    toast.success(updated.annulled ? "La forma parasitaria fue desactivada correctamente." : "La forma parasitaria fue activada correctamente.");
   } catch (error) {
     stateDialog.value?.setError(getParasiticformErrorMessage(error, "No fue posible cambiar el estado."));
   } finally { saving.value = false; }

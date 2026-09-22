@@ -12,15 +12,15 @@
       <div v-if="loading" class="bio-nexus-empty-state">Consultando roles...</div>
       <div v-else-if="errorMessage" class="bio-nexus-message bio-nexus-message-error" role="alert">{{ errorMessage }}</div>
       <template v-else-if="authorization">
-        <div v-if="user?.hidden" class="bio-nexus-message bio-nexus-message-warning" role="status">Los usuarios inactivos permanecen visibles para consulta, pero no pueden modificarse.</div>
+        <div v-if="user?.hidden" class="bio-nexus-message bio-nexus-message-warning" role="status">Los usuarios desactivados permanecen visibles para consulta, pero no pueden modificarse.</div>
         <div v-else-if="!canAssign" class="bio-nexus-empty-state">La cuenta actual puede consultar los roles, pero no modificarlos.</div>
-        <div v-if="inactiveAssignedCount > 0" class="bio-nexus-message bio-nexus-message-warning" role="status">Los roles inactivos se conservan para consulta y se retiraran al guardar.</div>
+        <div v-if="inactiveAssignedCount > 0" class="bio-nexus-message bio-nexus-message-warning" role="status">Los roles desactivados se conservan para consulta y se retiraran al guardar.</div>
         <div v-if="filteredRoles.length === 0" class="bio-nexus-empty-state">No existen roles que coincidan con la busqueda.</div>
         <div v-else class="role-assignment-list">
           <label v-for="role in filteredRoles" :key="role.id" class="role-assignment-option" :class="{ 'role-assignment-option-selected': isSelected(role.id), 'role-assignment-option-disabled': !role.isActive || user?.hidden }">
             <BioNexusCheckbox :checked="isSelected(role.id)" :disabled="!role.isActive || !canEdit || !canAssign || saving" stop-propagation @change="emit('toggle-role', role)" />
             <span class="role-assignment-copy"><strong>{{ role.name }}</strong><small>{{ role.description || "Sin descripción" }}</small></span>
-            <span class="bio-nexus-badge" :class="role.isActive ? 'bio-nexus-badge-success' : 'bio-nexus-badge-warning'">{{ role.isActive ? "Activo" : "Inactivo" }}</span>
+            <span class="bio-nexus-badge" :class="role.isActive ? 'bio-nexus-badge-success' : 'bio-nexus-badge-warning'">{{ role.isActive ? "Activo" : "Desactivado" }}</span>
           </label>
         </div>
         <div v-if="saveError" class="bio-nexus-inline-message bio-nexus-message-error" role="alert">{{ saveError }}</div>

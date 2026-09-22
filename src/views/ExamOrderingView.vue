@@ -3,8 +3,8 @@
     <div class="exam-order-commandbar" aria-label="Acciones de ordenamiento">
       <p>Arrastra una fila, usa los botones o selecciónala con clic. Muévela con ↑ o ↓, Enter para fijar y Esc para cancelar.</p>
       <div class="exam-order-actions">
-        <button class="exam-order-button exam-order-button--secondary" type="button" :disabled="!dirty || saving" @click="discard">Descartar</button>
-        <button class="exam-order-button exam-order-button--primary" type="button" :disabled="!dirty || !canUpdate || saving" @click="save">{{ saving ? "Guardando..." : "Guardar orden" }}</button>
+        <BioNexusActionButton variant="secondary" icon="undo" :disabled="!dirty || saving" @click="discard">Descartar</BioNexusActionButton>
+        <BioNexusActionButton variant="primary" icon="save" :loading="saving" :disabled="!dirty || !canUpdate || saving" @click="save">Guardar orden</BioNexusActionButton>
       </div>
     </div>
     <p v-if="error" class="exam-order-error">{{ error }}</p>
@@ -13,16 +13,16 @@
       <article class="exam-order-panel"><header><div><small>ORDEN GLOBAL</small><h2>Grupos de exámenes</h2></div><span>{{ groups.length }} grupo(s)</span></header>
         <ol class="exam-order-list" @dragover.prevent="autoScroll($event)">
   <li v-for="(group,index) in groups" :key="group.id" :data-order-key="`group-${group.id}`" draggable="true" :tabindex="0" :aria-selected="keyboardSelection?.type==='group'&&keyboardSelection?.id===group.id" :class="{selected:group.id===selectedGroupId,inactive:group.annulled,dragging:dragState?.type==='group'&&dragState?.id===group.id,'keyboard-selected':keyboardSelection?.type==='group'&&keyboardSelection?.id===group.id}" @focus="selectForKeyboard('group',group.id)" @click="activateKeyboardSelection('group',group.id,$event)" @dragstart="startDrag('group',index,$event)" @dragenter.prevent="previewRow('group',index,$event)" @dragover.prevent="previewRow('group',index,$event)" @drop.prevent="endDrag" @dragend="endDrag">
-    <button class="select-row" type="button" @click="selectedGroupId=group.id"><span class="order-number">{{ index + 1 }}</span><span class="drag-icon" aria-hidden="true">⋮⋮</span><span><strong>{{ group.description }}</strong><small>{{ group.annulled ? "Inactivo" : "Activo" }}</small></span></button>
-    <div class="move-actions"><button type="button" :disabled="index===0 || saving" aria-label="Subir grupo" @click="move(groups,index,-1)">↑</button><button type="button" :disabled="index===groups.length-1 || saving" aria-label="Bajar grupo" @click="move(groups,index,1)">↓</button></div>
+    <button class="select-row" type="button" @click="selectedGroupId=group.id"><span class="order-number">{{ index + 1 }}</span><span class="drag-icon" aria-hidden="true">⋮⋮</span><span><strong>{{ group.description }}</strong><small>{{ group.annulled ? "Desactivado" : "Activo" }}</small></span></button>
+    <div class="move-actions"><BioNexusActionButton icon="arrow_upward" label="Subir grupo" size="sm" :disabled="index===0 || saving" @click="move(groups,index,-1)"  icon-only /><BioNexusActionButton icon="arrow_downward" label="Bajar grupo" size="sm" :disabled="index===groups.length-1 || saving" @click="move(groups,index,1)"  icon-only /></div>
   </li>
 </ol>
       </article>
       <article class="exam-order-panel"><header><div><small>ORDEN DEL GRUPO</small><h2>{{ selectedGroup?.description || "Exámenes" }}</h2></div><span>{{ exams.length }} examen(es)</span></header>
         <div v-if="!selectedGroup" class="exam-order-state">Selecciona un grupo.</div><ol v-else class="exam-order-list" @dragover.prevent="autoScroll($event)">
   <li v-for="(exam,index) in exams" :key="exam.id" :data-order-key="`exam-${exam.id}`" draggable="true" :tabindex="0" :aria-selected="keyboardSelection?.type==='exam'&&keyboardSelection?.id===exam.id" :class="{inactive:exam.annulled,dragging:dragState?.type==='exam'&&dragState?.id===exam.id,'keyboard-selected':keyboardSelection?.type==='exam'&&keyboardSelection?.id===exam.id}" @focus="selectForKeyboard('exam',exam.id)" @click="activateKeyboardSelection('exam',exam.id,$event)" @dragstart="startDrag('exam',index,$event)" @dragenter.prevent="previewRow('exam',index,$event)" @dragover.prevent="previewRow('exam',index,$event)" @drop.prevent="endDrag" @dragend="endDrag">
-    <div class="select-row static"><span class="order-number">{{ index + 1 }}</span><span class="drag-icon" aria-hidden="true">⋮⋮</span><span><strong>{{ exam.description }}</strong><small>{{ exam.abbreviation }} · {{ exam.annulled ? "Inactivo" : "Activo" }}</small></span></div>
-    <div class="move-actions"><button type="button" :disabled="index===0 || saving" aria-label="Subir examen" @click="move(exams,index,-1)">↑</button><button type="button" :disabled="index===exams.length-1 || saving" aria-label="Bajar examen" @click="move(exams,index,1)">↓</button></div>
+    <div class="select-row static"><span class="order-number">{{ index + 1 }}</span><span class="drag-icon" aria-hidden="true">⋮⋮</span><span><strong>{{ exam.description }}</strong><small>{{ exam.abbreviation }} · {{ exam.annulled ? "Desactivado" : "Activo" }}</small></span></div>
+    <div class="move-actions"><BioNexusActionButton icon="arrow_upward" label="Subir examen" size="sm" :disabled="index===0 || saving" @click="move(exams,index,-1)"  icon-only /><BioNexusActionButton icon="arrow_downward" label="Bajar examen" size="sm" :disabled="index===exams.length-1 || saving" @click="move(exams,index,1)"  icon-only /></div>
   </li>
 </ol>
       </article>
@@ -30,6 +30,7 @@
   </section>
 </template>
 <script setup>
+import BioNexusActionButton from "@/components/ui/BioNexusActionButton.vue";
 import { computed,onBeforeUnmount,onMounted,ref,watch } from "vue";
 import { onBeforeRouteLeave } from "vue-router";
 import { useAuthorizationStore } from "@/stores/authorization";

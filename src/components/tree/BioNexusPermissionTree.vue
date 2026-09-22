@@ -85,7 +85,7 @@
                 ? selectable
                   ? 'Permiso activo y disponible para asignar'
                   : 'Permiso activo'
-                : 'Permiso inactivo'
+                : 'Permiso desactivado'
             "
             :class="{
               'permission-tree-badge-inactive':
@@ -97,7 +97,7 @@
                 ? selectable
                   ? "Disponible"
                   : "Activo"
-                : "Inactivo"
+                : "Desactivado"
             }}
             </span>
         </template>

@@ -34,19 +34,21 @@
     <template #footer><button type="button" class="bio-nexus-action bio-nexus-action-secondary" :disabled="saving" @click="requestClose"><BioNexusActionIcon action="cancel" />Cancelar</button>
         <button type="button" class="bio-nexus-action bio-nexus-action-primary" :disabled="saving || !dirty || tooLong || !canUpdate" @click="submit"><BioNexusActionIcon action="save" />{{ saving ? "Guardando..." : "Guardar" }}</button></template>
   </BioNexusDialog>
+  <BioNexusConfirmDialog ref="confirmDialog" />
 </template>
 <script setup>
 import { computed, nextTick, ref } from "vue";
 import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
 import BioNexusDialog from "@/components/ui/BioNexusDialog.vue";
+import BioNexusConfirmDialog from "@/components/ui/BioNexusConfirmDialog.vue";
 import BioNexusIcon from "@/components/ui/BioNexusIcon.vue";
-const props=defineProps({saving:{type:Boolean,default:false},canUpdate:{type:Boolean,default:false}});const emit=defineEmits(["save"]);const dialog=ref(null),editor=ref(null),exam=ref(null),tab=ref("editor"),draft=ref(""),original=ref(""),errorMessage=ref("");const length=computed(()=>draft.value.length),tooLong=computed(()=>length.value>100000),dirty=computed(()=>draft.value!==original.value);const safePreview=computed(()=>sanitizePreview(draft.value));
+const props=defineProps({saving:{type:Boolean,default:false},canUpdate:{type:Boolean,default:false}});const emit=defineEmits(["save"]);const dialog=ref(null),confirmDialog=ref(null),editor=ref(null),exam=ref(null),tab=ref("editor"),draft=ref(""),original=ref(""),errorMessage=ref("");const length=computed(()=>draft.value.length),tooLong=computed(()=>length.value>100000),dirty=computed(()=>draft.value!==original.value);const safePreview=computed(()=>sanitizePreview(draft.value));
 function sanitizePreview(html){const documentValue=new DOMParser().parseFromString(String(html||""),"text/html");documentValue.querySelectorAll("script,style,iframe,object,embed,link,meta,form,input,button,textarea,select,video,audio").forEach(node=>node.remove());documentValue.body.querySelectorAll("*").forEach(node=>{for(const attribute of Array.from(node.attributes)){const name=attribute.name.toLowerCase(),value=attribute.value.trim().toLowerCase();if(name.startsWith("on")||name==="srcdoc"||(name==="href"||name==="src")&&(value.startsWith("javascript:")||value.startsWith("data:")))node.removeAttribute(attribute.name)}});return documentValue.body.innerHTML}
 async function open(record){exam.value=record;draft.value=typeof record?.work_sheet==="string"?record.work_sheet:"";original.value=draft.value;errorMessage.value="";tab.value="editor";dialog.value?.open();await nextTick();if(editor.value){editor.value.innerHTML=draft.value;editor.value.focus()}}
 function capture(){draft.value=editor.value?.innerHTML??"";if(tooLong.value)errorMessage.value="La Hoja de trabajo supera el limite permitido.";else errorMessage.value=""}
 function command(name,value=null){editor.value?.focus();document.execCommand(name,false,value);capture()}function setBlockType(event){editor.value?.focus();document.execCommand("formatBlock",false,event.target.value);capture()}function setLineHeight(event){editor.value?.focus();const selection=globalThis.getSelection?.();let node=selection?.anchorNode??null;if(node?.nodeType===Node.TEXT_NODE)node=node.parentElement;const block=node?.closest?.("p,div,h3,h4,li")??editor.value;if(block)block.style.lineHeight=event.target.value;capture()}
 function onPaste(event){event.preventDefault();const text=event.clipboardData?.getData("text/plain")??"";document.execCommand("insertText",false,text);capture()}
-function requestClose(){if(props.saving)return;if(dirty.value&&!globalThis.confirm("Hay cambios sin guardar. Desea descartarlos?"))return;close()}
+async function requestClose(){if(props.saving)return;if(dirty.value){const accepted=await confirmDialog.value?.ask({title:"Descartar cambios",message:"Hay cambios sin guardar. ¿Deseas salir y descartarlos?",confirmText: "Sí, salir y descartar cambios",confirmIcon:"delete",variant:"danger"});if(!accepted)return}close()}
 function handleClosed(){exam.value=null;draft.value="";original.value="";errorMessage.value=""}
 function close(){dialog.value?.close();exam.value=null;draft.value="";original.value="";errorMessage.value=""}
 function setError(message){errorMessage.value=String(message||"")}

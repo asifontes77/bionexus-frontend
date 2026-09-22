@@ -45,13 +45,10 @@
             <button
               v-if="canCreateRoles"
               type="button"
-              class="bio-nexus-action bio-nexus-action-primary"
+              class="bio-nexus-action bio-nexus-action-primary bio-nexus-grid-icon-action"
               :disabled="loading || creatingRole"
               @click="openCreateRoleDialog"
-            >
-              <BioNexusActionIcon action="create" />
-              <span>Nuevo rol</span>
-            </button>
+             title="Nuevo rol" aria-label="Nuevo rol"><BioNexusActionIcon action="create" /></button>
           </template>
         </BioNexusDataGrid>
 
@@ -133,7 +130,7 @@ const visibleRoles = computed(() => {
       role.name,
       role.description,
       role.isSystem ? "Sistema" : "Configurable",
-      role.isActive ? "Activo" : "Inactivo",
+      role.isActive ? "Activo" : "Desactivado",
     ]
       .filter((value) => typeof value === "string")
       .some((value) => value.toLocaleLowerCase().includes(search)),
@@ -331,7 +328,7 @@ const roleColumnDefs = computed(() => [
       getValue: (data) => Boolean(data?.isActive),
       options: [
         { value: true, label: "Activo" },
-        { value: false, label: "Inactivo" },
+        { value: false, label: "Desactivado" },
       ],
     },
     minWidth: 135,
@@ -349,7 +346,7 @@ const roleColumnDefs = computed(() => [
     headerClass: "bio-nexus-grid-centered-header",
     cellRenderer: BioNexusGridToggleCell,
 
-  cellRendererParams: { onLabel: "Activo", offLabel: "Inactivo", ariaLabel: "Estado", disabled: false, onToggle: (row) => openRoleStateDialog(row) },
+  cellRendererParams: { onLabel: "Activo", offLabel: "Desactivado", ariaLabel: "Estado", disabled: false, onToggle: (row) => openRoleStateDialog(row) },
 },
   {
     colId: "actions",
@@ -995,7 +992,7 @@ async function savePermissionChanges() {
       ADMIN_ESSENTIAL_PERMISSIONS_REQUIRED:
         "El rol administrador debe conservar todos los permisos esenciales.",
       PERMISSIONS_NOT_FOUND_OR_INACTIVE:
-        "Uno o más permisos no existen o están inactivos.",
+        "Uno o más permisos no existen o están desactivados.",
       ROLE_NOT_FOUND:
         "El rol seleccionado ya no existe.",
     };

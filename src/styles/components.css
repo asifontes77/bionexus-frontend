@@ -1,4 +1,4 @@
-﻿/* Bio Nexus shared components
+/* Bio Nexus shared components
  * Reusable visual primitives shared by Vue 3 views.
  */
 
@@ -818,3 +818,45 @@
   background: var(--bio-nexus-color-warning-soft);
 }
 /* Bio Nexus PARASITIC STATUS ACTION COLORS END */
+/* Bio Nexus BUTTON DEPTH CONTRACT START */
+.bio-nexus-action {
+  position: relative;
+  border-bottom-color: color-mix(in srgb, currentColor 28%, var(--bio-nexus-color-border-strong));
+  box-shadow: 0 2px 0 rgb(13 55 82 / 14%), 0 4px 10px rgb(13 55 82 / 10%);
+  transform: translateY(0);
+  transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease, background 120ms ease, filter 120ms ease;
+}
+.bio-nexus-action-primary {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--bio-nexus-color-primary) 84%, white) 0%, var(--bio-nexus-color-primary) 58%, var(--bio-nexus-color-primary-strong) 100%);
+}
+.bio-nexus-action-secondary {
+  background: linear-gradient(180deg, #ffffff 0%, color-mix(in srgb, var(--bio-nexus-color-surface-soft) 80%, white) 100%);
+}
+.bio-nexus-action-danger {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--bio-nexus-color-danger) 84%, white) 0%, var(--bio-nexus-color-danger) 100%);
+}
+.bio-nexus-action:not(:disabled):not([aria-disabled="true"]):hover {
+  filter: saturate(1.06) brightness(1.025);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 0 rgb(13 55 82 / 16%), 0 7px 16px rgb(13 55 82 / 15%);
+}
+.bio-nexus-action:not(:disabled):not([aria-disabled="true"]):active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 0 rgb(13 55 82 / 14%), 0 2px 5px rgb(13 55 82 / 10%);
+}
+.bio-nexus-action:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--bio-nexus-color-accent) 36%, transparent);
+  outline-offset: 3px;
+}
+.bio-nexus-action:disabled,
+.bio-nexus-action[aria-disabled="true"] {
+  box-shadow: none;
+  transform: none;
+  filter: grayscale(.22) saturate(.72);
+}
+/* Bio Nexus BUTTON DEPTH CONTRACT END */
+
+/* Shared danger contrast correction */
+.bio-nexus-action-danger { border-color: var(--bio-nexus-color-danger); background: linear-gradient(180deg, color-mix(in srgb, var(--bio-nexus-color-danger) 82%, white), var(--bio-nexus-color-danger)); color: #fff; }
+.bio-nexus-action-danger :is(svg,.bio-nexus-icon,.material-symbols-rounded) { color: currentColor; }
+.bio-nexus-action-danger:disabled { border-color: var(--bio-nexus-color-border); background: var(--bio-nexus-color-surface-soft); color: var(--bio-nexus-color-text-muted); }

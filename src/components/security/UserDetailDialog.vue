@@ -12,7 +12,7 @@
               <p>{{ authorization.user.position || "Sin cargo registrado" }}</p>
             </div>
             <span class="bio-nexus-badge" :class="authorization.user.hidden ? 'bio-nexus-badge-warning' : 'bio-nexus-badge-success'">
-              {{ authorization.user.hidden ? "Inactivo" : "Activo" }}
+              {{ authorization.user.hidden ? "Desactivado" : "Activo" }}
             </span>
           </section>
 

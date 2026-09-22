@@ -8,8 +8,8 @@
     <div v-if="!isCommunicationsRoute" class="laboratory-navigation">
       <BioNexusTabs v-model="activeTab" :tabs="tabs" aria-label="Secciones de Laboratorio" id-prefix="laboratory" />
       <div class="laboratory-actions">
-        <BioNexusActionButton v-if="dirty" variant="secondary" :disabled="saving" @click="discard">Descartar</BioNexusActionButton>
-        <BioNexusActionButton v-if="canUpdate" variant="primary" :loading="saving" :disabled="loading || !dirty" @click="save">Guardar cambios</BioNexusActionButton>
+        <BioNexusActionButton icon="undo" v-if="dirty" variant="secondary" :disabled="saving" @click="discard">Descartar</BioNexusActionButton>
+        <BioNexusActionButton icon="save" v-if="canUpdate" variant="primary" :loading="saving" :disabled="loading || !dirty" @click="save">Guardar cambios</BioNexusActionButton>
       </div>
     </div>
 

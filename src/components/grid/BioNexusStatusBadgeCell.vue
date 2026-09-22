@@ -6,7 +6,7 @@
         'bio-nexus-badge-warning': !isActive,
       }"
     >
-      {{ isActive ? "Activo" : "Inactivo" }}
+      {{ isActive ? "Activo" : "Desactivado" }}
     </span>
   </div>
 </template>
@@ -24,7 +24,7 @@ const props = defineProps({
 const isActive = computed(() => {
   const value = props.params?.value;
   if (value === "Activo") return true;
-  if (value === "Inactivo") return false;
+  if (value === "Desactivado") return false;
 
   const data = props.params?.data;
   if (typeof data?.isActive === "boolean") return data.isActive;

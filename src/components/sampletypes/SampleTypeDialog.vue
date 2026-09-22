@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <BioNexusDialog ref="dialog" size="standard" :kicker="mode === 'create' ? 'Nuevo registro' : 'Editar registro'" :title="mode === 'create' ? 'Crear tipo de muestra' : 'Editar tipo de muestra'" @close="reset">
     <section class="sample-type-form">
       <BioNexusFormField label="Descripción" field-id="sample-type-description" :error="descriptionError" :help="`${draft.description.length} de 50 caracteres`" required>
@@ -32,11 +32,10 @@ const draft = reactive({ description: '' })
 const normalizedDescription = computed(() => draft.description.trim())
 const hasChanges = computed(() => mode.value === 'edit' && normalizedDescription.value !== originalDescription.value)
 const descriptionError = computed(() => attempted.value && normalizedDescription.value === '' ? 'La descripción es obligatoria.' : '')
-const saveDisabled = computed(() => {
-  if (props.saving) return true
-  if (mode.value === 'create') return !props.canCreate
-  return !props.canUpdate || !hasChanges.value
-})
+const isValid = computed(() => normalizedDescription.value !== '')
+const saveDisabled = computed(() => mode.value === 'create'
+  ? props.saving || !props.canCreate || !isValid.value
+  : props.saving || !props.canUpdate || !isValid.value || !hasChanges.value)
 
 async function show() { await dialog.value?.open(); await nextTick(); firstInput.value?.focus() }
 async function openCreate() {

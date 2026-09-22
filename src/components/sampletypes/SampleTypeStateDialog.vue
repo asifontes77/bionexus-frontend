@@ -11,7 +11,7 @@ const configuration = {
   kicker: 'Estado del tipo de muestra',
   isInactive: row => row?.annulled === true,
   activateTitle: 'Activar tipo de muestra',
-  deactivateTitle: 'Inactivar tipo de muestra',
+  deactivateTitle: 'Desactivar tipo de muestra',
   activateMessage: 'El tipo de muestra volvera a estar disponible para nuevas selecciones.',
   deactivateMessage: 'El registro permanecera visible en este catalogo, pero no estara disponible para nuevas selecciones.',
   label: row => row?.description || 'Tipo de muestra seleccionado',

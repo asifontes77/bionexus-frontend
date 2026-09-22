@@ -1,20 +1,8 @@
 <template>
   <div class="bio-nexus-grid-export">
-    <button
-      type="button"
-      class="bio-nexus-action bio-nexus-action-secondary bio-nexus-grid-export-trigger"
-      :disabled="disabled"
-      @click="openDialog"
-    >
-      <svg class="bio-nexus-grid-export-trigger-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M12 3v12" />
-        <path d="m7 10 5 5 5-5" />
-        <path d="M5 21h14" />
-      </svg>
-      <span>Exportar</span>
-    </button>
+    <BioNexusActionButton class="bio-nexus-grid-export-trigger" icon="download" icon-only shape="rounded" size="md" variant="secondary" label="Exportar" :disabled="disabled" @click="openDialog" />
 
-        <BioNexusDialog ref="dialog" size="standard" kicker="Exportacion del grid" title="Configurar exportacion" @close="handleClosed">
+        <BioNexusDialog ref="dialog" size="standard" kicker="Exportación del grid" title="Configurar exportación" @close="handleClosed">
       <section class="bio-nexus-grid-export-dialog-body">
           <section class="bio-nexus-grid-export-section" aria-labelledby="export-format-title">
             <h4 id="export-format-title">Formato</h4>
@@ -81,6 +69,7 @@
 import BioNexusCheckbox from "@/components/ui/BioNexusCheckbox.vue";
 import { ref, watch } from "vue";
 import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
+import BioNexusActionButton from "@/components/ui/BioNexusActionButton.vue";
 import BioNexusDialog from "@/components/ui/BioNexusDialog.vue";
 import { useBioNexusToast } from "@/composables/useBioNexusToast.js";
 
@@ -156,19 +145,6 @@ function confirmExport() {
 <style scoped>
 .bio-nexus-grid-export {
   display: inline-flex;
-}
-
-.bio-nexus-grid-export-trigger {
-  min-height: 34px;
-  gap: 7px;
-  padding: 6px 10px;
-  font-size: var(--bio-nexus-font-size-sm);
-  font-weight: 600;
-}
-
-.bio-nexus-grid-export-trigger-icon {
-  width: 17px;
-  height: 17px;
 }
 
 .bio-nexus-grid-export-dialog-body {

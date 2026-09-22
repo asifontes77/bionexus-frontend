@@ -1,5 +1,5 @@
 <template>
-  <BioNexusDialog ref="dialog" size="standard" :kicker="mode === 'create' ? 'Nuevo registro' : 'Editar registro'" :title="mode === 'create' ? 'Crear grupo de exámenes' : 'Editar grupo de exámenes'" @close="handleClosed">
+  <BioNexusDialog ref="dialog" size="standard" :kicker="mode === 'create' ? 'Nuevo registro' : 'Editar registro'" :title="mode === 'create' ? 'Crear grupo de exámenes' : 'Editar grupo de exámenes'" :prevent-close="saving || hasChanges" @before-close="close" @close="handleClosed">
     <section class="exam-group-body">
       <BioNexusFormField label="Descripción" field-id="exam-group-description" :error="descriptionError" :help="draft.description.length + ' de 150 caracteres'" required>
         <input id="exam-group-description" ref="firstInput" v-model="draft.description" class="bio-nexus-field" maxlength="150" autocomplete="off" />
@@ -12,6 +12,7 @@
       <button type="button" class="bio-nexus-action bio-nexus-action-primary" :disabled="submitDisabled" @click="submit"><BioNexusActionIcon action="save" />{{ saving ? "Guardando..." : mode === "create" ? "Crear" : "Guardar" }}</button>
     </template>
   </BioNexusDialog>
+  <BioNexusConfirmDialog ref="discardDialog" />
 </template>
 
 <script setup>
@@ -19,22 +20,25 @@ import BioNexusCheckbox from "@/components/ui/BioNexusCheckbox.vue";
 import { computed, nextTick, reactive, ref } from "vue";
 import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
 import BioNexusDialog from "@/components/ui/BioNexusDialog.vue";
+import BioNexusConfirmDialog from "@/components/ui/BioNexusConfirmDialog.vue";
 import BioNexusFormField from "@/components/ui/BioNexusFormField.vue";
 
 const props = defineProps({ saving: { type: Boolean, default: false }, canCreate: { type: Boolean, default: false }, canUpdate: { type: Boolean, default: false } });
 const emit = defineEmits(["submit"]);
-const dialog = ref(null), firstInput = ref(null), mode = ref("create"), current = ref(null), errorMessage = ref(""), attempted = ref(false), original = ref("");
+const dialog = ref(null), discardDialog = ref(null), firstInput = ref(null), mode = ref("create"), current = ref(null), errorMessage = ref(""), attempted = ref(false), original = ref("");
 const draft = reactive({ description: "", its_exam: true });
 const values = computed(() => ({ description: draft.description.trim(), its_exam: Boolean(draft.its_exam) }));
 const signature = computed(() => JSON.stringify(values.value));
 const descriptionError = computed(() => attempted.value && values.value.description === "" ? "La descripción es obligatoria." : "");
-const submitDisabled = computed(() => props.saving || signature.value === original.value || (mode.value === "create" ? !props.canCreate : !props.canUpdate));
+const isValid = computed(() => values.value.description !== "");
+const hasChanges = computed(() => signature.value !== original.value);
+const submitDisabled = computed(() => mode.value === "create" ? props.saving || !props.canCreate || !isValid.value : props.saving || !props.canUpdate || !isValid.value || !hasChanges.value);
 
 async function show() { await dialog.value?.open(); nextTick(() => firstInput.value?.focus()); }
 function assign(row) { draft.description = row?.description || ""; draft.its_exam = row?.its_exam ?? true; original.value = JSON.stringify(values.value); }
-function openCreate() { mode.value = "create"; current.value = null; assign(null); original.value = ""; attempted.value = false; errorMessage.value = ""; show(); }
+function openCreate() { mode.value = "create"; current.value = null; assign(null); attempted.value = false; errorMessage.value = ""; show(); }
 function openEdit(row) { mode.value = "edit"; current.value = row; assign(row); attempted.value = false; errorMessage.value = ""; show(); }
-function close() { dialog.value?.close(); }
+async function close() { if (props.saving) return; if (hasChanges.value) { const accepted = await discardDialog.value?.ask({ title: "Descartar cambios", message: "Hay cambios sin guardar. ¿Deseas salir y descartarlos?", confirmText: "Sí, salir y descartar cambios", confirmIcon: "delete", variant: "danger" }); if (!accepted) return; } dialog.value?.close(); }
 function handleClosed() { attempted.value = false; }
 function clearError() { errorMessage.value = ""; }
 function setError(message) { errorMessage.value = String(message || ""); }

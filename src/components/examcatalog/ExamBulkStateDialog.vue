@@ -16,7 +16,7 @@ function open(records, annulled) {
   const noun = count === 1 ? "examen" : "exámenes";
   stateDialog.value?.open(target.value, {
     activateTitle: count === 1 ? "Activar examen" : `Activar ${count} exámenes`,
-    deactivateTitle: count === 1 ? "Inactivar examen" : `Inactivar ${count} exámenes`,
+    deactivateTitle: count === 1 ? "Desactivar examen" : `Desactivar ${count} exámenes`,
     activateMessage: count === 1 ? "El examen volverá a estar disponible en nuevos procesos." : `Los ${count} exámenes volverán a estar disponibles en nuevos procesos.`,
     deactivateMessage: count === 1 ? "El examen permanecerá visible en el catálogo, pero no estará disponible en nuevos procesos." : `Los ${count} exámenes permanecerán visibles en el catálogo, pero no estarán disponibles en nuevos procesos.`,
     label: () => count === 1 ? items[0]?.description || "Examen seleccionado" : `${count} ${noun} seleccionados`,

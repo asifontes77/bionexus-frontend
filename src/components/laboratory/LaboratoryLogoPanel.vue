@@ -14,7 +14,7 @@
           <div class="range-control"><input v-model.number="model.max_width_logo" class="logo-range" type="range" min="20" max="200" step="5" :disabled="disabled"><output>{{ model.max_width_logo }} px</output></div>
         </BioNexusFormField>
         <input ref="fileInput" class="file-input" type="file" accept="image/png,image/jpeg,image/webp" @change="selectFile">
-        <BioNexusActionButton class="select-image" variant="secondary" :disabled="disabled" @click="fileInput?.click()">Seleccionar imagen</BioNexusActionButton>
+        <BioNexusActionButton icon="image" class="select-image" variant="secondary" :disabled="disabled" @click="fileInput?.click()">Seleccionar imagen</BioNexusActionButton>
         <small>El logo conserva su proporción. Se aplica primero el límite que produzca el tamaño más pequeño.</small><small>PNG, JPEG o WebP. Tamaño máximo: 5 MB.</small>
       </div>
     </div>

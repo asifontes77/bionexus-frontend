@@ -2,7 +2,14 @@
   <section class="tariffs-page">
     <div v-if="loadError" class="bio-nexus-message bio-nexus-message-error">{{ loadError }}</div>
     <BioNexusDataGrid :row-data="rows" :column-defs="columnDefs" :default-col-def="defaultColDef" :components="gridComponents" :get-row-id="({data}) => String(data.id)" :search-enabled="true" v-model:search-model-value="search" search-placeholder="Buscar tarifa" :refresh-enabled="true" :refreshing="loading" :page-size="10" :page-size-selector="[10,20,50]" :min-grid-height="360" :max-grid-height="620" @refresh="load" @row-context-menu="openContextMenu" @grid-ready="rememberGrid">
-      <template #actions><div class="tariff-grid-actions" aria-label="Acciones de ordenamiento"><button type="button" class="tariff-order-button" :disabled="!selectedRow || selectedIndex <= 0 || orderSaving" title="Subir tarifa" @click="moveSelected(-1)">↑</button><button type="button" class="tariff-order-button" :disabled="!selectedRow || selectedIndex < 0 || selectedIndex >= tariffs.length - 1 || orderSaving" title="Bajar tarifa" @click="moveSelected(1)">↓</button><button type="button" class="bio-nexus-action bio-nexus-action-secondary tariff-order-save" :disabled="!orderDirty || orderSaving" @click="saveOrder"><BioNexusActionIcon action="save" />{{ orderSaving ? 'Guardando...' : 'Guardar orden' }}</button><button v-if="canCreate" class="bio-nexus-action bio-nexus-action-primary" @click="openCreate"><BioNexusActionIcon action="create" />Nueva tarifa</button></div></template>
+      <template #actions>
+        <div class="tariff-grid-actions" aria-label="Acciones de ordenamiento">
+          <BioNexusActionButton icon="arrow_upward" icon-only shape="circle" size="md" variant="secondary" label="Subir tarifa" :disabled="!selectedRow || selectedIndex <= 0 || orderSaving" @click="moveSelected(-1)" />
+          <BioNexusActionButton icon="arrow_downward" icon-only shape="circle" size="md" variant="secondary" label="Bajar tarifa" :disabled="!selectedRow || selectedIndex < 0 || selectedIndex >= tariffs.length - 1 || orderSaving" @click="moveSelected(1)" />
+          <BioNexusActionButton variant="secondary" icon="save" :loading="orderSaving" :disabled="!orderDirty || orderSaving" @click="saveOrder">Guardar orden</BioNexusActionButton>
+          <BioNexusActionButton v-if="canCreate" icon="add" icon-only shape="rounded" size="md" variant="primary" label="Nueva tarifa" @click="openCreate" />
+        </div>
+      </template>
     </BioNexusDataGrid>
 
     <BioNexusContextMenu ref="contextMenu" :open="menu.open" :x="menu.x" :y="menu.y" :items="menuItems" @close="closeMenu" @select="runMenuAction" />
@@ -13,13 +20,14 @@
         <BioNexusFormField label="Nombre" field-id="tariff-name" required :error="fieldErrors.name"><input id="tariff-name" v-model.trim="draft.name" class="bio-nexus-field" maxlength="100" autocomplete="off" @input="clearFieldError('name')" /></BioNexusFormField>
         <BioNexusFormField class="span-all" label="Descripción" field-id="tariff-description"><textarea id="tariff-description" v-model.trim="draft.description" class="bio-nexus-field tariff-description" maxlength="250"></textarea></BioNexusFormField>
       </form>
-      <template #footer><button type="button" class="bio-nexus-action bio-nexus-action-secondary" :disabled="saving" @click="closeDialog"><BioNexusActionIcon action="cancel" /><span>Cancelar</span></button><button type="submit" class="bio-nexus-action bio-nexus-action-primary" form="tariff-form" :disabled="saving || (dialog.mode === 'edit' && !hasChanges)"><BioNexusActionIcon :action="dialog.mode === 'create' ? 'create' : 'save'" /><span>{{ saving ? 'Procesando...' : dialog.mode === 'create' ? 'Crear' : 'Guardar' }}</span></button></template>
+      <template #footer><button type="button" class="bio-nexus-action bio-nexus-action-secondary" :disabled="saving" @click="closeDialog"><BioNexusActionIcon action="cancel" /><span>Cancelar</span></button><button type="submit" class="bio-nexus-action bio-nexus-action-primary" form="tariff-form" :disabled="tariffSubmitDisabled"><BioNexusActionIcon :action="dialog.mode === 'create' ? 'create' : 'save'" /><span>{{ saving ? 'Procesando...' : dialog.mode === 'create' ? 'Crear' : 'Guardar' }}</span></button></template>
     </BioNexusDialog>
 
     <BioNexusStateDialog ref="stateDialog" :saving="saving" @confirm="confirmStatus" />
   </section>
 </template>
 <script setup>
+import BioNexusActionButton from "@/components/ui/BioNexusActionButton.vue";
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref } from "vue";
 import BioNexusDataGrid from "@/components/grid/BioNexusDataGrid.vue";
 import BioNexusGridToggleCell from "@/components/grid/BioNexusGridToggleCell.vue";
@@ -46,10 +54,12 @@ const canCreate = computed(() => auth.hasPermission("tariffs.create"));
 const canUpdate = computed(() => auth.hasPermission("tariffs.update"));
 const canChangeStatus = computed(() => auth.hasPermission("tariffs.update"));
 const canSetDefault = computed(() => auth.hasPermission("tariffs.update"));
-const rows = computed(() => { const q=search.value.trim().toLowerCase(); return tariffs.value.filter(x => !q || [x.code,x.name,x.description,x.isDefault?'predeterminada':'',x.isActive?'activa':'inactiva'].some(v => String(v||'').toLowerCase().includes(q))); });
+const rows = computed(() => { const q=search.value.trim().toLowerCase(); return tariffs.value.filter(x => !q || [x.code,x.name,x.description,x.isDefault?'predeterminada':'',x.isActive?'activa':'desactivada'].some(v => String(v||'').toLowerCase().includes(q))); });
 const activeCount = computed(() => tariffs.value.filter(x => x.isActive).length);
 const draftSignature = computed(() => JSON.stringify({name:draft.name.trim(),description:draft.description.trim()}));
 const hasChanges = computed(() => draftSignature.value !== originalDraft.value);
+const tariffFormValid = computed(() => draft.name.trim() !== "");
+const tariffSubmitDisabled = computed(() => dialog.mode === "create" ? saving.value || !canCreate.value || !tariffFormValid.value : saving.value || !canUpdate.value || !tariffFormValid.value || !hasChanges.value);
 const selectedRow = computed(() => tariffs.value.find(row => row.id === selectedOrderId.value) || null);
 const selectedIndex = computed(() => selectedRow.value ? tariffs.value.findIndex(row => row.id === selectedRow.value.id) : -1);
 const orderSnapshot = () => JSON.stringify(tariffs.value.map(row => row.id));
@@ -62,13 +72,13 @@ const columnDefs = computed(() => [
   { field:"name", headerName:"Nombre", minWidth:260, flex:1 },
   { field:"configuredPriceCount", headerName:"Registros de precio", width:190, type:"numericColumn", headerClass:"tariff-center-header", cellClass:"tariff-center-cell" },
   { field:"isDefault", headerName:"Predeterminada", width:185, headerClass:"tariff-center-header", cellClass:"tariff-center-cell", filter:BioNexusOptionFilter, filterParams:{options:[{value:true,label:"Sí"},{value:false,label:"No"}]}, cellRenderer:"BioNexusGridToggleCell", cellRendererParams:{onLabel:"Sí",offLabel:"No",ariaLabel:"Predeterminada",disabled:row=>!canSetDefault.value||saving.value||row.isDefault||!row.isActive,onToggle:(row,next)=>{if(next)makeDefault(row);}} },
-  { field:"isActive", headerName:"Estado", width:175, headerClass:"tariff-center-header", cellClass:"tariff-center-cell", filter:BioNexusOptionFilter, filterParams:{options:[{value:true,label:"Activa"},{value:false,label:"Inactiva"}]}, cellRenderer:"BioNexusGridToggleCell", cellRendererParams:{onLabel:"Activa",offLabel:"Inactiva",ariaLabel:"Estado",disabled:()=>!canChangeStatus.value||saving.value,onToggle:requestStatus} },
+  { field:"isActive", headerName:"Estado", width:175, headerClass:"tariff-center-header", cellClass:"tariff-center-cell", filter:BioNexusOptionFilter, filterParams:{options:[{value:true,label:"Activa"},{value:false,label:"Desactivada"}]}, cellRenderer:"BioNexusGridToggleCell", cellRendererParams:{onLabel:"Activa",offLabel:"Desactivada",ariaLabel:"Estado",disabled:()=>!canChangeStatus.value||saving.value,onToggle:requestStatus} },
   { colId:"actions", headerName:"Acciones", width:110, minWidth:110, maxWidth:110, suppressMovable:true, sortable:false, filter:false, resizable:false, headerClass:"bio-nexus-grid-actions-header", cellClass:"bio-nexus-grid-actions-cell", cellRenderer:"BioNexusGridActionsCell", cellRendererParams:{actions:[{key:"edit",label:"Editar",visible:()=>canUpdate.value,disabled:()=>saving.value,onClick:openEdit}]}}
 ]);
 const menuItems = computed(() => { const row=menu.row; if(!row)return []; return [
   { key:"edit", icon:"edit", label:"Editar tarifa", visible:canUpdate.value, disabled:saving.value, action:()=>openEdit(row) },
   { key:"default", icon:"star", label:row.isDefault?"Tarifa predeterminada":"Definir como predeterminada", visible:canSetDefault.value, disabled:saving.value||row.isDefault||!row.isActive, action:()=>makeDefault(row) },
-  { key:"status", icon:row.isActive?"deactivate":"activate", label:row.isActive?"Inactivar tarifa":"Activar tarifa", visible:canChangeStatus.value, disabled:saving.value, action:()=>requestStatus(row) },
+  { key:"status", icon:row.isActive?"deactivate":"activate", label:row.isActive?"Desactivar tarifa":"Activar tarifa", visible:canChangeStatus.value, disabled:saving.value, action:()=>requestStatus(row) },
 ]; });
 function resetDraft(){Object.assign(draft,{code:"",name:"",description:""});Object.assign(fieldErrors,{name:""});originalDraft.value="";}
 function openCreate(){resetDraft();Object.assign(dialog,{open:true,mode:"create",record:null,error:""});originalDraft.value=draftSignature.value;formDialog.value?.open();}
@@ -81,8 +91,8 @@ function validateFields(){Object.assign(fieldErrors,{name:""});if(!draft.name.tr
 function createTechnicalCode(){return "TARIFF_"+Date.now().toString(36).toUpperCase();}
 async function submit(){dialog.error="";if(dialog.mode==="edit"&&!hasChanges.value)return;if(!validateFields())return;saving.value=true;try{const values={name:draft.name.trim(),description:draft.description.trim()||null};if(dialog.mode==="create")await createTariff({...values,code:createTechnicalCode()});else await updateTariff(dialog.record.id,values);formDialog.value?.close();await load();toast.success(dialog.mode==="create"?"Tarifa creada correctamente.":"Tarifa actualizada correctamente.");}catch(e){const code=String(e?.message||"");if(code==="TARIFF_CODE_OR_NAME_ALREADY_EXISTS")fieldErrors.name="Ya existe una tarifa con el mismo nombre.";else dialog.error=tariffError(e);}finally{saving.value=false;}}
 async function makeDefault(row){if(!row||row.isDefault||!row.isActive||saving.value)return;saving.value=true;closeMenu();try{await setDefaultTariff(row.id);await load();toast.success("Tarifa predeterminada actualizada.");}catch(e){toast.error(tariffError(e));}finally{saving.value=false;}}
-function requestStatus(row){if(!row||saving.value)return;closeMenu();stateDialog.value?.open(row,{kicker:"Estado de la tarifa",label:item=>item.name,isInactive:item=>!item.isActive,activateTitle:"Activar tarifa",deactivateTitle:"Inactivar tarifa",activateMessage:"La tarifa volverá a estar disponible para nuevas operaciones.",deactivateMessage:"La tarifa dejará de estar disponible para nuevas operaciones.",deactivateWarning:item=>item.isDefault?"La tarifa predeterminada no puede inactivarse. Define primero otra tarifa predeterminada.":"",dangerOnDeactivate:true});}
-async function confirmStatus(row){if(!row||saving.value)return;saving.value=true;stateDialog.value?.clearError();try{await changeTariffStatus(row.id,!row.isActive);stateDialog.value?.close();await load();toast.success(row.isActive?"Tarifa inactivada.":"Tarifa activada.");}catch(e){stateDialog.value?.setError(tariffError(e));}finally{saving.value=false;}}
+function requestStatus(row){if(!row||saving.value)return;closeMenu();stateDialog.value?.open(row,{kicker:"Estado de la tarifa",label:item=>item.name,isInactive:item=>!item.isActive,activateTitle:"Activar tarifa",deactivateTitle:"Desactivar tarifa",activateMessage:"La tarifa volverá a estar disponible para nuevas operaciones.",deactivateMessage:"La tarifa dejará de estar disponible para nuevas operaciones.",deactivateWarning:item=>item.isDefault?"La tarifa predeterminada no puede desactivarse. Define primero otra tarifa predeterminada.":"",deactivateBlocked:item=>Boolean(item.isDefault),dangerOnDeactivate:true});}
+async function confirmStatus(row){if(!row||saving.value)return;saving.value=true;stateDialog.value?.clearError();try{await changeTariffStatus(row.id,!row.isActive);stateDialog.value?.close();await load();toast.success(row.isActive?"Tarifa desactivada.":"Tarifa activada.");}catch(e){stateDialog.value?.setError(tariffError(e));}finally{saving.value=false;}}
 function rememberGrid(event){gridApi.value=event?.api??null;}
 function refreshOrderCells(){gridApi.value?.refreshCells?.({force:true});}
 function selectForOrder(row,checked){if(!row)return;if(checked){selectedOrderId.value=row.id;keyboardOriginal.value=tariffs.value.map(item=>item.id);}else if(selectedOrderId.value===row.id){selectedOrderId.value=null;keyboardOriginal.value=[];}nextTick(refreshOrderCells);}

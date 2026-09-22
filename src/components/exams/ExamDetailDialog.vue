@@ -3,7 +3,7 @@
     <section v-if="exam" class="exam-detail-grid">
       <article class="exam-detail-card exam-detail-card-wide"><span>Descripción</span><strong>{{ exam.description || "Sin descripción" }}</strong></article>
       <article class="exam-detail-card"><span>Abreviatura</span><strong>{{ exam.abbreviation || "Sin abreviatura" }}</strong></article>
-      <article class="exam-detail-card"><span>Estado</span><strong class="exam-detail-status" :class="{ 'exam-detail-status-inactive': exam.annulled }">{{ exam.annulled ? "Inactivo" : "Activo" }}</strong></article>
+      <article class="exam-detail-card"><span>Estado</span><strong class="exam-detail-status" :class="{ 'exam-detail-status-inactive': exam.annulled }">{{ exam.annulled ? "Desactivado" : "Activo" }}</strong></article>
       <article class="exam-detail-card"><span>Tipo</span><strong>{{ exam.special_test ? "Prueba especial" : "Examen de laboratorio" }}</strong></article>
     </section>
     <template #footer><button type="button" class="bio-nexus-action bio-nexus-action-secondary" @click="close"><BioNexusActionIcon action="close" />Cerrar</button></template>

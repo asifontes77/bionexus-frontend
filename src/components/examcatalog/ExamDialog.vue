@@ -1,5 +1,5 @@
 <template>
-  <BioNexusDialog ref="dialog" size="wide" dialog-class="exam-entry-dialog" shell-class="exam-entry-shell" body-class="exam-entry-dialog-body" :kicker="mode === 'create' ? 'Nuevo registro' : 'Editar registro'" :title="mode === 'create' ? 'Crear examen' : 'Editar examen'" @close="handleClosed">
+  <BioNexusDialog ref="dialog" size="wide" dialog-class="exam-entry-dialog" shell-class="exam-entry-shell" body-class="exam-entry-dialog-body" :kicker="mode === 'create' ? 'Nuevo registro' : 'Editar registro'" :title="mode === 'create' ? 'Crear examen' : 'Editar examen'" :prevent-close="saving || hasChanges" @before-close="close" @close="handleClosed">
     <section class="exam-body">
       <div class="exam-main-grid">
         <BioNexusFormField label="Descripción" field-id="exam-description" :error="descriptionError" required><input id="exam-description" ref="firstInput" v-model="draft.description" class="bio-nexus-field" maxlength="60" /></BioNexusFormField>
@@ -15,6 +15,7 @@
       <button type="button" class="bio-nexus-action bio-nexus-action-primary" :disabled="submitDisabled" @click="submit"><BioNexusActionIcon action="save" />{{ saving ? "Guardando..." : mode === "create" ? "Crear" : "Guardar" }}</button>
     </template>
   </BioNexusDialog>
+  <BioNexusConfirmDialog ref="discardDialog" />
 </template>
 
 <script setup>
@@ -24,11 +25,12 @@ import BioNexusCheckbox from "@/components/ui/BioNexusCheckbox.vue";
 import { computed, nextTick, reactive, ref } from "vue";
 import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
 import BioNexusDialog from "@/components/ui/BioNexusDialog.vue";
+import BioNexusConfirmDialog from "@/components/ui/BioNexusConfirmDialog.vue";
 import BioNexusFormField from "@/components/ui/BioNexusFormField.vue";
 
 const props = defineProps({ saving: { type: Boolean, default: false }, canCreate: { type: Boolean, default: false }, canUpdate: { type: Boolean, default: false }, taxes: { type: Array, default: () => [] }, tariffs: { type: Array, default: () => [] }, group: { type: Object, default: null } });
 const emit = defineEmits(["submit"]);
-const dialog = ref(null), firstInput = ref(null), mode = ref("create"), current = ref(null), errorMessage = ref(""), attempted = ref(false), original = ref("");
+const dialog = ref(null), discardDialog = ref(null), firstInput = ref(null), mode = ref("create"), current = ref(null), errorMessage = ref(""), attempted = ref(false), original = ref("");
 const regionalSettings = useRegionalSettingsStore();
 const baseCurrencySymbol = computed(() => String(regionalSettings.settings.base_currency_symbol || 'USD').trim() || 'USD');
 const tariffFields = computed(() => props.tariffs.filter(t => Number(t.position) >= 1 && Number(t.position) <= 6).sort((a,b) => Number(a.position) - Number(b.position)));
@@ -41,13 +43,15 @@ const signature = computed(() => JSON.stringify(values.value));
 const descriptionError = computed(() => attempted.value && !values.value.description ? "La descripción es obligatoria." : "");
 const abbreviationError = computed(() => attempted.value && !values.value.abbreviation ? "La abreviatura es obligatoria." : "");
 const invalidPrice = computed(() => [1, 2, 3, 4, 5, 6].some((number) => price(number) === null || price(number) < 0));
-const submitDisabled = computed(() => props.saving || invalidPrice.value || signature.value === original.value || (mode.value === "create" ? !props.canCreate : !props.canUpdate));
+const isValid = computed(() => Boolean(values.value.description && values.value.abbreviation && values.value.tax_id > 0) && !invalidPrice.value);
+const hasChanges = computed(() => signature.value !== original.value);
+const submitDisabled = computed(() => mode.value === "create" ? props.saving || !props.canCreate || !isValid.value : props.saving || !props.canUpdate || !isValid.value || !hasChanges.value);
 
 async function show() { await dialog.value?.open(); nextTick(() => firstInput.value?.focus()); }
 function assign(row) { draft.description = row?.description || ""; draft.abbreviation = row?.abbreviation || ""; draft.tax_id = row?.tax_id || props.taxes[0]?.id || 1; draft.special_test = Boolean(row?.special_test); for (let number = 1; number <= 6; number += 1) draft['cost' + number] = formatRegionalAmount(row?.['cost' + number] || 0, regionalSettings.settings); original.value = JSON.stringify(values.value); }
-function openCreate() { mode.value = "create"; current.value = null; assign(null); original.value = ""; attempted.value = false; errorMessage.value = ""; show(); }
+function openCreate() { mode.value = "create"; current.value = null; assign(null); attempted.value = false; errorMessage.value = ""; show(); }
 function openEdit(row) { mode.value = "edit"; current.value = row; assign(row); attempted.value = false; errorMessage.value = ""; show(); }
-function close() { dialog.value?.close(); }
+async function close() { if (props.saving) return; if (hasChanges.value) { const accepted = await discardDialog.value?.ask({ title: "Descartar cambios", message: "Hay cambios sin guardar. ¿Deseas salir y descartarlos?", confirmText: "Sí, salir y descartar cambios", confirmIcon: "delete", variant: "danger" }); if (!accepted) return; } dialog.value?.close(); }
 function handleClosed() { attempted.value = false; }
 function clearError() { errorMessage.value = ""; }
 function setError(message) { errorMessage.value = String(message || ""); }

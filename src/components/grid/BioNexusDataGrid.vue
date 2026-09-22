@@ -42,19 +42,7 @@
       <div v-if="$slots.stats" class="bio-nexus-grid-toolbar-stats"><slot name="stats" /></div>
       <div v-if="$slots.actions" class="bio-nexus-grid-toolbar-actions"><slot name="actions" /></div>
 
-      <button
-        v-if="refreshEnabled"
-        type="button"
-        class="bio-nexus-action bio-nexus-action-primary"
-        :disabled="refreshing || refreshDisabled"
-        @click="emit('refresh')"
-      >
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M20 11a8.1 8.1 0 0 0-15.5-2M4 4v5h5" />
-          <path d="M4 13a8.1 8.1 0 0 0 15.5 2M20 20v-5h-5" />
-        </svg>
-        <span>{{ refreshing ? "Actualizando..." : "Actualizar" }}</span>
-      </button>
+      <BioNexusActionButton v-if="refreshEnabled" icon="refresh" icon-only shape="rounded" size="md" variant="primary" :loading="refreshing" label="Actualizar" :disabled="refreshing || refreshDisabled" @click="emit('refresh')" />
 
       <BioNexusGridExportMenu
         v-if="exportOptions !== false"
@@ -73,6 +61,7 @@
       :context="context"
       :get-row-id="getRowId"
       :row-selection="rowSelection"
+      :selection-column-def="selectionColumnDef"
       :pagination="pagination"
       :pagination-page-size="pageSize"
       :pagination-page-size-selector="false"
@@ -105,6 +94,8 @@ import { AgGridVue } from "ag-grid-vue3";
 import { AG_GRID_LOCALE_ES } from "@ag-grid-community/locale";
 import BioNexusGridExportMenu from "@/components/grid/BioNexusGridExportMenu.vue";
 import BioNexusFormField from "@/components/ui/BioNexusFormField.vue";
+import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
+import BioNexusActionButton from "@/components/ui/BioNexusActionButton.vue";
 import { exportGridToExcel, exportGridToPdf } from "@/services/gridExportService.js";
 import { useRegionalSettingsStore } from "@/stores/regionalSettings";
 
@@ -224,11 +215,28 @@ const emit = defineEmits([
 ]);
 
 const gridApi = shallowRef(null);
+const selectionColumnDef = Object.freeze({
+  colId: "ag-Grid-SelectionColumn",
+  width: 56,
+  minWidth: 56,
+  maxWidth: 56,
+  resizable: false,
+  suppressSizeToFit: true,
+  suppressAutoSize: true,
+  flex: null,
+  suppressMovable: true,
+  pinned: "left",
+  lockPinned: true,
+  headerClass: "bio-nexus-selection-header",
+  cellClass: "bio-nexus-selection-cell",
+  suppressExport: true,
+});
 
 function getExportColumns() {
   if (!gridApi.value) return [];
   const options = props.exportOptions === true ? {} : (props.exportOptions || {});
-  const excluded = new Set(["actions", "ag-Grid-SelectionColumn", ...(options.excludeColumns || [])]);
+  const selectionColumnId = selectionColumnDef.colId;
+  const excluded = new Set(["actions", selectionColumnId, ...(options.excludeColumns || [])]);
   return gridApi.value.getAllDisplayedColumns()
     .filter((column) => {
       const definition = column.getColDef();
@@ -390,6 +398,7 @@ function handleGridReady(event) {
   gridApi.value = event.api;
   emit("grid-ready", event);
 }
+
 
 function handleFirstDataRendered(event) {
   if (props.autoSizeColumns) {
@@ -560,6 +569,64 @@ function handleCellContextMenu(params) {
 .bio-nexus-data-grid :global(.ag-cell:not(:last-child)) {
   border-right: 1px solid var(--bio-nexus-color-border);
 }
+/* BIO NEXUS GRID SELECTION CENTER START */
+.bio-nexus-data-grid :global(.bio-nexus-selection-header),
+.bio-nexus-data-grid :global(.bio-nexus-selection-cell) {
+  padding-inline: 0 !important;
+  text-align: center;
+}
+.bio-nexus-data-grid :global(.bio-nexus-selection-header),
+.bio-nexus-data-grid :global(.bio-nexus-selection-cell),
+.bio-nexus-data-grid :global(.bio-nexus-selection-header .ag-header-cell-comp-wrapper),
+.bio-nexus-data-grid :global(.bio-nexus-selection-header .ag-header-cell-label),
+.bio-nexus-data-grid :global(.bio-nexus-selection-cell .ag-cell-wrapper) {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+}
+.bio-nexus-data-grid :global(.bio-nexus-selection-header .ag-selection-checkbox),
+.bio-nexus-data-grid :global(.bio-nexus-selection-cell .ag-selection-checkbox) {
+  display: flex !important;
+  flex: 1 1 100% !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  margin-inline: 0 !important;
+}
+.bio-nexus-data-grid :global(.bio-nexus-selection-header .ag-header-cell-comp-wrapper) {
+  display: none !important;
+  width: 0 !important;
+  min-width: 0 !important;
+  flex: 0 0 0 !important;
+}
+.bio-nexus-data-grid :global(.bio-nexus-selection-header .ag-header-select-all) {
+  display: flex !important;
+  flex: 1 1 100% !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  margin: 0 !important;
+}
+.bio-nexus-data-grid :global(.bio-nexus-selection-header .ag-header-cell-comp-wrapper > .ag-checkbox),
+.bio-nexus-data-grid :global(.bio-nexus-selection-header .ag-header-cell-label > .ag-checkbox),
+.bio-nexus-data-grid :global(.bio-nexus-selection-header .ag-header-select-all .ag-checkbox),
+.bio-nexus-data-grid :global(.bio-nexus-selection-header .ag-header-select-all .ag-checkbox-input-wrapper),
+.bio-nexus-data-grid :global(.bio-nexus-selection-header .ag-selection-checkbox .ag-checkbox),
+.bio-nexus-data-grid :global(.bio-nexus-selection-cell .ag-selection-checkbox .ag-checkbox) {
+  flex: 0 0 auto;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  margin-inline: auto !important;
+}
+/* BIO NEXUS GRID SELECTION CENTER END */
 </style>
 
 <style>
@@ -763,6 +830,23 @@ function handleCellContextMenu(params) {
 .bio-nexus-grid-toolbar-actions { display: inline-flex; align-items: center; gap: 14px; white-space: nowrap; }
 .bio-nexus-grid-toolbar > .bio-nexus-action,
 .bio-nexus-grid-toolbar .bio-nexus-grid-export-trigger { min-height: 44px; }
+.bio-nexus-grid-toolbar .bio-nexus-grid-icon-action {
+  display: inline-grid;
+  place-items: center;
+  box-sizing: border-box;
+  flex: 0 0 44px;
+  width: 44px;
+  min-width: 44px;
+  max-width: 44px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0;
+  border-radius: var(--bio-nexus-radius-md);
+}
+.bio-nexus-grid-toolbar .bio-nexus-grid-icon-action:focus-visible {
+  outline: 3px solid var(--bio-nexus-color-accent-soft);
+  outline-offset: 2px;
+}
 .bio-nexus-grid-toolbar > .bio-nexus-action svg { width: 20px; height: 20px; }
 
 @media (max-width: 980px) {

@@ -13,7 +13,7 @@
       <div v-else-if="assignedPermissionsError" class="bio-nexus-message bio-nexus-message-error" role="alert">{{ assignedPermissionsError }}</div>
       <template v-else>
         <div v-if="selectedRole?.code === 'admin'" class="bio-nexus-warning">El rol administrador debe conservar los permisos esenciales.</div>
-        <div v-if="inactiveAssignedPermissions.length > 0" class="bio-nexus-warning">Los permisos inactivos se conservan para consulta y se retiraran al guardar.</div>
+        <div v-if="inactiveAssignedPermissions.length > 0" class="bio-nexus-warning">Los permisos desactivados se conservan para consulta y se retiraran al guardar.</div>
         <div v-if="filteredPermissionModules.length === 0" class="bio-nexus-empty-state">No existen permisos que coincidan con la busqueda.</div>
         <BioNexusPermissionTree class="role-permission-tree" :modules="filteredPermissionModules" :search-text="permissionSearchText" :selected-ids="draftPermissionIds" selectable :disabled="!canAssignPermissions || savingPermissions" @toggle-permission="emit('togglePermission', $event)" @toggle-module="emit('toggleModulePermissions', $event)" empty-text="No existen permisos que coincidan con la busqueda." />
         <div v-if="savePermissionsError" class="bio-nexus-inline-message bio-nexus-message-error" role="alert">{{ savePermissionsError }}</div>

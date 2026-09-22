@@ -10,7 +10,7 @@
     <div v-if="open" class="exam-global-results" role="listbox">
       <button v-for="result in results" :key="result.id" type="button" role="option" @click="select(result)">
         <span><strong>{{ result.description }}</strong><small>{{ result.abbreviation || 'Sin abreviatura' }} - {{ result.group_description }}</small></span>
-        <em :class="{ inactive: result.annulled || result.group_annulled }">{{ result.annulled || result.group_annulled ? 'Inactivo' : 'Activo' }}</em>
+        <em :class="{ inactive: result.annulled || result.group_annulled }">{{ result.annulled || result.group_annulled ? 'Desactivado' : 'Activo' }}</em>
       </button>
       <div v-if="!loading && results.length === 0" class="exam-global-empty">No se encontraron examenes.</div>
     </div>

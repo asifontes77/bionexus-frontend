@@ -37,16 +37,7 @@
         @refresh="loadUsers"
       >
         <template #actions>
-          <button
-            v-if="canCreateUsers"
-            type="button"
-            class="bio-nexus-action bio-nexus-action-primary"
-            :disabled="usersLoading || authorizationLoading || savingRoles || savingOverrides"
-            @click="openCreateUserDialog"
-          >
-            <BioNexusIcon name="person_add" :size="19" />
-            <span>Nuevo usuario</span>
-          </button>
+          <BioNexusActionButton v-if="canCreateUsers" icon="add" icon-only shape="rounded" size="md" variant="primary" label="Nuevo usuario" :disabled="usersLoading || authorizationLoading || savingRoles || savingOverrides" @click="openCreateUserDialog" />
         </template>
       </BioNexusDataGrid>
 
@@ -113,6 +104,8 @@
 </template>
 
 <script setup>
+import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
+import BioNexusActionButton from "@/components/ui/BioNexusActionButton.vue";
 import { computed, onMounted, ref } from "vue";
 import { nextTick } from "vue";
 import BioNexusDataGrid from "@/components/grid/BioNexusDataGrid.vue";
@@ -357,7 +350,7 @@ const userColumnDefs = computed(() => [
       getValue: (data) => data?.hidden !== true,
       options: [
         { value: true, label: "Activo" },
-        { value: false, label: "Inactivo" },
+        { value: false, label: "Desactivado" },
       ],
     },
     headerClass: "bio-nexus-grid-centered-header",
@@ -365,7 +358,7 @@ const userColumnDefs = computed(() => [
     cellRenderer: BioNexusGridToggleCell,
     cellRendererParams: {
       onLabel: "Activo",
-      offLabel: "Inactivo",
+      offLabel: "Desactivado",
       ariaLabel: "Estado",
       disabled: false,
       onToggle: (row) => openUserStateDialog(row),
@@ -412,7 +405,7 @@ const userContextMenuItems = computed(() => {
     },
     {
       key: "state", icon: user.hidden ? "activate" : "deactivate",
-      label: user.hidden ? "Reactivar usuario" : "Inactivar usuario",
+      label: user.hidden ? "Reactivar usuario" : "Desactivar usuario",
       visible: canUpdateUsers.value,
       action: () => openUserStateDialog(user),
     },
@@ -845,7 +838,7 @@ async function saveRoleChanges() {
             LAST_ADMIN_ROLE_REQUIRED:
                 "No es posible retirar el rol administrador porque no existe otro administrador visible.",
             ROLES_NOT_FOUND_OR_INACTIVE:
-                "Uno o más roles no existen o están inactivos.",
+                "Uno o más roles no existen o están desactivados.",
             USER_NOT_FOUND:
                 "El usuario seleccionado ya no existe.",
             USER_ID_INVALID:
@@ -907,7 +900,7 @@ async function saveOverrideChanges() {
 
         const messages = {
             PERMISSIONS_NOT_FOUND_OR_INACTIVE:
-                "Uno o más permisos no existen o están inactivos.",
+                "Uno o más permisos no existen o están desactivados.",
             PERMISSION_OVERRIDE_DUPLICATED:
                 "No puede registrarse más de una excepción para el mismo permiso.",
             PERMISSION_EFFECT_INVALID:

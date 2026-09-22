@@ -6,7 +6,7 @@
           <h4>{{ selectedRole.name }}</h4>
           <p>{{ selectedRole.isSystem ? "Rol de sistema" : "Rol configurable" }}</p>
         </div>
-        <span class="bio-nexus-badge" :class="{ 'bio-nexus-badge-warning': !selectedRole.isActive }">{{ selectedRole.isActive ? "Activo" : "Inactivo" }}</span>
+        <span class="bio-nexus-badge" :class="{ 'bio-nexus-badge-warning': !selectedRole.isActive }">{{ selectedRole.isActive ? "Activo" : "Desactivado" }}</span>
       </div>
       <section class="role-summary-description">
         <span>Descripcion</span>

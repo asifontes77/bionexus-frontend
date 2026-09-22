@@ -366,49 +366,11 @@ dialog.bio-nexus-dialog .dialog-close:focus-visible {
   gap: 8px !important;
 }
 
-.bio-nexus-grid-action-list > button.bio-nexus-grid-icon-action {
-  appearance: none !important;
-  display: inline-grid !important;
-  width: 32px !important;
-  height: 32px !important;
-  min-width: 32px !important;
-  min-height: 32px !important;
-  flex: 0 0 32px !important;
-  place-items: center !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  border: 0 !important;
-  border-radius: 50% !important;
-  outline: 0 !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  color: var(--bio-nexus-color-primary-strong) !important;
-}
 
-.bio-nexus-grid-action-list > button.bio-nexus-grid-icon-action:hover:not(:disabled) {
-  background: var(--bio-nexus-color-selection-soft) !important;
-  color: var(--bio-nexus-color-primary) !important;
-}
 
-.bio-nexus-grid-action-list > button.bio-nexus-grid-icon-action-accent:hover:not(:disabled) {
-  background: var(--bio-nexus-color-accent-soft) !important;
-  color: var(--bio-nexus-color-accent-strong) !important;
-}
 
-.bio-nexus-grid-action-list > button.bio-nexus-grid-icon-action:focus:not(:focus-visible) {
-  outline: 0 !important;
-  background: transparent !important;
-  box-shadow: none !important;
-}
 
-.bio-nexus-grid-action-list > button.bio-nexus-grid-icon-action:focus-visible {
-  background: var(--bio-nexus-color-selection-soft) !important;
-  outline: 2px solid var(--bio-nexus-color-primary) !important;
-  outline-offset: 2px !important;
-}
-/* Bio Nexus GLOBAL GRID ACTIONS UNIFORMITY END */
 
-/* Bio Nexus ROLES DIALOG INITIAL FOCUS START */
 .roles-permissions-page dialog.bio-nexus-dialog:focus,
 .roles-permissions-page dialog.bio-nexus-dialog:focus-visible {
   outline: 0 !important;

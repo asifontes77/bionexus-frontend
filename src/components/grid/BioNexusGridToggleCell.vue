@@ -26,7 +26,7 @@ const props = defineProps({
 
 const value = computed(() => Boolean(props.params?.value));
 const onLabel = computed(() => String(props.params?.onLabel ?? "Activo"));
-const offLabel = computed(() => String(props.params?.offLabel ?? "Inactivo"));
+const offLabel = computed(() => String(props.params?.offLabel ?? "Desactivado"));
 const disabled = computed(() => {
   const option = props.params?.disabled;
   return typeof option === "function" ? Boolean(option(props.params?.data)) : Boolean(option);

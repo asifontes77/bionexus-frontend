@@ -133,7 +133,7 @@ function resolveIcon(item) {
 
   if (key === "edit" || label === "editar") return "edit";
   if (key === "activate" || label === "activar") return "activate";
-  if (key === "deactivate" || label === "inactivar") return "deactivate";
+  if (key === "deactivate" || key.includes("deactivate") || label.includes("desactivar")) return "deactivate";
 
   return "";
 }

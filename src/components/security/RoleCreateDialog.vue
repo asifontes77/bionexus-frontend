@@ -8,7 +8,7 @@
     </form>
     <template #footer>
       <button type="button" class="bio-nexus-action bio-nexus-action-secondary" :disabled="creatingRole" @click="close"><BioNexusActionIcon action="cancel" />Cancelar</button>
-      <button type="submit" form="role-create-form" class="bio-nexus-action bio-nexus-action-primary" :disabled="creatingRole || !canCreateRoles"><BioNexusActionIcon action="create" />{{ creatingRole ? "Creando..." : "Crear rol" }}</button>
+      <button type="submit" form="role-create-form" class="bio-nexus-action bio-nexus-action-primary" :disabled="creatingRole || !canCreateRoles || !createRoleForm.name.trim() || Boolean(createRoleNameError)"><BioNexusActionIcon action="create" />{{ creatingRole ? "Creando..." : "Crear rol" }}</button>
     </template>
   </BioNexusDialog>
 </template>

@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <section class="dollar-value-page">
     <div v-if="loadError" class="bio-nexus-message bio-nexus-message-error" role="alert">
       <strong>No fue posible cargar la cotizaci&#243;n.</strong>
@@ -37,8 +37,8 @@
           <span><b>Fuente:</b> {{ automation.last_source || "BCV / DolarApi" }}</span>
         </div>
         <div v-if="canUpdate" class="automation-actions">
-          <BioNexusActionButton variant="secondary" :loading="automationRunning" :disabled="automationSaving" @click="runAutomation">Ejecutar ahora</BioNexusActionButton>
-          <BioNexusActionButton variant="primary" :loading="automationSaving" :disabled="automationRunning" @click="saveAutomation">Guardar configuración</BioNexusActionButton>
+          <BioNexusActionButton icon="play_circle" variant="secondary" :loading="automationRunning" :disabled="automationSaving" @click="runAutomation">Ejecutar ahora</BioNexusActionButton>
+          <BioNexusActionButton icon="save" variant="primary" :loading="automationSaving" :disabled="automationRunning" @click="saveAutomation">Guardar configuración</BioNexusActionButton>
         </div>
       </div>
     </section>
@@ -63,7 +63,7 @@
             placeholder="0,00"
           >
         </BioNexusFormField>
-        <BioNexusActionButton type="submit" variant="primary" :loading="saving" :disabled="loading">
+        <BioNexusActionButton icon="publish" type="submit" variant="primary" :loading="saving" :disabled="loading">
           Publicar valor
         </BioNexusActionButton>
       </form>

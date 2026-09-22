@@ -1,5 +1,5 @@
 <template>
-  <dialog ref="dialog" class="bio-nexus-dialog" :class="[dialogClasses, dialogClass]" tabindex="-1" @cancel.prevent="requestClose" @click="onBackdropClick" @close="handleNativeClose">
+  <dialog ref="dialog" class="bio-nexus-dialog" :class="[dialogClasses, dialogClass]" tabindex="-1" @cancel.prevent="blockImplicitClose" @keydown.esc.capture.prevent.stop="blockImplicitClose" @click="blockBackdropClose" @close="handleNativeClose">
     <section class="bio-nexus-dialog-shell" :class="shellClass">
       <header class="bio-nexus-dialog-header">
         <div class="bio-nexus-dialog-heading">
@@ -50,6 +50,7 @@ async function open() {
   if (!dialog.value || dialog.value.open) return;
   previousFocus.value = document.activeElement;
   dialog.value.showModal();
+  document.addEventListener("keydown", blockEscape, true);
   await nextTick();
   const initialControl = dialog.value.querySelector("[autofocus], input:not([disabled]), select:not([disabled]), textarea:not([disabled])");
   if (initialControl) initialControl.focus({ preventScroll: true });
@@ -63,18 +64,25 @@ function requestClose() {
 }
 
 function close(returnValue = "") {
+  document.removeEventListener("keydown", blockEscape, true);
   if (dialog.value?.open) dialog.value.close(returnValue);
 }
 
 function handleNativeClose() {
+  document.removeEventListener("keydown", blockEscape, true);
   previousFocus.value?.focus?.({ preventScroll: true });
   previousFocus.value = null;
   emit("close");
 }
 
-function onBackdropClick(event) {
-  if (props.closeOnBackdrop && event.target === dialog.value) requestClose();
+function blockEscape(event) {
+  if (event?.key !== "Escape") return;
+  event.preventDefault();
+  event.stopPropagation();
+  event.stopImmediatePropagation?.();
 }
+function blockImplicitClose(event) { blockEscape(event); }
+function blockBackdropClose(event) { if (event.target === dialog.value) event.preventDefault(); }
 
 onBeforeUnmount(() => close());
 defineExpose({ open, close, requestClose, element: dialog });

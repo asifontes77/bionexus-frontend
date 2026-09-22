@@ -33,17 +33,13 @@
       :refresh-disabled="saving"
       @refresh="loadRows" @grid-ready="rememberGrid"
     >
-      <template #actions><div class="type-payment-grid-actions"><button type="button" class="type-payment-order-button" :disabled="!selectedRow || selectedIndex <= 0 || orderSaving" @click="moveSelected(-1)">↑</button><button type="button" class="type-payment-order-button" :disabled="!selectedRow || selectedIndex >= rows.length - 1 || orderSaving" @click="moveSelected(1)">↓</button><button type="button" class="bio-nexus-action bio-nexus-action-secondary" :disabled="!orderDirty || orderSaving" @click="saveOrder"><BioNexusActionIcon action="save"/>Guardar orden</button></div>
-        <button
-          v-if="canCreate"
-          type="button"
-          class="bio-nexus-action bio-nexus-action-primary"
-          :disabled="loading || saving"
-          @click="openCreate"
-        >
-          <BioNexusActionIcon action="create" />
-          <span>Nuevo tipo</span>
-        </button>
+      <template #actions>
+        <div class="type-payment-grid-actions" aria-label="Acciones de ordenamiento">
+          <BioNexusActionButton icon="arrow_upward" icon-only shape="circle" size="md" variant="secondary" label="Subir forma de pago" :disabled="!selectedRow || selectedIndex <= 0 || orderSaving" @click="moveSelected(-1)" />
+          <BioNexusActionButton icon="arrow_downward" icon-only shape="circle" size="md" variant="secondary" label="Bajar forma de pago" :disabled="!selectedRow || selectedIndex >= rows.length - 1 || orderSaving" @click="moveSelected(1)" />
+          <BioNexusActionButton variant="secondary" icon="save" :loading="orderSaving" :disabled="!orderDirty || orderSaving" @click="saveOrder">Guardar orden</BioNexusActionButton>
+        </div>
+        <BioNexusActionButton v-if="canCreate" icon="add" icon-only shape="rounded" size="md" variant="primary" label="Nueva forma de pago" :disabled="loading || saving" @click="openCreate" />
       </template>
     </BioNexusDataGrid>
 
@@ -64,6 +60,7 @@
 </template>
 
 <script setup>
+import BioNexusActionButton from "@/components/ui/BioNexusActionButton.vue";
 import { computed, onBeforeUnmount, onMounted, reactive, ref, shallowRef, nextTick } from "vue";
 import BioNexusDataGrid from "@/components/grid/BioNexusDataGrid.vue";
 import BioNexusGridActionsCell from "@/components/grid/BioNexusGridActionsCell.vue";
@@ -98,7 +95,7 @@ const typePaymentContextMenuItems = computed(() => {
   if (!row) return [];
   return [
     { key: "edit", label: "Editar", icon: "edit", visible: canUpdate.value, disabled: saving.value, action: () => openEdit(row) },
-    { key: "toggle-status", label: row.annulled ? "Activar" : "Inactivar", icon: row.annulled ? "activate" : "deactivate", visible: canChangeStatus.value, disabled: saving.value, action: () => openState(row) },
+    { key: "toggle-status", label: row.annulled ? "Activar" : "Desactivar", icon: row.annulled ? "activate" : "deactivate", visible: canChangeStatus.value, disabled: saving.value, action: () => openState(row) },
   ];
 });
 const contextMenu = reactive({ visible: false, x: 0, y: 0, row: null });
@@ -121,14 +118,14 @@ const columnDefs = computed(() => [
     field: "isActive",
     filter: BioNexusOptionFilter,
     filterParams: {
-      options: [{"value":true,"label":"Activo"},{"value":false,"label":"Inactivo"}],
+      options: [{"value":true,"label":"Activo"},{"value":false,"label":"Desactivado"}],
     },
     headerName: "Estado",
     width: 170,
     headerClass: "type-payment-center-header",
     cellClass: "type-payment-center-cell",
     cellRenderer: "BioNexusGridToggleCell",
-    cellRendererParams: { onLabel: "Activo", offLabel: "Inactivo", ariaLabel: "Estado", disabled: () => !canChangeStatus.value || saving.value, onToggle: openState },
+    cellRendererParams: { onLabel: "Activo", offLabel: "Desactivado", ariaLabel: "Estado", disabled: () => !canChangeStatus.value || saving.value, onToggle: openState },
   },
   {
     colId: "actions",
@@ -224,7 +221,7 @@ async function toggleStatus(row) {
     const saved = await updateTypePayment(row.id, { annulled: !row.annulled });
     replaceRow(saved);
     void reconcileRowsSilently();
-    toast.success(saved.annulled ? "Tipo de pago inactivado." : "Tipo de pago activado.");
+    toast.success(saved.annulled ? "Tipo de pago desactivado." : "Tipo de pago activado.");
   } catch (error) {
     toast.error(getTypePaymentErrorMessage(error, "No fue posible cambiar el estado."));
   } finally {
@@ -281,7 +278,7 @@ async function saveState(row) {
     replaceRow(saved);
     void reconcileRowsSilently();
     stateDialog.value?.close();
-    toast.success(saved.annulled ? "Tipo de pago inactivado correctamente." : "Tipo de pago activado correctamente.");
+    toast.success(saved.annulled ? "Tipo de pago desactivado correctamente." : "Tipo de pago activado correctamente.");
   } catch (error) {
     stateDialog.value?.setError(getTypePaymentErrorMessage(error, "No fue posible cambiar el estado."));
   } finally { saving.value = false; }

@@ -1,26 +1,25 @@
-﻿<template>
+<template>
   <div class="bio-nexus-grid-action-list" role="group" aria-label="Acciones de la fila">
-    <button
+    <BioNexusActionButton
       v-for="action in visibleActions"
       :key="action.key"
-      type="button"
-      class="bio-nexus-grid-icon-action"
-      :class="'bio-nexus-grid-icon-action-' + (action.variant || 'subtle')"
+      icon-only
+      shape="circle"
+      size="sm"
+      :icon="resolveIcon(action)"
+      :label="action.tooltip || action.label"
+      :variant="action.variant || 'subtle'"
       :disabled="isDisabled(action)"
-      :title="action.tooltip || action.label"
-      :aria-label="action.tooltip || action.label"
       @pointerdown.stop
       @mousedown.prevent.stop
       @click.stop="runAction(action, $event)"
-    >
-      <BioNexusIcon :name="resolveIcon(action)" :size="20" />
-    </button>
+    />
   </div>
 </template>
 
 <script setup>
 import { computed } from "vue";
-import BioNexusIcon from "@/components/ui/BioNexusIcon.vue";
+import BioNexusActionButton from "@/components/ui/BioNexusActionButton.vue";
 
 const props = defineProps({
   params: { type: Object, required: true },
@@ -65,7 +64,7 @@ function resolveIcon(action) {
   if (iconByKey[value]) return iconByKey[value];
   if (value.includes("permiso")) return "shield_person";
   if (value.includes("rol")) return "badge";
-  if (value.includes("inactivar") || value.includes("desactivar")) return "toggle_off";
+  if (value.includes("desactivar") || value.includes("desactivar")) return "toggle_off";
   if (value.includes("activar")) return "toggle_on";
   if (value.includes("editar") || value.includes("modificar")) return "edit";
   if (value.includes("ver") || value.includes("detalle")) return "visibility";
@@ -88,65 +87,5 @@ function runAction(action, event) {
 </script>
 
 <style scoped>
-.bio-nexus-grid-action-list {
-  display: flex;
-  width: 100%;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-.bio-nexus-grid-icon-action {
-  appearance: none;
-  display: inline-grid;
-  width: 32px;
-  height: 32px;
-  min-width: 32px;
-  min-height: 32px;
-  flex: 0 0 32px;
-  place-items: center;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  border: 0;
-  border-radius: 50%;
-  outline: 0;
-  background: transparent;
-  box-shadow: none;
-  color: var(--bio-nexus-color-primary-strong);
-  cursor: pointer;
-  transition: background-color 140ms ease, color 140ms ease, transform 140ms ease;
-}
-
-.bio-nexus-grid-icon-action:hover:not(:disabled) {
-  background: var(--bio-nexus-color-selection-soft);
-  color: var(--bio-nexus-color-primary);
-  transform: translateY(-1px);
-}
-
-.bio-nexus-grid-icon-action-accent {
-  color: var(--bio-nexus-color-accent-strong);
-}
-
-.bio-nexus-grid-icon-action-accent:hover:not(:disabled) {
-  background: var(--bio-nexus-color-accent-soft);
-  color: var(--bio-nexus-color-accent-strong);
-}
-
-.bio-nexus-grid-icon-action:focus {
-  outline: 0;
-  box-shadow: none;
-}
-
-.bio-nexus-grid-icon-action:focus-visible {
-  background: var(--bio-nexus-color-selection-soft);
-  outline: 2px solid var(--bio-nexus-color-primary);
-  outline-offset: 2px;
-}
-
-.bio-nexus-grid-icon-action:disabled {
-  background: transparent;
-  cursor: not-allowed;
-  opacity: 0.36;
-}
+.bio-nexus-grid-action-list { display:flex; width:100%; align-items:center; justify-content:center; gap:8px; }
 </style>

@@ -31,9 +31,9 @@
             </dl>
           </div>
         </details>
-        <div v-if="user?.hidden" class="bio-nexus-message bio-nexus-message-warning" role="status">Los usuarios inactivos permanecen visibles para consulta, pero no pueden modificarse.</div>
+        <div v-if="user?.hidden" class="bio-nexus-message bio-nexus-message-warning" role="status">Los usuarios desactivados permanecen visibles para consulta, pero no pueden modificarse.</div>
         <div v-else-if="!canAssign" class="bio-nexus-empty-state">La cuenta actual puede consultar las excepciones, pero no modificarlas.</div>
-        <div v-if="inactiveOverrideCount > 0" class="bio-nexus-message bio-nexus-message-warning" role="status">Las excepciones inactivas se conservan para consulta y se retirarán al guardar.</div>
+        <div v-if="inactiveOverrideCount > 0" class="bio-nexus-message bio-nexus-message-warning" role="status">Las excepciones desactivadas se conservan para consulta y se retirarán al guardar.</div>
         <div v-if="filteredModules.length === 0" class="bio-nexus-empty-state">No existen permisos que coincidan con los filtros.</div>
         <BioNexusPermissionTree class="user-override-tree" :modules="filteredModules" :search-text="searchText" empty-text="No existen permisos que coincidan con los filtros.">
           <template #permission-action="{ permission }">

@@ -1,13 +1,13 @@
 <template>
   <section class="antibiotics-page">
     <div v-if="loadError" class="bio-nexus-message bio-nexus-message-error" role="alert">
-      <strong>No fue posible cargar los antibiÃ³ticos.</strong>
+      <strong>No fue posible cargar los antibióticos.</strong>
       <span>{{ loadError }}</span>
     </div>
 
     <section class="bio-nexus-administrative-directory antibiotics-directory">
-      <div v-if="loading" class="bio-nexus-empty-state">Cargando antibiÃ³ticos...</div>
-      <div v-else-if="rows.length === 0" class="bio-nexus-empty-state">No existen antibiÃ³ticos registrados.</div>
+      <div v-if="loading" class="bio-nexus-empty-state">Cargando antibióticos...</div>
+      <div v-else-if="rows.length === 0" class="bio-nexus-empty-state">No existen antibióticos registrados.</div>
 
       <BioNexusDataGrid
         v-else
@@ -20,7 +20,7 @@
         :quick-filter-text="searchText"
         :search-enabled="true"
         v-model:search-model-value="searchText"
-        search-placeholder="Buscar antibiÃ³tico"
+        search-placeholder="Buscar antibiótico"
         :refresh-enabled="true"
         :refreshing="loading"
         :refresh-disabled="saving"
@@ -28,15 +28,12 @@
         :page-size-selector="[10, 20, 50, 100]"
         :min-grid-height="300"
         :max-grid-height="560"
-        empty-text="No existen antibiÃ³ticos que coincidan con los filtros."
+        empty-text="No existen antibióticos que coincidan con los filtros."
         @refresh="loadRows"
         @row-context-menu="openContextMenu"
       >
         <template #actions>
-          <button v-if="canCreate" type="button" class="bio-nexus-action bio-nexus-action-primary" :disabled="loading || saving" @click="openCreate">
-            <BioNexusActionIcon action="create" />
-            <span>Nuevo antibiÃ³tico</span>
-          </button>
+          <button v-if="canCreate" type="button" class="bio-nexus-action bio-nexus-action-primary bio-nexus-grid-icon-action" :disabled="loading || saving" @click="openCreate" title="Nuevo antibiótico" aria-label="Nuevo antibiótico"><BioNexusActionIcon action="create" /></button>
         </template>
       </BioNexusDataGrid>
 
@@ -82,7 +79,7 @@ const defaultColDef = Object.freeze({ sortable: true, filter: true, resizable: t
 const gridComponents = Object.freeze({ BioNexusGridActionsCell, BioNexusGridToggleCell });
 
 const columnDefs = computed(() => [
-  { field: "description", headerName: "DescripciÃ³n", minWidth: 280, flex: 1, filter: "agTextColumnFilter" },
+  { field: "description", headerName: "Descripción", minWidth: 280, flex: 1, filter: "agTextColumnFilter" },
   { field: "siglas", headerName: "Siglas", minWidth: 180, flex: 0.45, filter: "agTextColumnFilter" },
   {
     field: "isActive",
@@ -91,13 +88,13 @@ const columnDefs = computed(() => [
     minWidth: 150,
     maxWidth: 180,
     filter: BioNexusOptionFilter,
-    filterParams: { options: [{ value: true, label: "Activo" }, { value: false, label: "Inactivo" }] },
+    filterParams: { options: [{ value: true, label: "Activo" }, { value: false, label: "Desactivado" }] },
     headerClass: "bio-nexus-grid-toggle-header",
     cellClass: "bio-nexus-grid-toggle-cell",
     cellRenderer: BioNexusGridToggleCell,
     cellRendererParams: {
       onLabel: "Activo",
-      offLabel: "Inactivo",
+      offLabel: "Desactivado",
       ariaLabel: "Estado",
       disabled: () => !canChangeStatus.value || saving.value,
       onToggle: (row) => openState(row),
@@ -129,7 +126,7 @@ const contextItems = computed(() => {
   if (!row) return [];
   return [
     { key: "edit", label: "Editar", icon: "edit", visible: canUpdate.value, disabled: saving.value, action: () => openEdit(row) },
-    { key: "toggle-status", label: row.annulled ? "Activar" : "Inactivar", icon: row.annulled ? "activate" : "deactivate", visible: canChangeStatus.value, disabled: saving.value, action: () => openState(row) },
+    { key: "toggle-status", label: row.annulled ? "Activar" : "Desactivar", icon: row.annulled ? "activate" : "deactivate", visible: canChangeStatus.value, disabled: saving.value, action: () => openState(row) },
   ];
 });
 
@@ -141,9 +138,9 @@ function replaceRow(saved) { const next = rows.value.map((row) => row.id === sav
 async function openContextMenu({ event, row }) { if (!event || !row || (!canUpdate.value && !canChangeStatus.value)) return; event.preventDefault(); contextState.value = { open: true, x: event.clientX, y: event.clientY, row }; await nextTick(); contextMenu.value?.positionMenu?.(); }
 function closeContextMenu() { contextState.value = { open: false, x: 0, y: 0, row: null }; }
 async function runContextAction(item) { const action = item?.action; closeContextMenu(); if (typeof action === "function") await action(); }
-async function loadRows() { if (loading.value || saving.value) return; loading.value = true; loadError.value = ""; try { rows.value = await getAntibiotics(); } catch (error) { rows.value = []; loadError.value = antibioticError(error, "No fue posible consultar los antibiÃ³ticos."); toast.error(loadError.value); } finally { loading.value = false; } }
-async function saveForm(payload) { if (saving.value) return; saving.value = true; formDialog.value?.clearError(); try { const saved = payload.mode === "create" ? await createAntibiotic(payload.values) : await updateAntibiotic(payload.record.id, payload.values); if (!saved) throw new Error("El Backend no devolviÃ³ un registro vÃ¡lido."); replaceRow(saved); formDialog.value?.close(); toast.success(payload.mode === "create" ? "AntibiÃ³tico creado correctamente." : "AntibiÃ³tico actualizado correctamente."); } catch (error) { formDialog.value?.setError(antibioticError(error, "No fue posible guardar el antibiÃ³tico.")); } finally { saving.value = false; } }
-async function saveState(row) { if (saving.value || !canChangeStatus.value) return; saving.value = true; stateDialog.value?.clearError(); try { const saved = await updateAntibiotic(row.id, { annulled: !row.annulled }); if (!saved) throw new Error("El Backend no devolviÃ³ un registro vÃ¡lido."); replaceRow(saved); stateDialog.value?.close(); toast.success(saved.annulled ? "AntibiÃ³tico inactivado correctamente." : "AntibiÃ³tico activado correctamente."); } catch (error) { stateDialog.value?.setError(antibioticError(error, "No fue posible cambiar el estado.")); } finally { saving.value = false; } }
+async function loadRows() { if (loading.value || saving.value) return; loading.value = true; loadError.value = ""; try { rows.value = await getAntibiotics(); } catch (error) { rows.value = []; loadError.value = antibioticError(error, "No fue posible consultar los antibióticos."); toast.error(loadError.value); } finally { loading.value = false; } }
+async function saveForm(payload) { if (saving.value) return; saving.value = true; formDialog.value?.clearError(); try { const saved = payload.mode === "create" ? await createAntibiotic(payload.values) : await updateAntibiotic(payload.record.id, payload.values); if (!saved) throw new Error("El Backend no devolvió un registro válido."); replaceRow(saved); formDialog.value?.close(); toast.success(payload.mode === "create" ? "Antibiótico creado correctamente." : "Antibiótico actualizado correctamente."); } catch (error) { formDialog.value?.setError(antibioticError(error, "No fue posible guardar el antibiótico.")); } finally { saving.value = false; } }
+async function saveState(row) { if (saving.value || !canChangeStatus.value) return; saving.value = true; stateDialog.value?.clearError(); try { const saved = await updateAntibiotic(row.id, { annulled: !row.annulled }); if (!saved) throw new Error("El Backend no devolvió un registro válido."); replaceRow(saved); stateDialog.value?.close(); toast.success(saved.annulled ? "Antibiótico desactivado correctamente." : "Antibiótico activado correctamente."); } catch (error) { stateDialog.value?.setError(antibioticError(error, "No fue posible cambiar el estado.")); } finally { saving.value = false; } }
 onMounted(loadRows);
 </script>
 

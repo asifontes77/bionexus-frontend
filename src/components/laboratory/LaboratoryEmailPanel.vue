@@ -6,9 +6,9 @@
         <h3>Env&iacute;o por correo</h3>
       </div>
       <div class="panel-actions">
-        <BioNexusActionButton v-if="dirty" variant="secondary" :disabled="saving || testing" @click="$emit('discard')">Descartar</BioNexusActionButton>
-        <BioNexusActionButton v-if="canUpdate" variant="primary" :loading="saving" :disabled="disabled || testing || !dirty || hasErrors" @click="$emit('save')">Guardar cambios</BioNexusActionButton>
-        <BioNexusActionButton v-if="canUpdate" variant="secondary" :loading="testing" :disabled="disabled || saving || testing || hasErrors" @click="$emit('test-connection')">Probar conexi&oacute;n</BioNexusActionButton>
+        <BioNexusActionButton icon="undo" v-if="dirty" variant="secondary" :disabled="saving || testing" @click="$emit('discard')">Descartar</BioNexusActionButton>
+        <BioNexusActionButton icon="save" v-if="canUpdate" variant="primary" :loading="saving" :disabled="disabled || testing || !dirty || hasErrors" @click="$emit('save')">Guardar cambios</BioNexusActionButton>
+        <BioNexusActionButton icon="wifi_tethering" v-if="canUpdate" variant="secondary" :loading="testing" :disabled="disabled || saving || testing || hasErrors" @click="$emit('test-connection')">Probar conexi&oacute;n</BioNexusActionButton>
       </div>
     </div>
     <div class="email-grid">

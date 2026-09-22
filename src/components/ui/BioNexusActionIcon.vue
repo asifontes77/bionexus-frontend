@@ -18,6 +18,7 @@ const actionIcons = Object.freeze({
   cancel: "close",
   close: "close",
   refresh: "refresh",
+  export: "download",
   edit: "edit",
   activate: "person_check",
   deactivate: "person_off",
@@ -29,5 +30,5 @@ const actionIcons = Object.freeze({
   send: "send",
   clear: "filter_alt_off",
 });
-const iconName = computed(() => actionIcons[props.action] || "bolt");
+const iconName = computed(() => actionIcons[props.action] || props.action || "bolt");
 </script>

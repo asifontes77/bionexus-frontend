@@ -41,7 +41,7 @@
           </BioNexusFormField>
 
           <div class="dialog-field-wide role-active-option">
-            <BioNexusCheckbox v-model="updateRoleForm.isActive" :disabled="editingRole || selectedRole?.code === 'admin'" label="Rol activo" :help="selectedRole?.code === 'admin' ? 'El rol administrador debe permanecer activo.' : 'Los roles inactivos no pueden asignarse a nuevos usuarios.'" />
+            <BioNexusCheckbox v-model="updateRoleForm.isActive" :disabled="editingRole || selectedRole?.code === 'admin'" label="Rol activo" :help="selectedRole?.code === 'admin' ? 'El rol administrador debe permanecer activo.' : 'Los roles desactivados no pueden asignarse a nuevos usuarios.'" />
           </div>
 
           <div v-if="updateRoleError" class="dialog-field-wide bio-nexus-inline-message bio-nexus-message-error" role="alert">

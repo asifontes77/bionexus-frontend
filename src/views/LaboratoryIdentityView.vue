@@ -4,8 +4,8 @@
     <div class="identity-toolbar">
       <p>Los datos guardados se utilizan en documentos, reportes y comunicaciones del laboratorio.</p>
       <div class="identity-actions">
-        <BioNexusActionButton v-if="dirty" variant="secondary" :disabled="saving" @click="discard">Descartar</BioNexusActionButton>
-        <BioNexusActionButton v-if="canUpdate" variant="primary" :loading="saving" :disabled="loading || !dirty" @click="save">Guardar cambios</BioNexusActionButton>
+        <BioNexusActionButton icon="undo" v-if="dirty" variant="secondary" :disabled="saving" @click="discard">Descartar</BioNexusActionButton>
+        <BioNexusActionButton icon="save" v-if="canUpdate" variant="primary" :loading="saving" :disabled="loading || !dirty" @click="save">Guardar cambios</BioNexusActionButton>
       </div>
     </div>
     <div v-if="loading" class="bio-nexus-empty-state">Cargando identidad...</div>

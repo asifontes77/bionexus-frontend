@@ -1,13 +1,13 @@
 <template>
   <section class="germs-page">
     <div v-if="loadError" class="bio-nexus-message bio-nexus-message-error" role="alert">
-      <strong>No fue posible cargar los gÃ©rmenes.</strong>
+      <strong>No fue posible cargar los gérmenes.</strong>
       <span>{{ loadError }}</span>
     </div>
 
     <section class="bio-nexus-administrative-directory germs-directory">
-      <div v-if="loading" class="bio-nexus-empty-state">Cargando gÃ©rmenes...</div>
-      <div v-else-if="rows.length === 0" class="bio-nexus-empty-state">No existen gÃ©rmenes registrados.</div>
+      <div v-if="loading" class="bio-nexus-empty-state">Cargando gérmenes...</div>
+      <div v-else-if="rows.length === 0" class="bio-nexus-empty-state">No existen gérmenes registrados.</div>
 
       <BioNexusDataGrid
         v-else
@@ -28,15 +28,12 @@
         :page-size-selector="[10, 20, 50, 100]"
         :min-grid-height="300"
         :max-grid-height="560"
-        empty-text="No existen gÃ©rmenes que coincidan con los filtros."
+        empty-text="No existen gérmenes que coincidan con los filtros."
         @refresh="loadRows"
         @row-context-menu="openContextMenu"
       >
         <template #actions>
-          <button v-if="canCreate" type="button" class="bio-nexus-action bio-nexus-action-primary" :disabled="loading || saving" @click="openCreate">
-            <BioNexusActionIcon action="create" />
-            <span>Nuevo germen</span>
-          </button>
+          <button v-if="canCreate" type="button" class="bio-nexus-action bio-nexus-action-primary bio-nexus-grid-icon-action" :disabled="loading || saving" @click="openCreate" title="Nuevo germen" aria-label="Nuevo germen"><BioNexusActionIcon action="create" /></button>
         </template>
       </BioNexusDataGrid>
 
@@ -82,7 +79,7 @@ const defaultColDef = Object.freeze({ sortable: true, filter: true, resizable: t
 const gridComponents = Object.freeze({ BioNexusGridActionsCell, BioNexusGridToggleCell });
 
 const columnDefs = computed(() => [
-  { field: "germen", headerName: "DescripciÃ³n", minWidth: 280, flex: 1, filter: "agTextColumnFilter" },
+  { field: "germen", headerName: "Descripción", minWidth: 280, flex: 1, filter: "agTextColumnFilter" },
   {
     field: "isActive",
     headerName: "Estado",
@@ -90,13 +87,13 @@ const columnDefs = computed(() => [
     minWidth: 150,
     maxWidth: 180,
     filter: BioNexusOptionFilter,
-    filterParams: { options: [{ value: true, label: "Activo" }, { value: false, label: "Inactivo" }] },
+    filterParams: { options: [{ value: true, label: "Activo" }, { value: false, label: "Desactivado" }] },
     headerClass: "bio-nexus-grid-toggle-header",
     cellClass: "bio-nexus-grid-toggle-cell",
     cellRenderer: BioNexusGridToggleCell,
     cellRendererParams: {
       onLabel: "Activo",
-      offLabel: "Inactivo",
+      offLabel: "Desactivado",
       ariaLabel: "Estado",
       disabled: () => !canChangeStatus.value || saving.value,
       onToggle: (row) => openState(row)}},
@@ -124,7 +121,7 @@ const contextItems = computed(() => {
   if (!row) return [];
   return [
     { key: "edit", label: "Editar", icon: "edit", visible: canUpdate.value, disabled: saving.value, action: () => openEdit(row) },
-    { key: "toggle-status", label: row.annulled ? "Activar" : "Inactivar", icon: row.annulled ? "activate" : "deactivate", visible: canChangeStatus.value, disabled: saving.value, action: () => openState(row) }];
+    { key: "toggle-status", label: row.annulled ? "Activar" : "Desactivar", icon: row.annulled ? "activate" : "deactivate", visible: canChangeStatus.value, disabled: saving.value, action: () => openState(row) }];
 });
 
 function getRowId({ data }) { return String(data.id); }
@@ -135,9 +132,9 @@ function replaceRow(saved) { const next = rows.value.map((row) => row.id === sav
 async function openContextMenu({ event, row }) { if (!event || !row || (!canUpdate.value && !canChangeStatus.value)) return; event.preventDefault(); contextState.value = { open: true, x: event.clientX, y: event.clientY, row }; await nextTick(); contextMenu.value?.positionMenu?.(); }
 function closeContextMenu() { contextState.value = { open: false, x: 0, y: 0, row: null }; }
 async function runContextAction(item) { const action = item?.action; closeContextMenu(); if (typeof action === "function") await action(); }
-async function loadRows() { if (loading.value || saving.value) return; loading.value = true; loadError.value = ""; try { rows.value = await getGerms(); } catch (error) { rows.value = []; loadError.value = germError(error, "No fue posible consultar los gÃ©rmenes."); toast.error(loadError.value); } finally { loading.value = false; } }
-async function saveForm(payload) { if (saving.value) return; saving.value = true; formDialog.value?.clearError(); try { const saved = payload.mode === "create" ? await createGerm(payload.values) : await updateGerm(payload.record.id, payload.values); if (!saved) throw new Error("El Backend no devolviÃ³ un registro vÃ¡lido."); replaceRow(saved); formDialog.value?.close(); toast.success(payload.mode === "create" ? "Germen creado correctamente." : "Germen actualizado correctamente."); } catch (error) { formDialog.value?.setError(germError(error, "No fue posible guardar el germen.")); } finally { saving.value = false; } }
-async function saveState(row) { if (saving.value || !canChangeStatus.value) return; saving.value = true; stateDialog.value?.clearError(); try { const saved = await updateGerm(row.id, { annulled: !row.annulled }); if (!saved) throw new Error("El Backend no devolviÃ³ un registro vÃ¡lido."); replaceRow(saved); stateDialog.value?.close(); toast.success(saved.annulled ? "Germen inactivado correctamente." : "Germen activado correctamente."); } catch (error) { stateDialog.value?.setError(germError(error, "No fue posible cambiar el estado.")); } finally { saving.value = false; } }
+async function loadRows() { if (loading.value || saving.value) return; loading.value = true; loadError.value = ""; try { rows.value = await getGerms(); } catch (error) { rows.value = []; loadError.value = germError(error, "No fue posible consultar los gérmenes."); toast.error(loadError.value); } finally { loading.value = false; } }
+async function saveForm(payload) { if (saving.value) return; saving.value = true; formDialog.value?.clearError(); try { const saved = payload.mode === "create" ? await createGerm(payload.values) : await updateGerm(payload.record.id, payload.values); if (!saved) throw new Error("El Backend no devolvió un registro válido."); replaceRow(saved); formDialog.value?.close(); toast.success(payload.mode === "create" ? "Germen creado correctamente." : "Germen actualizado correctamente."); } catch (error) { formDialog.value?.setError(germError(error, "No fue posible guardar el germen.")); } finally { saving.value = false; } }
+async function saveState(row) { if (saving.value || !canChangeStatus.value) return; saving.value = true; stateDialog.value?.clearError(); try { const saved = await updateGerm(row.id, { annulled: !row.annulled }); if (!saved) throw new Error("El Backend no devolvió un registro válido."); replaceRow(saved); stateDialog.value?.close(); toast.success(saved.annulled ? "Germen desactivado correctamente." : "Germen activado correctamente."); } catch (error) { stateDialog.value?.setError(germError(error, "No fue posible cambiar el estado.")); } finally { saving.value = false; } }
 onMounted(loadRows);
 </script>
 

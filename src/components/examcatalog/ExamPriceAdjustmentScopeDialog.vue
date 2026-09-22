@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <BioNexusDialog ref="box" size="wide" kicker="Catálogo de exámenes" title="Agregar exámenes">
     <section class="scope-body">
       <p class="scope-help">Agrega exámenes por grupo o búscalos en todo el catálogo. Los exámenes ya incluidos permanecen ocultos.</p>
@@ -42,7 +42,7 @@
         @grid-ready="ready"
       >
         <template #stats><span>{{ selected.length }} seleccionado(s)</span></template>
-        <template #actions><button type="button" class="bio-nexus-action bio-nexus-action-primary" :disabled="selected.length === 0" @click="confirmSelected">Agregar seleccionados</button></template>
+        <template #actions><button type="button" class="bio-nexus-action bio-nexus-action-primary bio-nexus-grid-icon-action" :disabled="selected.length === 0" @click="confirmSelected" title="Agregar seleccionados" aria-label="Agregar seleccionados"><BioNexusActionIcon action="create" /></button></template>
       </BioNexusDataGrid>
 
       <div v-if="error" class="bio-nexus-message bio-nexus-message-error">{{ error }}</div>
@@ -53,6 +53,7 @@
 </template>
 
 <script setup>
+import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
 import { computed, ref } from "vue";
 import BioNexusDataGrid from "@/components/grid/BioNexusDataGrid.vue";
 import BioNexusDialog from "@/components/ui/BioNexusDialog.vue";
@@ -73,11 +74,11 @@ const available = computed(() => sourceRows.value.filter(row => !excluded.value.
 const sourceTitle = computed(() => mode.value === "global" ? `Resultados globales: ${available.value.length}` : groupId.value ? `Exámenes del grupo: ${available.value.length}` : "Selecciona un grupo o realiza una búsqueda global");
 
 const emptyText = computed(() => mode.value === "global" ? "No existen exámenes globales disponibles para agregar." : "Selecciona un grupo o usa la búsqueda global.");
-const columns = Object.freeze([{ field: "group_description", headerName: "Grupo", minWidth: 240, flex: 1 }, { field: "description", headerName: "Examen", minWidth: 340, flex: 1.6, checkboxSelection: true, headerCheckboxSelection: true }, { field: "abbreviation", headerName: "Abreviatura", minWidth: 170, flex: .7 }]);
+const columns = Object.freeze([{ field: "group_description", headerName: "Grupo", minWidth: 240, flex: 1 }, { field: "description", headerName: "Examen", minWidth: 340, flex: 1.6 }, { field: "abbreviation", headerName: "Abreviatura", minWidth: 170, flex: .7 }]);
 const selection = Object.freeze({ mode: "multiRow", checkboxes: true, headerCheckbox: true, selectAll: "filtered" });
 
 function getId({ data }) { return String(data.id); }
-function ready(event) { api.value = event.api; event.api.addEventListener("selectionChanged", () => selected.value = event.api.getSelectedRows() || []); event.api.sizeColumnsToFit?.(); }
+function ready(event) { api.value = event.api; event.api.addEventListener("selectionChanged", () => selected.value = event.api.getSelectedRows() || []); }
 async function selectGroup(group) { groupId.value = Number(group?.id || 0); mode.value = "group"; gridSearch.value = ""; selected.value = []; api.value?.deselectAll?.(); await loadGroup(); }
 async function loadGroup() { if (!groupId.value || cache.value.has(groupId.value)) return; loading.value = true; error.value = ""; try { const rows = await getExamsByGroup(groupId.value); cache.value = new Map(cache.value).set(groupId.value, rows); } catch (exception) { error.value = String(exception?.message || "No fue posible cargar el grupo."); } finally { loading.value = false; } }
 async function searchGlobal() { const term = globalSearch.value.trim(); if (term.length < 2 || loading.value) return; loading.value = true; error.value = ""; try { const rows = await searchExamCatalog(term, 30); globalRows.value = rows; mode.value = "global"; gridSearch.value = ""; selected.value = []; api.value?.deselectAll?.(); if (!available.value.length) toast.info("No se encontraron exámenes nuevos para agregar."); } catch (exception) { globalRows.value = []; error.value = String(exception?.message || "No fue posible realizar la búsqueda global."); } finally { loading.value = false; } }
