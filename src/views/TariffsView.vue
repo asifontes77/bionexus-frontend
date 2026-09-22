@@ -14,16 +14,16 @@
 
     <BioNexusContextMenu ref="contextMenu" :open="menu.open" :x="menu.x" :y="menu.y" :items="menuItems" @close="closeMenu" @select="runMenuAction" />
 
-    <BioNexusDialog ref="formDialog" kicker="ADMINISTRAR TARIFA" :title="dialog.mode === 'create' ? 'Nueva tarifa' : 'Editar tarifa'" size="standard" @close="resetFormDialog">
+    <BioNexusDialog ref="formDialog" kicker="ADMINISTRAR TARIFA" :title="dialog.mode === 'create' ? 'Nueva tarifa' : 'Editar tarifa'" size="standard" :prevent-close="saving || hasChanges" @before-close="requestCloseDialog" @close="resetFormDialog">
       <form id="tariff-form" class="tariff-form" @submit.prevent="submit">
         <div v-if="dialog.error" class="bio-nexus-message bio-nexus-message-error">{{ dialog.error }}</div>
-        <BioNexusFormField label="Nombre" field-id="tariff-name" required :error="fieldErrors.name"><input id="tariff-name" v-model.trim="draft.name" class="bio-nexus-field" maxlength="100" autocomplete="off" @input="clearFieldError('name')" /></BioNexusFormField>
+        <BioNexusFormField label="Nombre" field-id="tariff-name" required :error="fieldErrors.name"><input id="tariff-name" v-model.trim="draft.name" class="bio-nexus-field" maxlength="100" autocomplete="off" autofocus @input="clearFieldError('name')" /></BioNexusFormField>
         <BioNexusFormField class="span-all" label="Descripción" field-id="tariff-description"><textarea id="tariff-description" v-model.trim="draft.description" class="bio-nexus-field tariff-description" maxlength="250"></textarea></BioNexusFormField>
       </form>
-      <template #footer><button type="button" class="bio-nexus-action bio-nexus-action-secondary" :disabled="saving" @click="closeDialog"><BioNexusActionIcon action="cancel" /><span>Cancelar</span></button><button type="submit" class="bio-nexus-action bio-nexus-action-primary" form="tariff-form" :disabled="tariffSubmitDisabled"><BioNexusActionIcon :action="dialog.mode === 'create' ? 'create' : 'save'" /><span>{{ saving ? 'Procesando...' : dialog.mode === 'create' ? 'Crear' : 'Guardar' }}</span></button></template>
+      <template #footer><BioNexusActionButton variant="secondary" icon="cancel" :disabled="saving" @click="requestCloseDialog">Cancelar</BioNexusActionButton><BioNexusActionButton type="submit" variant="primary" :icon="dialog.mode === 'create' ? 'create' : 'save'" form="tariff-form" :loading="saving" :disabled="tariffSubmitDisabled">{{ dialog.mode === 'create' ? 'Crear' : 'Guardar' }}</BioNexusActionButton></template>
     </BioNexusDialog>
 
-    <BioNexusStateDialog ref="stateDialog" :saving="saving" @confirm="confirmStatus" />
+    <BioNexusStateDialog ref="stateDialog" :saving="saving" @confirm="confirmStatus" /><BioNexusConfirmDialog ref="discardDialog" />
   </section>
 </template>
 <script setup>
@@ -35,7 +35,7 @@ import BioNexusGridActionsCell from "@/components/grid/BioNexusGridActionsCell.v
 import TariffOrderSelectCell from "@/components/tariffs/TariffOrderSelectCell.vue";
 import BioNexusOptionFilter from "@/components/grid/BioNexusOptionFilter.vue";
 import BioNexusContextMenu from "@/components/ui/BioNexusContextMenu.vue";
-import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
+import BioNexusConfirmDialog from "@/components/ui/BioNexusConfirmDialog.vue";
 import BioNexusDialog from "@/components/ui/BioNexusDialog.vue";
 import BioNexusFormField from "@/components/ui/BioNexusFormField.vue";
 import BioNexusStateDialog from "@/components/ui/BioNexusStateDialog.vue";
@@ -44,7 +44,7 @@ import { useBioNexusToast } from "@/composables/useBioNexusToast";
 import { changeTariffStatus, createTariff, getTariffs, reorderTariffs, setDefaultTariff, tariffError, updateTariff } from "@/services/tariffService";
 
 const auth = useAuthorizationStore(), toast = useBioNexusToast();
-const tariffs = ref([]), loading = ref(false), saving = ref(false), orderSaving = ref(false), loadError = ref(""), search = ref(""), contextMenu = ref(null), formDialog = ref(null), stateDialog = ref(null), selectedOrderId = ref(null), orderOriginal = ref(""), keyboardOriginal = ref([]), gridApi = ref(null);
+const tariffs = ref([]), loading = ref(false), saving = ref(false), orderSaving = ref(false), loadError = ref(""), search = ref(""), contextMenu = ref(null), formDialog = ref(null), stateDialog = ref(null), discardDialog = ref(null), selectedOrderId = ref(null), orderOriginal = ref(""), keyboardOriginal = ref([]), gridApi = ref(null);
 const menu = reactive({ open:false, x:0, y:0, row:null });
 const dialog = reactive({ open:false, mode:"create", record:null, error:"" });
 const fieldErrors = reactive({ name:"" });
@@ -78,12 +78,12 @@ const columnDefs = computed(() => [
 const menuItems = computed(() => { const row=menu.row; if(!row)return []; return [
   { key:"edit", icon:"edit", label:"Editar tarifa", visible:canUpdate.value, disabled:saving.value, action:()=>openEdit(row) },
   { key:"default", icon:"star", label:row.isDefault?"Tarifa predeterminada":"Definir como predeterminada", visible:canSetDefault.value, disabled:saving.value||row.isDefault||!row.isActive, action:()=>makeDefault(row) },
-  { key:"status", icon:row.isActive?"deactivate":"activate", label:row.isActive?"Desactivar tarifa":"Activar tarifa", visible:canChangeStatus.value, disabled:saving.value, action:()=>requestStatus(row) },
+  { key:"status", icon:row.isActive?"deactivate":"activate", label:row.isActive?"Desactivar tarifa":"Activar tarifa", variant:row.isActive?"danger":"default", visible:canChangeStatus.value, disabled:saving.value, action:()=>requestStatus(row) },
 ]; });
 function resetDraft(){Object.assign(draft,{code:"",name:"",description:""});Object.assign(fieldErrors,{name:""});originalDraft.value="";}
 function openCreate(){resetDraft();Object.assign(dialog,{open:true,mode:"create",record:null,error:""});originalDraft.value=draftSignature.value;formDialog.value?.open();}
 function openEdit(row){Object.assign(draft,{code:row.code,name:row.name,description:row.description||""});Object.assign(dialog,{open:true,mode:"edit",record:row,error:""});formDialog.value?.open();nextTick(()=>{originalDraft.value=draftSignature.value;});}
-function closeDialog(){if(!saving.value)formDialog.value?.close();}
+async function requestCloseDialog(){if(saving.value)return;if(hasChanges.value){const confirmed=await discardDialog.value?.ask({kicker:"Confirmación",title:"Descartar cambios",message:"Hay cambios sin guardar. ¿Deseas salir y descartarlos?",icon:"warning",variant:"danger",confirmIcon:"delete",confirmText:"Sí, salir y descartar cambios",cancelText:"Cancelar"});if(!confirmed)return;}formDialog.value?.close();}
 function resetFormDialog(){Object.assign(dialog,{open:false,record:null,error:""});Object.assign(fieldErrors,{name:"",position:""});originalDraft.value="";}
 async function load(){loading.value=true;loadError.value="";try{tariffs.value=(await getTariffs()).map(row=>({...row,isDefault:Boolean(row.isDefault),isActive:Boolean(row.isActive),configuredPriceCount:Number(row.configuredPriceCount)||0}));orderOriginal.value=orderSnapshot();selectedOrderId.value=null;}catch(e){loadError.value=tariffError(e,"No fue posible consultar las tarifas.");toast.error(loadError.value);}finally{loading.value=false;}}
 function clearFieldError(field){if(Object.prototype.hasOwnProperty.call(fieldErrors,field))fieldErrors[field]="";dialog.error="";}
@@ -108,14 +108,3 @@ async function runMenuAction(item){const action=item?.action;closeMenu();if(type
 onMounted(()=>{globalThis.addEventListener("keydown",handleKeyboardOrder,{capture:true});load();});
 onBeforeUnmount(()=>globalThis.removeEventListener("keydown",handleKeyboardOrder,{capture:true}));
 </script>
-<style scoped>
-.tariffs-page{min-width:0}.tariff-form{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--bio-nexus-space-3)}.span-all{grid-column:1/-1}.tariff-description{min-height:88px;resize:vertical}.tariffs-page :deep(.tariff-order-select-header .ag-header-cell-label),.tariffs-page :deep(.tariff-center-header .ag-header-cell-label){justify-content:center}.tariffs-page :deep(.tariff-order-select-cell){display:flex;align-items:center;justify-content:center;padding:0!important}.tariffs-page :deep(.tariff-center-cell){display:flex;align-items:center;justify-content:center;text-align:center}.tariffs-page :deep(.bio-nexus-grid-actions-header .ag-header-cell-label),.tariffs-page :deep(.bio-nexus-grid-actions-cell){justify-content:center}.tariff-grid-actions{display:flex;align-items:center;gap:8px}
-
-.tariffs-page :deep(.tariff-order-selected-cell){background:var(--bio-nexus-color-info-soft)!important}
-.tariffs-page :deep(.tariff-order-selected-cell[col-id="order-select"]){box-shadow:inset 5px 0 0 var(--bio-nexus-color-accent)!important}
-.tariffs-page :deep(.tariff-order-selected-cell .tariff-position-number){border:2px solid var(--bio-nexus-color-primary);background:var(--bio-nexus-color-primary);color:#fff;transform:scale(1.06)}
-.tariffs-page :deep(.tariff-order-selected-cell[col-id="name"]){padding-right:225px;font-weight:700}
-.tariffs-page :deep(.tariff-order-selected-cell[col-id="name"]::after){position:absolute;top:5px;right:12px;content:"SELECCIONADO · ↑ ↓ · ENTER · ESC";color:var(--bio-nexus-color-primary);font-size:9px;font-weight:800;letter-spacing:.04em;white-space:nowrap;pointer-events:none}
-.tariffs-page :deep(.tariff-position-cell){display:flex;align-items:center;justify-content:center;text-align:center}
-.tariffs-page :deep(.tariff-position-number){box-sizing:border-box;display:grid;place-items:center;width:34px;height:34px;border:1px solid var(--bio-nexus-color-border-strong);border-radius:50%;background:var(--bio-nexus-color-surface);color:var(--bio-nexus-color-text-secondary);font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;transition:background-color .15s ease,border-color .15s ease,color .15s ease,transform .15s ease}.tariff-order-button{display:grid;place-items:center;width:38px;height:38px;border:1px solid var(--bio-nexus-color-border);border-radius:50%;background:var(--bio-nexus-color-surface);color:var(--bio-nexus-color-primary);font:700 17px/1 var(--bio-nexus-font-family);cursor:pointer}.tariff-order-button:hover:not(:disabled){border-color:var(--bio-nexus-color-primary);background:var(--bio-nexus-color-info-soft)}.tariff-order-button:disabled{cursor:not-allowed;opacity:.32}.tariff-order-save:disabled,.tariffs-page .bio-nexus-action-primary:disabled{border-color:var(--bio-nexus-color-border)!important;background:var(--bio-nexus-color-surface-soft)!important;color:var(--bio-nexus-color-text-muted)!important;box-shadow:none!important;cursor:not-allowed!important;opacity:.58!important;pointer-events:none}@media(max-width:760px){.tariff-form{grid-template-columns:1fr}.span-all{grid-column:auto}}
-</style>
