@@ -10,27 +10,28 @@
     <p v-if="error" class="exam-order-error">{{ error }}</p>
     <div v-if="loading" class="exam-order-state">Cargando catálogo...</div>
     <div v-else class="exam-order-layout">
-      <article class="exam-order-panel"><header><div><small>ORDEN GLOBAL</small><h2>Grupos de exámenes</h2></div><span>{{ groups.length }} grupo(s)</span></header>
+      <BioNexusSectionPanel class="exam-order-section" title="Grupos de exámenes" icon="folder" description="Organiza la prioridad global de los grupos del catálogo." variant="accent"><template #actions><span class="exam-order-section-count">{{ groups.length }} grupo(s)</span></template>
         <ol class="exam-order-list" @dragover.prevent="autoScroll($event)">
   <li v-for="(group,index) in groups" :key="group.id" :data-order-key="`group-${group.id}`" draggable="true" :tabindex="0" :aria-selected="keyboardSelection?.type==='group'&&keyboardSelection?.id===group.id" :class="{selected:group.id===selectedGroupId,inactive:group.annulled,dragging:dragState?.type==='group'&&dragState?.id===group.id,'keyboard-selected':keyboardSelection?.type==='group'&&keyboardSelection?.id===group.id}" @focus="selectForKeyboard('group',group.id)" @click="activateKeyboardSelection('group',group.id,$event)" @dragstart="startDrag('group',index,$event)" @dragenter.prevent="previewRow('group',index,$event)" @dragover.prevent="previewRow('group',index,$event)" @drop.prevent="endDrag" @dragend="endDrag">
     <button class="select-row" type="button" @click="selectedGroupId=group.id"><span class="order-number">{{ index + 1 }}</span><span class="drag-icon" aria-hidden="true">⋮⋮</span><span><strong>{{ group.description }}</strong><small>{{ group.annulled ? "Desactivado" : "Activo" }}</small></span></button>
     <div class="move-actions"><BioNexusActionButton icon="arrow_upward" label="Subir grupo" size="sm" :disabled="index===0 || saving" @click="move(groups,index,-1)"  icon-only /><BioNexusActionButton icon="arrow_downward" label="Bajar grupo" size="sm" :disabled="index===groups.length-1 || saving" @click="move(groups,index,1)"  icon-only /></div>
   </li>
 </ol>
-      </article>
-      <article class="exam-order-panel"><header><div><small>ORDEN DEL GRUPO</small><h2>{{ selectedGroup?.description || "Exámenes" }}</h2></div><span>{{ exams.length }} examen(es)</span></header>
+      </BioNexusSectionPanel>
+      <BioNexusSectionPanel class="exam-order-section" title="Orden del grupo" icon="format_list_numbered" :description="selectedGroup?.description || 'Selecciona un grupo para consultar sus exámenes.'" variant="accent"><template #actions><span class="exam-order-section-count">{{ exams.length }} examen(es)</span></template>
         <div v-if="!selectedGroup" class="exam-order-state">Selecciona un grupo.</div><ol v-else class="exam-order-list" @dragover.prevent="autoScroll($event)">
   <li v-for="(exam,index) in exams" :key="exam.id" :data-order-key="`exam-${exam.id}`" draggable="true" :tabindex="0" :aria-selected="keyboardSelection?.type==='exam'&&keyboardSelection?.id===exam.id" :class="{inactive:exam.annulled,dragging:dragState?.type==='exam'&&dragState?.id===exam.id,'keyboard-selected':keyboardSelection?.type==='exam'&&keyboardSelection?.id===exam.id}" @focus="selectForKeyboard('exam',exam.id)" @click="activateKeyboardSelection('exam',exam.id,$event)" @dragstart="startDrag('exam',index,$event)" @dragenter.prevent="previewRow('exam',index,$event)" @dragover.prevent="previewRow('exam',index,$event)" @drop.prevent="endDrag" @dragend="endDrag">
     <div class="select-row static"><span class="order-number">{{ index + 1 }}</span><span class="drag-icon" aria-hidden="true">⋮⋮</span><span><strong>{{ exam.description }}</strong><small>{{ exam.abbreviation }} · {{ exam.annulled ? "Desactivado" : "Activo" }}</small></span></div>
     <div class="move-actions"><BioNexusActionButton icon="arrow_upward" label="Subir examen" size="sm" :disabled="index===0 || saving" @click="move(exams,index,-1)"  icon-only /><BioNexusActionButton icon="arrow_downward" label="Bajar examen" size="sm" :disabled="index===exams.length-1 || saving" @click="move(exams,index,1)"  icon-only /></div>
   </li>
 </ol>
-      </article>
+      </BioNexusSectionPanel>
     </div>
   </section>
 </template>
 <script setup>
 import BioNexusActionButton from "@/components/ui/BioNexusActionButton.vue";
+import BioNexusSectionPanel from "@/components/ui/BioNexusSectionPanel.vue";
 import { computed,onBeforeUnmount,onMounted,ref,watch } from "vue";
 import { onBeforeRouteLeave } from "vue-router";
 import { useAuthorizationStore } from "@/stores/authorization";
@@ -72,11 +73,8 @@ function guard(event){if(dirty.value){event.preventDefault();event.returnValue="
 .exam-order-button:focus-visible,.move-actions button:focus-visible,.select-row:focus-visible{outline:2px solid var(--bio-nexus-color-primary);outline-offset:2px}
 .exam-order-button:disabled{cursor:not-allowed;opacity:.48}
 .exam-order-layout{display:grid;grid-template-columns:minmax(300px,.9fr) minmax(380px,1.1fr);gap:16px;align-items:start}
-.exam-order-panel{min-width:0;padding:14px;border:1px solid var(--bio-nexus-color-border);border-radius:var(--bio-nexus-radius-md);background:var(--bio-nexus-color-surface);box-shadow:var(--bio-nexus-shadow-sm)}
-.exam-order-panel>header{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:48px;margin-bottom:10px;padding:0 2px 10px;border-bottom:1px solid var(--bio-nexus-color-border)}
-.exam-order-panel h2{margin:2px 0 0;color:var(--bio-nexus-color-text);font-size:17px;font-weight:700;line-height:1.2}
-.exam-order-panel header>span{flex:none;color:var(--bio-nexus-color-text-muted);font-size:12px;font-weight:600}
-.exam-order-panel small{color:var(--bio-nexus-color-accent);font-size:10px;font-weight:800;letter-spacing:.04em}
+.exam-order-section{min-width:0}
+.exam-order-section-count{display:inline-flex;align-items:center;min-height:32px;color:var(--bio-nexus-color-text-muted);font-size:12px;font-weight:600;white-space:nowrap}
 .exam-order-list{display:grid;gap:8px;height:clamp(430px,calc(100vh - 330px),680px);min-height:430px;max-height:680px;margin:0;padding:4px 6px 12px 2px;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable;list-style:none}
 .exam-order-list li{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;min-height:54px;border:1px solid var(--bio-nexus-color-border);border-radius:var(--bio-nexus-radius-sm);background:var(--bio-nexus-color-surface-soft);cursor:grab;transition:border-color .15s ease,background-color .15s ease,opacity .15s ease,transform .15s ease}
 .exam-order-list li:active{cursor:grabbing}.exam-order-list li:focus{outline:none}.exam-order-list li:focus-visible{outline:2px solid var(--bio-nexus-color-primary);outline-offset:2px}
