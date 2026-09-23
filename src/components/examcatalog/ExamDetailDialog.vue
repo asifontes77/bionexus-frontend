@@ -1,25 +1,25 @@
 <template>
   <BioNexusDialog ref="dialog" size="wide" kicker="Detalle del catálogo" title="Ver examen" :subtitle="exam?.description || ''" @close="handleClosed">
 <section v-if="exam" class="exam-detail-content">
-        <section class="exam-detail-summary">
-          <article class="wide"><span>Descripción</span><strong>{{ exam.description || "Sin descripcion" }}</strong></article>
-          <article><span>Abreviatura</span><strong>{{ exam.abbreviation || "Sin abreviatura" }}</strong></article>
-          <article class="wide"><span>Grupo</span><strong>{{ group?.description || "Sin grupo" }}</strong></article>
-          <article><span>Estado</span><strong :class="exam.annulled ? 'inactive' : 'active'">{{ exam.annulled ? "Desactivado" : "Activo" }}</strong></article>
-          <article><span>Prueba especial</span><strong>{{ exam.special_test ? "Si" : "No" }}</strong></article>
-          <article><span>Tipo de impuesto</span><strong>{{ taxLabel }}</strong></article>
-        </section>
-        <section class="exam-detail-section">
-          <h3>Tarifas</h3>
+        <BioNexusSectionPanel title="Información del examen" icon="science" description="Consulta la identificación, clasificación y estado del examen." variant="accent">
+          <div class="exam-detail-summary">
+            <article class="wide"><span>Descripción</span><strong>{{ exam.description || "Sin descripcion" }}</strong></article>
+            <article><span>Abreviatura</span><strong>{{ exam.abbreviation || "Sin abreviatura" }}</strong></article>
+            <article class="wide"><span>Grupo</span><strong>{{ group?.description || "Sin grupo" }}</strong></article>
+            <article><span>Estado</span><strong :class="exam.annulled ? 'inactive' : 'active'">{{ exam.annulled ? "Desactivado" : "Activo" }}</strong></article>
+            <article><span>Prueba especial</span><strong>{{ exam.special_test ? "Si" : "No" }}</strong></article>
+            <article><span>Tipo de impuesto</span><strong>{{ taxLabel }}</strong></article>
+          </div>
+        </BioNexusSectionPanel>
+        <BioNexusSectionPanel title="Tarifas" icon="price_change" description="Consulta el precio del examen para cada tarifa disponible." variant="accent">
           <div class="exam-price-grid"><article v-for="tariff in tariffFields" :key="tariff.id"><span>{{ tariff.name }} ({{ baseCurrencySymbol }})</span><strong>{{ money(exam[`cost${tariff.position}`]) }}</strong></article></div>
-        </section>
-        <section class="exam-detail-section">
-          <h3>Configuración del resultado</h3>
+        </BioNexusSectionPanel>
+        <BioNexusSectionPanel title="Configuración del resultado" icon="settings" description="Verifica la disponibilidad de la hoja de trabajo y del formato de resultado." variant="accent">
           <div class="exam-config-grid">
             <article><span>Hoja de trabajo</span><strong :class="hasWorksheet ? 'configured' : 'pending'">{{ hasWorksheet ? "Configurada" : "No configurada" }}</strong></article>
             <article><span>Formato de resultado</span><strong :class="hasResultFormat ? 'configured' : 'pending'">{{ hasResultFormat ? "Configurado" : "No configurado" }}</strong></article>
           </div>
-        </section>
+        </BioNexusSectionPanel>
       </section>
     <template #footer><BioNexusActionButton variant="secondary" icon="close" @click="close">Cerrar</BioNexusActionButton></template>
   </BioNexusDialog>
@@ -30,6 +30,7 @@ import { useRegionalSettingsStore } from "@/stores/regionalSettings";
 import { computed, nextTick, ref } from "vue";
 import BioNexusDialog from "@/components/ui/BioNexusDialog.vue";
 import BioNexusActionButton from "@/components/ui/BioNexusActionButton.vue";
+import BioNexusSectionPanel from "@/components/ui/BioNexusSectionPanel.vue";
 const props = defineProps({ taxes: { type: Array, default: () => [] }, tariffs: { type: Array, default: () => [] } });
 const dialog = ref(null); const exam = ref(null); const group = ref(null);
 const regionalSettings = useRegionalSettingsStore();
@@ -46,6 +47,3 @@ function close() { dialog.value?.close(); exam.value = null; group.value = null;
 
 defineExpose({ show, close });
 </script>
-<style scoped>.exam-detail-content{display:grid;align-content:start;gap:18px}
-.exam-detail-summary{display:grid;grid-template-columns:2fr 1fr;gap:12px}.exam-detail-summary article,.exam-price-grid article,.exam-config-grid article{display:grid;gap:5px;padding:12px 14px;border:1px solid var(--bio-nexus-color-border);border-radius:var(--bio-nexus-radius-md);background:var(--bio-nexus-color-surface-soft)}.exam-detail-summary span,.exam-price-grid span,.exam-config-grid span{color:var(--bio-nexus-color-text-muted);font-size:var(--bio-nexus-font-size-xs);font-weight:700;text-transform:uppercase}.exam-detail-summary strong,.exam-price-grid strong,.exam-config-grid strong{overflow-wrap:anywhere;color:var(--bio-nexus-color-text);font-size:var(--bio-nexus-font-size-sm)}strong.active,strong.configured{color:var(--bio-nexus-color-success)}strong.inactive{color:var(--bio-nexus-color-danger)}strong.pending{color:var(--bio-nexus-color-text-muted)}.exam-detail-section h3{margin:0 0 10px;color:var(--bio-nexus-color-primary-strong);font-size:var(--bio-nexus-font-size-md)}.exam-price-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.exam-price-grid strong{text-align:right;font-variant-numeric:tabular-nums}.exam-config-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}@media(max-width:680px){.exam-detail-summary,.exam-price-grid,.exam-config-grid{grid-template-columns:1fr}}
-</style>

@@ -15,11 +15,11 @@
     <BioNexusContextMenu ref="contextMenu" :open="menu.open" :x="menu.x" :y="menu.y" :items="menuItems" @close="closeMenu" @select="runMenuAction" />
 
     <BioNexusDialog ref="formDialog" kicker="ADMINISTRAR TARIFA" :title="dialog.mode === 'create' ? 'Nueva tarifa' : 'Editar tarifa'" size="standard" :prevent-close="saving || hasChanges" @before-close="requestCloseDialog" @close="resetFormDialog">
-      <form id="tariff-form" class="tariff-form" @submit.prevent="submit">
+      <form id="tariff-form" class="tariff-form" @submit.prevent="submit"><BioNexusSectionPanel title="Información de la tarifa" icon="sell" description="Define el nombre y la descripción de la tarifa." variant="accent">
         <div v-if="dialog.error" class="bio-nexus-message bio-nexus-message-error">{{ dialog.error }}</div>
         <BioNexusFormField label="Nombre" field-id="tariff-name" required :error="fieldErrors.name"><input id="tariff-name" v-model.trim="draft.name" class="bio-nexus-field" maxlength="100" autocomplete="off" autofocus @input="clearFieldError('name')" /></BioNexusFormField>
         <BioNexusFormField class="span-all" label="Descripción" field-id="tariff-description"><textarea id="tariff-description" v-model.trim="draft.description" class="bio-nexus-field tariff-description" maxlength="250"></textarea></BioNexusFormField>
-      </form>
+      </BioNexusSectionPanel></form>
       <template #footer><BioNexusActionButton variant="secondary" icon="cancel" :disabled="saving" @click="requestCloseDialog">Cancelar</BioNexusActionButton><BioNexusActionButton type="submit" variant="primary" :icon="dialog.mode === 'create' ? 'create' : 'save'" form="tariff-form" :loading="saving" :disabled="tariffSubmitDisabled">{{ dialog.mode === 'create' ? 'Crear' : 'Guardar' }}</BioNexusActionButton></template>
     </BioNexusDialog>
 
@@ -38,6 +38,7 @@ import BioNexusContextMenu from "@/components/ui/BioNexusContextMenu.vue";
 import BioNexusConfirmDialog from "@/components/ui/BioNexusConfirmDialog.vue";
 import BioNexusDialog from "@/components/ui/BioNexusDialog.vue";
 import BioNexusFormField from "@/components/ui/BioNexusFormField.vue";
+import BioNexusSectionPanel from "@/components/ui/BioNexusSectionPanel.vue";
 import BioNexusStateDialog from "@/components/ui/BioNexusStateDialog.vue";
 import { useAuthorizationStore } from "@/stores/authorization";
 import { useBioNexusToast } from "@/composables/useBioNexusToast";

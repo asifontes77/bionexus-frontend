@@ -865,7 +865,7 @@
   border: 1px solid var(--bio-nexus-color-border);
   border-radius: var(--bio-nexus-radius-md);
   background: var(--bio-nexus-color-surface);
-  box-shadow: var(--bio-nexus-shadow-sm);
+  box-shadow: 0 10px 24px rgb(31 55 78 / 9%), 0 2px 5px rgb(31 55 78 / 12%), inset 0 1px 0 rgb(255 255 255 / 70%);
 }
 .bio-nexus-section-panel-heading {
   display: grid;
@@ -954,6 +954,7 @@
 /* BIO NEXUS TARIFFS ADMIN START */
 .tariffs-page { min-width: 0; }
 .tariff-form { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--bio-nexus-space-3); }
+.tariff-form .bio-nexus-section-panel-body { display: grid; gap: var(--bio-nexus-space-4); }
 .tariff-form .span-all { grid-column: 1 / -1; }
 .tariff-description { min-height: 88px; resize: vertical; }
 .tariff-grid-actions { display: flex; align-items: center; gap: var(--bio-nexus-space-2); }
@@ -1006,3 +1007,117 @@ dialog.bio-nexus-dialog.routine-entry-dialog{width:min(1320px,calc(100vw - 32px)
 @media(max-width:620px){.routine-exam-detail-dialog{width:calc(100vw - 24px)!important}.routine-detail-grid{grid-template-columns:1fr}.routine-exam-detail-dialog .bio-nexus-dialog-body{padding:14px 16px!important}}
 
 /* BIO NEXUS ROUTINES ADMIN END */
+/* BIO NEXUS EXAM ENTRY SECTIONS START */
+.exam-body {
+  display: grid;
+  gap: var(--bio-nexus-space-4);
+}
+.exam-main-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: var(--bio-nexus-space-3);
+  align-items: center;
+}
+.exam-price-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--bio-nexus-space-3);
+}
+.exam-check {
+  display: flex;
+  grid-column: 1 / -1;
+  align-items: center;
+  gap: var(--bio-nexus-space-2);
+  min-height: 36px;
+}
+dialog.bio-nexus-dialog.exam-entry-dialog {
+  position: fixed !important;
+  inset: 50% auto auto 50% !important;
+  width: min(980px, calc(100vw - 32px)) !important;
+  height: auto !important;
+  max-height: calc(100dvh - 32px) !important;
+  margin: 0 !important;
+  transform: translate(-50%, -50%) !important;
+}
+dialog.bio-nexus-dialog.exam-entry-dialog > .exam-entry-shell {
+  height: auto !important;
+  max-height: calc(100dvh - 32px) !important;
+}
+dialog.bio-nexus-dialog.exam-entry-dialog > .exam-entry-shell > .exam-entry-dialog-body {
+  flex: 0 1 auto !important;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+@media (max-width: 720px) {
+  .exam-main-grid,
+  .exam-price-grid {
+    grid-template-columns: 1fr;
+  }
+  dialog.bio-nexus-dialog.exam-entry-dialog {
+    width: calc(100vw - 16px) !important;
+  }
+}
+/* BIO NEXUS EXAM ENTRY SECTIONS END */
+/* BIO NEXUS EXAM DETAIL SECTIONS START */
+.exam-detail-content {
+  display: grid;
+  align-content: start;
+  gap: var(--bio-nexus-space-4);
+}
+.exam-detail-summary {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--bio-nexus-space-3);
+}
+.exam-detail-summary article,
+.exam-detail-content .exam-price-grid article,
+.exam-detail-content .exam-config-grid article {
+  display: grid;
+  gap: 5px;
+  padding: 12px 14px;
+  border: 1px solid var(--bio-nexus-color-border);
+  border-radius: var(--bio-nexus-radius-md);
+  background: var(--bio-nexus-color-surface-soft);
+}
+.exam-detail-summary span,
+.exam-detail-content .exam-price-grid span,
+.exam-detail-content .exam-config-grid span {
+  color: var(--bio-nexus-color-text-muted);
+  font-size: var(--bio-nexus-font-size-xs);
+  font-weight: var(--bio-nexus-font-weight-bold);
+  text-transform: uppercase;
+}
+.exam-detail-summary strong,
+.exam-detail-content .exam-price-grid strong,
+.exam-detail-content .exam-config-grid strong {
+  overflow-wrap: anywhere;
+  color: var(--bio-nexus-color-text);
+  font-size: var(--bio-nexus-font-size-sm);
+}
+.exam-detail-content strong.active,
+.exam-detail-content strong.configured { color: var(--bio-nexus-color-success); }
+.exam-detail-content strong.inactive { color: var(--bio-nexus-color-danger); }
+.exam-detail-content strong.pending { color: var(--bio-nexus-color-text-muted); }
+.exam-detail-content .exam-price-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--bio-nexus-space-3);
+}
+.exam-detail-content .exam-price-grid strong {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.exam-detail-content .exam-config-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--bio-nexus-space-3);
+}
+@media (max-width: 680px) {
+  .exam-detail-summary,
+  .exam-detail-content .exam-price-grid,
+  .exam-detail-content .exam-config-grid {
+    grid-template-columns: 1fr;
+  }
+}
+/* BIO NEXUS EXAM DETAIL SECTIONS END */
