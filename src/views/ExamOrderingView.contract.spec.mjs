@@ -58,3 +58,7 @@ assert.match(view,/auth.hasPermission\("exam-catalog.update"\)/);
 assert.doesNotMatch(view,/useSessionStore/);
 assert.doesNotMatch(view,/Cambios pendientes/);
 assert.match(view,/:disabled="!dirty \|\| !canUpdate \|\| saving"/);
+assert.match(view,/font-size:8px/);
+assert.match(view,/padding-right:215px/);
+assert.match(view,/@media\(max-width:1250px\)/);
+assert.match(view,/keyboard-selected::after\{display:none\}/);
