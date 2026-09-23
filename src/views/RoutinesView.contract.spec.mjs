@@ -60,7 +60,7 @@ if (!router.includes("configuration/routines") || !router.includes("routines.rea
 }
 if (!model.includes("hasOwnProperty.call")) throw new Error("ACTIVE");
 if (dialog.includes("routine-selected-heading") || dialog.includes("Selecciona un examen y usa ↑ ↓ · Enter · Esc")) throw new Error("DIALOG:HEADER_GUIDANCE_FORBIDDEN");
-if (!theme.includes(".selected-row.keyboard-selected::after") || !theme.includes("padding-right:290px") || !theme.includes("font-size:8px") || !theme.includes("@media(max-width:1200px)")) throw new Error("THEME:ORDERING_GUIDANCE_CONTRACT");
+if (!theme.includes(".selected-row.keyboard-selected::after") || !theme.includes("padding-right:210px") || !theme.includes("font-size:8px") || !theme.includes("@media(max-width:1200px)")) throw new Error("THEME:ORDERING_GUIDANCE_CONTRACT");
 
 console.log("Routines view contract passed");
 
