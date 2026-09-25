@@ -62,3 +62,16 @@ assert.match(view,/font-size:8px/);
 assert.match(view,/padding-right:215px/);
 assert.match(view,/@media\(max-width:1250px\)/);
 assert.match(view,/keyboard-selected::after\{display:none\}/);
+
+assert.match(view,/BioNexusFormErrors/);
+assert.ok(view.includes('<BioNexusFormErrors :errors="error" />'));
+assert.doesNotMatch(view,/class="exam-order-error"/);
+assert.doesNotMatch(view,/\.exam-order-error\{/);
+
+assert.match(view,/original\.value=snapshot\(\);clearKeyboardSelection\(\);toast\.success\("Orden guardado correctamente\."\)/);
+const saveFunction=view.match(/async function save\(\)\{.*?\}\nfunction discard/s)?.[0]||"";
+assert.ok(saveFunction,"ORDER_SAVE_FUNCTION_NOT_FOUND");
+const successfulSave=saveFunction.split('}catch(e){')[0];
+const failedSave=saveFunction.split('}catch(e){')[1]||"";
+assert.doesNotMatch(successfulSave,/await load\(\)/,"ORDER_SAVE_SUCCESS_WITHOUT_RELOAD");
+assert.match(failedSave,/await load\(\)/,"ORDER_SAVE_FAILURE_RELOAD_REQUIRED");

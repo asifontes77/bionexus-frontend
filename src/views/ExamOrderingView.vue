@@ -7,7 +7,7 @@
         <BioNexusActionButton variant="primary" icon="save" :loading="saving" :disabled="!dirty || !canUpdate || saving" @click="save">Guardar orden</BioNexusActionButton>
       </div>
     </div>
-    <p v-if="error" class="exam-order-error">{{ error }}</p>
+    <BioNexusFormErrors :errors="error" />
     <div v-if="loading" class="exam-order-state">Cargando catálogo...</div>
     <div v-else class="exam-order-layout">
       <BioNexusSectionPanel class="exam-order-section" title="Grupos de exámenes" icon="folder" description="Organiza la prioridad global de los grupos del catálogo." variant="accent"><template #actions><span class="exam-order-section-count">{{ groups.length }} grupo(s)</span></template>
@@ -32,6 +32,7 @@
 <script setup>
 import BioNexusActionButton from "@/components/ui/BioNexusActionButton.vue";
 import BioNexusSectionPanel from "@/components/ui/BioNexusSectionPanel.vue";
+import BioNexusFormErrors from "@/components/ui/BioNexusFormErrors.vue";
 import { computed,onBeforeUnmount,onMounted,ref,watch } from "vue";
 import { onBeforeRouteLeave } from "vue-router";
 import { useAuthorizationStore } from "@/stores/authorization";
@@ -56,7 +57,7 @@ function previewRow(type,rowIndex,event){if(dragState.value?.type!==type)return;
 function autoScroll(event){if(!dragState.value)return;const list=event.currentTarget;if(!list)return;const rect=list.getBoundingClientRect(),edge=44,step=9;if(event.clientY<rect.top+edge)list.scrollTop-=step;else if(event.clientY>rect.bottom-edge)list.scrollTop+=step}
 function endDrag(){dragState.value=null;dragOver.value=null}
 async function load(){loading.value=true;error.value="";try{groups.value=await getExamGroups();const entries=await Promise.all(groups.value.map(async g=>[g.id,await getExamsByGroup(g.id)]));examsByGroup.value=Object.fromEntries(entries);selectedGroupId.value=groups.value[0]?.id||null;original.value=snapshot();markOrderChanged()}catch(e){error.value=examCatalogError(e,"No fue posible cargar el orden de exámenes.");toast.error(error.value)}finally{loading.value=false}}
-async function save(){if(!dirty.value||!canUpdate.value||saving.value)return;saving.value=true;error.value="";try{const before=JSON.parse(original.value),current=JSON.parse(snapshot());if(JSON.stringify(before.groups)!==JSON.stringify(current.groups))await reorderExamGroups(current.groups);for(const group of groups.value){if(JSON.stringify(before.exams[group.id])!==JSON.stringify(current.exams[group.id]))await reorderExams(group.id,current.exams[group.id])}toast.success("Orden guardado correctamente.");await load()}catch(e){error.value=examCatalogError(e,"No fue posible guardar el orden.");toast.error(error.value);await load()}finally{saving.value=false}}
+async function save(){if(!dirty.value||!canUpdate.value||saving.value)return;saving.value=true;error.value="";try{const before=JSON.parse(original.value),current=JSON.parse(snapshot());if(JSON.stringify(before.groups)!==JSON.stringify(current.groups))await reorderExamGroups(current.groups);for(const group of groups.value){if(JSON.stringify(before.exams[group.id])!==JSON.stringify(current.exams[group.id]))await reorderExams(group.id,current.exams[group.id])}original.value=snapshot();clearKeyboardSelection();toast.success("Orden guardado correctamente.")}catch(e){error.value=examCatalogError(e,"No fue posible guardar el orden.");toast.error(error.value);await load()}finally{saving.value=false}}
 function discard(){const value=JSON.parse(original.value),byGroup=new Map(groups.value.map(x=>[x.id,x])),examMaps=Object.fromEntries(Object.entries(examsByGroup.value).map(([id,rows])=>[id,new Map(rows.map(x=>[x.id,x]))]));groups.value=value.groups.map(id=>byGroup.get(id)).filter(Boolean);examsByGroup.value=Object.fromEntries(Object.entries(value.exams).map(([id,ids])=>[id,ids.map(x=>examMaps[id]?.get(x)).filter(Boolean)]));markOrderChanged()}
 function guard(event){if(dirty.value){event.preventDefault();event.returnValue=""}}onBeforeRouteLeave(()=>!dirty.value||globalThis.confirm("Hay cambios de orden sin guardar. ¿Deseas salir y descartarlos?"));watch(selectedGroupId,()=>{error.value=""});onMounted(()=>{globalThis.addEventListener("beforeunload",guard);globalThis.addEventListener("keydown",handleKeyboardMove,{capture:true});load()});onBeforeUnmount(()=>{globalThis.removeEventListener("beforeunload",guard);globalThis.removeEventListener("keydown",handleKeyboardMove,{capture:true})});
 </script>
@@ -96,7 +97,6 @@ function guard(event){if(dirty.value){event.preventDefault();event.returnValue="
 .exam-order-list::-webkit-scrollbar-thumb{border:2px solid transparent;border-radius:999px;background:var(--bio-nexus-color-border-strong);background-clip:padding-box}
 .exam-order-list::-webkit-scrollbar-track{background:transparent}
 .exam-order-state{padding:24px;text-align:center;color:var(--bio-nexus-color-text-muted);font-size:13px}
-.exam-order-error{margin:0;padding:10px 12px;border:1px solid var(--bio-nexus-color-danger);border-radius:var(--bio-nexus-radius-sm);background:var(--bio-nexus-color-danger-soft);color:var(--bio-nexus-color-danger);font-size:13px}
 @media(max-width:1250px){.exam-order-list li.keyboard-selected .select-row>span:not(.drag-icon):not(.order-number){padding-right:0}.exam-order-list li.keyboard-selected::after{display:none}}@media(max-width:900px){.exam-order-layout{grid-template-columns:1fr}.exam-order-commandbar{align-items:stretch;flex-direction:column}.exam-order-actions{justify-content:flex-end}.exam-order-list{height:520px;min-height:420px}}
 @media(max-width:560px){.exam-order-actions{display:grid;grid-template-columns:1fr 1fr}.exam-order-button{min-width:0;width:100%}}
 </style>

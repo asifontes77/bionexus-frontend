@@ -113,3 +113,36 @@ async function runMenuAction(item){const action=item?.action;closeMenu();if(type
 onMounted(()=>{globalThis.addEventListener("keydown",handleKeyboardOrder,{capture:true});load();});
 onBeforeUnmount(()=>globalThis.removeEventListener("keydown",handleKeyboardOrder,{capture:true}));
 </script>
+<style scoped>
+.tariffs-page { min-width: 0; }
+.tariff-form { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--bio-nexus-space-3); }
+.tariff-form .bio-nexus-section-panel-body { display: grid; gap: var(--bio-nexus-space-4); }
+.tariff-form .span-all { grid-column: 1 / -1; }
+.tariff-description { min-height: 88px; resize: vertical; }
+.tariff-grid-actions { display: flex; align-items: center; gap: var(--bio-nexus-space-2); }
+.tariff-order-check { display: flex; width: 100%; height: 100%; align-items: center; justify-content: center; margin: 0; cursor: pointer; }
+.tariff-order-check .ag-checkbox { display: inline-flex; align-items: center; justify-content: center; margin: 0; }
+.tariff-order-check .ag-checkbox-input-wrapper { cursor: pointer; }
+.tariffs-page :deep(.tariff-order-select-header .ag-header-cell-label),
+.tariffs-page :deep(.tariff-center-header .ag-header-cell-label),
+.tariffs-page :deep(.bio-nexus-grid-actions-header .ag-header-cell-label) { justify-content: center; }
+.tariffs-page :deep(.tariff-order-select-cell) { display: flex; align-items: center; justify-content: center; padding: 0 !important; }
+.tariffs-page :deep(.tariff-center-cell),
+.tariffs-page :deep(.bio-nexus-grid-actions-cell),
+.tariffs-page :deep(.tariff-position-cell) { display: flex; align-items: center; justify-content: center; text-align: center; }
+.tariffs-page :deep(.tariff-order-selected-cell) { background: var(--bio-nexus-color-info-soft) !important; }
+.tariffs-page :deep(.tariff-order-selected-cell[col-id="order-select"]) { box-shadow: inset 5px 0 0 var(--bio-nexus-color-accent) !important; }
+.tariffs-page :deep(.tariff-order-selected-cell .tariff-position-number) { border-color: var(--bio-nexus-color-primary); background: var(--bio-nexus-color-primary); color: var(--bio-nexus-color-text-inverse); transform: scale(1.06); }
+.tariffs-page :deep(.tariff-order-selected-cell[col-id="name"]) { padding-right: 215px; overflow: hidden; font-weight: var(--bio-nexus-font-weight-bold); text-overflow: ellipsis; white-space: nowrap; }
+.tariffs-page :deep(.tariff-order-selected-cell[col-id="name"]::after) { position: absolute; top: 5px; right: 12px; content: "SELECCIONADO · ↑ ↓ · ENTER · ESC"; color: var(--bio-nexus-color-primary); font-size: 8px; font-weight: var(--bio-nexus-font-weight-heavy); letter-spacing: .035em; line-height: 1; white-space: nowrap; pointer-events: none; }
+.tariffs-page :deep(.tariff-position-number) { box-sizing: border-box; display: grid; width: 34px; height: 34px; place-items: center; border: 1px solid var(--bio-nexus-color-border-strong); border-radius: 50%; background: var(--bio-nexus-color-surface); color: var(--bio-nexus-color-text-secondary); font-size: var(--bio-nexus-font-size-xs); font-weight: var(--bio-nexus-font-weight-bold); font-variant-numeric: tabular-nums; transition: background-color .15s ease, border-color .15s ease, color .15s ease, transform .15s ease; }
+@media (max-width: 1250px) {
+  .tariffs-page :deep(.tariff-order-selected-cell[col-id="name"]) { padding-right: var(--bio-nexus-space-3); }
+  .tariffs-page :deep(.tariff-order-selected-cell[col-id="name"]::after) { display: none; }
+}
+@media (max-width: 760px) {
+  .tariff-form { grid-template-columns: 1fr; }
+  .tariff-form .span-all { grid-column: auto; }
+  .tariff-grid-actions { flex-wrap: wrap; }
+}
+</style>

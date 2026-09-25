@@ -27,3 +27,6 @@ describe("Exam ordering shared sections",()=>{
     for(const token of ["Descartar","Guardar orden","canUpdate","beforeunload","onBeforeRouteLeave"])assert.ok(source.includes(token),token);
   });
 });
+
+assert.ok(source.includes('<BioNexusFormErrors :errors="error" />'));
+assert.ok(source.indexOf('BioNexusFormErrors') < source.indexOf('class="exam-order-layout"'));
