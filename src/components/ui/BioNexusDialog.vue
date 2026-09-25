@@ -14,7 +14,7 @@
       </header>
 
       <section v-if="$slots.toolbar" class="bio-nexus-dialog-toolbar"><slot name="toolbar" /></section>
-      <main class="bio-nexus-dialog-body" :class="[bodyClass, { 'bio-nexus-dialog-body-flush': bodyFlush, 'bio-nexus-dialog-body-scroll-hidden': bodyScroll === 'hidden' }]"><slot /></main>
+      <main ref="body" class="bio-nexus-dialog-body" :class="[bodyClass, { 'bio-nexus-dialog-body-flush': bodyFlush, 'bio-nexus-dialog-body-scroll-hidden': bodyScroll === 'hidden' }]"><slot /></main>
 
       <footer v-if="$slots.footer || $slots['footer-status']" class="bio-nexus-dialog-footer">
         <div v-if="$slots['footer-status']" class="bio-nexus-dialog-footer-status"><slot name="footer-status" /></div>
@@ -43,15 +43,19 @@ const props = defineProps({
 });
 const emit = defineEmits(["before-close", "close", "opened"]);
 const dialog = ref(null);
+const body = ref(null);
 const previousFocus = ref(null);
 const dialogClasses = computed(() => [`bio-nexus-dialog-size-${props.size}`]);
+function resetBodyScroll() { if (!body.value) return; body.value.scrollTop = 0; body.value.scrollLeft = 0; }
 
 async function open() {
   if (!dialog.value || dialog.value.open) return;
   previousFocus.value = document.activeElement;
   dialog.value.showModal();
   document.addEventListener("keydown", blockEscape, true);
+  resetBodyScroll();
   await nextTick();
+  resetBodyScroll();
   const initialControl = dialog.value.querySelector("[autofocus], input:not([disabled]), select:not([disabled]), textarea:not([disabled])");
   if (initialControl) initialControl.focus({ preventScroll: true });
   else dialog.value.focus({ preventScroll: true });

@@ -1,18 +1,18 @@
 <template>
   <BioNexusDialog ref="dialog" size="wide" dialog-class="exam-entry-dialog" shell-class="exam-entry-shell" body-class="exam-entry-dialog-body" :kicker="mode === 'create' ? 'Nuevo registro' : 'Editar registro'" :title="mode === 'create' ? 'Crear examen' : 'Editar examen'" :prevent-close="saving || hasChanges" @before-close="close" @close="handleClosed">
     <section class="exam-body">
+      <BioNexusFormErrors :errors="errorMessage" />
       <BioNexusSectionPanel title="Información del examen" icon="science" description="Define la identificación, el impuesto y la clasificación del examen." variant="accent">
         <div class="exam-main-grid">
-          <BioNexusFormField label="Descripción" field-id="exam-description" :error="descriptionError" required><input id="exam-description" ref="firstInput" v-model="draft.description" class="bio-nexus-field" maxlength="60" /></BioNexusFormField>
-          <BioNexusFormField label="Abreviatura" field-id="exam-abbreviation" :error="abbreviationError" required><input id="exam-abbreviation" v-model="draft.abbreviation" class="bio-nexus-field" maxlength="10" /></BioNexusFormField>
-          <BioNexusFormField label="Impuesto" field-id="exam-tax"><select id="exam-tax" v-model.number="draft.tax_id" class="bio-nexus-field"><option v-for="tax in taxes" :key="tax.id" :value="tax.id">{{ tax.description }} ({{ percentage(tax.value) }}%)</option></select></BioNexusFormField>
-          <BioNexusCheckbox v-model="draft.special_test" class="exam-check" label="Prueba especial" />
+          <BioNexusFormField label="Descripción" field-id="exam-description" :error="descriptionError" :help="draft.description.length + ' de 60 caracteres'" required><input id="exam-description" ref="firstInput" v-model="draft.description" class="bio-nexus-field" maxlength="60" @input="handleFormMutation" /></BioNexusFormField>
+          <BioNexusFormField label="Abreviatura" field-id="exam-abbreviation" :error="abbreviationError" :help="draft.abbreviation.length + ' de 10 caracteres'" required><input id="exam-abbreviation" v-model="draft.abbreviation" class="bio-nexus-field" maxlength="10" @input="handleFormMutation" /></BioNexusFormField>
+          <BioNexusFormField label="Impuesto" field-id="exam-tax"><select id="exam-tax" v-model.number="draft.tax_id" class="bio-nexus-field" @change="handleFormMutation"><option v-for="tax in taxes" :key="tax.id" :value="tax.id">{{ tax.description }} ({{ percentage(tax.value) }}%)</option></select></BioNexusFormField>
+          <BioNexusCheckbox v-model="draft.special_test" class="exam-check" label="Prueba especial" @change="handleFormMutation" />
         </div>
       </BioNexusSectionPanel>
       <BioNexusSectionPanel title="Tarifas" icon="price_change" description="Establece el precio del examen para cada tarifa disponible." variant="accent">
-        <div class="exam-price-grid"><BioNexusFormField v-for="tariff in tariffFields" :key="tariff.id" :label="tariff.name + ' (' + baseCurrencySymbol + ')'" :field-id="'exam-cost-' + tariff.position"><input :id="'exam-cost-' + tariff.position" v-model.trim="draft['cost' + tariff.position]" class="bio-nexus-field" type="text" inputmode="decimal" :placeholder="moneyPlaceholder" /></BioNexusFormField></div>
+        <div class="exam-price-grid"><BioNexusFormField v-for="tariff in tariffFields" :key="tariff.id" :label="tariff.name + ' (' + baseCurrencySymbol + ')'" :field-id="'exam-cost-' + tariff.position"><input :id="'exam-cost-' + tariff.position" v-model.trim="draft['cost' + tariff.position]" class="bio-nexus-field" type="text" inputmode="decimal" :placeholder="moneyPlaceholder" @input="handleFormMutation" /></BioNexusFormField></div>
       </BioNexusSectionPanel>
-      <div v-if="errorMessage" class="bio-nexus-message bio-nexus-message-error" role="alert">{{ errorMessage }}</div>
     </section>
     <template #footer>
       <button type="button" class="bio-nexus-action bio-nexus-action-secondary" :disabled="saving" @click="close"><BioNexusActionIcon action="cancel" />Cancelar</button>
@@ -31,6 +31,7 @@ import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
 import BioNexusDialog from "@/components/ui/BioNexusDialog.vue";
 import BioNexusConfirmDialog from "@/components/ui/BioNexusConfirmDialog.vue";
 import BioNexusFormField from "@/components/ui/BioNexusFormField.vue";
+import BioNexusFormErrors from "@/components/ui/BioNexusFormErrors.vue";
 import BioNexusSectionPanel from "@/components/ui/BioNexusSectionPanel.vue";
 
 const props = defineProps({ saving: { type: Boolean, default: false }, canCreate: { type: Boolean, default: false }, canUpdate: { type: Boolean, default: false }, taxes: { type: Array, default: () => [] }, tariffs: { type: Array, default: () => [] }, group: { type: Object, default: null } });
@@ -59,7 +60,71 @@ function openEdit(row) { mode.value = "edit"; current.value = row; assign(row); 
 async function close() { if (props.saving) return; if (hasChanges.value) { const accepted = await discardDialog.value?.ask({ title: "Descartar cambios", message: "Hay cambios sin guardar. ¿Deseas salir y descartarlos?", confirmText: "Sí, salir y descartar cambios", confirmIcon: "delete", variant: "danger" }); if (!accepted) return; } dialog.value?.close(); }
 function handleClosed() { attempted.value = false; }
 function clearError() { errorMessage.value = ""; }
+function handleFormMutation() { clearError(); }
 function setError(message) { errorMessage.value = String(message || ""); }
+function markSaved(row, closeAfterSave = false) { current.value = row; assign(row); attempted.value = false; errorMessage.value = ""; if (closeAfterSave) dialog.value?.close(); }
 function submit() { attempted.value = true; if (descriptionError.value || abbreviationError.value || submitDisabled.value) return; emit("submit", { mode: mode.value, record: current.value, values: values.value }); }
-defineExpose({ openCreate, openEdit, close, clearError, setError });
+defineExpose({ openCreate, openEdit, close, clearError, setError, markSaved });
 </script>
+
+<style scoped>
+.exam-body { display: grid; gap: var(--bio-nexus-space-4); }
+.exam-main-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: var(--bio-nexus-space-3); align-items: start; }
+.exam-price-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--bio-nexus-space-3); }
+.exam-check { display: flex; grid-column: 1 / -1; align-items: center; gap: var(--bio-nexus-space-2); min-height: 36px; }
+@media (max-width: 720px) { .exam-main-grid, .exam-price-grid { grid-template-columns: 1fr; } }
+</style>
+<style>
+/* BIO NEXUS EXAM ENTRY LAYOUT START */
+dialog.bio-nexus-dialog.exam-entry-dialog {
+  width: min(980px, calc(100vw - 32px)) !important;
+  height: auto !important;
+  max-height: calc(100dvh - 48px) !important;
+}
+dialog.bio-nexus-dialog.exam-entry-dialog > .exam-entry-shell {
+  height: auto !important;
+  max-height: calc(100dvh - 48px) !important;
+}
+dialog.bio-nexus-dialog.exam-entry-dialog > .exam-entry-shell > .exam-entry-dialog-body {
+  flex: 0 1 auto !important;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+@media (max-width: 720px) {
+  dialog.bio-nexus-dialog.exam-entry-dialog {
+    width: calc(100vw - 16px) !important;
+  }
+}
+/* BIO NEXUS EXAM ENTRY LAYOUT END */
+</style>
+<style>
+
+</style>
+<style>
+
+</style>
+<style>
+
+</style>
+<style>
+/* BIO NEXUS EXAM ENTRY CENTER V4 START */
+dialog.bio-nexus-dialog.exam-entry-dialog {
+  position: fixed !important;
+  inset: 50% auto auto 50% !important;
+  margin: 0 !important;
+  width: min(980px, calc(100vw - 32px)) !important;
+  height: auto !important;
+  max-height: calc(100dvh - 32px) !important;
+  transform: translate(-50%, -50%) !important;
+}
+dialog.bio-nexus-dialog.exam-entry-dialog > .exam-entry-shell {
+  max-height: calc(100dvh - 32px) !important;
+}
+dialog.bio-nexus-dialog.exam-entry-dialog > .exam-entry-shell > .exam-entry-dialog-body {
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+/* BIO NEXUS EXAM ENTRY CENTER V4 END */
+</style>

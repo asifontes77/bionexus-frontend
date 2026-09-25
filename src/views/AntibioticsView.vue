@@ -33,7 +33,7 @@
         @row-context-menu="openContextMenu"
       >
         <template #actions>
-          <button v-if="canCreate" type="button" class="bio-nexus-action bio-nexus-action-primary bio-nexus-grid-icon-action" :disabled="loading || saving" @click="openCreate" title="Nuevo antibiótico" aria-label="Nuevo antibiótico"><BioNexusActionIcon action="create" /></button>
+          <BioNexusActionButton v-if="canCreate" icon="create" icon-only shape="rounded" size="md" variant="primary" label="Nuevo antibiótico" :disabled="loading || saving" @click="openCreate" />
         </template>
       </BioNexusDataGrid>
 
@@ -53,7 +53,7 @@ import BioNexusDataGrid from "@/components/grid/BioNexusDataGrid.vue";
 import BioNexusGridActionsCell from "@/components/grid/BioNexusGridActionsCell.vue";
 import BioNexusGridToggleCell from "@/components/grid/BioNexusGridToggleCell.vue";
 import BioNexusOptionFilter from "@/components/grid/BioNexusOptionFilter.vue";
-import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
+import BioNexusActionButton from "@/components/ui/BioNexusActionButton.vue";
 import BioNexusContextMenu from "@/components/ui/BioNexusContextMenu.vue";
 import { useBioNexusToast } from "@/composables/useBioNexusToast";
 import { antibioticError, createAntibiotic, getAntibiotics, updateAntibiotic } from "@/services/antibioticsService";
@@ -143,7 +143,3 @@ async function saveForm(payload) { if (saving.value) return; saving.value = true
 async function saveState(row) { if (saving.value || !canChangeStatus.value) return; saving.value = true; stateDialog.value?.clearError(); try { const saved = await updateAntibiotic(row.id, { annulled: !row.annulled }); if (!saved) throw new Error("El Backend no devolvió un registro válido."); replaceRow(saved); stateDialog.value?.close(); toast.success(saved.annulled ? "Antibiótico desactivado correctamente." : "Antibiótico activado correctamente."); } catch (error) { stateDialog.value?.setError(antibioticError(error, "No fue posible cambiar el estado.")); } finally { saving.value = false; } }
 onMounted(loadRows);
 </script>
-
-<style scoped>
-.antibiotics-page,.antibiotics-directory,.antibiotics-grid{min-width:0}.antibiotics-grid{width:100%}
-</style>

@@ -1009,58 +1009,7 @@ dialog.bio-nexus-dialog.routine-entry-dialog{width:min(1320px,calc(100vw - 32px)
 @media(max-width:620px){.routine-exam-detail-dialog{width:calc(100vw - 24px)!important}.routine-detail-grid{grid-template-columns:1fr}.routine-exam-detail-dialog .bio-nexus-dialog-body{padding:14px 16px!important}}
 
 /* BIO NEXUS ROUTINES ADMIN END */
-/* BIO NEXUS EXAM ENTRY SECTIONS START */
-.exam-body {
-  display: grid;
-  gap: var(--bio-nexus-space-4);
-}
-.exam-main-grid {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
-  gap: var(--bio-nexus-space-3);
-  align-items: center;
-}
-.exam-price-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--bio-nexus-space-3);
-}
-.exam-check {
-  display: flex;
-  grid-column: 1 / -1;
-  align-items: center;
-  gap: var(--bio-nexus-space-2);
-  min-height: 36px;
-}
-dialog.bio-nexus-dialog.exam-entry-dialog {
-  position: fixed !important;
-  inset: 50% auto auto 50% !important;
-  width: min(980px, calc(100vw - 32px)) !important;
-  height: auto !important;
-  max-height: calc(100dvh - 32px) !important;
-  margin: 0 !important;
-  transform: translate(-50%, -50%) !important;
-}
-dialog.bio-nexus-dialog.exam-entry-dialog > .exam-entry-shell {
-  height: auto !important;
-  max-height: calc(100dvh - 32px) !important;
-}
-dialog.bio-nexus-dialog.exam-entry-dialog > .exam-entry-shell > .exam-entry-dialog-body {
-  flex: 0 1 auto !important;
-  min-height: 0;
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-@media (max-width: 720px) {
-  .exam-main-grid,
-  .exam-price-grid {
-    grid-template-columns: 1fr;
-  }
-  dialog.bio-nexus-dialog.exam-entry-dialog {
-    width: calc(100vw - 16px) !important;
-  }
-}
-/* BIO NEXUS EXAM ENTRY SECTIONS END */
+
 /* BIO NEXUS EXAM DETAIL SECTIONS START */
 .exam-detail-content {
   display: grid;
@@ -1123,3 +1072,11 @@ dialog.bio-nexus-dialog.exam-entry-dialog > .exam-entry-shell > .exam-entry-dial
   }
 }
 /* BIO NEXUS EXAM DETAIL SECTIONS END */
+
+/* BIO NEXUS ANTIBIOTICS ADMIN START */
+.antibiotics-page,.antibiotics-directory,.antibiotics-grid{min-width:0}.antibiotics-grid{width:100%}
+.antibiotics-grid :is(.ag-pinned-right-header),.antibiotics-grid :is(.ag-pinned-right-cols-container){border-left:1px solid var(--bio-nexus-color-border-strong);box-shadow:calc(var(--bio-nexus-space-1)*-1) 0 var(--bio-nexus-space-3) var(--bio-nexus-shadow-panel-soft)}
+.antibiotic-entry-dialog .bio-nexus-dialog-body{display:grid;gap:var(--bio-nexus-space-4)}
+.antibiotic-section{min-width:0}.antibiotic-section .bio-nexus-section-panel-body{display:grid;gap:var(--bio-nexus-space-6)}
+.antibiotic-entry-dialog .bio-nexus-action-primary:disabled{border-color:var(--bio-nexus-color-border)!important;background:var(--bio-nexus-color-surface-soft)!important;color:var(--bio-nexus-color-text-muted)!important;box-shadow:none!important;cursor:not-allowed!important;opacity:.58!important;pointer-events:none}
+/* BIO NEXUS ANTIBIOTICS ADMIN END */
