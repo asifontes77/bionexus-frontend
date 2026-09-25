@@ -15,11 +15,13 @@
     <BioNexusContextMenu ref="contextMenu" :open="menu.open" :x="menu.x" :y="menu.y" :items="menuItems" @close="closeMenu" @select="runMenuAction" />
 
     <BioNexusDialog ref="formDialog" kicker="ADMINISTRAR TARIFA" :title="dialog.mode === 'create' ? 'Nueva tarifa' : 'Editar tarifa'" size="standard" :prevent-close="saving || hasChanges" @before-close="requestCloseDialog" @close="resetFormDialog">
-      <form id="tariff-form" class="tariff-form" @submit.prevent="submit"><BioNexusSectionPanel title="Información de la tarifa" icon="sell" description="Define el nombre y la descripción de la tarifa." variant="accent">
-        <div v-if="dialog.error" class="bio-nexus-message bio-nexus-message-error">{{ dialog.error }}</div>
-        <BioNexusFormField label="Nombre" field-id="tariff-name" required :error="fieldErrors.name"><input id="tariff-name" v-model.trim="draft.name" class="bio-nexus-field" maxlength="100" autocomplete="off" autofocus @input="clearFieldError('name')" /></BioNexusFormField>
-        <BioNexusFormField class="span-all" label="Descripción" field-id="tariff-description"><textarea id="tariff-description" v-model.trim="draft.description" class="bio-nexus-field tariff-description" maxlength="250"></textarea></BioNexusFormField>
-      </BioNexusSectionPanel></form>
+      <form id="tariff-form" class="tariff-form" @submit.prevent="submit">
+        <BioNexusFormErrors :errors="dialog.error" />
+        <BioNexusSectionPanel title="Información de la tarifa" icon="sell" description="Define el nombre y la descripción de la tarifa." variant="accent">
+          <BioNexusFormField label="Nombre" field-id="tariff-name" required :error="fieldErrors.name" :help="`${draft.name.length} de 100 caracteres`"><input id="tariff-name" v-model.trim="draft.name" class="bio-nexus-field" maxlength="100" autocomplete="off" autofocus @input="clearFieldError('name')" /></BioNexusFormField>
+          <BioNexusFormField class="span-all" label="Descripción" field-id="tariff-description" :help="`${draft.description.length} de 250 caracteres`"><textarea id="tariff-description" v-model.trim="draft.description" class="bio-nexus-field tariff-description" maxlength="250" @input="clearGeneralError"></textarea></BioNexusFormField>
+        </BioNexusSectionPanel>
+      </form>
       <template #footer><BioNexusActionButton variant="secondary" icon="cancel" :disabled="saving" @click="requestCloseDialog">Cancelar</BioNexusActionButton><BioNexusActionButton type="submit" variant="primary" :icon="dialog.mode === 'create' ? 'create' : 'save'" form="tariff-form" :loading="saving" :disabled="tariffSubmitDisabled">{{ dialog.mode === 'create' ? 'Crear' : 'Guardar' }}</BioNexusActionButton></template>
     </BioNexusDialog>
 
@@ -38,6 +40,7 @@ import BioNexusContextMenu from "@/components/ui/BioNexusContextMenu.vue";
 import BioNexusConfirmDialog from "@/components/ui/BioNexusConfirmDialog.vue";
 import BioNexusDialog from "@/components/ui/BioNexusDialog.vue";
 import BioNexusFormField from "@/components/ui/BioNexusFormField.vue";
+import BioNexusFormErrors from "@/components/ui/BioNexusFormErrors.vue";
 import BioNexusSectionPanel from "@/components/ui/BioNexusSectionPanel.vue";
 import BioNexusStateDialog from "@/components/ui/BioNexusStateDialog.vue";
 import { useAuthorizationStore } from "@/stores/authorization";
@@ -88,9 +91,10 @@ async function requestCloseDialog(){if(saving.value)return;if(hasChanges.value){
 function resetFormDialog(){Object.assign(dialog,{open:false,record:null,error:""});Object.assign(fieldErrors,{name:"",position:""});originalDraft.value="";}
 async function load(){loading.value=true;loadError.value="";try{tariffs.value=(await getTariffs()).map(row=>({...row,isDefault:Boolean(row.isDefault),isActive:Boolean(row.isActive),configuredPriceCount:Number(row.configuredPriceCount)||0}));orderOriginal.value=orderSnapshot();selectedOrderId.value=null;}catch(e){loadError.value=tariffError(e,"No fue posible consultar las tarifas.");toast.error(loadError.value);}finally{loading.value=false;}}
 function clearFieldError(field){if(Object.prototype.hasOwnProperty.call(fieldErrors,field))fieldErrors[field]="";dialog.error="";}
+function clearGeneralError(){dialog.error="";}
 function validateFields(){Object.assign(fieldErrors,{name:""});if(!draft.name.trim())fieldErrors.name="El nombre es obligatorio.";return !fieldErrors.name;}
 function createTechnicalCode(){return "TARIFF_"+Date.now().toString(36).toUpperCase();}
-async function submit(){dialog.error="";if(dialog.mode==="edit"&&!hasChanges.value)return;if(!validateFields())return;saving.value=true;try{const values={name:draft.name.trim(),description:draft.description.trim()||null};if(dialog.mode==="create")await createTariff({...values,code:createTechnicalCode()});else await updateTariff(dialog.record.id,values);formDialog.value?.close();await load();toast.success(dialog.mode==="create"?"Tarifa creada correctamente.":"Tarifa actualizada correctamente.");}catch(e){const code=String(e?.message||"");if(code==="TARIFF_CODE_OR_NAME_ALREADY_EXISTS")fieldErrors.name="Ya existe una tarifa con el mismo nombre.";else dialog.error=tariffError(e);}finally{saving.value=false;}}
+async function submit(){dialog.error="";if(dialog.mode==="edit"&&!hasChanges.value)return;if(!validateFields())return;saving.value=true;try{const values={name:draft.name.trim(),description:draft.description.trim()||null};if(dialog.mode==="create")await createTariff({...values,code:createTechnicalCode()});else await updateTariff(dialog.record.id,values);formDialog.value?.close();await load();toast.success(dialog.mode==="create"?"Tarifa creada correctamente.":"Tarifa actualizada correctamente.");}catch(e){dialog.error=tariffError(e);}finally{saving.value=false;}}
 async function makeDefault(row){if(!row||row.isDefault||!row.isActive||saving.value)return;saving.value=true;closeMenu();try{await setDefaultTariff(row.id);await load();toast.success("Tarifa predeterminada actualizada.");}catch(e){toast.error(tariffError(e));}finally{saving.value=false;}}
 function requestStatus(row){if(!row||saving.value)return;closeMenu();stateDialog.value?.open(row,{kicker:"Estado de la tarifa",label:item=>item.name,isInactive:item=>!item.isActive,activateTitle:"Activar tarifa",deactivateTitle:"Desactivar tarifa",activateMessage:"La tarifa volverá a estar disponible para nuevas operaciones.",deactivateMessage:"La tarifa dejará de estar disponible para nuevas operaciones.",deactivateWarning:item=>item.isDefault?"La tarifa predeterminada no puede desactivarse. Define primero otra tarifa predeterminada.":"",deactivateBlocked:item=>Boolean(item.isDefault),dangerOnDeactivate:true});}
 async function confirmStatus(row){if(!row||saving.value)return;saving.value=true;stateDialog.value?.clearError();try{await changeTariffStatus(row.id,!row.isActive);stateDialog.value?.close();await load();toast.success(row.isActive?"Tarifa desactivada.":"Tarifa activada.");}catch(e){stateDialog.value?.setError(tariffError(e));}finally{saving.value=false;}}
