@@ -1,86 +1,126 @@
 <template>
-  <BioNexusDialog ref="dialog" size="standard" :kicker="mode === 'create' ? 'Nuevo registro' : 'Editar registro'" :title="mode === 'create' ? 'Crear tipo de muestra' : 'Editar tipo de muestra'" @close="reset">
-    <section class="sample-type-form">
-      <BioNexusFormField label="Descripción" field-id="sample-type-description" :error="descriptionError" :help="`${draft.description.length} de 50 caracteres`" required>
-        <input id="sample-type-description" ref="firstInput" v-model="draft.description" class="bio-nexus-field" maxlength="50" autocomplete="off">
-      </BioNexusFormField>
-      <div v-if="errorMessage" class="bio-nexus-message bio-nexus-message-error" role="alert">{{ errorMessage }}</div>
-    </section>
+  <BioNexusDialog
+    ref="dialog"
+    size="standard"
+    :kicker="mode === 'create' ? 'Nuevo registro' : 'Editar registro'"
+    :title="mode === 'create' ? 'Crear tipo de muestra' : 'Editar tipo de muestra'"
+    :prevent-close="saving || changed"
+    @before-close="requestClose"
+    @close="handleClosed"
+  >
+    <BioNexusFormLayout>
+      <BioNexusFormErrors :errors="errorMessage" />
+
+      <BioNexusSectionPanel
+        title="Información del tipo de muestra"
+        icon="science"
+        description="Define la descripción que identifica el tipo de muestra."
+        variant="accent"
+      >
+        <BioNexusFormField
+          label="Descripción"
+          field-id="sample-type-description"
+          :error="descriptionError"
+          :help="draft.description.length + ' de 50 caracteres'"
+          required
+        >
+          <input
+            id="sample-type-description"
+            ref="firstInput"
+            v-model="draft.description"
+            class="bio-nexus-field"
+            maxlength="50"
+            autocomplete="off"
+          >
+        </BioNexusFormField>
+      </BioNexusSectionPanel>
+    </BioNexusFormLayout>
+
     <template #footer>
-      <button class="bio-nexus-action bio-nexus-action-secondary" :disabled="saving" @click="close"><BioNexusActionIcon action="cancel" />Cancelar</button>
-      <button class="bio-nexus-action bio-nexus-action-primary" :disabled="saveDisabled" :aria-disabled="String(saveDisabled)" :class="{ 'sample-type-save-disabled': saveDisabled }" @click="submit"><BioNexusActionIcon action="save" />{{ saving ? 'Guardando...' : mode === 'create' ? 'Crear' : 'Guardar' }}</button>
+      <button type="button" class="bio-nexus-action bio-nexus-action-secondary" :disabled="saving" @click="requestClose">
+        <BioNexusActionIcon action="cancel" />
+        Cancelar
+      </button>
+      <button type="button" class="bio-nexus-action bio-nexus-action-primary" :disabled="submitDisabled" @click="submit">
+        <BioNexusActionIcon :action="mode === 'create' ? 'create' : 'save'" />
+        {{ saving ? 'Guardando...' : mode === 'create' ? 'Crear' : 'Guardar' }}
+      </button>
     </template>
   </BioNexusDialog>
+  <BioNexusConfirmDialog ref="discardDialog" />
 </template>
 
 <script setup>
-import { computed, nextTick, reactive, ref } from 'vue'
-import BioNexusDialog from '@/components/ui/BioNexusDialog.vue'
-import BioNexusFormField from '@/components/ui/BioNexusFormField.vue'
-import BioNexusActionIcon from '@/components/ui/BioNexusActionIcon.vue'
+import { computed, nextTick, reactive, ref } from "vue";
+import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
+import BioNexusConfirmDialog from "@/components/ui/BioNexusConfirmDialog.vue";
+import BioNexusDialog from "@/components/ui/BioNexusDialog.vue";
+import BioNexusFormErrors from "@/components/ui/BioNexusFormErrors.vue";
+import BioNexusFormField from "@/components/ui/BioNexusFormField.vue";
+import BioNexusFormLayout from "@/components/ui/BioNexusFormLayout.vue";
+import BioNexusSectionPanel from "@/components/ui/BioNexusSectionPanel.vue";
 
-const props = defineProps({ saving: Boolean, canCreate: Boolean, canUpdate: Boolean })
-const emit = defineEmits(['submit'])
-const dialog = ref(null)
-const firstInput = ref(null)
-const mode = ref('create')
-const current = ref(null)
-const attempted = ref(false)
-const errorMessage = ref('')
-const originalDescription = ref('')
-const draft = reactive({ description: '' })
-const normalizedDescription = computed(() => draft.description.trim())
-const hasChanges = computed(() => mode.value === 'edit' && normalizedDescription.value !== originalDescription.value)
-const descriptionError = computed(() => attempted.value && normalizedDescription.value === '' ? 'La descripción es obligatoria.' : '')
-const isValid = computed(() => normalizedDescription.value !== '')
-const saveDisabled = computed(() => mode.value === 'create'
-  ? props.saving || !props.canCreate || !isValid.value
-  : props.saving || !props.canUpdate || !isValid.value || !hasChanges.value)
+const props = defineProps({ saving: Boolean, canCreate: Boolean, canUpdate: Boolean });
+const emit = defineEmits(["submit"]);
+const dialog = ref(null);
+const discardDialog = ref(null);
+const firstInput = ref(null);
+const mode = ref("create");
+const current = ref(null);
+const originalDescription = ref("");
+const errorMessage = ref("");
+const attempted = ref(false);
+const draft = reactive({ description: "" });
 
-async function show() { await dialog.value?.open(); await nextTick(); firstInput.value?.focus() }
-async function openCreate() {
-  mode.value = 'create'
-  current.value = null
-  originalDescription.value = ''
-  draft.description = ''
-  attempted.value = false
-  errorMessage.value = ''
-  await show()
+const normalizedDescription = computed(() => draft.description.trim());
+const descriptionError = computed(() => attempted.value && normalizedDescription.value === "" ? "La descripción es obligatoria." : "");
+const changed = computed(() => mode.value === "create" ? normalizedDescription.value !== "" : normalizedDescription.value !== originalDescription.value);
+const submitDisabled = computed(() => props.saving || normalizedDescription.value === "" || normalizedDescription.value.length > 50 || !changed.value || (mode.value === "create" ? !props.canCreate : !props.canUpdate));
+
+async function show() { dialog.value?.open(); await nextTick(); firstInput.value?.focus(); }
+function openCreate() {
+  mode.value = "create";
+  current.value = null;
+  originalDescription.value = "";
+  draft.description = "";
+  attempted.value = false;
+  errorMessage.value = "";
+  show();
 }
-async function openEdit(row) {
-  const initial = typeof row?.description === 'string' ? row.description.trim() : ''
-  mode.value = 'edit'
-  current.value = row
-  originalDescription.value = initial
-  draft.description = initial
-  attempted.value = false
-  errorMessage.value = ''
-  await show()
+function openEdit(record) {
+  mode.value = "edit";
+  current.value = record;
+  originalDescription.value = String(record?.description || "").trim();
+  draft.description = record?.description || "";
+  attempted.value = false;
+  errorMessage.value = "";
+  show();
 }
+async function requestClose() {
+  if (props.saving) return;
+  if (changed.value) {
+    const confirmed = await discardDialog.value?.ask({
+      kicker: "Confirmación",
+      title: "Descartar cambios",
+      message: "Hay cambios sin guardar. ¿Deseas salir y descartarlos?",
+      icon: "warning",
+      variant: "danger",
+      confirmIcon: "delete",
+      confirmText: "Sí, salir y descartar cambios",
+      cancelText: "Cancelar",
+    });
+    if (!confirmed) return;
+  }
+  dialog.value?.close();
+}
+function close() { dialog.value?.close(); }
+function handleClosed() { attempted.value = false; errorMessage.value = ""; }
+function setError(value) { errorMessage.value = String(value || ""); }
+function clearError() { errorMessage.value = ""; }
 function submit() {
-  attempted.value = true
-  if (normalizedDescription.value === '' || saveDisabled.value) return
-  emit('submit', { mode: mode.value, record: current.value, values: { description: normalizedDescription.value } })
+  attempted.value = true;
+  if (descriptionError.value || submitDisabled.value) return;
+  emit("submit", { mode: mode.value, record: current.value, values: { description: normalizedDescription.value } });
 }
-function close() { dialog.value?.close() }
-function reset() { attempted.value = false; errorMessage.value = '' }
-function setError(value) { errorMessage.value = String(value || '') }
-function clearError() { errorMessage.value = '' }
-defineExpose({ openCreate, openEdit, close, setError, clearError })
+defineExpose({ openCreate, openEdit, close, setError, clearError });
 </script>
-
-<style scoped>
-.sample-type-form { display: grid; gap: var(--bio-nexus-space-3); }
-
-.bio-nexus-action.sample-type-save-disabled,
-.bio-nexus-action.sample-type-save-disabled:hover,
-.bio-nexus-action.sample-type-save-disabled:focus,
-.bio-nexus-action.sample-type-save-disabled:active,
-.bio-nexus-action:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
-  filter: grayscale(0.35) saturate(0.45);
-  box-shadow: none;
-  pointer-events: none;
-}
-</style>
