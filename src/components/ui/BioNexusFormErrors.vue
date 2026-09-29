@@ -50,8 +50,7 @@ const normalizedErrors = computed(() => [...new Set(collect(props.errors))]);
   position: relative;
   display: grid;
   gap: var(--bio-nexus-space-1);
-  margin: 0;
-  padding-inline-start: 1.25rem;
+padding-inline-start: 1.25rem;
 }
 .bio-nexus-form-errors li {
   padding-inline-start: var(--bio-nexus-space-1);

@@ -1,6 +1,7 @@
 <template>
   <BioNexusDialog ref="dialog" size="wide" dialog-class="exam-entry-dialog" shell-class="exam-entry-shell" body-class="exam-entry-dialog-body" :kicker="mode === 'create' ? 'Nuevo registro' : 'Editar registro'" :title="mode === 'create' ? 'Crear examen' : 'Editar examen'" :prevent-close="saving || hasChanges" @before-close="close" @close="handleClosed">
     <section class="exam-body">
+      <BioNexusFormLayout>
       <BioNexusFormErrors :errors="errorMessage" />
       <BioNexusSectionPanel title="Información del examen" icon="science" description="Define la identificación, el impuesto y la clasificación del examen." variant="accent">
         <div class="exam-main-grid">
@@ -13,6 +14,7 @@
       <BioNexusSectionPanel title="Tarifas" icon="price_change" description="Establece el precio del examen para cada tarifa disponible." variant="accent">
         <div class="exam-price-grid"><BioNexusFormField v-for="tariff in tariffFields" :key="tariff.id" :label="tariff.name + ' (' + baseCurrencySymbol + ')'" :field-id="'exam-cost-' + tariff.position"><input :id="'exam-cost-' + tariff.position" v-model.trim="draft['cost' + tariff.position]" class="bio-nexus-field" type="text" inputmode="decimal" :placeholder="moneyPlaceholder" @input="handleFormMutation" /></BioNexusFormField></div>
       </BioNexusSectionPanel>
+      </BioNexusFormLayout>
     </section>
     <template #footer>
       <button type="button" class="bio-nexus-action bio-nexus-action-secondary" :disabled="saving" @click="close"><BioNexusActionIcon action="cancel" />Cancelar</button>
@@ -32,6 +34,7 @@ import BioNexusDialog from "@/components/ui/BioNexusDialog.vue";
 import BioNexusConfirmDialog from "@/components/ui/BioNexusConfirmDialog.vue";
 import BioNexusFormField from "@/components/ui/BioNexusFormField.vue";
 import BioNexusFormErrors from "@/components/ui/BioNexusFormErrors.vue";
+import BioNexusFormLayout from "@/components/ui/BioNexusFormLayout.vue";
 import BioNexusSectionPanel from "@/components/ui/BioNexusSectionPanel.vue";
 
 const props = defineProps({ saving: { type: Boolean, default: false }, canCreate: { type: Boolean, default: false }, canUpdate: { type: Boolean, default: false }, taxes: { type: Array, default: () => [] }, tariffs: { type: Array, default: () => [] }, group: { type: Object, default: null } });

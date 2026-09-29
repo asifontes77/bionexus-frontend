@@ -11,7 +11,7 @@ const tariffSelectCell=read("src/components/tariffs/TariffOrderSelectCell.vue");
 const tariffViewStyle=view.match(/<style scoped>([\s\S]*?)<\/style>/)?.[1]||"";
 const viewTokens=[
   "tariffs.create","tariffs.update","BioNexusDataGrid","BioNexusContextMenu","BioNexusDialog",
-  "BioNexusStateDialog","BioNexusConfirmDialog","BioNexusActionButton","BioNexusFormErrors","BioNexusSectionPanel","requestCloseDialog",
+  "BioNexusStateDialog","BioNexusConfirmDialog","BioNexusFormLayout","BioNexusActionButton","BioNexusFormErrors","BioNexusSectionPanel","requestCloseDialog",
   "Confirmación","Descartar cambios","Hay cambios sin guardar. ¿Deseas salir y descartarlos?","Cancelar","Sí, salir y descartar cambios","variant:row.isActive?\"danger\":\"default\"","BioNexusGridToggleCell",
   "hasChanges","fieldErrors.name","`${draft.name.length} de 100 caracteres`","`${draft.description.length} de 250 caracteres`","clearGeneralError","createTechnicalCode","reorderTariffs","saveOrder","orderDirty",
   "handleKeyboardOrder","acceptKeyboardPosition","cancelKeyboardPosition","TariffOrderSelectCell",

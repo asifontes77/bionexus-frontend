@@ -3,7 +3,8 @@
     <BioNexusActionButton class="bio-nexus-grid-export-trigger" icon="download" icon-only shape="rounded" size="md" variant="secondary" label="Exportar" :disabled="disabled" @click="openDialog" />
     <BioNexusDialog ref="dialog" size="standard" kicker="Exportación del grid" title="Configurar exportación" @close="handleClosed">
       <section class="bio-nexus-grid-export-dialog-body">
-        <BioNexusFormErrors :errors="errorMessage" />
+        <BioNexusFormLayout>
+      <BioNexusFormErrors :errors="errorMessage" />
         <BioNexusSectionPanel title="Formato del archivo" icon="download" description="Selecciona el tipo de archivo y, para PDF, la orientación de la página." variant="accent">
           <div class="bio-nexus-grid-export-format-layout">
             <fieldset class="bio-nexus-grid-export-choice-group">
@@ -48,6 +49,7 @@
             </label>
           </div>
         </BioNexusSectionPanel>
+        </BioNexusFormLayout>
       </section>
       <template #footer>
         <button type="button" class="bio-nexus-action bio-nexus-action-secondary" @click="closeDialog">
@@ -69,6 +71,7 @@ import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
 import BioNexusActionButton from "@/components/ui/BioNexusActionButton.vue";
 import BioNexusDialog from "@/components/ui/BioNexusDialog.vue";
 import BioNexusFormErrors from "@/components/ui/BioNexusFormErrors.vue";
+import BioNexusFormLayout from "@/components/ui/BioNexusFormLayout.vue";
 import BioNexusSectionPanel from "@/components/ui/BioNexusSectionPanel.vue";
 import { useBioNexusToast } from "@/composables/useBioNexusToast.js";
 

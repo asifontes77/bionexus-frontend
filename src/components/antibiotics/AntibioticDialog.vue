@@ -9,7 +9,8 @@
     :title="mode === 'create' ? 'Crear antibiótico' : 'Editar antibiótico'"
     @close="reset"
   >
-    <BioNexusFormErrors :errors="errorMessage" />
+    <BioNexusFormLayout>
+      <BioNexusFormErrors :errors="errorMessage" />
     <BioNexusSectionPanel
       class="antibiotic-section"
       title="Información del antibiótico"
@@ -24,7 +25,7 @@
           <input id="antibiotic-initials" v-model="draft.siglas" class="bio-nexus-field" @input="syncDirty" maxlength="10" autocomplete="off">
         </BioNexusFormField>
     </BioNexusSectionPanel>
-
+    </BioNexusFormLayout>
     <template #footer>
       <BioNexusActionButton variant="secondary" icon="cancel" :disabled="saving" @click="requestClose">Cancelar</BioNexusActionButton>
       <BioNexusActionButton variant="primary" :icon="mode === 'create' ? 'create' : 'save'" :loading="saving" :disabled="submitDisabled" @click="submit">{{ mode === 'create' ? 'Crear' : 'Guardar' }}</BioNexusActionButton>
@@ -40,6 +41,7 @@ import BioNexusConfirmDialog from "@/components/ui/BioNexusConfirmDialog.vue";
 import BioNexusDialog from "@/components/ui/BioNexusDialog.vue";
 import BioNexusFormField from "@/components/ui/BioNexusFormField.vue";
 import BioNexusFormErrors from "@/components/ui/BioNexusFormErrors.vue";
+import BioNexusFormLayout from "@/components/ui/BioNexusFormLayout.vue";
 import BioNexusSectionPanel from "@/components/ui/BioNexusSectionPanel.vue";
 
 const props = defineProps({ saving: Boolean, canCreate: Boolean, canUpdate: Boolean });
@@ -60,7 +62,7 @@ const descriptionError = computed(() => attempted.value && !values.value.descrip
 const submitDisabled = computed(() => initializing.value || props.saving || (mode.value === "create" ? (!props.canCreate || !values.value.description) : (!props.canUpdate || !dirty.value)));
 
 function snapshot() { return JSON.stringify(values.value); }
-function syncDirty() { dirty.value = !initializing.value && snapshot() !== original.value; }
+function syncDirty() { clearError(); dirty.value = !initializing.value && snapshot() !== original.value; }
 function assign(row) { draft.description = row?.description || ""; draft.siglas = row?.siglas || ""; }
 async function show() { await dialog.value?.open(); await nextTick(); original.value = snapshot(); dirty.value = false; initializing.value = false; firstInput.value?.focus(); }
 async function openCreate() { initializing.value = true; mode.value = "create"; current.value = null; assign(null); attempted.value = false; errorMessage.value = ""; await show(); }
@@ -71,5 +73,42 @@ function close() { dialog.value?.close(); }
 function reset() { attempted.value = false; dirty.value = false; }
 function setError(value) { errorMessage.value = String(value || ""); }
 function clearError() { errorMessage.value = ""; }
-defineExpose({ openCreate, openEdit, close, setError, clearError });
+function markSaved(row, closeAfterSave = false) {
+  current.value = row ?? current.value;
+  assign(row);
+  attempted.value = false;
+  clearError();
+  original.value = snapshot();
+  dirty.value = false;
+  if (closeAfterSave) dialog.value?.close();
+}
+defineExpose({ openCreate, openEdit, close, setError, clearError, markSaved });
 </script>
+
+
+<style scoped>
+:deep(.antibiotic-entry-dialog .bio-nexus-dialog-body) {
+  display: grid;
+  gap: var(--bio-nexus-space-4);
+}
+
+:deep(.antibiotic-section) {
+  min-width: 0;
+}
+
+:deep(.antibiotic-section .bio-nexus-section-panel-body) {
+  display: grid;
+  gap: var(--bio-nexus-space-6);
+}
+
+:deep(.antibiotic-entry-dialog .bio-nexus-action-primary:disabled) {
+  border-color: var(--bio-nexus-color-border) !important;
+  background: var(--bio-nexus-color-surface-soft) !important;
+  color: var(--bio-nexus-color-text-muted) !important;
+  box-shadow: none !important;
+  cursor: not-allowed !important;
+  opacity: 0.58 !important;
+  pointer-events: none;
+}
+
+</style>

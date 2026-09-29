@@ -7,6 +7,7 @@
         <BioNexusActionButton variant="primary" icon="save" :loading="saving" :disabled="!dirty || !canUpdate || saving" @click="save">Guardar orden</BioNexusActionButton>
       </div>
     </div>
+    <BioNexusFormLayout>
     <BioNexusFormErrors :errors="error" />
     <div v-if="loading" class="exam-order-state">Cargando catálogo...</div>
     <div v-else class="exam-order-layout">
@@ -27,12 +28,14 @@
 </ol>
       </BioNexusSectionPanel>
     </div>
+    </BioNexusFormLayout>
   </section>
 </template>
 <script setup>
 import BioNexusActionButton from "@/components/ui/BioNexusActionButton.vue";
 import BioNexusSectionPanel from "@/components/ui/BioNexusSectionPanel.vue";
 import BioNexusFormErrors from "@/components/ui/BioNexusFormErrors.vue";
+import BioNexusFormLayout from "@/components/ui/BioNexusFormLayout.vue";
 import { computed,onBeforeUnmount,onMounted,ref,watch } from "vue";
 import { onBeforeRouteLeave } from "vue-router";
 import { useAuthorizationStore } from "@/stores/authorization";

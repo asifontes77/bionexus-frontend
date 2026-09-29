@@ -16,11 +16,13 @@
 
     <BioNexusDialog ref="formDialog" kicker="ADMINISTRAR TARIFA" :title="dialog.mode === 'create' ? 'Nueva tarifa' : 'Editar tarifa'" size="standard" :prevent-close="saving || hasChanges" @before-close="requestCloseDialog" @close="resetFormDialog">
       <form id="tariff-form" class="tariff-form" @submit.prevent="submit">
+        <BioNexusFormLayout>
         <BioNexusFormErrors :errors="dialog.error" />
         <BioNexusSectionPanel title="Información de la tarifa" icon="sell" description="Define el nombre y la descripción de la tarifa." variant="accent">
           <BioNexusFormField label="Nombre" field-id="tariff-name" required :error="fieldErrors.name" :help="`${draft.name.length} de 100 caracteres`"><input id="tariff-name" v-model.trim="draft.name" class="bio-nexus-field" maxlength="100" autocomplete="off" autofocus @input="clearFieldError('name')" /></BioNexusFormField>
           <BioNexusFormField class="span-all" label="Descripción" field-id="tariff-description" :help="`${draft.description.length} de 250 caracteres`"><textarea id="tariff-description" v-model.trim="draft.description" class="bio-nexus-field tariff-description" maxlength="250" @input="clearGeneralError"></textarea></BioNexusFormField>
         </BioNexusSectionPanel>
+        </BioNexusFormLayout>
       </form>
       <template #footer><BioNexusActionButton variant="secondary" icon="cancel" :disabled="saving" @click="requestCloseDialog">Cancelar</BioNexusActionButton><BioNexusActionButton type="submit" variant="primary" :icon="dialog.mode === 'create' ? 'create' : 'save'" form="tariff-form" :loading="saving" :disabled="tariffSubmitDisabled">{{ dialog.mode === 'create' ? 'Crear' : 'Guardar' }}</BioNexusActionButton></template>
     </BioNexusDialog>
@@ -41,6 +43,7 @@ import BioNexusConfirmDialog from "@/components/ui/BioNexusConfirmDialog.vue";
 import BioNexusDialog from "@/components/ui/BioNexusDialog.vue";
 import BioNexusFormField from "@/components/ui/BioNexusFormField.vue";
 import BioNexusFormErrors from "@/components/ui/BioNexusFormErrors.vue";
+import BioNexusFormLayout from "@/components/ui/BioNexusFormLayout.vue";
 import BioNexusSectionPanel from "@/components/ui/BioNexusSectionPanel.vue";
 import BioNexusStateDialog from "@/components/ui/BioNexusStateDialog.vue";
 import { useAuthorizationStore } from "@/stores/authorization";
@@ -115,7 +118,7 @@ onBeforeUnmount(()=>globalThis.removeEventListener("keydown",handleKeyboardOrder
 </script>
 <style scoped>
 .tariffs-page { min-width: 0; }
-.tariff-form { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--bio-nexus-space-3); }
+
 .tariff-form .bio-nexus-section-panel-body { display: grid; gap: var(--bio-nexus-space-4); }
 .tariff-form .span-all { grid-column: 1 / -1; }
 .tariff-description { min-height: 88px; resize: vertical; }
