@@ -12,7 +12,7 @@ export function normalizeRoutine(value = {}) {
   let raw = value.registered_exams;
   if (typeof raw === "string") { try { raw = JSON.parse(raw); } catch { raw = []; } }
   const registered_exams = (Array.isArray(raw) ? raw : []).map(normalizeRoutineExam).filter((item) => item.examId > 0);
-  return { id: positiveId(value.id), description: text(value.description), details: text(value.details), registered_exams, examCount: registered_exams.length };
+  return { id: positiveId(value.id), description: text(value.description), details: text(value.details), isActive: value.isActive !== false, registered_exams, examCount: registered_exams.length };
 }
 export function normalizeRoutines(value) {
   const rows = Array.isArray(value) ? value : Array.isArray(value?.data) ? value.data : [];

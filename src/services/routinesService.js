@@ -6,6 +6,10 @@ export async function updateRoutine(routineId, values) {
   if (!Number.isInteger(routineId) || routineId <= 0) throw new Error("ROUTINE_ID_INVALID");
   return normalizeRoutine(await apiRequest(`/api/routines/${routineId}`, { method: "PATCH", body: normalizeRoutinePayload(values) }));
 }
+export async function changeRoutineStatus(routineId, isActive) {
+  if (!Number.isInteger(routineId) || routineId <= 0) throw new Error("ROUTINE_ID_INVALID");
+  return normalizeRoutine(await apiRequest(`/api/routines/${routineId}/status`, { method: "PATCH", body: { isActive: Boolean(isActive) } }));
+}
 export async function deleteRoutine(routineId) {
   if (!Number.isInteger(routineId) || routineId <= 0) throw new Error("ROUTINE_ID_INVALID");
   return apiRequest(`/api/routines/${routineId}`, { method: "DELETE" });
@@ -15,6 +19,9 @@ export function routineError(error, fallback) {
   const messages = {
     ROUTINE_NOT_FOUND: "La rutina seleccionada ya no existe.",
     ROUTINE_DESCRIPTION_REQUIRED: "La descripción es obligatoria.",
+    ROUTINE_DESCRIPTION_ALREADY_EXISTS: "Ya existe una rutina con esa descripción.",
+    ROUTINE_STATUS_INVALID: "El estado indicado para la rutina no es válido.",
+    ROUTINE_STATUS_ACTOR_REQUIRED: "No fue posible identificar al usuario que cambia el estado.",
     ROUTINE_TEXT_TOO_LONG: "Uno de los textos supera el límite permitido.",
     ROUTINE_EXAMS_ARRAY_REQUIRED: "Debes seleccionar los exámenes de la rutina.",
     ROUTINE_EXAMS_COUNT_INVALID: "Selecciona al menos un examen.",
