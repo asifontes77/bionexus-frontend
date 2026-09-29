@@ -105,7 +105,7 @@ const parasiticContextMenuItems = computed(() => {
   if (!record) return [];
   return [
     { key: "edit", icon: "edit", label: "Editar", visible: canUpdateDescription.value, disabled: saving.value, action: () => openEdit(record) },
-    { key: "toggle-status", icon: record.annulled ? "activate" : "deactivate", label: record.annulled ? "Activar" : "Desactivar", visible: canChangeStatus.value, disabled: saving.value, action: () => openState(record) },
+    { key: "toggle-status", icon: record.annulled ? "activate" : "deactivate", label: record.annulled ? "Activar" : "Desactivar", variant: record.annulled ? "default" : "danger", visible: canChangeStatus.value, disabled: saving.value, action: () => openState(record) },
   ];
 });
 const dataGrid = ref(null);
