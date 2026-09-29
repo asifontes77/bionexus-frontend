@@ -80,10 +80,10 @@ function handleNativeClose() {
 }
 
 function blockEscape(event) {
-  if (event?.key !== "Escape") return;
+  if (event?.key !== "Escape" || event.defaultPrevented) return;
   event.preventDefault();
   event.stopPropagation();
-  event.stopImmediatePropagation?.();
+  requestClose();
 }
 function blockImplicitClose(event) { blockEscape(event); }
 function blockBackdropClose(event) { if (event.target === dialog.value) event.preventDefault(); }
