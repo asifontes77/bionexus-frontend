@@ -121,7 +121,7 @@ const contextItems = computed(() => {
   if (!row) return [];
   return [
     { key: "edit", label: "Editar", icon: "edit", visible: canUpdate.value, disabled: saving.value, action: () => openEdit(row) },
-    { key: "toggle-status", label: row.annulled ? "Activar" : "Desactivar", icon: row.annulled ? "activate" : "deactivate", visible: canChangeStatus.value, disabled: saving.value, action: () => openState(row) }];
+    { key: "toggle-status", label: row.annulled ? "Activar" : "Desactivar", icon: row.annulled ? "activate" : "deactivate", variant: row.annulled ? "default" : "danger", visible: canChangeStatus.value, disabled: saving.value, action: () => openState(row) }];
 });
 
 function getRowId({ data }) { return String(data.id); }
