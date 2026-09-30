@@ -95,7 +95,7 @@ const typePaymentContextMenuItems = computed(() => {
   if (!row) return [];
   return [
     { key: "edit", label: "Editar", icon: "edit", visible: canUpdate.value, disabled: saving.value, action: () => openEdit(row) },
-    { key: "toggle-status", label: row.annulled ? "Activar" : "Desactivar", icon: row.annulled ? "activate" : "deactivate", visible: canChangeStatus.value, disabled: saving.value, action: () => openState(row) },
+    { key: "toggle-status", label: row.annulled ? "Activar" : "Desactivar", icon: row.annulled ? "activate" : "deactivate", variant: row.annulled ? undefined : "danger", visible: canChangeStatus.value, disabled: saving.value, action: () => openState(row) },
   ];
 });
 const contextMenu = reactive({ visible: false, x: 0, y: 0, row: null });

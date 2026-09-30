@@ -1,4 +1,4 @@
-﻿import fs from 'node:fs';
+import fs from 'node:fs';
 const read=file=>fs.readFileSync(file,'utf8');
 const tariffs=read('src/views/TariffsView.vue');
 const payments=read('src/views/TypePaymentView.vue');
@@ -13,5 +13,5 @@ const normalizedPaymentSelect=normalize(paymentSelect).replaceAll('type-payment'
 const normalizedTariffSelect=normalize(tariffSelect);
 if(normalizedPaymentSelect!==normalizedTariffSelect)throw new Error('SELECT_CELL_NOT_EQUIVALENT');
 if(payments.includes('TypePaymentPositionCell'))throw new Error('CUSTOM_POSITION_COMPONENT_REMAINS');
-for(const token of ['margin:14px auto 0','margin-top:9px','margin-top:13px'])if(!dialog.includes(token))throw new Error('FIELD_ALIGNMENT_'+token);
+for(const token of ['margin:14px auto 0','align-self:center','margin-top:13px'])if(!dialog.includes(token))throw new Error('FIELD_ALIGNMENT_'+token);
 console.log('[OK] Formas de pago replica el patron real de Tarifas y alinea contra BioNexusFormField.');
