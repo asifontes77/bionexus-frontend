@@ -1,6 +1,5 @@
 <template>
-  <section class="bio-nexus-panel laboratory-panel logo-panel">
-    <div class="bio-nexus-panel-heading"><div><p class="bio-nexus-panel-eyebrow">Identidad visual</p><h3>Logo del laboratorio</h3></div></div>
+  <BioNexusSectionPanel class="logo-section" title="Logo del laboratorio" icon="image" description="Configura la imagen institucional y sus dimensiones máximas." variant="accent">
     <div class="logo-layout">
       <div class="logo-preview">
         <img v-if="logoUrl" :src="logoUrl" alt="Logo actual" :style="previewStyle" @error="imageFailed=true">
@@ -18,12 +17,13 @@
         <small>El logo conserva su proporción. Se aplica primero el límite que produzca el tamaño más pequeño.</small><small>PNG, JPEG o WebP. Tamaño máximo: 5 MB.</small>
       </div>
     </div>
-  </section>
+  </BioNexusSectionPanel>
 </template>
 <script setup>
 import { computed, ref, watch } from 'vue'
 import BioNexusActionButton from '@/components/ui/BioNexusActionButton.vue'
 import BioNexusFormField from '@/components/ui/BioNexusFormField.vue'
+import BioNexusSectionPanel from '@/components/ui/BioNexusSectionPanel.vue'
 const props=defineProps({model:{type:Object,required:true},errors:{type:Object,default:()=>({})},disabled:{type:Boolean,default:false}})
 const emit=defineEmits(['upload'])
 const fileInput=ref(null)
@@ -35,5 +35,5 @@ watch(()=>props.model.logo,()=>{imageFailed.value=false})
 function selectFile(event){const file=event.target.files?.[0];if(file)emit('upload',file);event.target.value=''}
 </script>
 <style scoped>
-.logo-panel{min-width:0;overflow:hidden}.logo-layout{display:grid;grid-template-columns:1fr;gap:var(--bio-nexus-space-4);min-width:0}.logo-preview{display:grid;place-items:center;width:100%;min-width:0;min-height:210px;padding:var(--bio-nexus-space-3);border:1px dashed var(--bio-nexus-color-border-strong);border-radius:var(--bio-nexus-radius-md);background:var(--bio-nexus-color-surface-soft);overflow:hidden}.logo-preview img{display:block;max-width:100%;object-fit:contain}.logo-empty{display:grid;justify-items:center;gap:8px;color:var(--bio-nexus-color-text-muted);font-size:12px;text-align:center}.logo-empty-mark{display:grid;place-items:center;width:54px;height:54px;border-radius:16px;background:var(--bio-nexus-color-primary-soft);color:var(--bio-nexus-color-primary);font-size:17px;font-weight:900}.logo-controls{display:grid;grid-template-columns:1fr;gap:var(--bio-nexus-space-3);min-width:0}.range-control{display:grid;grid-template-columns:minmax(0,1fr) 58px;align-items:center;gap:10px;min-height:46px;padding:10px 12px 5px;border:1px solid var(--bio-nexus-color-border);border-radius:var(--bio-nexus-radius-md);background:var(--bio-nexus-color-surface)}.logo-range{display:block;width:100%;min-width:0;margin:0;accent-color:var(--bio-nexus-color-primary)}.range-control output{color:var(--bio-nexus-color-text-secondary);font-size:12px;font-weight:800;text-align:right}.select-image{width:100%;justify-content:center}.logo-controls small{color:var(--bio-nexus-color-text-muted);font-size:11px;line-height:1.35}.file-input{display:none}
+.logo-section{min-width:0;overflow:hidden}.logo-layout{display:grid;grid-template-columns:1fr;gap:var(--bio-nexus-space-4);min-width:0}.logo-preview{display:grid;place-items:center;width:100%;min-width:0;min-height:210px;padding:var(--bio-nexus-space-3);border:1px dashed var(--bio-nexus-color-border-strong);border-radius:var(--bio-nexus-radius-md);background:var(--bio-nexus-color-surface-soft);overflow:hidden}.logo-preview img{display:block;max-width:100%;object-fit:contain}.logo-empty{display:grid;justify-items:center;gap:8px;color:var(--bio-nexus-color-text-muted);font-size:12px;text-align:center}.logo-empty-mark{display:grid;place-items:center;width:54px;height:54px;border-radius:16px;background:var(--bio-nexus-color-primary-soft);color:var(--bio-nexus-color-primary);font-size:17px;font-weight:900}.logo-controls{display:grid;grid-template-columns:1fr;gap:var(--bio-nexus-space-3);min-width:0}.range-control{display:grid;grid-template-columns:minmax(0,1fr) 58px;align-items:center;gap:10px;min-height:46px;padding:10px 12px 5px;border:1px solid var(--bio-nexus-color-border);border-radius:var(--bio-nexus-radius-md);background:var(--bio-nexus-color-surface)}.logo-range{display:block;width:100%;min-width:0;margin:0;accent-color:var(--bio-nexus-color-primary)}.range-control output{color:var(--bio-nexus-color-text-secondary);font-size:12px;font-weight:800;text-align:right}.select-image{width:100%;justify-content:center}.logo-controls small{color:var(--bio-nexus-color-text-muted);font-size:11px;line-height:1.35}.file-input{display:none}
 </style>

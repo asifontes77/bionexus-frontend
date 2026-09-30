@@ -1,5 +1,5 @@
 <template>
-  <section class="laboratory-page">
+  <section class="laboratory-page"><BioNexusFormErrors :errors="generalError"/>
     <div v-if="loadError" class="bio-nexus-message bio-nexus-message-error" role="alert">
       <strong>No fue posible cargar Laboratorio.</strong>
       <span>{{ loadError }}</span>
@@ -21,12 +21,15 @@
       <LaboratoryEmailPanel v-if="isCommunicationsRoute || activeTab === 'email'" v-show="isCommunicationsRoute || activeTab === 'email'" id="laboratory-panel-email" role="tabpanel" aria-labelledby="laboratory-tab-email" :model="laboratory" :errors="emailErrors" :disabled="!canUpdate || saving || testingEmail" :testing="testingEmail" :saving="saving" :dirty="dirty" :can-update="canUpdate" @discard="discard" @save="save" @test-connection="testConnection" />
     </template>
   </section>
+  <BioNexusConfirmDialog ref="discardDialog"/>
 </template>
 
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { onBeforeRouteLeave, useRoute } from 'vue-router'
 import BioNexusActionButton from '@/components/ui/BioNexusActionButton.vue'
+import BioNexusConfirmDialog from '@/components/ui/BioNexusConfirmDialog.vue'
+import BioNexusFormErrors from '@/components/ui/BioNexusFormErrors.vue'
 import BioNexusTabs from '@/components/ui/BioNexusTabs.vue'
 import LaboratoryBillingPanel from '@/components/laboratory/LaboratoryBillingPanel.vue'
 import LaboratoryEmailPanel from '@/components/laboratory/LaboratoryEmailPanel.vue'
@@ -45,7 +48,9 @@ const original = ref('')
 const loading = ref(false)
 const saving = ref(false)
 const loadError = ref('')
+const generalError = ref('')
 const identityErrors = ref({})
+const discardDialog = ref(null)
 const emailErrors = ref({})
 const testingEmail = ref(false)
 const activeTab = ref(typeof route.query.tab === 'string' ? route.query.tab : (typeof route.meta.initialTab === 'string' ? route.meta.initialTab : 'general'))
@@ -59,7 +64,7 @@ const canUpdate = computed(() => authorization.hasPermission('laboratory.update'
 const isCommunicationsRoute = computed(() => route.name === 'configuration-laboratory-communications')
 const dirty = computed(() => laboratory.value !== null && JSON.stringify(laboratory.value) !== original.value)
 
-function snapshot() { original.value = JSON.stringify(laboratory.value) }
+function snapshot() { original.value = JSON.stringify(laboratory.value); generalError.value = '' }
 function discard() {
   if (!original.value || saving.value) return
   laboratory.value = JSON.parse(original.value)
@@ -67,6 +72,8 @@ function discard() {
   emailErrors.value = {}
   toast.info('Los cambios pendientes fueron descartados.')
 }
+async function confirmDiscard() { if (!dirty.value) return true; return Boolean(await discardDialog.value?.ask({ kicker: 'Confirmación', title: 'Descartar cambios', message: 'Hay cambios sin guardar. ¿Deseas salir y descartarlos?', icon: 'warning', variant: 'danger', confirmIcon: 'delete', confirmText: 'Sí, salir y descartar cambios', cancelText: 'Cancelar' })) }
+function beforeUnload(event) { if (!dirty.value || saving.value) return; event.preventDefault(); event.returnValue = '' }
 async function load() {
   loading.value = true
   loadError.value = ''
@@ -89,7 +96,7 @@ async function save() {
     snapshot()
     identityErrors.value = {}
     toast.success('La configuración fue actualizada.')
-  } catch (error) { toast.error(getLaboratoryErrorMessage(error, 'No fue posible guardar.')) }
+  } catch (error) { generalError.value = getLaboratoryErrorMessage(error, 'No fue posible guardar.'); toast.error(generalError.value) }
   finally { saving.value = false }
 }
 async function testConnection() {
@@ -100,7 +107,7 @@ async function testConnection() {
   try {
     const result = await testLaboratoryEmailConnection(laboratory.value.id, laboratory.value.sendEmail)
     toast.success(result?.mode === 'gmail' ? 'Conexi\u00f3n con Gmail verificada.' : 'Conexi\u00f3n SMTP verificada.')
-  } catch (error) { toast.error(getLaboratoryErrorMessage(error, 'No fue posible verificar la conexi\u00f3n.')) }
+  } catch (error) { generalError.value = getLaboratoryErrorMessage(error, 'No fue posible verificar la conexión.'); toast.error(generalError.value) }
   finally { testingEmail.value = false }
 }
 async function uploadLogo(file) {
@@ -119,7 +126,10 @@ async function uploadLogo(file) {
 watch(() => [route.name, route.query.tab, route.meta.initialTab], ([, queryTab, initialTab]) => {
   activeTab.value = typeof queryTab === 'string' ? queryTab : (typeof initialTab === 'string' ? initialTab : 'general')
 }, { immediate: true })
-onMounted(load)
+watch(laboratory, () => { if (generalError.value) generalError.value = '' }, { deep: true })
+onBeforeRouteLeave(async () => isCommunicationsRoute.value ? await confirmDiscard() : true)
+onMounted(() => { globalThis.addEventListener('beforeunload', beforeUnload); load() })
+onBeforeUnmount(() => globalThis.removeEventListener('beforeunload', beforeUnload))
 </script>
 
 <style scoped>

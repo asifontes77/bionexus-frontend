@@ -68,6 +68,11 @@ export function validateLaboratoryRequired(value) { return Object.values(validat
 export function validateLaboratoryEmail(value, requirePassword = false) {
   const settings = objectOr(value);
   const errors = {};
+  const maximums = { host: 255, user: 254, pass: 255, from: 254 };
+  Object.entries(maximums).forEach(([field, maximum]) => {
+    const fieldValue = settings[field];
+    if (typeof fieldValue === 'string' && fieldValue.length > maximum) errors[field] = 'El valor no puede superar ' + maximum + ' caracteres.';
+  });
   if (typeof settings.isGmail !== 'boolean') errors.isGmail = 'Seleccione un modo de correo válido.';
   if (String(settings.user ?? '').trim() === '') errors.user = 'El usuario SMTP es obligatorio.';
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(settings.from ?? '').trim())) errors.from = 'Ingrese un remitente válido.';

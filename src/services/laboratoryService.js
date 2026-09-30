@@ -64,6 +64,10 @@ export function getLaboratoryErrorMessage(error, fallback) {
     LABORATORY_QR_PHONE_INVALID: 'Ingrese un teléfono de contacto válido.',
     LABORATORY_EMAIL_SETTINGS_REQUIRED: 'Complete la configuración de correo.',
     LABORATORY_EMAIL_SETTINGS_INVALID: 'La configuración de correo no es válida.',
+    LABORATORY_EMAIL_FIELD_UNKNOWN: 'La configuración de correo contiene campos no permitidos.',
+    LABORATORY_EMAIL_MODE_INVALID: 'Seleccione un modo de correo válido.',
+    LABORATORY_EMAIL_PASSWORD_INVALID: 'La contraseña SMTP no es válida.',
+    LABORATORY_EMAIL_SECURE_INVALID: 'El valor de seguridad SSL no es válido.',
     LABORATORY_EMAIL_USER_REQUIRED: 'El usuario SMTP es obligatorio.',
     LABORATORY_EMAIL_FROM_INVALID: 'Ingrese un remitente válido.',
     LABORATORY_EMAIL_HOST_REQUIRED: 'El host SMTP es obligatorio.',
@@ -72,9 +76,14 @@ export function getLaboratoryErrorMessage(error, fallback) {
     LABORATORY_EMAIL_CONNECTION_FAILED: 'No fue posible verificar la conexión. Revise servidor, puerto y credenciales.',
     LABORATORY_LOGO_REQUIRED: 'Seleccione una imagen para el logo.',
     LABORATORY_LOGO_TYPE_INVALID: 'Use una imagen PNG, JPEG o WebP.',
+    LABORATORY_TRANSACTION_UNAVAILABLE: 'No fue posible iniciar la operación. Inténtalo nuevamente.',
+    SECURITY_AUDIT_SERVICE_UNAVAILABLE: 'No fue posible registrar la operación de seguridad. Inténtalo nuevamente.',
     BIO_NEXUS_REQUEST_TIMEOUT: 'La solicitud tardó demasiado.'
   };
-  return messages[error?.message] || error?.message || fallback;
+  const code = String(error?.data?.message || error?.message || '').trim();
+  if (messages[code]) return messages[code];
+  if (code) console.error('[getLaboratoryErrorMessage] Código Backend no traducido:', code);
+  return fallback || 'No fue posible completar la operación.';
 }
 
 export async function getLaboratoryTaxes() { const value = await apiRequest("/api/tax"); return Array.isArray(value) ? value.map(normalizeTax) : []; }
