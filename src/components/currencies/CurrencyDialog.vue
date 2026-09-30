@@ -1,2 +1,127 @@
-<template><BioNexusDialog ref="dialog" size="standard" :prevent-close="saving" :kicker="mode==='create'?'Nuevo registro':'Editar registro'" :title="mode==='create'?'Crear moneda':'Editar moneda'" @close="reset"><section class="currency-form"><BioNexusFormField label="Moneda" field-id="currency-code" :error="errors.code" help="Selecciona la moneda oficial que identificará los importes." required><select v-if="mode==='create'" id="currency-code" ref="firstInput" v-model="draft.code" class="bio-nexus-field" @change="selectCurrency"><option value="">Seleccione una moneda</option><option v-for="item in options" :key="item.code" :value="item.code">{{item.name}} ({{item.code}})</option></select><input v-else id="currency-code" ref="firstInput" :value="identity" class="bio-nexus-field readonly" readonly></BioNexusFormField><BioNexusFormField label="Nombre" field-id="currency-name" :error="errors.name" required><input id="currency-name" v-model="draft.name" class="bio-nexus-field" maxlength="80" @input="syncDirty"></BioNexusFormField><BioNexusFormField label="Símbolo" field-id="currency-symbol" :error="errors.symbol" help="Ejemplos: Bs. o $." required><input id="currency-symbol" v-model="draft.symbol" class="bio-nexus-field" maxlength="12" @input="syncDirty"></BioNexusFormField><BioNexusFormField label="Posición del símbolo" field-id="currency-position"><select id="currency-position" v-model="draft.symbolPosition" class="bio-nexus-field" @change="syncDirty"><option value="before">Antes del monto</option><option value="after">Después del monto</option></select></BioNexusFormField><BioNexusFormField label="Decimales" field-id="currency-decimals" :error="errors.decimals" help="Cantidad de decimales mostrados, entre 0 y 6."><input id="currency-decimals" v-model.number="draft.decimalPlaces" class="bio-nexus-field" type="number" min="0" max="6" @input="syncDirty"></BioNexusFormField><div class="preview"><span>Vista previa</span><strong>{{preview}}</strong></div><div v-if="errorMessage" class="bio-nexus-message bio-nexus-message-error">{{errorMessage}}</div></section><template #footer><button class="bio-nexus-action bio-nexus-action-secondary" :disabled="saving" @click="close"><BioNexusActionIcon action="cancel"/>Cancelar</button><button class="bio-nexus-action bio-nexus-action-primary" :disabled="submitDisabled" @click="submit"><BioNexusActionIcon action="save"/>{{saving?'Guardando...':mode==='create'?'Crear':'Guardar'}}</button></template></BioNexusDialog></template>
-<script setup>import{computed,nextTick,reactive,ref}from'vue';import BioNexusDialog from'@/components/ui/BioNexusDialog.vue';import BioNexusFormField from'@/components/ui/BioNexusFormField.vue';import BioNexusActionIcon from'@/components/ui/BioNexusActionIcon.vue';const props=defineProps({saving:Boolean,canCreate:Boolean,canUpdate:Boolean}),emit=defineEmits(['submit']),dialog=ref(null),firstInput=ref(null),mode=ref('create'),current=ref(null),attempted=ref(false),errorMessage=ref(''),original=ref(''),dirty=ref(false),draft=reactive({code:'',name:'',symbol:'',symbolPosition:'before',decimalPlaces:2});const options=[{code:'VES',name:'Bolívar venezolano',symbol:'Bs.'},{code:'USD',name:'Dólar estadounidense',symbol:'$'},{code:'EUR',name:'Euro',symbol:'€'},{code:'GBP',name:'Libra esterlina',symbol:'£'},{code:'COP',name:'Peso colombiano',symbol:'$'},{code:'BRL',name:'Real brasileño',symbol:'R$'},{code:'MXN',name:'Peso mexicano',symbol:'$'},{code:'ARS',name:'Peso argentino',symbol:'$'},{code:'CLP',name:'Peso chileno',symbol:'$'},{code:'PEN',name:'Sol peruano',symbol:'S/'}],values=computed(()=>({code:String(draft.code||'').trim().toUpperCase(),name:String(draft.name||'').trim(),symbol:String(draft.symbol||'').trim(),symbolPosition:draft.symbolPosition,decimalPlaces:Number(draft.decimalPlaces)})),identity=computed(()=>`${current.value?.name||draft.name} (${current.value?.code||draft.code})`),preview=computed(()=>draft.symbolPosition==='after'?`1.250,00 ${draft.symbol}`:`${draft.symbol} 1.250,00`),errors=computed(()=>attempted.value?{code:/^[A-Z]{3}$/.test(values.value.code)?'':'Selecciona una moneda.',name:values.value.name?'':'Ingresa el nombre de la moneda.',symbol:values.value.symbol?'':'Ingresa el símbolo de la moneda.',decimals:Number.isInteger(values.value.decimalPlaces)&&values.value.decimalPlaces>=0&&values.value.decimalPlaces<=6?'':'Los decimales deben estar entre 0 y 6.'}:{code:'',name:'',symbol:'',decimals:''}),submitDisabled=computed(()=>props.saving||(mode.value==='create'?(!props.canCreate||!/^[A-Z]{3}$/.test(values.value.code)||!values.value.name||!values.value.symbol):(!props.canUpdate||!dirty.value)));function signature(){return JSON.stringify(values.value)}function syncDirty(){dirty.value=signature()!==original.value}function assign(row){Object.assign(draft,{code:row?.code||'',name:row?.name||'',symbol:row?.symbol||'',symbolPosition:row?.symbolPosition||'before',decimalPlaces:Number(row?.decimalPlaces??2)})}function selectCurrency(){const item=options.find(x=>x.code===draft.code);if(item){draft.name=item.name;draft.symbol=item.symbol}syncDirty()}async function show(){original.value=signature();dirty.value=false;await dialog.value?.open();await nextTick();original.value=signature();dirty.value=false;firstInput.value?.focus()}async function openCreate(){mode.value='create';current.value=null;assign(null);attempted.value=false;errorMessage.value='';await show()}async function openEdit(row){mode.value='edit';current.value=row;assign(row);attempted.value=false;errorMessage.value='';await show()}function submit(){attempted.value=true;if(Object.values(errors.value).some(Boolean)||submitDisabled.value)return;emit('submit',{mode:mode.value,record:current.value,values:values.value})}function close(){dialog.value?.close()}function reset(){attempted.value=false;dirty.value=false}defineExpose({openCreate,openEdit,close,setError:v=>errorMessage.value=String(v||''),clearError:()=>errorMessage.value=''})</script><style scoped>.currency-form{display:grid;grid-template-columns:1fr 1fr;gap:var(--bio-nexus-space-3);font:400 13px var(--bio-nexus-font-family,Inter,Roboto,Arial,sans-serif)}.readonly{background:var(--bio-nexus-color-surface-soft);cursor:not-allowed}.preview{display:grid;gap:2px;padding:8px 12px;border:1px solid var(--bio-nexus-color-border);border-radius:var(--bio-nexus-radius-sm);background:var(--bio-nexus-color-surface-soft)}.preview span{color:var(--bio-nexus-color-text-muted);font-size:11px}.bio-nexus-message{grid-column:1/-1}@media(max-width:620px){.currency-form{grid-template-columns:1fr}}</style>
+<template>
+  <BioNexusDialog ref="dialog" size="standard" :prevent-close="saving || dirty" :kicker="mode === 'create' ? 'Nuevo registro' : 'Editar registro'" :title="mode === 'create' ? 'Crear moneda' : 'Editar moneda'" @before-close="requestClose" @close="reset">
+    <section class="currency-form-content">
+      <BioNexusFormErrors :errors="errorMessage" />
+
+      <BioNexusSectionPanel title="Información de la moneda" icon="payments" description="Define la identificación, presentación y precisión utilizada para los importes." variant="accent">
+        <div class="currency-form">
+          <BioNexusFormField label="Moneda" field-id="currency-code" :error="errors.code" help="Selecciona la moneda oficial que identificará los importes." required>
+            <select v-if="mode === 'create'" id="currency-code" ref="firstInput" v-model="draft.code" class="bio-nexus-field" @change="selectCurrency">
+              <option value="">Seleccione una moneda</option>
+              <option v-for="item in options" :key="item.code" :value="item.code">{{ item.name }} ({{ item.code }})</option>
+            </select>
+            <input v-else id="currency-code" ref="firstInput" :value="identity" class="bio-nexus-field readonly" readonly>
+          </BioNexusFormField>
+
+          <BioNexusFormField label="Nombre" field-id="currency-name" :error="errors.name" :help="draft.name.length + ' de 80 caracteres'" required>
+            <input id="currency-name" v-model="draft.name" class="bio-nexus-field" maxlength="80" @input="syncDirty">
+          </BioNexusFormField>
+
+          <BioNexusFormField label="Símbolo" field-id="currency-symbol" :error="errors.symbol" :help="draft.symbol.length + ' de 12 caracteres'" required>
+            <input id="currency-symbol" v-model="draft.symbol" class="bio-nexus-field" maxlength="12" @input="syncDirty">
+          </BioNexusFormField>
+
+          <BioNexusFormField label="Posición del símbolo" field-id="currency-position">
+            <select id="currency-position" v-model="draft.symbolPosition" class="bio-nexus-field" @change="syncDirty">
+              <option value="before">Antes del monto</option>
+              <option value="after">Después del monto</option>
+            </select>
+          </BioNexusFormField>
+
+          <BioNexusFormField label="Decimales" field-id="currency-decimals" :error="errors.decimals" help="Cantidad de decimales mostrados, entre 0 y 6.">
+            <input id="currency-decimals" v-model.number="draft.decimalPlaces" class="bio-nexus-field" type="number" min="0" max="6" @input="syncDirty">
+          </BioNexusFormField>
+
+          <div class="currency-preview" aria-live="polite">
+            <span>Vista previa</span>
+            <strong>{{ preview }}</strong>
+          </div>
+        </div>
+      </BioNexusSectionPanel>
+    </section>
+
+    <template #footer>
+      <BioNexusActionButton variant="secondary" icon="cancel" :disabled="saving" @click="requestClose">Cancelar</BioNexusActionButton>
+      <BioNexusActionButton variant="primary" :icon="mode === 'create' ? 'create' : 'save'" :loading="saving" :disabled="submitDisabled" @click="submit">{{ mode === 'create' ? 'Crear' : 'Guardar' }}</BioNexusActionButton>
+    </template>
+  </BioNexusDialog>
+  <BioNexusConfirmDialog ref="discardDialog" />
+</template>
+
+<script setup>
+import { computed, nextTick, reactive, ref } from 'vue'
+import BioNexusActionButton from '@/components/ui/BioNexusActionButton.vue'
+import BioNexusConfirmDialog from '@/components/ui/BioNexusConfirmDialog.vue'
+import BioNexusDialog from '@/components/ui/BioNexusDialog.vue'
+import BioNexusFormErrors from '@/components/ui/BioNexusFormErrors.vue'
+import BioNexusFormField from '@/components/ui/BioNexusFormField.vue'
+import BioNexusSectionPanel from '@/components/ui/BioNexusSectionPanel.vue'
+
+const props = defineProps({ saving: Boolean, canCreate: Boolean, canUpdate: Boolean })
+const emit = defineEmits(['submit'])
+const dialog = ref(null)
+const discardDialog = ref(null)
+const firstInput = ref(null)
+const mode = ref('create')
+const current = ref(null)
+const attempted = ref(false)
+const errorMessage = ref('')
+const original = ref('')
+const dirty = ref(false)
+const draft = reactive({ code: '', name: '', symbol: '', symbolPosition: 'before', decimalPlaces: 2 })
+const options = [
+  { code: 'VES', name: 'Bolívar venezolano', symbol: 'Bs.' },
+  { code: 'USD', name: 'Dólar estadounidense', symbol: '$' },
+  { code: 'EUR', name: 'Euro', symbol: '€' },
+  { code: 'GBP', name: 'Libra esterlina', symbol: '£' },
+  { code: 'COP', name: 'Peso colombiano', symbol: '$' },
+  { code: 'BRL', name: 'Real brasileño', symbol: 'R$' },
+  { code: 'MXN', name: 'Peso mexicano', symbol: '$' },
+  { code: 'ARS', name: 'Peso argentino', symbol: '$' },
+  { code: 'CLP', name: 'Peso chileno', symbol: '$' },
+  { code: 'PEN', name: 'Sol peruano', symbol: 'S/' }
+]
+
+const values = computed(() => ({
+  code: String(draft.code || '').trim().toUpperCase(),
+  name: String(draft.name || '').trim(),
+  symbol: String(draft.symbol || '').trim(),
+  symbolPosition: draft.symbolPosition,
+  decimalPlaces: Number(draft.decimalPlaces)
+}))
+const identity = computed(() => `${current.value?.name || draft.name} (${current.value?.code || draft.code})`)
+const preview = computed(() => draft.symbolPosition === 'after' ? `1.250,00 ${draft.symbol}` : `${draft.symbol} 1.250,00`)
+const isValid = computed(() => /^[A-Z]{3}$/.test(values.value.code) && Boolean(values.value.name) && Boolean(values.value.symbol) && Number.isInteger(values.value.decimalPlaces) && values.value.decimalPlaces >= 0 && values.value.decimalPlaces <= 6)
+const errors = computed(() => attempted.value ? {
+  code: /^[A-Z]{3}$/.test(values.value.code) ? '' : 'Selecciona una moneda.',
+  name: values.value.name ? '' : 'Ingresa el nombre de la moneda.',
+  symbol: values.value.symbol ? '' : 'Ingresa el símbolo de la moneda.',
+  decimals: Number.isInteger(values.value.decimalPlaces) && values.value.decimalPlaces >= 0 && values.value.decimalPlaces <= 6 ? '' : 'Los decimales deben estar entre 0 y 6.'
+} : { code: '', name: '', symbol: '', decimals: '' })
+const submitDisabled = computed(() => props.saving || !dirty.value || !isValid.value || (mode.value === 'create' ? !props.canCreate : !props.canUpdate))
+
+function signature() { return JSON.stringify(values.value) }
+function clearGeneralError() { errorMessage.value = '' }
+function syncDirty() { clearGeneralError(); dirty.value = signature() !== original.value }
+function assign(row) { Object.assign(draft, { code: row?.code || '', name: row?.name || '', symbol: row?.symbol || '', symbolPosition: row?.symbolPosition || 'before', decimalPlaces: Number(row?.decimalPlaces ?? 2) }) }
+function selectCurrency() { const item = options.find(option => option.code === draft.code); if (item) { draft.name = item.name; draft.symbol = item.symbol } syncDirty() }
+async function show() { original.value = signature(); dirty.value = false; await dialog.value?.open(); await nextTick(); original.value = signature(); dirty.value = false; firstInput.value?.focus() }
+async function openCreate() { mode.value = 'create'; current.value = null; assign(null); attempted.value = false; errorMessage.value = ''; await show() }
+async function openEdit(row) { mode.value = 'edit'; current.value = row; assign(row); attempted.value = false; errorMessage.value = ''; await show() }
+function submit() { attempted.value = true; if (Object.values(errors.value).some(Boolean) || submitDisabled.value) return; emit('submit', { mode: mode.value, record: current.value, values: values.value }) }
+async function requestClose() { if (props.saving) return; if (dirty.value) { const confirmed = await discardDialog.value?.ask({ kicker: 'Confirmación', title: 'Descartar cambios', message: 'Hay cambios sin guardar. ¿Deseas salir y descartarlos?', icon: 'warning', variant: 'danger', confirmIcon: 'delete', confirmText: 'Sí, salir y descartar cambios', cancelText: 'Cancelar' }); if (!confirmed) return } dialog.value?.close() }
+function close() { dialog.value?.close() }
+function reset() { attempted.value = false; dirty.value = false; errorMessage.value = '' }
+function setError(value) { errorMessage.value = String(value || '') }
+function clearError() { errorMessage.value = '' }
+defineExpose({ openCreate, openEdit, close, setError, clearError })
+</script>
+
+<style scoped>
+.currency-form-content { display: grid; gap: var(--bio-nexus-space-4); }
+.currency-form { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--bio-nexus-space-3); align-items: start; font: 400 13px var(--bio-nexus-font-family, Inter, Roboto, Arial, sans-serif); }
+.readonly { background: var(--bio-nexus-color-surface-soft); cursor: not-allowed; }
+.currency-preview { display: grid; gap: 2px; align-self: start; padding: 8px 12px; border: 1px solid var(--bio-nexus-color-border); border-radius: var(--bio-nexus-radius-sm); background: var(--bio-nexus-color-surface-soft); }
+.currency-preview span { color: var(--bio-nexus-color-text-muted); font-size: 11px; }
+@media (max-width: 620px) { .currency-form { grid-template-columns: 1fr; } }
+</style>
