@@ -1,2 +1,19 @@
-﻿import fs from "node:fs";import assert from "node:assert/strict";const read=p=>fs.readFileSync(p,"utf8"),state=read("src/components/tax/TaxStateDialog.vue"),dialog=read("src/components/tax/TaxDialog.vue"),view=read("src/views/TaxesView.vue");assert.ok(state.includes("isInactive:record=>record?.hide===true"),"STATE_DIRECTION");assert.ok(state.includes('activateTitle:"Activar impuesto"')&&state.includes('deactivateTitle:"Inactivar impuesto"'),"STATE_ACTIONS");assert.ok(dialog.includes("BioNexusCheckbox"),"SHARED_CHECKBOX_IMPORT");assert.ok(dialog.includes("Solo d&#243;lares"),"DOLLARS_LABEL_ENCODING");assert.ok((dialog.match(/<BioNexusCheckbox/g)||[]).length===2,"SHARED_CHECKBOX_COUNT");assert.ok(!dialog.includes('type="checkbox"'),"NATIVE_CHECKBOX_REMAINS");assert.ok(view.includes(':quick-filter-text="search"'),"QUICK_FILTER_BINDING");assert.ok(view.includes(':row-data="gridRows"'),"SEARCHABLE_ROWS");assert.ok(view.includes('colId: "searchValue"'),"SEARCH_VALUE_COLUMN");for(const value of["description","only_dollars","always_subtotal","Inactivo","Activo"])assert.ok(view.includes(value),"SEARCH_VALUE_"+value);console.log("Tax final interactions approved.");
-
+import fs from "node:fs";
+import assert from "node:assert/strict";
+const read = (path) => fs.readFileSync(path, "utf8");
+const state = read("src/components/tax/TaxStateDialog.vue");
+const dialog = read("src/components/tax/TaxDialog.vue");
+const view = read("src/views/TaxesView.vue");
+assert.ok(state.includes("isInactive:record=>record?.hide===true"), "STATE_DIRECTION");
+assert.ok(state.includes('activateTitle:"Activar impuesto"') && state.includes('deactivateTitle:"Inactivar impuesto"'), "STATE_ACTIONS");
+assert.ok(dialog.includes("BioNexusCheckbox"), "SHARED_CHECKBOX_IMPORT");
+assert.ok(dialog.includes('label="Solo dólares"'), "DOLLARS_LABEL_ENCODING");
+assert.ok((dialog.match(/<BioNexusCheckbox/g) || []).length === 2, "SHARED_CHECKBOX_COUNT");
+assert.ok(!dialog.includes('type="checkbox"'), "NATIVE_CHECKBOX_REMAINS");
+assert.ok(view.includes(':quick-filter-text="search"'), "QUICK_FILTER_BINDING");
+assert.ok(view.includes(':row-data="gridRows"'), "SEARCHABLE_ROWS");
+assert.ok(view.includes('colId: "searchValue"'), "SEARCH_VALUE_COLUMN");
+for (const value of ["description", "only_dollars", "always_subtotal", "Desactivado", "Activo"]) assert.ok(view.includes(value), "SEARCH_VALUE_" + value);
+assert.ok(view.includes('toggleColumn("only_dollars", "Solo dolares", 170)'), "DOLLARS_COLUMN");
+assert.ok(view.includes('row.only_dollars ? "Desactivar Solo dolares" : "Activar Solo dolares"'), "DOLLARS_CONTEXT_ACTION");
+console.log("Tax final interactions approved.");

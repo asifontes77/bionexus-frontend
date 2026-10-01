@@ -31,13 +31,7 @@
         @row-context-menu="openContextMenu"
       >
         <template #actions>
-          <button
-            v-if="canCreate"
-            type="button"
-            class="bio-nexus-action bio-nexus-action-primary bio-nexus-grid-icon-action"
-            :disabled="saving"
-            @click="formDialog?.openCreate()"
-           title="Nuevo impuesto" aria-label="Nuevo impuesto"><BioNexusActionIcon action="create" /></button>
+          <BioNexusActionButton v-if="canCreate" icon="add" icon-only shape="rounded" size="md" variant="primary" label="Nuevo impuesto" :disabled="loading || saving" @click="formDialog?.openCreate()" />
         </template>
       </BioNexusDataGrid>
 
@@ -52,7 +46,7 @@
       />
     </section>
 
-    <TaxDialog ref="formDialog" :saving="saving" :can-create="canCreate" :can-update="canUpdate" @submit="save" />
+    <TaxDialog ref="formDialog" :saving="saving" :can-create="canCreate" :can-update="canUpdate" :taxes="rows" @submit="save" />
     <TaxStateDialog ref="stateDialog" :saving="saving" @confirm="changeState" />
 
   </section>
@@ -64,7 +58,7 @@ import BioNexusDataGrid from "@/components/grid/BioNexusDataGrid.vue";
 import BioNexusGridActionsCell from "@/components/grid/BioNexusGridActionsCell.vue";
 import BioNexusGridToggleCell from "@/components/grid/BioNexusGridToggleCell.vue";
 import BioNexusOptionFilter from "@/components/grid/BioNexusOptionFilter.vue";
-import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
+import BioNexusActionButton from "@/components/ui/BioNexusActionButton.vue";
 import BioNexusContextMenu from "@/components/ui/BioNexusContextMenu.vue";
 import TaxDialog from "@/components/tax/TaxDialog.vue";
 import TaxStateDialog from "@/components/tax/TaxStateDialog.vue";
@@ -89,7 +83,7 @@ const stateDialog = ref(null);
 const contextMenu = ref(null);
 const contextState = ref({ open: false, x: 0, y: 0, row: null });
 
-const gridRows = computed(() => rows.value.map((row) => ({ ...row, isActive: !row.hide, searchValue: [row.description, formatRegionalNumber(row.value, regionalSettings.settings, { minimumFractionDigits: 2, maximumFractionDigits: 2 }), row.only_dollars ? "Si" : "No", row.always_subtotal ? "Si" : "No", row.hide ? "Desactivado" : "Activo"].join(" ") })));
+const gridRows = computed(() => rows.value.map((row) => ({ ...row, isActive: !row.hide, searchValue: [row.description, formatRegionalNumber(row.value, regionalSettings.settings, { minimumFractionDigits: regionalSettings.settings.monetary_decimals, maximumFractionDigits: regionalSettings.settings.monetary_decimals }), row.only_dollars ? "Si" : "No", row.always_subtotal ? "Si" : "No", row.hide ? "Desactivado" : "Activo"].join(" ") })));
 const canCreate = computed(() => authorization.hasPermission("tax.create"));
 const canUpdate = computed(() => authorization.hasPermission("tax.update"));
 const canChangeStatus = computed(() => authorization.hasPermission("tax.update"));
@@ -105,7 +99,7 @@ const contextItems = computed(() => {
     { key: "edit", label: "Editar", icon: "edit", visible: canUpdate.value, disabled: saving.value, action: () => formDialog.value?.openEdit(row) },
     { key: "toggle-only-dollars", label: row.only_dollars ? "Desactivar Solo dolares" : "Activar Solo dolares", icon: row.only_dollars ? "deactivate" : "activate", visible: canUpdate.value, disabled: saving.value, action: () => toggleBoolean(row, "only_dollars") },
     { key: "toggle-always-subtotal", label: row.always_subtotal ? "Desactivar Fijo en subtotal" : "Activar Fijo en subtotal", icon: row.always_subtotal ? "deactivate" : "activate", visible: canUpdate.value, disabled: saving.value, action: () => toggleBoolean(row, "always_subtotal") },
-    { key: "change-status", label: row.hide ? "Activar" : "Desactivar", icon: row.hide ? "activate" : "deactivate", visible: canChangeStatus.value, disabled: saving.value, action: () => stateDialog.value?.open(row) },
+    { key: "change-status", label: row.hide ? "Activar" : "Desactivar", icon: row.hide ? "activate" : "deactivate", variant: row.hide ? undefined : "danger", visible: canChangeStatus.value, disabled: saving.value, action: () => stateDialog.value?.open(row) },
 
   ];
 });
@@ -133,7 +127,7 @@ function toggleColumn(field, headerName, width, onLabel = "Si", offLabel = "No",
 const columns = computed(() => [
   { colId: "searchValue", valueGetter: ({ data }) => data?.searchValue || "", hide: true, suppressColumnsToolPanel: true, filter: false, sortable: false },
   { field: "description", headerName: "Descripcion", minWidth: 220, flex: 1 },
-  { field: "value", headerName: "Porcentaje", width: 150, minWidth: 150, headerClass: "tax-center-header", cellClass: "tax-center-cell", valueFormatter: ({ value }) => `${formatRegionalNumber(value, regionalSettings.settings, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} %` },
+  { field: "value", headerName: "Porcentaje", width: 150, minWidth: 150, headerClass: "tax-center-header", cellClass: "tax-center-cell", valueFormatter: ({ value }) => `${formatRegionalNumber(value, regionalSettings.settings, { minimumFractionDigits: regionalSettings.settings.monetary_decimals, maximumFractionDigits: regionalSettings.settings.monetary_decimals })} %` },
   toggleColumn("only_dollars", "Solo dolares", 170),
   toggleColumn("always_subtotal", "Fijo en subtotal", 180, "Si", "No", { exportAlignment: "center", exportHeaderAlignment: "center", cellStyle: { textAlign: "center" } }),
   { colId:"isActive",headerName:"Estado",width:150,filter:BioNexusOptionFilter,filterParams:{options:[{value:true,label:"Activo"},{value:false,label:"Desactivado"}]},valueGetter:({data})=>!data?.hide,headerClass:"tax-center-header",cellClass:"tax-center-cell",valueFormatter:({value})=>value?"Activo":"Desactivado",cellRenderer:BioNexusGridToggleCell,cellRendererParams:{onLabel:"Activo",offLabel:"Desactivado",ariaLabel:"Estado",disabled:()=>!canChangeStatus.value||saving.value,onToggle:row=>stateDialog.value?.open(row)} },
@@ -193,7 +187,7 @@ async function toggleBoolean(row, field) {
   saving.value = true;
   closeContextMenu();
   try {
-    const saved = await updateTax(row.id, { ...row, [field]: !row[field] });
+    const saved = await updateTax(row.id, { [field]: !row[field] });
     replace(saved);
     toast.success("Impuesto actualizado correctamente.");
   }
@@ -208,6 +202,7 @@ async function save(payload) {
   try {
     const value = payload.mode === "create" ? await createTax(payload.values) : await updateTax(payload.record.id, payload.values);
     replace(value);
+    formDialog.value?.markSaved(value);
     formDialog.value?.close();
     toast.success(payload.mode === "create" ? "Impuesto creado correctamente." : "Impuesto actualizado correctamente.");
   }

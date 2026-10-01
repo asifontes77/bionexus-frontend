@@ -18,8 +18,8 @@ assert.ok(breadcrumb.includes('name: "configuration-billing-module"') && breadcr
 assert.ok(/colId\s*:\s*["']isActive["']/.test(view), "ACTIVE_COLUMN");
 assert.ok(/valueGetter\s*:\s*\([^)]*\)\s*=>\s*!\s*[^,;\n]*hide/.test(view), "ACTIVE_SEMANTICS");
 assert.ok(/onLabel\s*:\s*["']Activo["']/.test(view), "ACTIVE_ON");
-assert.ok(/offLabel\s*:\s*["']Inactivo["']/.test(view), "INACTIVE_OFF");
-assert.ok(/mode\.value\s*===?\s*["']create["'][^:]*\?\s*!?props\.canCreate/.test(dialog), "CREATE_PERMISSION");
+assert.ok(/offLabel\s*:\s*["']Desactivado["']/.test(view), "INACTIVE_OFF");
+assert.ok(dialog.includes('mode.value==="create"?(!props.canCreate||!dirty.value||!isValid.value)'), "CREATE_PERMISSION");
 assert.ok(/attempted\.value\s*=\s*true/.test(dialog), "VALIDATE_ON_CLICK");
 assert.ok(dialog.includes("descriptionError") && dialog.includes("valueError"), "FIELD_ERRORS");
 assert.ok(/!\s*dirty\.value/.test(dialog), "EDIT_DIRTY");
