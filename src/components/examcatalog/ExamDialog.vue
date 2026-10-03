@@ -7,12 +7,12 @@
         <div class="exam-main-grid">
           <BioNexusFormField label="Descripción" field-id="exam-description" :error="descriptionError" :help="draft.description.length + ' de 60 caracteres'" required><input id="exam-description" ref="firstInput" v-model="draft.description" class="bio-nexus-field" maxlength="60" @input="handleFormMutation" /></BioNexusFormField>
           <BioNexusFormField label="Abreviatura" field-id="exam-abbreviation" :error="abbreviationError" :help="draft.abbreviation.length + ' de 10 caracteres'" required><input id="exam-abbreviation" v-model="draft.abbreviation" class="bio-nexus-field" maxlength="10" @input="handleFormMutation" /></BioNexusFormField>
-          <BioNexusFormField label="Impuesto" field-id="exam-tax"><select id="exam-tax" v-model.number="draft.tax_id" class="bio-nexus-field" @change="handleFormMutation"><option v-for="tax in taxes" :key="tax.id" :value="tax.id">{{ tax.description }} ({{ percentage(tax.value) }}%)</option></select></BioNexusFormField>
+          <BioNexusFormField label="Impuesto" field-id="exam-tax"><BioNexusSearchableSelect id="exam-tax" v-model="draft.tax_id" :options="taxOptions" value-key="id" label-key="displayName" placeholder="Seleccione un impuesto" search-placeholder="Buscar impuesto..." empty-text="Sin impuestos disponibles" @change="handleFormMutation" /></BioNexusFormField>
           <BioNexusCheckbox v-model="draft.special_test" class="exam-check" label="Prueba especial" @change="handleFormMutation" />
         </div>
       </BioNexusSectionPanel>
       <BioNexusSectionPanel title="Tarifas" icon="price_change" description="Establece el precio del examen para cada tarifa disponible." variant="accent">
-        <div class="exam-price-grid"><BioNexusFormField v-for="tariff in tariffFields" :key="tariff.id" :label="tariff.name + ' (' + baseCurrencySymbol + ')'" :field-id="'exam-cost-' + tariff.position"><input :id="'exam-cost-' + tariff.position" v-model.trim="draft['cost' + tariff.position]" class="bio-nexus-field" type="text" inputmode="decimal" :placeholder="moneyPlaceholder" @input="handleFormMutation" /></BioNexusFormField></div>
+        <div class="exam-price-grid"><BioNexusFormField v-for="tariff in tariffFields" :key="tariff.id" :label="tariff.name + ' (' + baseCurrencySymbol + ')'" :field-id="'exam-cost-' + tariff.position"><BioNexusNumericInput :id="'exam-cost-' + tariff.position" v-model="draft['cost' + tariff.position]" :min="0" :decimals="monetaryDecimals" @input="handleFormMutation" /></BioNexusFormField></div>
       </BioNexusSectionPanel>
       </BioNexusFormLayout>
     </section>
@@ -25,7 +25,7 @@
 </template>
 
 <script setup>
-import { formatRegionalAmount, formatRegionalNumber, parseRegionalNumber } from "@/services/regionalFormatter";
+import { formatRegionalNumber } from "@/services/regionalFormatter";
 import { useRegionalSettingsStore } from "@/stores/regionalSettings";
 import BioNexusCheckbox from "@/components/ui/BioNexusCheckbox.vue";
 import { computed, nextTick, reactive, ref } from "vue";
@@ -36,6 +36,8 @@ import BioNexusFormField from "@/components/ui/BioNexusFormField.vue";
 import BioNexusFormErrors from "@/components/ui/BioNexusFormErrors.vue";
 import BioNexusFormLayout from "@/components/ui/BioNexusFormLayout.vue";
 import BioNexusSectionPanel from "@/components/ui/BioNexusSectionPanel.vue";
+import BioNexusSearchableSelect from "@/components/ui/BioNexusSearchableSelect.vue";
+import BioNexusNumericInput from "@/components/ui/BioNexusNumericInput.vue";
 
 const props = defineProps({ saving: { type: Boolean, default: false }, canCreate: { type: Boolean, default: false }, canUpdate: { type: Boolean, default: false }, taxes: { type: Array, default: () => [] }, tariffs: { type: Array, default: () => [] }, group: { type: Object, default: null } });
 const emit = defineEmits(["submit"]);
@@ -43,9 +45,10 @@ const dialog = ref(null), discardDialog = ref(null), firstInput = ref(null), mod
 const regionalSettings = useRegionalSettingsStore();
 const baseCurrencySymbol = computed(() => String(regionalSettings.settings.base_currency_symbol || 'USD').trim() || 'USD');
 const tariffFields = computed(() => props.tariffs.filter(t => Number(t.position) >= 1 && Number(t.position) <= 6).sort((a,b) => Number(a.position) - Number(b.position)));
-const moneyPlaceholder = computed(() => formatRegionalAmount(0, regionalSettings.settings));
-const draft = reactive({ description: "", abbreviation: "", tax_id: 1, special_test: false, cost1: "", cost2: "", cost3: "", cost4: "", cost5: "", cost6: "" });
-function price(number) { return parseRegionalNumber(draft["cost" + number], regionalSettings.settings); }
+const monetaryDecimals = computed(() => Math.max(0, Number(regionalSettings.settings.monetary_decimals) || 0));
+const taxOptions = computed(() => props.taxes.map(tax => ({ ...tax, id: Number(tax.id), displayName: `${tax.description} (${percentage(tax.value)}%)` })));
+const draft = reactive({ description: "", abbreviation: "", tax_id: 1, special_test: false, cost1: 0, cost2: 0, cost3: 0, cost4: 0, cost5: 0, cost6: 0 });
+function price(number) { const value = Number(draft["cost" + number]); return Number.isFinite(value) && value >= 0 ? value : null; }
 function percentage(value) { const digits = Number(regionalSettings.settings.monetary_decimals) || 0; return formatRegionalNumber(value, regionalSettings.settings, { minimumFractionDigits: digits, maximumFractionDigits: digits }); }
 const values = computed(() => ({ group_id: props.group?.id || 0, description: draft.description.trim().toUpperCase(), abbreviation: draft.abbreviation.trim().toUpperCase(), tax_id: Number(draft.tax_id) || 0, special_test: Boolean(draft.special_test), cost1: price(1) ?? 0, cost2: price(2) ?? 0, cost3: price(3) ?? 0, cost4: price(4) ?? 0, cost5: price(5) ?? 0, cost6: price(6) ?? 0 }));
 const signature = computed(() => JSON.stringify(values.value));
@@ -57,7 +60,7 @@ const hasChanges = computed(() => signature.value !== original.value);
 const submitDisabled = computed(() => mode.value === "create" ? props.saving || !props.canCreate || !isValid.value : props.saving || !props.canUpdate || !isValid.value || !hasChanges.value);
 
 async function show() { await dialog.value?.open(); nextTick(() => firstInput.value?.focus()); }
-function assign(row) { draft.description = row?.description || ""; draft.abbreviation = row?.abbreviation || ""; draft.tax_id = row?.tax_id || props.taxes[0]?.id || 1; draft.special_test = Boolean(row?.special_test); for (let number = 1; number <= 6; number += 1) draft['cost' + number] = formatRegionalAmount(row?.['cost' + number] || 0, regionalSettings.settings); original.value = JSON.stringify(values.value); }
+function assign(row) { draft.description = row?.description || ""; draft.abbreviation = row?.abbreviation || ""; draft.tax_id = row?.tax_id || props.taxes[0]?.id || 1; draft.special_test = Boolean(row?.special_test); for (let number = 1; number <= 6; number += 1) draft['cost' + number] = Number(row?.['cost' + number]) || 0; original.value = JSON.stringify(values.value); }
 function openCreate() { mode.value = "create"; current.value = null; assign(null); attempted.value = false; errorMessage.value = ""; show(); }
 function openEdit(row) { mode.value = "edit"; current.value = row; assign(row); attempted.value = false; errorMessage.value = ""; show(); }
 async function close() { if (props.saving) return; if (hasChanges.value) { const accepted = await discardDialog.value?.ask({ title: "Descartar cambios", message: "Hay cambios sin guardar. ¿Deseas salir y descartarlos?", confirmText: "Sí, salir y descartar cambios", confirmIcon: "delete", variant: "danger" }); if (!accepted) return; } dialog.value?.close(); }

@@ -1,4 +1,4 @@
-﻿import assert from "node:assert/strict";
+import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, it } from "node:test";
@@ -18,7 +18,7 @@ describe("Exam catalog regional monetary contract", () => {
   });
 
   it("usa simbolo y entrada regional en el dialogo", () => {
-    for (const token of ["baseCurrencySymbol", "base_currency_symbol", "parseRegionalNumber", "formatRegionalAmount", 'inputmode="decimal"', "price(number)"])
+    for (const token of ["baseCurrencySymbol", "base_currency_symbol", "BioNexusNumericInput", "monetaryDecimals", "price(number)"])
       assert.ok(dialog.includes(token), `DIALOG_MISSING_${token}`);
     assert.ok(!dialog.includes('tariff.name + \' (USD)\''));
     assert.ok(!dialog.includes('step="0.01"'));

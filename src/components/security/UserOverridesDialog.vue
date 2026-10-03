@@ -1,17 +1,20 @@
-<template>
-  <BioNexusDialog ref="dialog" size="wide" dialog-class="user-overrides-dialog" body-class="user-overrides-dialog-body" kicker="Excepciones individuales" :title="`Permisos de ${user?.name || 'Usuario'}`" :prevent-close="saving" @close="handleClosed">
+﻿<template>
+  <BioNexusDialog ref="dialog" size="wide" dialog-class="user-overrides-dialog" body-class="user-overrides-dialog-body" kicker="Excepciones individuales" :title="`Permisos de ${user?.name || 'Usuario'}`" :prevent-close="saving || hasChanges" @before-close="requestClose" @close="handleClosed">
     <template #toolbar>
       <section class="overrides-toolbar">
         <BioNexusFormField label="Buscar permiso" field-id="user-permission-search">
-          <input id="user-permission-search" v-model="searchText" class="bio-nexus-field" type="search" autocomplete="off" placeholder="Modulo, nombre o descripcion" />
+          <input id="user-permission-search" v-model="searchText" class="bio-nexus-field" type="search" autocomplete="off" placeholder="Módulo, nombre o descripción" />
         </BioNexusFormField>
         <BioNexusFormField label="Estado" field-id="user-override-filter">
-          <select id="user-override-filter" v-model="statusFilter" class="bio-nexus-field">
-            <option value="all">Todos</option>
-            <option value="inherited">Según roles</option>
-            <option value="allow">Permitir</option>
-            <option value="deny">Denegar</option>
-          </select>
+          <BioNexusSearchableSelect
+            id="user-override-filter"
+            v-model="statusFilter"
+            :options="statusFilterOptions"
+            aria-label="Estado de la excepción"
+            placeholder="Todos"
+            search-placeholder="Buscar estado..."
+            empty-text="Sin estados coincidentes"
+          />
         </BioNexusFormField>
         <span><strong>{{ draftOverrides.length }}</strong> excepciones</span>
       </section>
@@ -38,11 +41,17 @@
         <BioNexusPermissionTree class="user-override-tree" :modules="filteredModules" :search-text="searchText" empty-text="No existen permisos que coincidan con los filtros.">
           <template #permission-action="{ permission }">
             <div class="override-tree-action" :class="{ 'override-tree-action-disabled': !permission.isActive || user?.hidden }">
-              <select :value="getEffect(permission.id)" :aria-label="`Excepción para ${permission.displayName}`" :disabled="!permission.isActive || !canEdit || !canAssign || saving" @change="emit('set-override', permission, $event.target.value)">
-                <option value="">Según roles</option>
-                <option :value="PermissionEffect.Allow">Permitir</option>
-                <option :value="PermissionEffect.Deny">Denegar</option>
-              </select>
+              <BioNexusSearchableSelect
+                class="override-effect-select"
+                :model-value="getEffect(permission.id)"
+                :options="overrideEffectOptions"
+                :aria-label="`Excepción para ${permission.displayName}`"
+                :disabled="!permission.isActive || !canEdit || !canAssign || saving"
+                placeholder="Según roles"
+                search-placeholder="Buscar efecto..."
+                empty-text="Sin efectos coincidentes"
+                @update:model-value="emit('set-override', permission, $event)"
+              />
               <span class="bio-nexus-badge" :class="getBadgeClass(permission)">{{ getLabel(permission) }}</span>
             </div>
           </template>
@@ -53,10 +62,11 @@
     </section>
     <template #footer-status><span class="dialog-pending-status">{{ hasChanges ? "Existen cambios pendientes." : "Las excepciones están sincronizadas." }}</span></template>
     <template #footer>
-      <button type="button" class="bio-nexus-action bio-nexus-action-secondary" :disabled="saving" @click="cancel"><BioNexusActionIcon action="cancel" />Cancelar</button>
+      <button type="button" class="bio-nexus-action bio-nexus-action-secondary" :disabled="saving" @click="requestClose"><BioNexusActionIcon action="cancel" />Cancelar</button>
       <button v-if="canAssign" type="button" class="bio-nexus-action bio-nexus-action-primary" :disabled="!canEdit || !hasChanges || saving" @click="emit('save')"><BioNexusActionIcon action="assignPermissions" />{{ saving ? "Guardando..." : "Guardar excepciones" }}</button>
     </template>
   </BioNexusDialog>
+  <BioNexusConfirmDialog ref="discardDialog" />
 </template>
 <script setup>
 import { computed, ref } from "vue";
@@ -64,11 +74,24 @@ import { PermissionEffect } from "@/models/authorization";
 import { groupPermissionsForPresentation } from "@/presentation/permissionPresentation";
 import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
 import BioNexusDialog from "@/components/ui/BioNexusDialog.vue";
+import BioNexusConfirmDialog from "@/components/ui/BioNexusConfirmDialog.vue";
 import BioNexusFormField from "@/components/ui/BioNexusFormField.vue";
+import BioNexusSearchableSelect from "@/components/ui/BioNexusSearchableSelect.vue";
 import BioNexusPermissionTree from "@/components/tree/BioNexusPermissionTree.vue";
 const props = defineProps({ user: { type: Object, default: null }, authorization: { type: Object, default: null }, permissions: { type: Array, default: () => [] }, draftOverrides: { type: Array, default: () => [] }, loading: { type: Boolean, default: false }, errorMessage: { type: String, default: "" }, saveError: { type: String, default: "" }, saveMessage: { type: String, default: "" }, saving: { type: Boolean, default: false }, canAssign: { type: Boolean, default: false }, canEdit: { type: Boolean, default: false }, hasChanges: { type: Boolean, default: false }, inactiveOverrideCount: { type: Number, default: 0 } });
 const emit = defineEmits(["set-override", "cancel", "save"]);
-const dialog = ref(null); const searchText = ref(""); const statusFilter = ref("all");
+const dialog = ref(null); const discardDialog = ref(null); const searchText = ref(""); const statusFilter = ref("all");
+const statusFilterOptions = [
+  { value: "all", label: "Todos" },
+  { value: "inherited", label: "Según roles" },
+  { value: PermissionEffect.Allow, label: "Permitir" },
+  { value: PermissionEffect.Deny, label: "Denegar" },
+];
+const overrideEffectOptions = [
+  { value: "", label: "Según roles" },
+  { value: PermissionEffect.Allow, label: "Permitir" },
+  { value: PermissionEffect.Deny, label: "Denegar" },
+];
 const modules = computed(() => groupPermissionsForPresentation(props.permissions));
 function getEffect(permissionId) { return props.draftOverrides.find((item) => item.permissionId === permissionId)?.effect || ""; }
 const filteredModules = computed(() => { const search = searchText.value.trim().toLowerCase(); return modules.value.map((module) => ({ ...module, permissions: module.permissions.filter((permission) => { const effect = getEffect(permission.id); const matchesEffect = statusFilter.value === "all" || (statusFilter.value === "inherited" && effect === "") || effect === statusFilter.value; const matchesSearch = search === "" || [module.label, permission.displayName, permission.displayDescription].some((value) => value.toLowerCase().includes(search)); return matchesEffect && matchesSearch; }) })).filter((module) => module.permissions.length > 0); });
@@ -103,7 +126,24 @@ function getBadgeClass(permission) {
 }
 function open() { searchText.value = ""; statusFilter.value = "all"; dialog.value?.open(); }
 function close() { dialog.value?.close(); }
-function cancel() { if (props.saving) return; emit("cancel"); searchText.value = ""; statusFilter.value = "all"; close(); }
+async function requestClose() {
+  if (props.saving) return;
+  if (props.hasChanges) {
+    const confirmed = await discardDialog.value?.ask({
+      kicker: "Confirmación",
+      title: "Descartar cambios",
+      message: "Hay cambios sin guardar. ¿Deseas salir y descartarlos?",
+      icon: "warning",
+      variant: "danger",
+      confirmIcon: "delete",
+      confirmText: "Sí, salir y descartar cambios",
+      cancelText: "Cancelar",
+    });
+    if (!confirmed) return;
+  }
+  emit("cancel");
+  dialog.value?.close();
+}
 function handleClosed() { searchText.value = ""; statusFilter.value = "all"; }
 defineExpose({ open, close });
 </script>
@@ -121,7 +161,7 @@ defineExpose({ open, close });
 .user-override-tree { width: 100%; min-width: 0; }
 .override-tree-action { display: grid; grid-template-columns: 170px minmax(150px, auto); align-items: center; gap: var(--bio-nexus-space-2); min-width: 342px; }
 .override-tree-action-disabled { opacity: .68; }
-.override-tree-action select { width: 100%; min-height: 34px; padding-inline: var(--bio-nexus-space-2); border: 1px solid var(--bio-nexus-color-border-strong); border-radius: var(--bio-nexus-radius-md); background: var(--bio-nexus-color-surface); color: var(--bio-nexus-color-text); }
+.override-effect-select{width:100%;min-width:0}.override-effect-select :deep(.bio-search-select),.override-effect-select :deep(.bio-search-trigger){width:100%;min-width:0}.override-effect-select :deep(.bio-search-trigger){min-height:34px;height:34px;padding-inline:var(--bio-nexus-space-2)}
 .dialog-pending-status { color: var(--bio-nexus-color-text-muted); font-size: var(--bio-nexus-font-size-sm); }
 @media (max-width: 720px) { .overrides-toolbar, .override-explanation-body dl { grid-template-columns: 1fr; } .override-tree-action { grid-template-columns: 1fr; min-width: 0; width: 100%; } .override-explanation > summary { align-items: flex-start; flex-direction: column; } .override-explanation > summary small { margin-left: 0; } }
 
@@ -136,4 +176,5 @@ defineExpose({ open, close });
 dialog.bio-nexus-dialog.user-overrides-dialog { width: min(900px, calc(100vw - 32px)) !important; height: min(720px, calc(100dvh - 48px)) !important; }
 dialog.bio-nexus-dialog.user-overrides-dialog > .bio-nexus-dialog-shell > .user-overrides-dialog-body { flex: 1 1 0; min-height: 0; overflow: hidden; }
 @media (max-width: 720px) { dialog.bio-nexus-dialog.user-overrides-dialog { width: calc(100vw - 16px) !important; height: calc(100dvh - 16px) !important; } }
+
 </style>

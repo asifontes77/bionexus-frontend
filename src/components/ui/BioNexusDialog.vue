@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <dialog ref="dialog" class="bio-nexus-dialog" :class="[dialogClasses, dialogClass]" tabindex="-1" @cancel.prevent="blockImplicitClose" @keydown.esc.capture.prevent.stop="blockImplicitClose" @click="blockBackdropClose" @close="handleNativeClose">
     <section class="bio-nexus-dialog-shell" :class="shellClass">
       <header class="bio-nexus-dialog-header">
@@ -27,6 +27,7 @@
 <script setup>
 import { computed, nextTick, onBeforeUnmount, ref } from "vue";
 import BioNexusDialogCloseButton from "@/components/ui/BioNexusDialogCloseButton.vue";
+import { isTopBioNexusDialog, registerBioNexusDialog, unregisterBioNexusDialog } from "@/services/dialogManager";
 
 const props = defineProps({
   kicker: { type: String, default: "" },
@@ -52,6 +53,7 @@ async function open() {
   if (!dialog.value || dialog.value.open) return;
   previousFocus.value = document.activeElement;
   dialog.value.showModal();
+  registerBioNexusDialog(dialog.value);
   document.addEventListener("keydown", blockEscape, true);
   resetBodyScroll();
   await nextTick();
@@ -69,18 +71,20 @@ function requestClose() {
 
 function close(returnValue = "") {
   document.removeEventListener("keydown", blockEscape, true);
+  unregisterBioNexusDialog(dialog.value);
   if (dialog.value?.open) dialog.value.close(returnValue);
 }
 
 function handleNativeClose() {
   document.removeEventListener("keydown", blockEscape, true);
+  unregisterBioNexusDialog(dialog.value);
   previousFocus.value?.focus?.({ preventScroll: true });
   previousFocus.value = null;
   emit("close");
 }
 
 function blockEscape(event) {
-  if (event?.key !== "Escape" || event.defaultPrevented) return;
+  if (event?.key !== "Escape" || event.defaultPrevented || !isTopBioNexusDialog(dialog.value)) return;
   event.preventDefault();
   event.stopPropagation();
   requestClose();

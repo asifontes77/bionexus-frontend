@@ -1,4 +1,4 @@
-const state = {
+﻿const state = {
   observer: null,
   installed: false,
   locked: false,
@@ -6,7 +6,26 @@ const state = {
   scrollY: 0,
   bodyStyles: null,
   htmlStyles: null,
+  dialogStack: [],
 };
+
+export function registerBioNexusDialog(dialog) {
+  if (!dialog) return;
+  state.dialogStack = state.dialogStack.filter((item) => item !== dialog);
+  state.dialogStack.push(dialog);
+}
+
+export function unregisterBioNexusDialog(dialog) {
+  if (!dialog) return;
+  state.dialogStack = state.dialogStack.filter((item) => item !== dialog);
+}
+
+export function isTopBioNexusDialog(dialog) {
+  if (!dialog) return false;
+  const openStack = state.dialogStack.filter((item) => item?.open);
+  state.dialogStack = openStack;
+  return openStack.at(-1) === dialog;
+}
 
 function openModalDialogs() {
   return Array.from(document.querySelectorAll("dialog[open]")).filter((dialog) => {

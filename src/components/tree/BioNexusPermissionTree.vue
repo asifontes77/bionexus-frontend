@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="bio-nexus-permission-tree">
     <div
       v-if="treeItems.length === 0"
@@ -12,6 +12,7 @@
       :items="treeItems"
       :is-checkable="false"
       :hide-guide-lines="false"
+      @on-select="clearInternalSelection"
     >
       <template #item-name="slotValue">
         <div
@@ -115,7 +116,7 @@
 
 <script setup>
 import BioNexusCheckbox from "@/components/ui/BioNexusCheckbox.vue";
-import { computed, useSlots } from "vue";
+import { computed, nextTick, useSlots } from "vue";
 import Vue3TreeVue from "vue3-tree-vue";
 import "vue3-tree-vue/dist/style.css";
 
@@ -295,6 +296,16 @@ const treeItems = computed(() => {
   return items;
 });
 
+function clearSelectedState(items) {
+  for (const item of items) {
+    item.selected = false;
+    if (Array.isArray(item.children)) clearSelectedState(item.children);
+  }
+}
+async function clearInternalSelection() {
+  await nextTick();
+  clearSelectedState(treeItems.value);
+}
 function groupPermissions(permissions) {
   const grouped = new Map();
 

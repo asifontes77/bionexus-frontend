@@ -6,10 +6,7 @@
       <BioNexusSectionPanel title="Información de la moneda" icon="payments" description="Define la identificación, presentación y precisión utilizada para los importes." variant="accent">
         <div class="currency-form">
           <BioNexusFormField label="Moneda" field-id="currency-code" :error="errors.code" help="Selecciona la moneda oficial que identificará los importes." required>
-            <select v-if="mode === 'create'" id="currency-code" ref="firstInput" v-model="draft.code" class="bio-nexus-field" @change="selectCurrency">
-              <option value="">Seleccione una moneda</option>
-              <option v-for="item in options" :key="item.code" :value="item.code">{{ item.name }} ({{ item.code }})</option>
-            </select>
+            <BioNexusSearchableSelect v-if="mode === 'create'" id="currency-code" ref="firstInput" v-model="draft.code" :options="currencyOptions" value-key="code" label-key="label" placeholder="Seleccione una moneda" search-placeholder="Buscar moneda..." empty-text="Sin monedas coincidentes" @change="selectCurrency" />
             <input v-else id="currency-code" ref="firstInput" :value="identity" class="bio-nexus-field readonly" readonly>
           </BioNexusFormField>
 
@@ -22,10 +19,7 @@
           </BioNexusFormField>
 
           <BioNexusFormField label="Posición del símbolo" field-id="currency-position">
-            <select id="currency-position" v-model="draft.symbolPosition" class="bio-nexus-field" @change="syncDirty">
-              <option value="before">Antes del monto</option>
-              <option value="after">Después del monto</option>
-            </select>
+            <BioNexusSearchableSelect id="currency-position" v-model="draft.symbolPosition" :options="symbolPositionOptions" placeholder="Seleccione la posición" search-placeholder="Buscar posición..." @change="syncDirty" />
           </BioNexusFormField>
 
           <BioNexusFormField label="Decimales" field-id="currency-decimals" :error="errors.decimals" help="Cantidad de decimales mostrados, entre 0 y 6.">
@@ -56,6 +50,7 @@ import BioNexusDialog from '@/components/ui/BioNexusDialog.vue'
 import BioNexusFormErrors from '@/components/ui/BioNexusFormErrors.vue'
 import BioNexusFormField from '@/components/ui/BioNexusFormField.vue'
 import BioNexusSectionPanel from '@/components/ui/BioNexusSectionPanel.vue'
+import BioNexusSearchableSelect from '@/components/ui/BioNexusSearchableSelect.vue'
 
 const props = defineProps({ saving: Boolean, canCreate: Boolean, canUpdate: Boolean })
 const emit = defineEmits(['submit'])
@@ -81,6 +76,11 @@ const options = [
   { code: 'CLP', name: 'Peso chileno', symbol: '$' },
   { code: 'PEN', name: 'Sol peruano', symbol: 'S/' }
 ]
+const currencyOptions = computed(() => options.map(option => ({ ...option, label: `${option.name} (${option.code})` })))
+const symbolPositionOptions = Object.freeze([
+  { value: 'before', label: 'Antes del monto' },
+  { value: 'after', label: 'Después del monto' }
+])
 
 const values = computed(() => ({
   code: String(draft.code || '').trim().toUpperCase(),
@@ -104,7 +104,7 @@ function signature() { return JSON.stringify(values.value) }
 function clearGeneralError() { errorMessage.value = '' }
 function syncDirty() { clearGeneralError(); dirty.value = signature() !== original.value }
 function assign(row) { Object.assign(draft, { code: row?.code || '', name: row?.name || '', symbol: row?.symbol || '', symbolPosition: row?.symbolPosition || 'before', decimalPlaces: Number(row?.decimalPlaces ?? 2) }) }
-function selectCurrency() { const item = options.find(option => option.code === draft.code); if (item) { draft.name = item.name; draft.symbol = item.symbol } syncDirty() }
+function selectCurrency(selected) { const item = selected?.code ? selected : options.find(option => option.code === draft.code); if (item) { draft.name = item.name; draft.symbol = item.symbol } syncDirty() }
 async function show() { original.value = signature(); dirty.value = false; await dialog.value?.open(); await nextTick(); original.value = signature(); dirty.value = false; firstInput.value?.focus() }
 async function openCreate() { mode.value = 'create'; current.value = null; assign(null); attempted.value = false; errorMessage.value = ''; await show() }
 async function openEdit(row) { mode.value = 'edit'; current.value = row; assign(row); attempted.value = false; errorMessage.value = ''; await show() }

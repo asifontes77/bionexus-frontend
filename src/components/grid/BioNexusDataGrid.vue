@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <section
     class="bio-nexus-data-grid"
     :class="{
@@ -14,16 +14,41 @@
         label="Mostrar"
         field-id="bio-nexus-grid-page-size"
       >
-        <select
-          id="bio-nexus-grid-page-size"
-          v-model="selectedPageSize"
-          class="bio-nexus-field bio-nexus-grid-toolbar-page-size"
-          aria-label="Mostrar registros"
-          @change="changePageSize"
-        >
-          <option v-for="size in effectivePageSizeSelector" :key="size" :value="String(size)">{{ size }}</option>
-          <option value="all">Todos</option>
-        </select>
+        <div class="bio-nexus-grid-page-size-shell">
+
+          <BioNexusSearchableSelect
+
+
+                    id="bio-nexus-grid-page-size"
+
+
+                    v-model="selectedPageSize"
+
+
+
+
+
+                    :options="pageSizeOptions"
+
+
+                    aria-label="Mostrar registros"
+
+
+                    placeholder="10"
+
+
+                    search-placeholder="Buscar tamaño..."
+
+
+                    empty-text="Sin tamaños coincidentes"
+
+
+                    @update:model-value="changePageSize"
+
+
+                  />
+
+        </div>
       </BioNexusFormField>
 
       <BioNexusFormField v-if="searchEnabled" class="bio-nexus-grid-toolbar-search" label="Buscar" field-id="bio-nexus-grid-search">
@@ -84,7 +109,7 @@
 </template>
 
 <script setup>
-import { computed, shallowRef, ref, useSlots } from "vue";
+import { computed, shallowRef, ref, useSlots, watch } from "vue";
 import {
   AllCommunityModule,
   ModuleRegistry,
@@ -94,6 +119,7 @@ import { AgGridVue } from "ag-grid-vue3";
 import { AG_GRID_LOCALE_ES } from "@ag-grid-community/locale";
 import BioNexusGridExportMenu from "@/components/grid/BioNexusGridExportMenu.vue";
 import BioNexusFormField from "@/components/ui/BioNexusFormField.vue";
+import BioNexusSearchableSelect from "@/components/ui/BioNexusSearchableSelect.vue";
 import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
 import BioNexusActionButton from "@/components/ui/BioNexusActionButton.vue";
 import { exportGridToExcel, exportGridToPdf } from "@/services/gridExportService.js";
@@ -339,6 +365,14 @@ const effectivePageSizeSelector = computed(() => {
 
   return [...new Set(values)].sort((left, right) => left - right);
 });
+const pageSizeOptions = computed(() => [
+  ...effectivePageSizeSelector.value.map((size) => ({ value: String(size), label: String(size) })),
+  { value: "all", label: "Todos" },
+]);
+watch(() => props.pageSize, (value) => {
+  const normalized = String(value);
+  if (selectedPageSize.value !== normalized) selectedPageSize.value = normalized;
+}, { immediate: true });
 
 
 const slots = useSlots();
@@ -627,6 +661,24 @@ function handleCellContextMenu(params) {
   margin-inline: auto !important;
 }
 /* BIO NEXUS GRID SELECTION CENTER END */
+.bio-nexus-grid-page-size-shell {
+  width: 96px;
+  height: 38px;
+}
+.bio-nexus-grid-page-size-shell :deep(.bio-search-select) {
+  width: 96px !important;
+  min-width: 96px !important;
+  height: 38px !important;
+}
+.bio-nexus-grid-page-size-shell :deep(.bio-search-trigger) {
+  width: 96px !important;
+  min-width: 96px !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  padding: 0 10px !important;
+  border-radius: var(--bio-nexus-radius-sm) !important;
+  font-size: var(--bio-nexus-font-size-sm) !important;
+}
 </style>
 
 <style>
