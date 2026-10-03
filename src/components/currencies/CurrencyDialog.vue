@@ -23,7 +23,7 @@
           </BioNexusFormField>
 
           <BioNexusFormField label="Decimales" field-id="currency-decimals" :error="errors.decimals" help="Cantidad de decimales mostrados, entre 0 y 6.">
-            <input id="currency-decimals" v-model.number="draft.decimalPlaces" class="bio-nexus-field" type="number" min="0" max="6" @input="syncDirty">
+            <BioNexusNumericInput id="currency-decimals" v-model="draft.decimalPlaces" :decimals="0" :min="0" :max="6" @input="syncDirty" />
           </BioNexusFormField>
 
           <div class="currency-preview" aria-live="polite">
@@ -43,6 +43,7 @@
 </template>
 
 <script setup>
+import BioNexusNumericInput from "@/components/ui/BioNexusNumericInput.vue";
 import { computed, nextTick, reactive, ref } from 'vue'
 import BioNexusActionButton from '@/components/ui/BioNexusActionButton.vue'
 import BioNexusConfirmDialog from '@/components/ui/BioNexusConfirmDialog.vue'
