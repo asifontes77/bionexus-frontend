@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <BioNexusDialog ref="dialog" size="wide" dialog-class="user-overrides-dialog" body-class="user-overrides-dialog-body" kicker="Excepciones individuales" :title="`Permisos de ${user?.name || 'Usuario'}`" :prevent-close="saving || hasChanges" @before-close="requestClose" @close="handleClosed">
     <template #toolbar>
       <section class="overrides-toolbar">
@@ -23,7 +23,8 @@
       <div v-if="loading" class="bio-nexus-empty-state">Consultando permisos...</div>
       <div v-else-if="errorMessage" class="bio-nexus-message bio-nexus-message-error" role="alert">{{ errorMessage }}</div>
       <template v-else-if="authorization">
-        <details class="override-explanation">
+        <BioNexusSectionPanel class="user-overrides-panel" title="Permisos y excepciones" description="Define si cada permiso conserva la herencia, se permite o se deniega para este usuario." icon="policy" variant="accent" compact>
+          <details class="override-explanation">
           <summary><span>¿Qué cambia una excepción individual?</span><small>Según roles conserva la herencia; Permitir concede; Denegar bloquea.</small></summary>
           <div class="override-explanation-body">
             <p>Cada permiso parte del resultado heredado de los roles. Una excepción cambia solamente ese permiso para este usuario.</p>
@@ -56,14 +57,15 @@
             </div>
           </template>
         </BioNexusPermissionTree>
+        </BioNexusSectionPanel>
         <div v-if="saveError" class="bio-nexus-inline-message bio-nexus-message-error" role="alert">{{ saveError }}</div>
         <div v-if="saveMessage" class="bio-nexus-inline-message bio-nexus-message-success" role="status">{{ saveMessage }}</div>
       </template>
     </section>
     <template #footer-status><span class="dialog-pending-status">{{ hasChanges ? "Existen cambios pendientes." : "Las excepciones están sincronizadas." }}</span></template>
     <template #footer>
-      <button type="button" class="bio-nexus-action bio-nexus-action-secondary" :disabled="saving" @click="requestClose"><BioNexusActionIcon action="cancel" />Cancelar</button>
-      <button v-if="canAssign" type="button" class="bio-nexus-action bio-nexus-action-primary" :disabled="!canEdit || !hasChanges || saving" @click="emit('save')"><BioNexusActionIcon action="assignPermissions" />{{ saving ? "Guardando..." : "Guardar excepciones" }}</button>
+      <BioNexusActionButton type="button" variant="secondary" icon="cancel" :disabled="saving" @click="requestClose">Cancelar</BioNexusActionButton>
+      <BioNexusActionButton v-if="canAssign" type="button" variant="primary" icon="assignPermissions" :loading="saving" :disabled="!canEdit || !hasChanges" @click="emit('save')">{{ saving ? "Guardando..." : "Guardar excepciones" }}</BioNexusActionButton>
     </template>
   </BioNexusDialog>
   <BioNexusConfirmDialog ref="discardDialog" />
@@ -72,7 +74,8 @@
 import { computed, ref } from "vue";
 import { PermissionEffect } from "@/models/authorization";
 import { groupPermissionsForPresentation } from "@/presentation/permissionPresentation";
-import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
+import BioNexusActionButton from "@/components/ui/BioNexusActionButton.vue";
+import BioNexusSectionPanel from "@/components/ui/BioNexusSectionPanel.vue";
 import BioNexusDialog from "@/components/ui/BioNexusDialog.vue";
 import BioNexusConfirmDialog from "@/components/ui/BioNexusConfirmDialog.vue";
 import BioNexusFormField from "@/components/ui/BioNexusFormField.vue";
@@ -151,6 +154,8 @@ defineExpose({ open, close });
 .overrides-toolbar { display: grid; grid-template-columns: minmax(280px, 1fr) 180px auto; align-items: end; gap: var(--bio-nexus-space-3); box-sizing: border-box; width: 100%; padding: var(--bio-nexus-space-3) var(--bio-nexus-space-4); }
 .overrides-toolbar > span { display: inline-flex; align-items: center; justify-content: flex-end; gap: var(--bio-nexus-space-1); min-width: 132px; min-height: var(--bio-nexus-control-height); padding: 0 var(--bio-nexus-space-2) 0 var(--bio-nexus-space-3); color: var(--bio-nexus-color-text-muted); white-space: nowrap; }
 .overrides-dialog-body { box-sizing: border-box; display: grid; align-content: start; gap: var(--bio-nexus-space-3); width: 100%; min-width: 0; min-height: 0; height: 100%; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; scrollbar-gutter: stable; }
+.user-overrides-panel { min-width: 0; min-height: 0; margin: 0; }
+.user-overrides-panel :deep(.bio-nexus-section-panel-body) { display: grid; gap: var(--bio-nexus-space-3); min-width: 0; min-height: 0; max-height: min(58dvh, 520px); overflow-y: auto; overscroll-behavior: contain; scrollbar-gutter: stable; }
 .override-explanation { padding: 0; border: 1px solid var(--bio-nexus-color-border); border-radius: var(--bio-nexus-radius-md); background: var(--bio-nexus-color-info-soft); }
 .override-explanation > summary { display: flex; align-items: center; gap: var(--bio-nexus-space-3); padding: var(--bio-nexus-space-3); color: var(--bio-nexus-color-primary-strong); font-weight: var(--bio-nexus-font-weight-bold); cursor: pointer; list-style: none; }
 .override-explanation > summary small { margin-left: auto; color: var(--bio-nexus-color-text-muted); font-size: var(--bio-nexus-font-size-sm); font-weight: var(--bio-nexus-font-weight-regular); }

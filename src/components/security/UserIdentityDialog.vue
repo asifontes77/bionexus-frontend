@@ -12,48 +12,50 @@
   >
     <form id="user-identity-form" class="user-identity-form" novalidate @submit.prevent="submitIdentity">
 <div v-if="formError" class="bio-nexus-message bio-nexus-message-error" role="alert">{{ formError }}</div>
-        <div class="identity-form-grid">
-          <BioNexusFormField label="Nombre completo" field-id="identity-name" :error="errors.name" required><input id="identity-name" v-model.trim="form.name" class="bio-nexus-field" maxlength="100" autocomplete="name" /></BioNexusFormField>
-          <BioNexusFormField label="Nombre de usuario" field-id="identity-user-name" :error="errors.userName" required><input id="identity-user-name" v-model.trim="form.userName" class="bio-nexus-field" maxlength="100" autocomplete="username" /></BioNexusFormField>
-          <BioNexusFormField label="Correo" field-id="identity-email" :error="errors.email" required><input id="identity-email" v-model.trim="form.email" class="bio-nexus-field" type="email" maxlength="100" autocomplete="email" @blur="validateEmailField" /></BioNexusFormField>
-          <BioNexusFormField label="Telefono" field-id="identity-telephone" :error="errors.telephone"><input id="identity-telephone" v-model.trim="form.telephone" class="bio-nexus-field" maxlength="20" autocomplete="tel" /></BioNexusFormField>
-          <BioNexusFormField label="Cargo" field-id="identity-position" :error="errors.position"><input id="identity-position" v-model.trim="form.position" class="bio-nexus-field" maxlength="50" /></BioNexusFormField>
-          <BioNexusFormField label="Numero de colegiatura" field-id="identity-college" :error="errors.collegeNumber"><input id="identity-college" v-model.trim="form.collegeNumber" class="bio-nexus-field" maxlength="50" /></BioNexusFormField>
-          <BioNexusFormField class="identity-address-field" label="Direccion" field-id="identity-direction" :error="errors.direction"><textarea id="identity-direction" v-model.trim="form.direction" class="bio-nexus-field identity-textarea" maxlength="100" rows="3"></textarea></BioNexusFormField>
-        </div>
-        <section class="identity-password-section">
-          <header class="identity-section-heading"><div><span>Acceso</span><h4>{{ isCreateMode ? "Contrasena inicial" : "Cambio opcional de contrasena" }}</h4></div><p v-if="!isCreateMode" class="identity-section-help">Deja ambos campos vacios para conservar la contrasena actual.</p></header>
+        <BioNexusSectionPanel class="identity-section-panel" title="Datos de identidad" description="Registra la informacion principal y profesional del usuario." icon="person" variant="accent" compact>
+          <div class="identity-form-grid">
+          <BioNexusFormField label="Nombre completo" field-id="identity-name" :error="errors.name" :help="`${form.name.length} de 100 caracteres`" required><input id="identity-name" v-model.trim="form.name" class="bio-nexus-field" maxlength="100" autocomplete="name" /></BioNexusFormField>
+          <BioNexusFormField label="Nombre de usuario" field-id="identity-user-name" :error="errors.userName" :help="`${form.userName.length} de 100 caracteres`" required><input id="identity-user-name" v-model.trim="form.userName" class="bio-nexus-field" maxlength="100" autocomplete="username" /></BioNexusFormField>
+          <BioNexusFormField label="Correo" field-id="identity-email" :error="errors.email" :help="`${form.email.length} de 100 caracteres`" required><input id="identity-email" v-model.trim="form.email" class="bio-nexus-field" type="email" maxlength="100" autocomplete="email" @blur="validateEmailField" /></BioNexusFormField>
+          <BioNexusFormField label="Telefono" field-id="identity-telephone" :error="errors.telephone" :help="`${form.telephone.length} de 20 caracteres`"><input id="identity-telephone" v-model.trim="form.telephone" class="bio-nexus-field" maxlength="20" autocomplete="tel" /></BioNexusFormField>
+          <BioNexusFormField label="Cargo" field-id="identity-position" :error="errors.position" :help="`${form.position.length} de 50 caracteres`"><input id="identity-position" v-model.trim="form.position" class="bio-nexus-field" maxlength="50" /></BioNexusFormField>
+          <BioNexusFormField label="Numero de colegiatura" field-id="identity-college" :error="errors.collegeNumber" :help="`${form.collegeNumber.length} de 50 caracteres`"><input id="identity-college" v-model.trim="form.collegeNumber" class="bio-nexus-field" maxlength="50" /></BioNexusFormField>
+          <BioNexusFormField class="identity-address-field" label="Direccion" field-id="identity-direction" :error="errors.direction" :help="`${form.direction.length} de 100 caracteres`"><textarea id="identity-direction" v-model.trim="form.direction" class="bio-nexus-field identity-textarea" maxlength="100" rows="3"></textarea></BioNexusFormField>
+          </div>
+        </BioNexusSectionPanel>
+        <BioNexusSectionPanel class="identity-section-panel" title="Acceso" :description="isCreateMode ? 'Define la contrasena inicial del usuario.' : 'Deja ambos campos vacios para conservar la contrasena actual.'" icon="lock" variant="accent" compact>
           <div class="identity-form-grid">
             <BioNexusFormField label="Contrasena" field-id="identity-password" :error="errors.password" :required="isCreateMode"><input id="identity-password" v-model="form.password" class="bio-nexus-field" type="password" maxlength="500" /></BioNexusFormField>
             <BioNexusFormField label="Confirmar contrasena" field-id="identity-password-confirm" :error="errors.passwordConfirm" :required="isCreateMode"><input id="identity-password-confirm" v-model="form.passwordConfirm" class="bio-nexus-field" type="password" maxlength="500" /></BioNexusFormField>
           </div>
-        </section>
-        <section class="identity-media-section">
+        </BioNexusSectionPanel>
+        <BioNexusSectionPanel class="identity-section-panel identity-media-panel" title="Archivos de identidad" description="Administra la fotografia de perfil y la firma digital." icon="badge" variant="accent" compact>
+          <div class="identity-media-section">
           <article class="identity-media-card">
             <header><div><span>Perfil</span><h4>Fotografia</h4></div></header>
             <div class="media-preview photo-preview"><img v-if="photoPreview" :src="photoPreview" alt="Vista previa de fotografia" /><BioNexusIcon v-else name="person" :size="44" /></div>
             <input ref="photoInput" class="visually-hidden" type="file" accept="image/png,image/jpeg,image/webp" @change="selectPhoto" />
-            <button type="button" class="bio-nexus-action bio-nexus-action-secondary" @click="photoInput?.click()"><BioNexusIcon name="upload" :size="18" />Seleccionar fotografia</button>
+            <BioNexusActionButton type="button" variant="secondary" icon="upload" @click="photoInput?.click()">Seleccionar fotografia</BioNexusActionButton>
           </article>
           <article class="identity-media-card">
             <header><div><span>Validacion profesional</span><h4>Firma digital</h4></div></header>
             <div class="media-preview signature-preview"><img v-if="signaturePreview" :src="signaturePreview" alt="Vista previa de firma" /><BioNexusIcon v-else name="draw" :size="44" /></div>
             <input ref="signatureInput" class="visually-hidden" type="file" accept="image/png,image/jpeg,image/webp" @change="selectSignature" />
-            <button type="button" class="bio-nexus-action bio-nexus-action-secondary" @click="signatureInput?.click()"><BioNexusIcon name="upload" :size="18" />Seleccionar firma</button>
+            <BioNexusActionButton type="button" variant="secondary" icon="upload" @click="signatureInput?.click()">Seleccionar firma</BioNexusActionButton>
           </article>
-        </section>
-        <section class="identity-password-section">
-          <header class="identity-section-heading"><div><span>Firma</span><h4>Cambio opcional de clave de firma</h4></div><p v-if="!isCreateMode" class="identity-section-help">Deja ambos campos vacios para conservar la clave de firma actual.</p></header>
+          </div>
+        </BioNexusSectionPanel>
+        <BioNexusSectionPanel class="identity-section-panel" title="Clave de firma" :description="isCreateMode ? 'Define una clave de firma si corresponde.' : 'Deja ambos campos vacios para conservar la clave de firma actual.'" icon="signature" variant="accent" compact>
           <div class="identity-form-grid">
             <BioNexusFormField label="Nueva clave de firma" field-id="identity-signature-password" :error="errors.signaturePassword"><input id="identity-signature-password" v-model="form.signaturePassword" class="bio-nexus-field" type="password" maxlength="500" /></BioNexusFormField>
             <BioNexusFormField label="Confirmar nueva clave" field-id="identity-signature-confirm" :error="errors.signaturePasswordConfirm"><input id="identity-signature-confirm" v-model="form.signaturePasswordConfirm" class="bio-nexus-field" type="password" maxlength="500" /></BioNexusFormField>
           </div>
-</section>
+        </BioNexusSectionPanel>
         <div class="bio-nexus-message bio-nexus-message-info" role="status">Los roles y permisos se administran desde las acciones del grid.</div>
     </form>
     <template #footer>
-<button type="button" class="bio-nexus-action bio-nexus-action-secondary" :disabled="saving" @click="closeIdentityDialog"><BioNexusActionIcon action="cancel" />Cancelar</button>
-        <button type="submit" form="user-identity-form" class="bio-nexus-action bio-nexus-action-primary" :disabled="identitySubmitDisabled"><BioNexusIcon :name="isCreateMode ? 'person_add' : 'save'" :size="19" />{{ saving ? "Guardando..." : isCreateMode ? "Crear usuario" : "Guardar datos" }}</button>
+<BioNexusActionButton type="button" variant="secondary" icon="cancel" :disabled="saving" @click="closeIdentityDialog">Cancelar</BioNexusActionButton>
+        <BioNexusActionButton type="submit" form="user-identity-form" variant="primary" :icon="isCreateMode ? 'person_add' : 'save'" :loading="saving" :disabled="validatingEmail || !identityFormValid">{{ saving ? "Guardando..." : isCreateMode ? "Crear usuario" : "Guardar datos" }}</BioNexusActionButton>
     </template>
   </BioNexusDialog>
   <UserStateDialog ref="stateDialog" :saving="savingState" @confirm="submitStateChange" />
@@ -63,7 +65,8 @@ import { computed, nextTick, reactive, ref } from "vue";
 import BioNexusFormField from "@/components/ui/BioNexusFormField.vue";
 import BioNexusIcon from "@/components/ui/BioNexusIcon.vue";
 import BioNexusDialog from "@/components/ui/BioNexusDialog.vue";
-import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
+import BioNexusActionButton from "@/components/ui/BioNexusActionButton.vue";
+import BioNexusSectionPanel from "@/components/ui/BioNexusSectionPanel.vue";
 import UserStateDialog from "@/components/security/UserStateDialog.vue";
 import { createUser, updateUser, uploadUserAsset, verifyUserEmail } from "@/services/authorizationService";
 import { useBioNexusToast } from "@/composables/useBioNexusToast";
@@ -102,18 +105,24 @@ function handleIdentityClosed() { if (!saving.value) resetErrors(); }
 defineExpose({ openCreate, openEdit, openState });
 </script>
 <style scoped>
-.identity-password-section, .identity-media-card { display: grid; gap: var(--bio-nexus-space-3); padding: var(--bio-nexus-space-3); border: 1px solid var(--bio-nexus-color-border); border-radius: var(--bio-nexus-radius-md); background: var(--bio-nexus-color-surface-soft); }
-.identity-password-section header, .identity-media-card header { display: flex; justify-content: space-between; gap: var(--bio-nexus-space-3); }
-.identity-password-section h4, .identity-password-section p, .identity-media-card h4 { margin: 0; }
-.identity-password-section header span, .identity-media-card header span { color: var(--bio-nexus-color-text-muted); font-size: var(--bio-nexus-font-size-xs); font-weight: var(--bio-nexus-font-weight-bold); text-transform: uppercase; }
-.identity-media-section { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--bio-nexus-space-3); }
+
+
+
+
+.identity-section-panel { min-width: 0; margin: 0; }
+.identity-section-panel :deep(.bio-nexus-section-panel-body) { display: grid; gap: var(--bio-nexus-space-3); min-width: 0; }
+.identity-media-section { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--bio-nexus-space-3); min-width: 0; }
+.identity-media-card { display: grid; gap: var(--bio-nexus-space-3); min-width: 0; padding: var(--bio-nexus-space-3); border: 1px solid var(--bio-nexus-color-border); border-radius: var(--bio-nexus-radius-md); background: var(--bio-nexus-color-surface-soft); }
+.identity-media-card header { display: flex; justify-content: space-between; gap: var(--bio-nexus-space-3); }
+.identity-media-card h4 { margin: 0; }
+.identity-media-card header span { color: var(--bio-nexus-color-text-muted); font-size: var(--bio-nexus-font-size-xs); font-weight: var(--bio-nexus-font-weight-bold); text-transform: uppercase; }
 .media-preview { display: grid; min-height: 128px; place-items: center; overflow: hidden; border: 1px dashed var(--bio-nexus-color-border-strong); border-radius: var(--bio-nexus-radius-md); background: var(--bio-nexus-color-surface); color: var(--bio-nexus-color-text-muted); }
 .media-preview img { display: block; max-width: 100%; max-height: 150px; object-fit: contain; }
 .photo-preview img { width: 128px; height: 128px; border-radius: 50%; object-fit: cover; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
 @media (max-width: 720px) { .identity-form-grid, .identity-media-section { grid-template-columns: 1fr; } .identity-address-field { grid-column: auto; } }
 
-.user-identity-form { display: block; min-width: 0; }
+.user-identity-form { display: grid; gap: var(--bio-nexus-space-4); min-width: 0; }
 .identity-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--bio-nexus-space-3); }
 .identity-address-field { grid-column: 1 / -1; }
 @media (max-width: 720px) { .identity-form-grid, .identity-media-section { grid-template-columns: 1fr; } .identity-address-field { grid-column: auto; } }

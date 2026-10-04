@@ -1,0 +1,10 @@
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import test from "node:test";
+const dialog=fs.readFileSync("src/components/security/UserOverridesDialog.vue","utf8");
+test("usa panel accent y acciones compartidas",()=>{assert.equal((dialog.match(/<BioNexusSectionPanel/g)||[]).length,1);assert.ok(dialog.includes('title="Permisos y excepciones"'));assert.ok(dialog.includes('variant="accent" compact'));assert.equal((dialog.match(/<BioNexusActionButton/g)||[]).length,2);assert.equal((dialog.match(/<button\b/g)||[]).length,0);});
+test("preserva los tres estados de excepcion",()=>{for(const token of ['label: "Según roles"','PermissionEffect.Allow, label: "Permitir"','PermissionEffect.Deny, label: "Denegar"'])assert.ok(dialog.includes(token),token);});
+test("preserva filtros arbol y borrador",()=>{for(const token of ['v-model="searchText"','v-model="statusFilter"','draftOverrides.length','filteredModules','BioNexusPermissionTree',"emit('set-override', permission, $event)"])assert.ok(dialog.includes(token),token);});
+test("preserva bloqueos y cierre pendiente",()=>{for(const token of ['!permission.isActive || !canEdit || !canAssign || saving','user?.hidden','inactiveOverrideCount',':prevent-close="saving || hasChanges"','@before-close="requestClose"','BioNexusConfirmDialog'])assert.ok(dialog.includes(token),token);});
+test("conserva errores y mensajes en ubicacion correcta",()=>{assert.ok(dialog.indexOf('v-else-if="errorMessage"')<dialog.indexOf('title="Permisos y excepciones"'));assert.ok(dialog.indexOf('v-if="saveError"')>dialog.indexOf('</BioNexusSectionPanel>'));assert.ok(dialog.includes('v-if="saveMessage"'));});
+test("restaura scroll vertical dentro del panel",()=>{assert.ok(dialog.includes('max-height: min(58dvh, 520px)'));assert.ok(dialog.includes('overflow-y: auto'));assert.ok(dialog.includes('overscroll-behavior: contain'));assert.ok(dialog.includes('scrollbar-gutter: stable'));assert.ok(dialog.includes('min-height: 0'));});

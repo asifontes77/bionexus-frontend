@@ -1,5 +1,5 @@
 <template>
-  <BioNexusDialog ref="dialog" size="wide" dialog-class="user-roles-dialog" body-class="user-roles-dialog-body" kicker="Asignacion directa" :title="`Roles de ${user?.name || 'Usuario'}`" :prevent-close="saving" @close="handleClosed">
+  <BioNexusDialog ref="dialog" size="wide" dialog-class="user-roles-dialog" body-class="user-roles-dialog-body" kicker="Asignacion directa" :title="`Roles de ${user?.name || 'Usuario'}`" :prevent-close="saving || hasChanges" @before-close="requestClose" @close="handleClosed">
     <template #toolbar>
       <section class="user-roles-toolbar">
         <BioNexusFormField label="Buscar rol" field-id="user-role-search">
@@ -15,39 +15,63 @@
         <div v-if="user?.hidden" class="bio-nexus-message bio-nexus-message-warning" role="status">Los usuarios desactivados permanecen visibles para consulta, pero no pueden modificarse.</div>
         <div v-else-if="!canAssign" class="bio-nexus-empty-state">La cuenta actual puede consultar los roles, pero no modificarlos.</div>
         <div v-if="inactiveAssignedCount > 0" class="bio-nexus-message bio-nexus-message-warning" role="status">Los roles desactivados se conservan para consulta y se retiraran al guardar.</div>
-        <div v-if="filteredRoles.length === 0" class="bio-nexus-empty-state">No existen roles que coincidan con la busqueda.</div>
-        <div v-else class="role-assignment-list">
-          <label v-for="role in filteredRoles" :key="role.id" class="role-assignment-option" :class="{ 'role-assignment-option-selected': isSelected(role.id), 'role-assignment-option-disabled': !role.isActive || user?.hidden }">
-            <BioNexusCheckbox :checked="isSelected(role.id)" :disabled="!role.isActive || !canEdit || !canAssign || saving" stop-propagation @change="emit('toggle-role', role)" />
-            <span class="role-assignment-copy"><strong>{{ role.name }}</strong><small>{{ role.description || "Sin descripción" }}</small></span>
-            <span class="bio-nexus-badge" :class="role.isActive ? 'bio-nexus-badge-success' : 'bio-nexus-badge-warning'">{{ role.isActive ? "Activo" : "Desactivado" }}</span>
-          </label>
-        </div>
+        <BioNexusSectionPanel class="user-roles-panel" title="Roles disponibles" description="Selecciona los roles directos que corresponden al usuario." icon="admin_panel_settings" variant="accent" compact>
+          <div v-if="filteredRoles.length === 0" class="bio-nexus-empty-state">No existen roles que coincidan con la busqueda.</div>
+          <div v-else class="role-assignment-list">
+            <label v-for="role in filteredRoles" :key="role.id" class="role-assignment-option" :class="{ 'role-assignment-option-selected': isSelected(role.id), 'role-assignment-option-disabled': !role.isActive || user?.hidden }">
+              <BioNexusCheckbox :checked="isSelected(role.id)" :disabled="!role.isActive || !canEdit || !canAssign || saving" stop-propagation @change="emit('toggle-role', role)" />
+              <span class="role-assignment-copy"><strong>{{ role.name }}</strong><small>{{ role.description || "Sin descripción" }}</small></span>
+              <span class="bio-nexus-badge" :class="role.isActive ? 'bio-nexus-badge-success' : 'bio-nexus-badge-warning'">{{ role.isActive ? "Activo" : "Desactivado" }}</span>
+            </label>
+          </div>
+        </BioNexusSectionPanel>
         <div v-if="saveError" class="bio-nexus-inline-message bio-nexus-message-error" role="alert">{{ saveError }}</div>
         <div v-if="saveMessage" class="bio-nexus-inline-message bio-nexus-message-success" role="status">{{ saveMessage }}</div>
       </template>
     </section>
     <template #footer-status><span class="dialog-pending-status">{{ hasChanges ? "Existen cambios pendientes." : "Los roles estan sincronizados." }}</span></template>
     <template #footer>
-      <button type="button" class="bio-nexus-action bio-nexus-action-secondary" :disabled="saving" @click="cancel"><BioNexusActionIcon action="cancel" />Cancelar</button>
-      <button v-if="canAssign" type="button" class="bio-nexus-action bio-nexus-action-primary" :disabled="!canEdit || !hasChanges || saving" @click="emit('save')"><BioNexusActionIcon action="assignRoles" />{{ saving ? "Guardando..." : "Guardar roles" }}</button>
+      <BioNexusActionButton type="button" variant="secondary" icon="cancel" :disabled="saving" @click="requestClose">Cancelar</BioNexusActionButton>
+      <BioNexusActionButton v-if="canAssign" type="button" variant="primary" icon="assignRoles" :loading="saving" :disabled="!canEdit || !hasChanges" @click="emit('save')">{{ saving ? "Guardando..." : "Guardar roles" }}</BioNexusActionButton>
     </template>
   </BioNexusDialog>
+  <BioNexusConfirmDialog ref="discardDialog" />
 </template>
 <script setup>
 import BioNexusCheckbox from "@/components/ui/BioNexusCheckbox.vue";
 import { computed, ref } from "vue";
-import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
+import BioNexusActionButton from "@/components/ui/BioNexusActionButton.vue";
+import BioNexusConfirmDialog from "@/components/ui/BioNexusConfirmDialog.vue";
+import BioNexusSectionPanel from "@/components/ui/BioNexusSectionPanel.vue";
 import BioNexusDialog from "@/components/ui/BioNexusDialog.vue";
 import BioNexusFormField from "@/components/ui/BioNexusFormField.vue";
 const props = defineProps({ user: { type: Object, default: null }, authorization: { type: Object, default: null }, roles: { type: Array, default: () => [] }, draftRoleIds: { type: Array, default: () => [] }, loading: { type: Boolean, default: false }, errorMessage: { type: String, default: "" }, saveError: { type: String, default: "" }, saveMessage: { type: String, default: "" }, saving: { type: Boolean, default: false }, canAssign: { type: Boolean, default: false }, canEdit: { type: Boolean, default: false }, hasChanges: { type: Boolean, default: false }, inactiveAssignedCount: { type: Number, default: 0 } });
 const emit = defineEmits(["toggle-role", "cancel", "save"]);
-const dialog = ref(null); const searchText = ref("");
+const dialog = ref(null); const discardDialog = ref(null); const searchText = ref("");
 const filteredRoles = computed(() => { const search = searchText.value.trim().toLowerCase(); if (search === "") return props.roles; return props.roles.filter((role) => [role.code, role.name, role.description].filter((value) => typeof value === "string").some((value) => value.toLowerCase().includes(search))); });
 function isSelected(roleId) { return props.draftRoleIds.includes(roleId); }
 function open() { searchText.value = ""; dialog.value?.open(); }
 function close() { dialog.value?.close(); }
-function cancel() { if (props.saving) return; emit("cancel"); searchText.value = ""; close(); }
+async function requestClose() {
+  if (props.saving) return;
+  if (props.hasChanges) {
+    const confirmed = await discardDialog.value?.ask({
+      kicker: "Confirmación",
+      title: "Descartar cambios",
+      message: "Hay cambios sin guardar. ¿Deseas salir y descartarlos?",
+      icon: "warning",
+      variant: "danger",
+      confirmIcon: "delete",
+      confirmText: "Sí, salir y descartar cambios",
+      cancelText: "Cancelar",
+    });
+    if (!confirmed) return;
+  }
+  emit("cancel");
+  searchText.value = "";
+  close();
+}
+function cancel() { requestClose(); }
 function handleClosed() { searchText.value = ""; }
 defineExpose({ open, close });
 </script>
@@ -55,6 +79,8 @@ defineExpose({ open, close });
 .user-roles-toolbar { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: var(--bio-nexus-space-4); box-sizing: border-box; width: 100%; padding: var(--bio-nexus-space-3) var(--bio-nexus-space-4); }
 .user-roles-toolbar > span { display: inline-flex; align-items: center; justify-content: flex-end; gap: var(--bio-nexus-space-1); min-width: 128px; min-height: var(--bio-nexus-control-height); padding-right: var(--bio-nexus-space-2); color: var(--bio-nexus-color-text-muted); white-space: nowrap; }
 .assignment-dialog-body { box-sizing: border-box; display: grid; align-content: start; gap: var(--bio-nexus-space-3); width: 100%; min-width: 0; min-height: 0; height: 100%; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; scrollbar-gutter: stable; }
+.user-roles-panel { min-width: 0; margin: 0; }
+.user-roles-panel :deep(.bio-nexus-section-panel-body) { display: grid; gap: var(--bio-nexus-space-3); min-width: 0; }
 .role-assignment-list { display: grid; gap: var(--bio-nexus-space-2); }
 .role-assignment-option { display: grid; grid-template-columns: 24px minmax(0, 1fr) auto; align-items: center; gap: var(--bio-nexus-space-3); min-height: var(--bio-nexus-table-row-height); padding: var(--bio-nexus-space-3); border: 1px solid var(--bio-nexus-color-border); border-radius: var(--bio-nexus-radius-md); background: var(--bio-nexus-color-surface); cursor: pointer; }
 .role-assignment-option-selected { border-color: var(--bio-nexus-color-primary); background: var(--bio-nexus-color-selection-soft); }

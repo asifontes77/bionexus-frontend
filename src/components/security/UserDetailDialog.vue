@@ -1,10 +1,11 @@
 <template>
-    <BioNexusDialog ref="dialog" size="wide" kicker="Detalle administrativo" :title="authorization?.user?.name || 'Usuario'">
+  <BioNexusDialog ref="dialog" size="wide" kicker="Detalle administrativo" :title="authorization?.user?.name || 'Usuario'">
     <section class="user-detail-body">
-        <div v-if="loading" class="bio-nexus-empty-state">Consultando autorización...</div>
-        <div v-else-if="errorMessage" class="bio-nexus-message bio-nexus-message-error" role="alert">{{ errorMessage }}</div>
-        <div v-else-if="authorization" class="user-detail-content">
-          <section class="user-detail-heading">
+      <div v-if="loading" class="bio-nexus-empty-state">Consultando autorización...</div>
+      <div v-else-if="errorMessage" class="bio-nexus-message bio-nexus-message-error" role="alert">{{ errorMessage }}</div>
+      <div v-else-if="authorization" class="user-detail-content">
+        <BioNexusSectionPanel class="user-detail-section-panel" title="Estado y acceso" description="Identificación administrativa y estado actual del usuario." icon="manage_accounts" variant="accent" compact>
+          <div class="user-detail-heading">
             <div class="user-avatar-large">{{ getUserInitials(authorization.user) }}</div>
             <div>
               <span class="user-detail-username">@{{ authorization.user.userName || "sin-usuario" }}</span>
@@ -14,56 +15,67 @@
             <span class="bio-nexus-badge" :class="authorization.user.hidden ? 'bio-nexus-badge-warning' : 'bio-nexus-badge-success'">
               {{ authorization.user.hidden ? "Desactivado" : "Activo" }}
             </span>
-          </section>
+          </div>
+        </BioNexusSectionPanel>
 
-          <dl class="user-detail-grid">
+        <BioNexusSectionPanel class="user-detail-section-panel" title="Datos de identidad" description="Información personal y profesional registrada." icon="person" variant="accent" compact>
+          <dl class="user-detail-grid user-detail-grid-identity">
             <div><dt>Correo</dt><dd>{{ authorization.user.email || "Sin correo" }}</dd></div>
             <div><dt>Teléfono</dt><dd>{{ authorization.user.telephone || "Sin teléfono" }}</dd></div>
             <div><dt>Colegio</dt><dd>{{ authorization.user.collegeNumber || "Sin registro" }}</dd></div>
-            <div><dt>Roles asignados</dt><dd>{{ authorization.assignedRoles.length }}</dd></div>
-            <div><dt>Permisos heredados</dt><dd>{{ authorization.inheritedPermissions.length }}</dd></div>
-            <div><dt>Excepciones</dt><dd>{{ authorization.permissionOverrides.length }}</dd></div>
           </dl>
+        </BioNexusSectionPanel>
 
-          <section class="effective-context-card">
-            <header><div><span>Resultado efectivo</span><h4>Contexto de autorización</h4></div></header>
-            <div v-if="authorization.context" class="effective-summary">
-              <article><span>Roles efectivos</span><strong>{{ authorization.context.roles.length }}</strong></article>
-              <article><span>Permisos efectivos</span><strong>{{ authorization.context.permissions.length }}</strong></article>
-              <article><span>Denegados</span><strong>{{ authorization.context.deniedPermissions.length }}</strong></article>
+        <BioNexusSectionPanel class="user-detail-section-panel" title="Roles y permisos" description="Asignaciones y contexto efectivo de autorización." icon="admin_panel_settings" variant="accent" compact>
+          <div class="user-detail-authorization">
+            <dl class="user-detail-grid user-detail-grid-authorization">
+              <div><dt>Roles asignados</dt><dd>{{ authorization.assignedRoles.length }}</dd></div>
+              <div><dt>Permisos heredados</dt><dd>{{ authorization.inheritedPermissions.length }}</dd></div>
+              <div><dt>Excepciones</dt><dd>{{ authorization.permissionOverrides.length }}</dd></div>
+            </dl>
+            <div class="effective-context-card">
+              <header><div><span>Resultado efectivo</span><h4>Contexto de autorización</h4></div></header>
+              <div v-if="authorization.context" class="effective-summary">
+                <article><span>Roles efectivos</span><strong>{{ authorization.context.roles.length }}</strong></article>
+                <article><span>Permisos efectivos</span><strong>{{ authorization.context.permissions.length }}</strong></article>
+                <article><span>Denegados</span><strong>{{ authorization.context.deniedPermissions.length }}</strong></article>
+              </div>
+              <p v-else class="bio-nexus-empty-state">El usuario no dispone de un contexto efectivo activo.</p>
             </div>
-            <p v-else class="bio-nexus-empty-state">El usuario no dispone de un contexto efectivo activo.</p>
-          </section>
+          </div>
+        </BioNexusSectionPanel>
 
-          <section class="user-detail-media" aria-label="Imagenes del usuario">
-          <article>
-            <span>Fotografia</span>
-            <div class="user-detail-image user-detail-photo">
-              <img v-if="authorization.user.photo" :src="assetUrl(authorization.user.photo)" alt="Fotografia del usuario" />
-              <BioNexusIcon v-else name="person" :size="42" />
-            </div>
-          </article>
-          <article>
-            <span>Firma digital</span>
-            <div class="user-detail-image">
-              <img v-if="authorization.user.signature" :src="assetUrl(authorization.user.signature)" alt="Firma digital del usuario" />
-              <BioNexusIcon v-else name="draw" :size="42" />
-            </div>
-          </article>
-        </section>
-        </div>
-          </section>
+        <BioNexusSectionPanel class="user-detail-section-panel" title="Archivos de identidad" description="Fotografía de perfil y firma digital registradas." icon="badge" variant="accent" compact>
+          <div class="user-detail-media" aria-label="Imagenes del usuario">
+            <article>
+              <span>Fotografia</span>
+              <div class="user-detail-image user-detail-photo">
+                <img v-if="authorization.user.photo" :src="assetUrl(authorization.user.photo)" alt="Fotografia del usuario" />
+                <BioNexusIcon v-else name="person" :size="42" />
+              </div>
+            </article>
+            <article>
+              <span>Firma digital</span>
+              <div class="user-detail-image">
+                <img v-if="authorization.user.signature" :src="assetUrl(authorization.user.signature)" alt="Firma digital del usuario" />
+                <BioNexusIcon v-else name="draw" :size="42" />
+              </div>
+            </article>
+          </div>
+        </BioNexusSectionPanel>
+      </div>
+    </section>
     <template #footer>
-        <button type="button" class="bio-nexus-action bio-nexus-action-secondary" @click="close">
-          <BioNexusActionIcon action="close" />Cerrar
-        </button>
-          </template>
+      <BioNexusActionButton type="button" variant="secondary" icon="close" @click="close">Cerrar</BioNexusActionButton>
+    </template>
   </BioNexusDialog>
 </template>
 
 <script setup>
 import { ref } from "vue";
-import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
+import BioNexusActionButton from "@/components/ui/BioNexusActionButton.vue";
+import BioNexusSectionPanel from "@/components/ui/BioNexusSectionPanel.vue";
+import BioNexusIcon from "@/components/ui/BioNexusIcon.vue";
 import BioNexusDialog from "@/components/ui/BioNexusDialog.vue";
 
 defineProps({
@@ -94,11 +106,14 @@ function assetUrl(value) { if (!value) return ""; const normalized = value.inclu
 .user-detail-body { flex: 1 1 auto; min-height: 0; padding: var(--bio-nexus-space-4); overflow: auto; scrollbar-gutter: stable; }
 .dialog-footer { display: flex; flex: 0 0 auto; align-items: center; justify-content: flex-end; gap: var(--bio-nexus-space-2); padding: var(--bio-nexus-space-3) var(--bio-nexus-space-4); border-top: 1px solid var(--bio-nexus-color-border); background: var(--bio-nexus-color-surface-soft); }
 .user-detail-content { display: grid; gap: var(--bio-nexus-space-4); }
-.user-detail-heading { display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; align-items: center; gap: var(--bio-nexus-space-3); padding-bottom: var(--bio-nexus-space-3); border-bottom: 1px solid var(--bio-nexus-color-border); }
+.user-detail-section-panel { min-width: 0; margin: 0; }
+.user-detail-section-panel :deep(.bio-nexus-section-panel-body) { min-width: 0; }
+.user-detail-heading { display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; align-items: center; gap: var(--bio-nexus-space-3); }
 .user-avatar-large { display: grid; width: 56px; height: 56px; place-items: center; border-radius: var(--bio-nexus-radius-md); background: var(--bio-nexus-color-info-soft); color: var(--bio-nexus-color-primary-strong); font-weight: var(--bio-nexus-font-weight-heavy); }
 .user-detail-heading h4, .user-detail-heading p { margin: 0; }
 .user-detail-heading p, .user-detail-username { color: var(--bio-nexus-color-text-muted); font-size: var(--bio-nexus-font-size-sm); }
-.user-detail-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--bio-nexus-space-3); margin: 0; }
+.user-detail-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--bio-nexus-space-3); margin: 0; }
+.user-detail-authorization { display: grid; gap: var(--bio-nexus-space-3); }
 .user-detail-grid > div, .effective-context-card { padding: var(--bio-nexus-space-3); border: 1px solid var(--bio-nexus-color-border); border-radius: var(--bio-nexus-radius-md); background: var(--bio-nexus-color-surface-soft); }
 .user-detail-grid dt, .effective-context-card header span { color: var(--bio-nexus-color-text-muted); font-size: var(--bio-nexus-font-size-xs); font-weight: var(--bio-nexus-font-weight-bold); text-transform: uppercase; letter-spacing: 0.04em; }
 .user-detail-grid dd { margin: var(--bio-nexus-space-1) 0 0; font-weight: var(--bio-nexus-font-weight-bold); overflow-wrap: anywhere; }

@@ -1,31 +1,42 @@
 <template>
   <BioNexusDialog ref="dialog" size="wide" body-class="patient-results-history-dialog-body" kicker="Trazabilidad" title="Historial de envios de resultados">
-    <section class="history-dialog-body">
-      <div class="history-scope-note">Muestra los intentos registrados entre <strong>{{ rangeLabel }}</strong>.</div>
-      <div v-if="loading" class="bio-nexus-message">Consultando historial...</div>
-      <div v-if="errorMessage" class="bio-nexus-message bio-nexus-message-error" role="alert">{{ errorMessage }}</div>
-      <BioNexusDataGrid
-        v-else
-        class="history-grid"
-        style="box-sizing: border-box; width: auto; max-width: none; min-width: 0; margin-inline: 16px; justify-self: stretch; align-self: stretch;"
-        :row-data="rows"
-        :column-defs="columns"
-        :components="components"
-        :min-grid-height="340"
-        :max-grid-height="560"
-        :search-enabled="true"
-        v-model:search-model-value="search"
-        :quick-filter-text="search"
-        :export-options="{ title: 'Historial de envios de resultados', fileName: 'historial-envios-resultados' }"
-        empty-text="No existen intentos en el rango consultado."
-      />
-    </section>
-    <template #footer><button type="button" class="bio-nexus-action bio-nexus-action-secondary" @click="close">Cerrar</button></template>
+  <BioNexusSectionPanel
+    title="Historial registrado"
+    icon="history"
+    variant="accent"
+  >
+      <section class="history-dialog-body">
+        <div class="history-scope-note">Muestra los intentos registrados entre <strong>{{ rangeLabel }}</strong>.</div>
+        <div v-if="loading" class="bio-nexus-message">Consultando historial...</div>
+        <BioNexusFormErrors v-if="errorMessage" :errors="errorMessage" />
+        <BioNexusDataGrid
+          v-else
+          class="history-grid"
+          style="box-sizing: border-box; width: auto; max-width: none; min-width: 0; margin-inline: 16px; justify-self: stretch; align-self: stretch;"
+          :row-data="rows"
+          :column-defs="columns"
+          :components="components"
+          :min-grid-height="340"
+          :max-grid-height="560"
+          :search-enabled="true"
+          v-model:search-model-value="search"
+          :quick-filter-text="search"
+          :export-options="{ title: 'Historial de envios de resultados', fileName: 'historial-envios-resultados' }"
+          empty-text="No existen intentos en el rango consultado."
+        />
+      </section>
+
+  </BioNexusSectionPanel>
+
+<template #footer><BioNexusActionButton type="button" variant="secondary" icon="close" @click="close">Cerrar</BioNexusActionButton></template>
   </BioNexusDialog>
 </template>
 <script setup>
 import { ref } from "vue";
+import BioNexusActionButton from "@/components/ui/BioNexusActionButton.vue";
 import BioNexusDialog from "@/components/ui/BioNexusDialog.vue";
+import BioNexusSectionPanel from "@/components/ui/BioNexusSectionPanel.vue";
+import BioNexusFormErrors from "@/components/ui/BioNexusFormErrors.vue";
 import BioNexusDataGrid from "@/components/grid/BioNexusDataGrid.vue";
 import BioNexusOptionFilter from "@/components/grid/BioNexusOptionFilter.vue";
 import { getPatientResultsEmailHistory } from "@/services/patientResultsEmailService";

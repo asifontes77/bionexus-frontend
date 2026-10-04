@@ -1,0 +1,11 @@
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import test from "node:test";
+const source=fs.readFileSync("src/components/examcatalog/designer/ExamResultGridDesignerDialog.vue","utf8");
+const footers=[...source.matchAll(/<template\s+(?:#footer|v-slot:footer)(?:="")?[^>]*>(.*?)<\/template>/gs)].map(match=>match[1]);
+const footerText=footers.join("\n");
+test("conserva cuatro footers y migra exactamente nueve acciones",()=>{assert.equal(footers.length,4);assert.equal((footerText.match(/<BioNexusActionButton\b/g)||[]).length,9);assert.equal((footerText.match(/<button\b/g)||[]).length,0);});
+test("preserva handlers de los nueve botones",()=>{for(const token of ['fieldDialog?.close()','wizardBack','wizardNext','saveField','ruleTestDialog?.close()','formulaTestDialog?.close()','requestClose','resetPilot','@click="save"'])assert.ok(footerText.includes(token),token);});
+test("preserva condiciones del asistente",()=>{for(const token of ['v-if="wizardStep>1"','v-if="wizardStep<4"','v-else',':disabled="!fieldDraftValid"'])assert.ok(footerText.includes(token),token);});
+test("preserva estado de guardado principal",()=>{assert.ok(footerText.includes(':disabled="!dirty"'));assert.ok(footerText.includes('>Guardar formato</BioNexusActionButton>'));});
+test("no modifica las acciones nativas internas fuera de footers",()=>{assert.ok((source.match(/<button\b/g)||[]).length>0);assert.ok(source.includes('BioNexusActionIcon'));});
