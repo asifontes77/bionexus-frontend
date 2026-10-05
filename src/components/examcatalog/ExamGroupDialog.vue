@@ -1,17 +1,19 @@
 <template>
   <BioNexusDialog ref="dialog" size="standard" :kicker="mode === 'create' ? 'Nuevo registro' : 'Editar registro'" :title="mode === 'create' ? 'Crear grupo de exámenes' : 'Editar grupo de exámenes'" :prevent-close="saving || hasChanges" @before-close="close" @close="handleClosed">
+    <div class="exam-group-dialog__errors">
+      <BioNexusFormErrors :errors="errorMessage" />
+    </div>
     <BioNexusSectionPanel title="Información del grupo" icon="folder" description="Define el nombre que identifica al grupo de exámenes." variant="accent">
     <section class="exam-group-body">
-      <BioNexusFormField label="Descripción" field-id="exam-group-description" :error="descriptionError" :help="draft.description.length + ' de 150 caracteres'" required>
+      <BioNexusFormField label="Descripción" field-id="exam-group-description" :error="descriptionError" :help="draft.description.length + ' de máximo 150 caracteres'" required>
         <input id="exam-group-description" ref="firstInput" v-model="draft.description" class="bio-nexus-field" maxlength="150" autocomplete="off" />
       </BioNexusFormField>
       <BioNexusCheckbox v-model="draft.its_exam" class="exam-check" label="Es análisis clínico" />
-      <div v-if="errorMessage" class="bio-nexus-message bio-nexus-message-error" role="alert">{{ errorMessage }}</div>
     </section>
         </BioNexusSectionPanel>
     <template #footer>
-      <button type="button" class="bio-nexus-action bio-nexus-action-secondary" :disabled="saving" @click="close"><BioNexusActionIcon action="cancel" />Cancelar</button>
-      <button type="button" class="bio-nexus-action bio-nexus-action-primary" :disabled="submitDisabled" @click="submit"><BioNexusActionIcon action="save" />{{ saving ? "Guardando..." : mode === "create" ? "Crear" : "Guardar" }}</button>
+      <BioNexusActionButton variant="secondary" icon="cancel" :disabled="saving" @click="close">Cancelar</BioNexusActionButton>
+      <BioNexusActionButton variant="primary" :icon="mode === 'create' ? 'create' : 'save'" :loading="saving" :disabled="submitDisabled" @click="submit">{{ mode === "create" ? "Crear" : "Guardar" }}</BioNexusActionButton>
     </template>
   </BioNexusDialog>
   <BioNexusConfirmDialog ref="discardDialog" />
@@ -20,8 +22,9 @@
 <script setup>
 import BioNexusCheckbox from "@/components/ui/BioNexusCheckbox.vue";
 import { computed, nextTick, reactive, ref } from "vue";
-import BioNexusActionIcon from "@/components/ui/BioNexusActionIcon.vue";
 import BioNexusDialog from "@/components/ui/BioNexusDialog.vue";
+import BioNexusActionButton from "@/components/ui/BioNexusActionButton.vue";
+import BioNexusFormErrors from "@/components/ui/BioNexusFormErrors.vue";
 import BioNexusConfirmDialog from "@/components/ui/BioNexusConfirmDialog.vue";
 import BioNexusFormField from "@/components/ui/BioNexusFormField.vue";
 import BioNexusSectionPanel from "@/components/ui/BioNexusSectionPanel.vue";
@@ -53,4 +56,8 @@ defineExpose({ openCreate, openEdit, close, clearError, setError });
 .exam-group-body { display: grid; gap: var(--bio-nexus-space-3); }
 .exam-check { display: flex; align-items: center; gap: var(--bio-nexus-space-2); }
 .exam-check input { width: 16px; height: 16px; accent-color: var(--bio-nexus-color-primary); }
+
+.exam-group-dialog__errors {
+  margin-bottom: var(--bionexus-spacing-md, 1rem);
+}
 </style>
