@@ -307,7 +307,7 @@ const roleColumnDefs = computed(() => [
     headerName: "Origen",
     filter: BioNexusOptionFilter,
     filterParams: {
-      getValue: (data) => data?.isSystem ? "Sistema" : "Configurable",
+      getValue: (node) => node.data?.isSystem ? "Sistema" : "Configurable",
       options: [
         { value: "Sistema", label: "Sistema" },
         { value: "Configurable", label: "Configurable" },
@@ -325,7 +325,7 @@ const roleColumnDefs = computed(() => [
     headerName: "Estado",
     filter: BioNexusOptionFilter,
     filterParams: {
-      getValue: (data) => Boolean(data?.isActive),
+      getValue: (node) => Boolean(node.data?.isActive),
       options: [
         { value: true, label: "Activo" },
         { value: false, label: "Desactivado" },
