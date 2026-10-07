@@ -71,6 +71,8 @@
   --bio-nexus-sidebar-collapsed-width: 64px;
   --bio-nexus-sidebar-expanded-width: 252px;
   --bio-nexus-topbar-height: 68px;
+  --bio-nexus-breadcrumb-sticky-height: 40px;
+  --bio-nexus-sticky-navigation-offset: calc(var(--bio-nexus-topbar-height) + var(--bio-nexus-breadcrumb-sticky-height));
   --bio-nexus-content-padding-x: 18px;
   --bio-nexus-content-padding-y: 14px;
 

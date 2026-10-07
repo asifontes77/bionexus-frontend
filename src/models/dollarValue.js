@@ -1,4 +1,7 @@
-﻿function positiveId(value) { const id = Number(value); return Number.isInteger(id) && id > 0 ? id : null; }
-export function normalizeDollarValue(value = {}) { const id = positiveId(value.id); const amount = Number(value.value); const date = typeof value.date === "string" ? value.date : ""; if (id === null || !Number.isFinite(amount) || amount <= 0 || !date) return null; return { id, value: amount, date }; }
+function positiveId(value) { const id = Number(value); return Number.isInteger(id) && id > 0 ? id : null; }
+const SOURCES = Object.freeze(["BCV", "DOLAR_API", "OTHER", "UNKNOWN"]);
+const UPDATE_METHODS = Object.freeze(["AUTOMATIC", "MANUAL", "UNKNOWN"]);
+function enumValue(value, allowed, fallback = "UNKNOWN") { const normalized = String(value || "").trim().toUpperCase(); return allowed.includes(normalized) ? normalized : fallback; }
+export function normalizeDollarValue(value = {}) { const id = positiveId(value.id); const amount = Number(value.value); const date = typeof value.date === "string" ? value.date : ""; if (id === null || !Number.isFinite(amount) || amount <= 0 || !date) return null; return { id, value: amount, date, registeredAt: typeof value.registeredAt === "string" ? value.registeredAt : date, source: enumValue(value.source, SOURCES), updateMethod: enumValue(value.updateMethod ?? value.update_method, UPDATE_METHODS) }; }
 export function normalizeDollarValueHistory(value) { const rows = Array.isArray(value) ? value : Array.isArray(value?.data) ? value.data : []; return rows.map(normalizeDollarValue).filter(Boolean).sort((a,b) => b.id - a.id); }
 export function normalizeDollarValuePayload(value = {}) { const amount = Number(value.value); if (!Number.isFinite(amount) || amount <= 0) throw new Error("DOLLAR_VALUE_INVALID"); const rounded = Math.round(amount * 100) / 100; if (Math.abs(amount - rounded) > Number.EPSILON) throw new Error("DOLLAR_VALUE_SCALE_INVALID"); return { value: rounded }; }

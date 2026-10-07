@@ -5,20 +5,23 @@
       <span>{{ loadError }}</span>
     </div>
 
-    <div v-if="!isCommunicationsRoute" class="laboratory-navigation">
-      <BioNexusTabs v-model="activeTab" :tabs="tabs" aria-label="Secciones de Laboratorio" id-prefix="laboratory" />
-      <div class="laboratory-actions">
-        <BioNexusActionButton icon="undo" v-if="dirty" variant="secondary" :disabled="saving" @click="discard">Descartar</BioNexusActionButton>
-        <BioNexusActionButton icon="save" v-if="canUpdate" variant="primary" :loading="saving" :disabled="loading || !dirty" @click="save">Guardar cambios</BioNexusActionButton>
-      </div>
-    </div>
-
     <div v-if="loading" class="bio-nexus-empty-state">Cargando configuración...</div>
     <template v-else-if="laboratory">
-      <LaboratoryLogoPanel v-if="!isCommunicationsRoute" v-show="activeTab === 'logo'" id="laboratory-panel-logo" role="tabpanel" aria-labelledby="laboratory-tab-logo" :model="laboratory" :errors="identityErrors" :disabled="!canUpdate || saving" @upload="uploadLogo" />
-      <LaboratoryGeneralPanel v-if="!isCommunicationsRoute" v-show="activeTab === 'general'" id="laboratory-panel-general" role="tabpanel" aria-labelledby="laboratory-tab-general" :model="laboratory" :errors="identityErrors" :disabled="!canUpdate || saving" />
-      <LaboratoryBillingPanel v-if="!isCommunicationsRoute" v-show="activeTab === 'billing'" id="laboratory-panel-billing" role="tabpanel" aria-labelledby="laboratory-tab-billing" :model="laboratory" :disabled="!canUpdate || saving" />
-      <LaboratoryEmailPanel v-if="isCommunicationsRoute || activeTab === 'email'" v-show="isCommunicationsRoute || activeTab === 'email'" id="laboratory-panel-email" role="tabpanel" aria-labelledby="laboratory-tab-email" :model="laboratory" :errors="emailErrors" :disabled="!canUpdate || saving || testingEmail" :testing="testingEmail" :saving="saving" :dirty="dirty" :can-update="canUpdate" @discard="discard" @save="save" @test-connection="testConnection" />
+<div class="laboratory-actions">
+      <BioNexusActionButton
+        v-if="canUpdate"
+        icon="save"
+        variant="primary"
+        :loading="saving"
+        :disabled="loading || !dirty"
+        @click="save"
+      >
+        Guardar cambios
+      </BioNexusActionButton>
+    </div>
+
+    <LaboratoryBillingPanel v-if="!isCommunicationsRoute" id="laboratory-panel-billing" role="tabpanel" aria-labelledby="laboratory-tab-billing" :model="laboratory" :disabled="!canUpdate || saving" />
+      <LaboratoryEmailPanel v-else-if="isCommunicationsRoute" id="laboratory-panel-email" role="tabpanel" aria-labelledby="laboratory-tab-email" :model="laboratory" :errors="emailErrors" :disabled="!canUpdate || saving || testingEmail" :testing="testingEmail" :saving="saving" :dirty="dirty" :can-update="canUpdate" @discard="discard" @save="save" @test-connection="testConnection" />
     </template>
   </section>
   <BioNexusConfirmDialog ref="discardDialog"/>
@@ -58,7 +61,7 @@ const tabs = Object.freeze([
   { key: 'logo', label: 'Logo' },
   { key: 'general', label: 'General' },
   { key: 'billing', label: 'Factura / Toma de muestra' },
-  { key: 'email', label: 'Envío por correo' }
+  { key: 'email', label: 'Env├¡o por correo' }
 ])
 const canUpdate = computed(() => authorization.hasPermission('laboratory.update'))
 const isCommunicationsRoute = computed(() => route.name === 'configuration-laboratory-communications')
@@ -72,14 +75,14 @@ function discard() {
   emailErrors.value = {}
   toast.info('Los cambios pendientes fueron descartados.')
 }
-async function confirmDiscard() { if (!dirty.value) return true; return Boolean(await discardDialog.value?.ask({ kicker: 'Confirmación', title: 'Descartar cambios', message: 'Hay cambios sin guardar. ¿Deseas salir y descartarlos?', icon: 'warning', variant: 'danger', confirmIcon: 'delete', confirmText: 'Sí, salir y descartar cambios', cancelText: 'Cancelar' })) }
+async function confirmDiscard() { if (!dirty.value) return true; return Boolean(await discardDialog.value?.ask({ kicker: 'Confirmaci├│n', title: 'Descartar cambios', message: 'Hay cambios sin guardar. ┬┐Deseas salir y descartarlos?', icon: 'warning', variant: 'danger', confirmIcon: 'delete', confirmText: 'S├¡, salir y descartar cambios', cancelText: 'Cancelar' })) }
 function beforeUnload(event) { if (!dirty.value || saving.value) return; event.preventDefault(); event.returnValue = '' }
 async function load() {
   loading.value = true
   loadError.value = ''
   try { laboratory.value = await getLaboratory(); snapshot() }
   catch (error) {
-    loadError.value = getLaboratoryErrorMessage(error, 'No fue posible cargar la configuración.')
+    loadError.value = getLaboratoryErrorMessage(error, 'No fue posible cargar la configuraci├│n.')
     toast.error(loadError.value)
   } finally { loading.value = false }
 }
@@ -89,13 +92,13 @@ async function save() {
   emailErrors.value = validateLaboratoryEmail(laboratory.value.sendEmail)
   if (Object.keys(emailErrors.value).length) { activeTab.value = 'email'; toast.error('Revise la configuraci\u00f3n de correo antes de guardar.'); return }
   const errors = Object.values(identityErrors.value)
-  if (errors.length) { activeTab.value = errors.some((_, index) => Object.keys(identityErrors.value)[index].startsWith('max_')) ? 'logo' : 'general'; toast.error('Revise los campos señalados antes de guardar.'); return }
+  if (errors.length) { activeTab.value = errors.some((_, index) => Object.keys(identityErrors.value)[index].startsWith('max_')) ? 'logo' : 'general'; toast.error('Revise los campos se├▒alados antes de guardar.'); return }
   saving.value = true
   try {
     laboratory.value = await updateLaboratory(laboratory.value.id, laboratory.value)
     snapshot()
     identityErrors.value = {}
-    toast.success('La configuración fue actualizada.')
+    toast.success('La configuraci├│n fue actualizada.')
   } catch (error) { generalError.value = getLaboratoryErrorMessage(error, 'No fue posible guardar.'); toast.error(generalError.value) }
   finally { saving.value = false }
 }
@@ -107,7 +110,7 @@ async function testConnection() {
   try {
     const result = await testLaboratoryEmailConnection(laboratory.value.id, laboratory.value.sendEmail)
     toast.success(result?.mode === 'gmail' ? 'Conexi\u00f3n con Gmail verificada.' : 'Conexi\u00f3n SMTP verificada.')
-  } catch (error) { generalError.value = getLaboratoryErrorMessage(error, 'No fue posible verificar la conexión.'); toast.error(generalError.value) }
+  } catch (error) { generalError.value = getLaboratoryErrorMessage(error, 'No fue posible verificar la conexi├│n.'); toast.error(generalError.value) }
   finally { testingEmail.value = false }
 }
 async function uploadLogo(file) {
@@ -142,7 +145,7 @@ onBeforeUnmount(() => globalThis.removeEventListener('beforeunload', beforeUnloa
 .laboratory-navigation {
   position: sticky;
   z-index: 20;
-  top: calc(var(--bio-nexus-topbar-height) + var(--bio-nexus-space-2));
+  top:var(--bio-nexus-sticky-navigation-offset);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -167,7 +170,7 @@ onBeforeUnmount(() => globalThis.removeEventListener('beforeunload', beforeUnloa
 
 @media (max-width: 720px) {
   .laboratory-navigation {
-    top: calc(var(--bio-nexus-topbar-height) + var(--bio-nexus-space-1));
+    top:var(--bio-nexus-sticky-navigation-offset);
     align-items: stretch;
     flex-direction: column;
   }

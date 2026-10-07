@@ -967,3 +967,48 @@
     object-position: center;
   }
 }
+
+/* Global sticky breadcrumb: keep navigation context visible below the authenticated topbar. */
+.authenticated-layout > .app-main > .app-breadcrumb,
+.authenticated-main > .app-breadcrumb,
+.app-content > .app-breadcrumb,
+.app-breadcrumb {
+  position: sticky;
+  z-index: 19;
+  top: var(--bio-nexus-topbar-height);
+  box-sizing: border-box;
+  min-height: var(--bio-nexus-breadcrumb-sticky-height);
+  margin-inline: calc(-1 * var(--bio-nexus-space-1));
+  padding: var(--bio-nexus-space-2) var(--bio-nexus-space-1);
+  background: var(--bio-nexus-color-background);
+  box-shadow: 0 1px 0 var(--bio-nexus-color-border);
+}
+
+@media (max-width: 720px) {
+  .authenticated-layout > .app-main > .app-breadcrumb,
+  .authenticated-main > .app-breadcrumb,
+  .app-content > .app-breadcrumb,
+  .app-breadcrumb {
+    top: var(--bio-nexus-topbar-height);
+    margin-inline: 0;
+    padding-inline: 0;
+  }
+}
+/* End global sticky breadcrumb. */
+
+/* Sticky navigation seam guard: prevent scrolling content from showing between breadcrumb and tabs. */
+.identity-toolbar::before,
+.patient-admission-navigation::before,
+.application-settings-navigation::before,
+.laboratory-navigation::before,
+.laboratory-tabs::before {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 100%;
+  left: 0;
+  height: var(--bio-nexus-space-2);
+  background: var(--bio-nexus-color-background);
+  pointer-events: none;
+}
+/* End sticky navigation seam guard. */
