@@ -515,6 +515,8 @@ function getRoleErrorMessage(error, fallbackMessage) {
       "El código debe comenzar con una letra y solo puede contener letras minúsculas, números, puntos, guiones y guiones bajos.",
     ROLE_CODE_TOO_LONG:
       "El código no puede superar los 60 caracteres.",
+    ROLE_NAME_ALREADY_EXISTS:
+      "Ya existe un rol con el mismo nombre.",
     ROLE_NAME_REQUIRED:
       "El campo Nombre es requerido.",
     ROLE_NAME_TOO_LONG:
@@ -1015,7 +1017,6 @@ async function createRole() {
   creatingRole.value = true;
   createRoleError.value = "";
   createRoleMessage.value = "";
-
   try {
     const createdRole = await createAuthorizationRole({
       code: createInternalRoleCode(createRoleForm.value.name),
@@ -1075,7 +1076,6 @@ async function updateRole() {
   editingRole.value = true;
   updateRoleError.value = "";
   updateRoleMessage.value = "";
-
   try {
     const updatedRole = await updateAuthorizationRole(
       role.id,
