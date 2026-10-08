@@ -36,8 +36,6 @@ import BioNexusFormErrors from '@/components/ui/BioNexusFormErrors.vue'
 import BioNexusTabs from '@/components/ui/BioNexusTabs.vue'
 import LaboratoryBillingPanel from '@/components/laboratory/LaboratoryBillingPanel.vue'
 import LaboratoryEmailPanel from '@/components/laboratory/LaboratoryEmailPanel.vue'
-import LaboratoryGeneralPanel from '@/components/laboratory/LaboratoryGeneralPanel.vue'
-import LaboratoryLogoPanel from '@/components/laboratory/LaboratoryLogoPanel.vue'
 import { useBioNexusToast } from '@/composables/useBioNexusToast'
 import { validateLaboratoryEmail, validateLaboratoryIdentity } from '@/models/laboratory'
 import { getLaboratory, getLaboratoryErrorMessage, testLaboratoryEmailConnection, updateLaboratory, uploadLaboratoryLogo } from '@/services/laboratoryService'
@@ -61,7 +59,7 @@ const tabs = Object.freeze([
   { key: 'logo', label: 'Logo' },
   { key: 'general', label: 'General' },
   { key: 'billing', label: 'Factura / Toma de muestra' },
-  { key: 'email', label: 'Env├¡o por correo' }
+  { key: 'email', label: 'Envío por correo' }
 ])
 const canUpdate = computed(() => authorization.hasPermission('laboratory.update'))
 const isCommunicationsRoute = computed(() => route.name === 'configuration-laboratory-communications')
@@ -75,14 +73,14 @@ function discard() {
   emailErrors.value = {}
   toast.info('Los cambios pendientes fueron descartados.')
 }
-async function confirmDiscard() { if (!dirty.value) return true; return Boolean(await discardDialog.value?.ask({ kicker: 'Confirmaci├│n', title: 'Descartar cambios', message: 'Hay cambios sin guardar. ┬┐Deseas salir y descartarlos?', icon: 'warning', variant: 'danger', confirmIcon: 'delete', confirmText: 'S├¡, salir y descartar cambios', cancelText: 'Cancelar' })) }
+async function confirmDiscard() { if (!dirty.value) return true; return Boolean(await discardDialog.value?.ask({ kicker: 'Confirmación', title: 'Descartar cambios', message: 'Hay cambios sin guardar. ¿Deseas salir y descartarlos?', icon: 'warning', variant: 'danger', confirmIcon: 'delete', confirmText: 'Sí, salir y descartar cambios', cancelText: 'Cancelar' })) }
 function beforeUnload(event) { if (!dirty.value || saving.value) return; event.preventDefault(); event.returnValue = '' }
 async function load() {
   loading.value = true
   loadError.value = ''
   try { laboratory.value = await getLaboratory(); snapshot() }
   catch (error) {
-    loadError.value = getLaboratoryErrorMessage(error, 'No fue posible cargar la configuraci├│n.')
+    loadError.value = getLaboratoryErrorMessage(error, 'No fue posible cargar la configuración.')
     toast.error(loadError.value)
   } finally { loading.value = false }
 }
@@ -92,13 +90,13 @@ async function save() {
   emailErrors.value = validateLaboratoryEmail(laboratory.value.sendEmail)
   if (Object.keys(emailErrors.value).length) { activeTab.value = 'email'; toast.error('Revise la configuraci\u00f3n de correo antes de guardar.'); return }
   const errors = Object.values(identityErrors.value)
-  if (errors.length) { activeTab.value = errors.some((_, index) => Object.keys(identityErrors.value)[index].startsWith('max_')) ? 'logo' : 'general'; toast.error('Revise los campos se├▒alados antes de guardar.'); return }
+  if (errors.length) { activeTab.value = errors.some((_, index) => Object.keys(identityErrors.value)[index].startsWith('max_')) ? 'logo' : 'general'; toast.error('Revise los campos señalados antes de guardar.'); return }
   saving.value = true
   try {
     laboratory.value = await updateLaboratory(laboratory.value.id, laboratory.value)
-    snapshot()
+      snapshot()
     identityErrors.value = {}
-    toast.success('La configuraci├│n fue actualizada.')
+    toast.success('La configuración fue actualizada.')
   } catch (error) { generalError.value = getLaboratoryErrorMessage(error, 'No fue posible guardar.'); toast.error(generalError.value) }
   finally { saving.value = false }
 }
@@ -110,21 +108,8 @@ async function testConnection() {
   try {
     const result = await testLaboratoryEmailConnection(laboratory.value.id, laboratory.value.sendEmail)
     toast.success(result?.mode === 'gmail' ? 'Conexi\u00f3n con Gmail verificada.' : 'Conexi\u00f3n SMTP verificada.')
-  } catch (error) { generalError.value = getLaboratoryErrorMessage(error, 'No fue posible verificar la conexi├│n.'); toast.error(generalError.value) }
+  } catch (error) { generalError.value = getLaboratoryErrorMessage(error, 'No fue posible verificar la conexión.'); toast.error(generalError.value) }
   finally { testingEmail.value = false }
-}
-async function uploadLogo(file) {
-  if (!authorization.hasPermission('laboratory.upload-logo')) {
-    toast.error('La cuenta no tiene permiso para actualizar el logo.')
-    return
-  }
-  saving.value = true
-  try {
-    laboratory.value = await uploadLaboratoryLogo(file)
-    snapshot()
-    toast.success('El logo fue actualizado.')
-  } catch (error) { toast.error(getLaboratoryErrorMessage(error, 'No fue posible actualizar el logo.')) }
-  finally { saving.value = false }
 }
 watch(() => [route.name, route.query.tab, route.meta.initialTab], ([, queryTab, initialTab]) => {
   activeTab.value = typeof queryTab === 'string' ? queryTab : (typeof initialTab === 'string' ? initialTab : 'general')

@@ -11,7 +11,7 @@
     <div v-if="loading" class="bio-nexus-empty-state">Cargando identidad...</div>
     <template v-else-if="laboratory">
       <div class="identity-layout">
-        <LaboratoryLogoPanel class="identity-logo" :model="laboratory" :errors="identityErrors" :disabled="!canUpdate || saving" @upload="uploadLogo" />
+        <LaboratoryLogoPanel class="identity-logo" :model="laboratory" :errors="identityErrors" :disabled="!canUpdate || saving" :preview-url="pendingLogoUrl" @select-logo="selectLogo" />
         <LaboratoryGeneralPanel class="identity-data" :model="laboratory" :errors="identityErrors" :disabled="!canUpdate || saving" />
       </div>
     </template>
@@ -40,19 +40,22 @@ const loadError=ref('')
 const generalError=ref('')
 const identityErrors=ref({})
 const discardDialog=ref(null)
+const pendingLogoFile=ref(null)
+const pendingLogoUrl=ref('')
 const canUpdate=computed(()=>authorization.hasPermission('laboratory.update'))
-const dirty=computed(()=>laboratory.value!==null&&JSON.stringify(laboratory.value)!==original.value)
+const dirty=computed(()=>laboratory.value!==null&&(JSON.stringify(laboratory.value)!==original.value||pendingLogoFile.value!==null))
 function snapshot(){original.value=JSON.stringify(laboratory.value);generalError.value=''}
-function discard(){if(!original.value||saving.value)return;laboratory.value=JSON.parse(original.value);identityErrors.value={};generalError.value='';toast.info('Los cambios pendientes fueron descartados.')}
+function clearPendingLogo(){if(pendingLogoUrl.value)URL.revokeObjectURL(pendingLogoUrl.value);pendingLogoFile.value=null;pendingLogoUrl.value=''}
+function selectLogo(file){if(!authorization.hasPermission('laboratory.upload-logo')){generalError.value='La cuenta no tiene permiso para actualizar el logo.';toast.error(generalError.value);return}clearPendingLogo();pendingLogoFile.value=file;pendingLogoUrl.value=URL.createObjectURL(file)}
+function discard(){if(!original.value||saving.value)return;laboratory.value=JSON.parse(original.value);clearPendingLogo();identityErrors.value={};generalError.value='';toast.info('Los cambios pendientes fueron descartados.')}
 async function confirmDiscard(){if(!dirty.value)return true;return Boolean(await discardDialog.value?.ask({kicker:'Confirmación',title:'Descartar cambios',message:'Hay cambios sin guardar. ¿Deseas salir y descartarlos?',icon:'warning',variant:'danger',confirmIcon:'delete',confirmText:'Sí, salir y descartar cambios',cancelText:'Cancelar'}))}
 function beforeUnload(event){if(!dirty.value||saving.value)return;event.preventDefault();event.returnValue=''}
 async function load(){loading.value=true;loadError.value='';generalError.value='';try{laboratory.value=await getLaboratory();snapshot()}catch(error){loadError.value=getLaboratoryErrorMessage(error,'No fue posible cargar la identidad.');toast.error(loadError.value)}finally{loading.value=false}}
-async function save(){if(!dirty.value||saving.value)return;generalError.value='';identityErrors.value=validateLaboratoryIdentity(laboratory.value);if(Object.keys(identityErrors.value).length){toast.error('Revise los campos señalados antes de guardar.');return}saving.value=true;try{laboratory.value=await updateLaboratory(laboratory.value.id,laboratory.value);snapshot();identityErrors.value={};toast.success('La identidad del laboratorio fue actualizada.')}catch(error){generalError.value=getLaboratoryErrorMessage(error,'No fue posible guardar la identidad.');toast.error(generalError.value)}finally{saving.value=false}}
-async function uploadLogo(file){generalError.value='';if(!authorization.hasPermission('laboratory.upload-logo')){generalError.value='La cuenta no tiene permiso para actualizar el logo.';toast.error(generalError.value);return}saving.value=true;try{laboratory.value=await uploadLaboratoryLogo(file);snapshot();toast.success('El logo fue actualizado.')}catch(error){generalError.value=getLaboratoryErrorMessage(error,'No fue posible actualizar el logo.');toast.error(generalError.value)}finally{saving.value=false}}
+async function save(){if(!dirty.value||saving.value)return;generalError.value='';identityErrors.value=validateLaboratoryIdentity(laboratory.value);if(Object.keys(identityErrors.value).length){toast.error('Revise los campos señalados antes de guardar.');return}saving.value=true;try{const logoFile=pendingLogoFile.value;laboratory.value=await updateLaboratory(laboratory.value.id,laboratory.value);if(logoFile)laboratory.value=await uploadLaboratoryLogo(logoFile,laboratory.value.id);clearPendingLogo();snapshot();identityErrors.value={};toast.success(logoFile?'La identidad y el logo fueron actualizados.':'La identidad del laboratorio fue actualizada.')}catch(error){generalError.value=getLaboratoryErrorMessage(error,'No fue posible guardar la identidad.');toast.error(generalError.value)}finally{saving.value=false}}
 watch(laboratory,()=>{if(generalError.value)generalError.value=''}, {deep:true})
 onBeforeRouteLeave(async()=>await confirmDiscard())
 onMounted(()=>{globalThis.addEventListener('beforeunload',beforeUnload);load()})
-onBeforeUnmount(()=>globalThis.removeEventListener('beforeunload',beforeUnload))
+onBeforeUnmount(()=>{clearPendingLogo();globalThis.removeEventListener('beforeunload',beforeUnload)})
 </script>
 <style scoped>
 .identity-page{display:grid;gap:var(--bio-nexus-space-4);min-width:0}.identity-toolbar{position:sticky;z-index:20;top:var(--bio-nexus-sticky-navigation-offset);display:flex;align-items:center;justify-content:space-between;gap:var(--bio-nexus-space-3);padding:10px 12px;border:1px solid var(--bio-nexus-color-border);border-radius:var(--bio-nexus-radius-md);background:var(--bio-nexus-color-surface);box-shadow:0 7px 16px rgb(34 59 87 / 8%)}.identity-toolbar p{margin:0;color:var(--bio-nexus-color-text-secondary);font-size:13px}.identity-actions{display:flex;flex:0 0 auto;gap:var(--bio-nexus-space-2)}.identity-layout{display:grid;grid-template-columns:minmax(300px,360px) minmax(0,1fr);gap:var(--bio-nexus-space-4);align-items:start}.identity-logo{position:sticky;top:calc(var(--bio-nexus-sticky-navigation-offset) + 82px);min-width:0}.identity-data{min-width:0}@media(max-width:980px){.identity-layout{grid-template-columns:1fr}.identity-logo{position:static}}@media(max-width:720px){.identity-toolbar{align-items:stretch;flex-direction:column}.identity-actions{justify-content:flex-end}}
