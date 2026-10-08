@@ -139,7 +139,10 @@ async function continueSession() {
     lastActivityAt = Date.now()
     countdown.value = 0
     if (dialog.value?.open) dialog.value.close()
-  } catch { await expireSession() }
+  } catch {
+    if (!session.isAuthenticated || (session.expiresAt > 0 && Date.now() >= session.expiresAt)) await expireSession()
+    else toast.error('No fue posible renovar la sesión. Intente nuevamente antes de que finalice la cuenta regresiva.')
+  }
   finally { renewing.value = false }
 }
 
@@ -168,7 +171,9 @@ async function monitor() {
     return
   }
   if (session.expiresAt > 0 && session.expiresAt - now <= RENEW_WINDOW_MS) {
-    try { await performRenewal() } catch { await expireSession() }
+    try { await performRenewal() } catch {
+      if (!session.isAuthenticated || (session.expiresAt > 0 && Date.now() >= session.expiresAt)) await expireSession()
+    }
   }
 }
 

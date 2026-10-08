@@ -32,15 +32,8 @@ installBioNexusDialogManager();
 app.mount('#app')
 
 if (sessionStore.isAuthenticated) {
-  authorizationStore.loadContext().catch(async () => {
+  authorizationStore.loadContext().catch(() => {
     authorizationStore.clear()
-    sessionStore.clear()
-    if (router.currentRoute.value.name !== 'login') {
-      await router.replace({
-        name: 'login',
-        query: { redirect: router.currentRoute.value.fullPath }
-      })
-    }
   })
 } else {
   authorizationStore.clear()

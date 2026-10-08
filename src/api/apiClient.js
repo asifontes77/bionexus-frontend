@@ -78,9 +78,10 @@ export async function apiRequest(path, options = {}) {
     requestHeaders.set('Content-Type', 'application/json;charset=UTF-8')
   }
 
+  let requestToken = ''
   if (auth) {
-    const token = getStoredToken()
-    if (token) requestHeaders.set('Authorization', `Bearer ${token}`)
+    requestToken = getStoredToken()
+    if (requestToken) requestHeaders.set('Authorization', `Bearer ${requestToken}`)
     const socketId = getSessionPolicySocketId()
     if (socketId) requestHeaders.set('X-Bio-Nexus-Socket-Id', socketId)
   }
@@ -129,7 +130,9 @@ export async function apiRequest(path, options = {}) {
         const renewedToken = await renewStoredSession()
         if (renewedToken) return apiRequest(path, { ...options, retryAfterRenewal: false })
       }
-      globalThis.dispatchEvent?.(new CustomEvent('bio-nexus:unauthorized', { detail: { path } }))
+      const currentToken = getStoredToken()
+      if (requestToken !== currentToken) throw new ApiError('HTTP 401', response.status, data)
+      globalThis.dispatchEvent?.(new CustomEvent('bio-nexus:unauthorized', { detail: { path, requestToken } }))
     }
     const message =
       data && typeof data === 'object' && data.message
