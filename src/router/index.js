@@ -1,4 +1,4 @@
-﻿import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHistory } from "vue-router";
 import { useAuthorizationStore } from "@/stores/authorization";
 import { useSessionStore } from "@/stores/session";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout.vue";
@@ -8,6 +8,7 @@ const MigrationHomeView=()=>import("@/views/MigrationHomeView.vue");
 const PatientResultsEmailView=()=>import("@/views/PatientResultsEmailView.vue");
 const PatientAdmissionView=()=>import("@/views/PatientAdmissionView.vue");
 const NotFoundView=()=>import("@/views/NotFoundView.vue");
+const PatientReceiptDocumentDesignerView=()=>import("@/views/PatientReceiptDocumentDesignerView.vue");
 const RolesPermissionsView=()=>import("@/views/RolesPermissionsView.vue");
 const UserAuthorizationView=()=>import("@/views/UserAuthorizationView.vue");
 const ParasiticformsView=()=>import("@/views/ParasiticformsView.vue");
@@ -117,6 +118,7 @@ const routes = [
           breadcrumb: ["Rutina diaria", "Entrega de resultados por correo"],
         },
       },
+      { path: "configuration/documents/patient-receipt", name: "configuration-patient-receipt-document", component: PatientReceiptDocumentDesignerView, meta: { requiresAuth: true, permissions: ["laboratory.read"], title: "Diseñador de comprobante del paciente", description: "Diseña la estructura visual y los datos dinámicos del comprobante del paciente.", breadcrumb: ["Configuración", "Documentos y plantillas", "Comprobante"] } },
       {
         path: "configuration/exams",
         name: "configuration-exams",
@@ -210,7 +212,7 @@ const routes = [
       {
         path: "configuration/documents", name: "configuration-documents", component: ConfigurationModuleView,
         meta: { requiresAuth: true, title: "Documentos y plantillas", description: "Catalogo central de formatos editables del laboratorio.", breadcrumb: ["Configuración", "Documentos y plantillas"], sections: [
-          { title: "Comprobante", description: "Plantilla del comprobante del paciente.", status: "pending" },
+          { title: "Comprobante", description: "Plantilla del comprobante del paciente.", routeName: "configuration-patient-receipt-document", permission: "laboratory.read", status: "available" },
           { title: "Factura", description: "Plantilla fiscal completa o preimpresa.", status: "pending" },
           { title: "Etiqueta de muestra", description: "Plantilla para tubos y muestras.", status: "pending" },
           { title: "Informe de resultados", description: "Formato de entrega de resultados.", status: "future" }

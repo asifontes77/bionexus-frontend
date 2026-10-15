@@ -17,6 +17,7 @@
       "exceljs": "^4.4.0",
       "jspreadsheet-ce": "5.0.4",
       "jsuites": "6.4.2",
+      "konva": "^10.8.0",
       "pdfmake": "^0.3.11",
       "pinia": "4.0.2",
       "socket.io-client": "4.8.1",

@@ -15,6 +15,15 @@ import './styles/components.css'
 import './styles/pages.css'
 import './styles/utilities.css'
 import './styles/security-management.css'
+// ResizeObserver may defer notifications to a later frame. Ignore only the two benign browser messages.
+window.addEventListener('error',event=>{
+  const message=event?.message||'';
+  if(message==='ResizeObserver loop completed with undelivered notifications.'||message==='ResizeObserver loop limit exceeded'){
+    event.preventDefault();
+    event.stopImmediatePropagation();
+  }
+},true);
+
 
 const app = createApp(App)
 const pinia = createPinia()
