@@ -1,11 +1,10 @@
+import { resolvePublicAssetUrl } from '@/api/apiUrl'
 const TOKEN_PATTERN=/\{\{\s*([a-zA-Z0-9_.-]+)\s*\}\}/g;
 
 export function laboratoryLogoUrl(laboratory){
   const logo=String(laboratory?.logo??'').trim();
   if(!logo)return'';
-  const prefix=String(import.meta.env.VITE_API_PUBLIC_URL??import.meta.env.VITE_API_URL??'').replace(/\/$/,'');
-  const encoded=logo.split('/').filter(Boolean).map(encodeURIComponent).join('/');
-  return prefix+'/api/public/'+encoded;
+  return resolvePublicAssetUrl(logo);
 }
 
 export function laboratoryDocumentContext(laboratory){

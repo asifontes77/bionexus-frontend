@@ -24,12 +24,12 @@ import { computed, ref, watch } from 'vue'
 import BioNexusActionButton from '@/components/ui/BioNexusActionButton.vue'
 import BioNexusFormField from '@/components/ui/BioNexusFormField.vue'
 import BioNexusSectionPanel from '@/components/ui/BioNexusSectionPanel.vue'
+import { resolvePublicAssetUrl } from '@/api/apiUrl'
 const props=defineProps({model:{type:Object,required:true},errors:{type:Object,default:()=>({})},disabled:{type:Boolean,default:false},previewUrl:{type:String,default:''}})
 const emit=defineEmits(['select-logo'])
 const fileInput=ref(null)
 const imageFailed=ref(false)
-const publicFilesPrefix='http://localhost:8081/api/public'
-const logoUrl=computed(()=>props.previewUrl || (props.model.logo?publicFilesPrefix+'/'+String(props.model.logo).split('/').filter(Boolean).map(encodeURIComponent).join('/'):''))
+const logoUrl=computed(()=>props.previewUrl || resolvePublicAssetUrl(props.model.logo))
 const previewStyle=computed(()=>({maxHeight:String(Number.isFinite(Number(props.model.max_height_logo)) ? Number(props.model.max_height_logo) : 200)+'px',maxWidth:String(Number.isFinite(Number(props.model.max_width_logo)) ? Number(props.model.max_width_logo) : 200)+'px'}))
 watch(()=>props.model.logo,()=>{imageFailed.value=false})
 watch(()=>props.previewUrl,()=>{imageFailed.value=false})

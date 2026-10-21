@@ -72,6 +72,7 @@
 </template>
 
 <script setup>
+import { resolvePublicAssetUrl } from '@/api/apiUrl'
 import { ref } from "vue";
 import BioNexusActionButton from "@/components/ui/BioNexusActionButton.vue";
 import BioNexusSectionPanel from "@/components/ui/BioNexusSectionPanel.vue";
@@ -99,7 +100,7 @@ function close() {
 }
 
 defineExpose({ open, close });
-function assetUrl(value) { if (!value) return ""; const normalized = value.includes("/") ? value : `images/${value}`; return `/api/public/${normalized.split("/").filter(Boolean).map(encodeURIComponent).join("/")}`; }
+function assetUrl(value) { return resolvePublicAssetUrl(value, "images"); }
 </script>
 
 <style scoped>

@@ -1,4 +1,5 @@
 import { io } from 'socket.io-client'
+import { resolveSocketNamespace } from '@/api/apiUrl'
 
 let socket = null
 let policyHandler = null
@@ -7,7 +8,7 @@ export function connectSessionPolicySocket(token, onPolicy) {
   disconnectSessionPolicySocket()
   if (typeof token !== 'string' || token.trim() === '') return
   policyHandler = typeof onPolicy === 'function' ? onPolicy : null
-  socket = io('/session-policy', {
+  socket = io(resolveSocketNamespace('/session-policy'), {
     auth: { token },
     transports: ['websocket'],
     reconnection: true,

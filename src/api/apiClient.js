@@ -1,4 +1,5 @@
 import { getSessionPolicySocketId } from '@/services/sessionPolicySocket'
+import { resolveApiUrl } from '@/api/apiUrl'
 
 const DEFAULT_REQUEST_TIMEOUT_MS = 15000
 const SESSION_STORAGE_KEY = 'bio-nexus.session'
@@ -43,7 +44,7 @@ async function renewStoredSession() {
   if (unauthorizedRenewalPromise) return unauthorizedRenewalPromise
   const token = getStoredToken()
   if (!token) return null
-  unauthorizedRenewalPromise = fetch(RENEW_PATH, { method: 'POST', headers: { Authorization: `Bearer ${token}` } })
+  unauthorizedRenewalPromise = fetch(resolveApiUrl(RENEW_PATH), { method: 'POST', headers: { Authorization: `Bearer ${token}` } })
     .then(async (response) => {
       const data = await parseResponse(response)
       if (!response.ok || !data?.token) return null
@@ -104,7 +105,7 @@ export async function apiRequest(path, options = {}) {
 
   let response
   try {
-    response = await fetch(path, {
+    response = await fetch(resolveApiUrl(path), {
       ...requestOptions,
       signal: controller.signal,
       method,

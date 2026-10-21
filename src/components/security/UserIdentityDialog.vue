@@ -61,6 +61,7 @@
   <UserStateDialog ref="stateDialog" :saving="savingState" @confirm="submitStateChange" />
 </template>
 <script setup>
+import { resolvePublicAssetUrl } from '@/api/apiUrl'
 import { computed, nextTick, reactive, ref } from "vue";
 import BioNexusFormField from "@/components/ui/BioNexusFormField.vue";
 import BioNexusIcon from "@/components/ui/BioNexusIcon.vue";
@@ -81,7 +82,7 @@ const form = reactive(createEmptyForm()); const isCreateMode = computed(() => mo
 function createEmptyForm() { return { name: "", userName: "", email: "", telephone: "", direction: "", position: "", collegeNumber: "", password: "", passwordConfirm: "", signaturePassword: "", signaturePasswordConfirm: "" }; }
 function resetErrors() { for (const key of Object.keys(errors)) delete errors[key]; formError.value = ""; }
 function clearMedia() { photoFile.value = null; signatureFile.value = null; photoPreview.value = ""; signaturePreview.value = ""; }
-function assetUrl(value) { if (!value) return ""; const normalized = value.includes("/") ? value : `images/${value}`; return `/api/public/${normalized.split("/").filter(Boolean).map(encodeURIComponent).join("/")}`; }
+function assetUrl(value) { return resolvePublicAssetUrl(value, "images"); }
 function assignForm(values) { Object.assign(form, createEmptyForm(), values); }
 function show(dialogReference) { dialogReference.value?.open(); }
 function close(dialog) { dialog.value?.close(); }
