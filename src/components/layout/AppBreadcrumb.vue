@@ -30,6 +30,8 @@ const routeByLabel = Object.freeze({
   "Sistema": { name: "configuration-system-module" },
   "Seguridad": { name: "configuration-security-module" },
   "Facturación": { name: "configuration-billing-module" },
+  "Documentos y plantillas": { name: "configuration-documents" },
+  "Comprobantes": { name: "configuration-patient-receipt-document" },
 
 });
 const labels = computed(() => {

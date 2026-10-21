@@ -8,6 +8,7 @@ const MigrationHomeView=()=>import("@/views/MigrationHomeView.vue");
 const PatientResultsEmailView=()=>import("@/views/PatientResultsEmailView.vue");
 const PatientAdmissionView=()=>import("@/views/PatientAdmissionView.vue");
 const NotFoundView=()=>import("@/views/NotFoundView.vue");
+const DocumentDefinitionsView=()=>import("@/views/DocumentDefinitionsView.vue");
 const PatientReceiptDocumentDesignerView=()=>import("@/views/PatientReceiptDocumentDesignerView.vue");
 const RolesPermissionsView=()=>import("@/views/RolesPermissionsView.vue");
 const UserAuthorizationView=()=>import("@/views/UserAuthorizationView.vue");
@@ -118,7 +119,8 @@ const routes = [
           breadcrumb: ["Rutina diaria", "Entrega de resultados por correo"],
         },
       },
-      { path: "configuration/documents/patient-receipt", name: "configuration-patient-receipt-document", component: PatientReceiptDocumentDesignerView, meta: { requiresAuth: true, permissions: ["laboratory.read"], title: "Diseñador de comprobante del paciente", description: "Diseña la estructura visual y los datos dinámicos del comprobante del paciente.", breadcrumb: ["Configuración", "Documentos y plantillas", "Comprobante"] } },
+      { path: "configuration/documents/receipts", name: "configuration-patient-receipt-document", component: DocumentDefinitionsView, meta: { requiresAuth: true, permissions: ["document-definitions.read"], title: "Comprobantes", description: "Administra los comprobantes y sus diseños.", breadcrumb: ["Configuración", "Documentos y plantillas", "Comprobantes"] } },
+      { path: "configuration/documents/:documentId/edit", name: "configuration-document-edit", component: PatientReceiptDocumentDesignerView, meta: { requiresAuth: true, permissions: ["document-definitions.read"], title: "Editor de comprobante", description: "Diseña el comprobante seleccionado.", breadcrumb: ["Configuración", "Documentos y plantillas", "Comprobantes", "Editor"] } },
       {
         path: "configuration/exams",
         name: "configuration-exams",
@@ -218,7 +220,7 @@ const routes = [
           { title: "Informe de resultados", description: "Formato de entrega de resultados.", status: "future" }
         ] },
       },
-      {
+        {
         path: "configuration/system-module", name: "configuration-system-module", component: ConfigurationModuleView,
         meta: { requiresAuth: true, permissions: ["application-settings.read"], title: "Sistema", description: "Sesión, formatos regionales y preferencias técnicas.", breadcrumb: ["Configuración", "Sistema"], sections: [
           { title: "Configuración de la aplicación", description: "Formatos regionales, sesión e impresora.", routeName: "configuration-application-settings", query: { tab: "regional" }, status: "available" },
