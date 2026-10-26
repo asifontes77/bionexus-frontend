@@ -167,9 +167,14 @@ async function submitLogin() {
 
     sessionStore.start(response);
     authorizationStore.clear();
-    await authorizationStore.loadContext({
-      force: true
-    });
+
+    if (sessionStore.isPlatformOwner) {
+      sessionStore.clear();
+      message.value = "Use el acceso administrativo de Bio Nexus.";
+      return;
+    }
+
+    await authorizationStore.loadContext({ force: true });
 
     const requestedRedirect = typeof route.query.redirect === "string" ? route.query.redirect : "/";
     const redirect = requestedRedirect.startsWith("/") && !requestedRedirect.startsWith("//") ? requestedRedirect : "/";

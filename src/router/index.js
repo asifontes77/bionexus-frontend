@@ -1,9 +1,13 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useAuthorizationStore } from "@/stores/authorization";
 import { useSessionStore } from "@/stores/session";
+import { useAdminSessionStore } from "@/stores/adminSession";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout.vue";
+import AdminLayout from "@/layouts/AdminLayout.vue";
 import ExamOrderingView from "@/views/ExamOrderingView.vue";
 const LoginView=()=>import("@/views/LoginView.vue");
+const AdminLoginView=()=>import("@/views/AdminLoginView.vue");
+const PlatformLaboratoriesView=()=>import("@/views/PlatformLaboratoriesView.vue");
 const MigrationHomeView=()=>import("@/views/MigrationHomeView.vue");
 const PatientResultsEmailView=()=>import("@/views/PatientResultsEmailView.vue");
 const PatientAdmissionView=()=>import("@/views/PatientAdmissionView.vue");
@@ -49,6 +53,26 @@ const routes = [
       public: true,
       title: "Iniciar sesion",
     },
+  },
+  {
+    path: "/admin/login",
+    name: "admin-login",
+    component: AdminLoginView,
+    meta: { public: true, adminPublic: true, title: "Acceso administrativo" },
+  },
+  {
+    path: "/admin",
+    component: AdminLayout,
+    meta: { requiresAdminAuth: true },
+    children: [
+      { path: "", redirect: { name: "admin-laboratories" } },
+      {
+        path: "laboratories",
+        name: "admin-laboratories",
+        component: PlatformLaboratoriesView,
+        meta: { requiresAdminAuth: true, title: "Laboratorios" },
+      },
+    ],
   },
   {
     path: "/",
@@ -317,7 +341,19 @@ const router = createRouter({
 
 router.beforeEach(async (to) => {
   const sessionStore = useSessionStore();
+  const adminSessionStore = useAdminSessionStore();
   const authorizationStore = useAuthorizationStore();
+
+  adminSessionStore.hydrate();
+  if (to.meta.requiresAdminAuth && !adminSessionStore.isAuthenticated) {
+    return { name: "admin-login" };
+  }
+  if (to.name === "admin-login" && adminSessionStore.isAuthenticated) {
+    return { name: "admin-laboratories" };
+  }
+  if (to.path.startsWith("/admin") && sessionStore.isAuthenticated) {
+    return { name: "admin-login" };
+  }
 
   if (to.meta.requiresAuth && !sessionStore.isAuthenticated) {
     authorizationStore.clear();
@@ -331,9 +367,7 @@ router.beforeEach(async (to) => {
   }
 
   if (to.name === "login" && sessionStore.isAuthenticated) {
-    return {
-      name: "dashboard",
-    };
+    return { name: "dashboard" };
   }
 
   const requiredPermissions = Array.isArray(to.meta.permissions)
@@ -350,9 +384,7 @@ router.beforeEach(async (to) => {
     } catch {
       authorizationStore.clear();
 
-      return {
-        name: "dashboard",
-      };
+      return { name: "dashboard" };
     }
   }
 

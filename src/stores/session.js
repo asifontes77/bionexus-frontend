@@ -1,10 +1,10 @@
-﻿import { defineStore } from 'pinia'
+import { defineStore } from 'pinia'
 import { isTokenExpired, parseJwt } from '@/logic/tokenUtils'
 
 const STORAGE_KEY = 'bio-nexus.session'
 
 function emptySession() {
-  return { token: '', user: null, signedInAt: '', renewedAt: '' }
+  return { token: '', user: null, identityType: '', signedInAt: '', renewedAt: '' }
 }
 
 function normalizeUser(response) {
@@ -17,7 +17,8 @@ function normalizeUser(response) {
     position: user.position ?? '',
     photo: response.url_photo === 'undefined' || response.url_photo === null ? '' : response.url_photo ?? user.photo ?? '',
     telephone: user.telephone ?? '',
-    email: user.email ?? ''
+    email: user.email ?? '',
+    identityType: response.identityType ?? user.identityType ?? 'tenant-user'
   }
 }
 
@@ -27,6 +28,7 @@ export const useSessionStore = defineStore('session', {
     isAuthenticated: (state) => state.token !== '' && !isTokenExpired(state.token),
     userId: (state) => state.user?.id ?? null,
     userName: (state) => state.user?.name ?? '',
+    isPlatformOwner: (state) => state.identityType === 'platform-owner',
     expiresAt: (state) => {
       const payload = parseJwt(state.token)
       return typeof payload?.exp === 'number' ? payload.exp * 1000 : 0
@@ -41,6 +43,7 @@ export const useSessionStore = defineStore('session', {
         if (!session.token || isTokenExpired(session.token)) { this.clear(); return }
         this.token = session.token
         this.user = session.user ?? null
+        this.identityType = session.identityType ?? session.user?.identityType ?? 'tenant-user'
         this.signedInAt = session.signedInAt ?? ''
         this.renewedAt = session.renewedAt ?? this.signedInAt
       } catch { this.clear() }
@@ -49,6 +52,7 @@ export const useSessionStore = defineStore('session', {
       if (!response?.token || !response?.user) throw new Error('La respuesta de autenticacion es invalida.')
       this.token = response.token
       this.user = normalizeUser(response)
+      this.identityType = response.identityType ?? this.user.identityType ?? 'tenant-user'
       this.signedInAt = new Date().toISOString()
       this.renewedAt = this.signedInAt
       this.persist()
@@ -57,11 +61,12 @@ export const useSessionStore = defineStore('session', {
       if (!response?.token) throw new Error('La respuesta de renovacion es invalida.')
       this.token = response.token
       if (response.user) this.user = normalizeUser(response)
+      this.identityType = response.identityType ?? this.user?.identityType ?? this.identityType
       this.renewedAt = new Date().toISOString()
       this.persist()
     },
     persist() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ token: this.token, user: this.user, signedInAt: this.signedInAt, renewedAt: this.renewedAt }))
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ token: this.token, user: this.user, identityType: this.identityType, signedInAt: this.signedInAt, renewedAt: this.renewedAt }))
     },
     clear() {
       this.$reset()
