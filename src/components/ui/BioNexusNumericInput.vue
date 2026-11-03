@@ -18,6 +18,7 @@
 </template>
 
 <script setup>
+import { resolveMonetaryDecimals } from "@/services/regionalFormatter";
 import { computed, ref, watch } from "vue";
 import { formatRegionalNumber } from "@/services/regionalFormatter";
 import { useRegionalSettingsStore } from "@/stores/regionalSettings";
@@ -45,7 +46,7 @@ watch(() => props.modelValue, value => { const next = toMinorUnits(value); if (n
 watch(digits, () => { minorUnits.value = toMinorUnits(props.modelValue); });
 
 function toMinorUnits(value) { const number = Number(value); return Number.isFinite(number) ? Math.max(0, Math.round(number * (10 ** digitsFallback()))) : 0; }
-function digitsFallback() { return props.decimals === null ? Math.max(0, Number(settings.settings.monetary_decimals) || 0) : Math.max(0, Number(props.decimals) || 0); }
+function digitsFallback() { return resolveMonetaryDecimals(settings.settings, props.decimals); }
 function publish(next) { const value = Math.max(0, Number(next) || 0) / divisor.value; if (props.max !== null && value > props.max) return; if (props.min !== null && value < props.min && next !== 0) return; minorUnits.value = Math.max(0, Number(next) || 0); emit("update:modelValue", numericValue.value); emit("input", numericValue.value); emit("change", numericValue.value); }
 function appendDigits(value) { const digitsOnly = String(value || "").replace(/\D/g, ""); if (!digitsOnly) return; publish(Number(String(minorUnits.value) + digitsOnly)); }
 function onKeydown(event) { if (props.disabled || props.readonly) return; if (/^\d$/.test(event.key)) { event.preventDefault(); appendDigits(event.key); return; } if (event.key === "Backspace" || event.key === "Delete") { event.preventDefault(); publish(Math.floor(minorUnits.value / 10)); return; } if (["Tab", "ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key) || event.ctrlKey || event.metaKey) return; event.preventDefault(); }

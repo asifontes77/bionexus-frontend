@@ -4,7 +4,7 @@ import { isTokenExpired, parseJwt } from '@/logic/tokenUtils'
 const STORAGE_KEY = 'bio-nexus.session'
 
 function emptySession() {
-  return { token: '', user: null, identityType: '', signedInAt: '', renewedAt: '' }
+  return { token: '', user: null, identityType: '', mustChangePassword: false, signedInAt: '', renewedAt: '' }
 }
 
 function normalizeUser(response) {
@@ -44,6 +44,7 @@ export const useSessionStore = defineStore('session', {
         this.token = session.token
         this.user = session.user ?? null
         this.identityType = session.identityType ?? session.user?.identityType ?? 'tenant-user'
+        this.mustChangePassword = session.mustChangePassword === true
         this.signedInAt = session.signedInAt ?? ''
         this.renewedAt = session.renewedAt ?? this.signedInAt
       } catch { this.clear() }
@@ -53,6 +54,7 @@ export const useSessionStore = defineStore('session', {
       this.token = response.token
       this.user = normalizeUser(response)
       this.identityType = response.identityType ?? this.user.identityType ?? 'tenant-user'
+      this.mustChangePassword = response.mustChangePassword === true
       this.signedInAt = new Date().toISOString()
       this.renewedAt = this.signedInAt
       this.persist()
@@ -62,11 +64,12 @@ export const useSessionStore = defineStore('session', {
       this.token = response.token
       if (response.user) this.user = normalizeUser(response)
       this.identityType = response.identityType ?? this.user?.identityType ?? this.identityType
+      this.mustChangePassword = response.mustChangePassword === true
       this.renewedAt = new Date().toISOString()
       this.persist()
     },
     persist() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ token: this.token, user: this.user, identityType: this.identityType, signedInAt: this.signedInAt, renewedAt: this.renewedAt }))
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ token: this.token, user: this.user, identityType: this.identityType, mustChangePassword: this.mustChangePassword, signedInAt: this.signedInAt, renewedAt: this.renewedAt }))
     },
     clear() {
       this.$reset()

@@ -63,7 +63,7 @@ const automation=ref({enabled:false,run_time:"18:00",time_zone:"America/Caracas"
 const canUpdate=computed(()=>authorizationStore.hasPermission("dollar-value.update"));
 const valueError=computed(()=>publishAttempted.value&&Number(draftValue.value)<=0?"Indica un valor mayor que cero.":"");
 const automationDirty=computed(()=>Boolean(automation.value.enabled)!==Boolean(automationInitial.value.enabled)||String(automation.value.run_time||"")!==String(automationInitial.value.run_time||""));
-const manualDirty=computed(()=>Number(draftValue.value)>0&&(!current.value||Math.round(Number(draftValue.value)*100)!==Math.round(Number(current.value.value)*100)));
+const manualDirty=computed(()=>Number(draftValue.value)>0&&(!current.value||Math.round(Number(draftValue.value)*1_000_000)!==Math.round(Number(current.value.value)*1_000_000)));
 const defaultColDef=Object.freeze({sortable:true,filter:true,resizable:true,suppressHeaderMenuButton:true});
 const sourceLabels=Object.freeze({BCV:"BCV",DOLAR_API:"DolarApi",OTHER:"Otra fuente",UNKNOWN:"No identificada"});
 const methodLabels=Object.freeze({AUTOMATIC:"Automática",MANUAL:"Manual",UNKNOWN:"No identificada"});

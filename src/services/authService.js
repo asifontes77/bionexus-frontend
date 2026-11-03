@@ -1,4 +1,4 @@
-﻿import { apiRequest } from '@/api/apiClient'
+import { apiRequest } from '@/api/apiClient'
 
 export function loginUser(username, password) {
   return apiRequest('/api/users/session', { auth: false, method: 'POST', body: { user_name: username, password } })
@@ -14,4 +14,8 @@ export function getSessionPolicy() {
 
 export function getUserById(userId) {
   return apiRequest(`/api/users/${userId}`)
+}
+
+export function changeRequiredPassword(body) {
+  return apiRequest('/api/users/session/change-required-password', { method: 'POST', body })
 }

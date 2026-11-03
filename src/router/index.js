@@ -355,6 +355,10 @@ router.beforeEach(async (to) => {
     return { name: "admin-login" };
   }
 
+  if (sessionStore.isAuthenticated && sessionStore.mustChangePassword && to.name !== 'dashboard') {
+    return { name: 'dashboard' };
+  }
+
   if (to.meta.requiresAuth && !sessionStore.isAuthenticated) {
     authorizationStore.clear();
 

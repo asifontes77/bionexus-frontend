@@ -1,5 +1,5 @@
-﻿<template>
-  <dialog ref="dialog" class="bio-nexus-dialog" :class="[dialogClasses, dialogClass]" tabindex="-1" @cancel.prevent="blockImplicitClose" @keydown.esc.capture.prevent.stop="blockImplicitClose" @click="blockBackdropClose" @close="handleNativeClose">
+<template>
+  <dialog ref="dialog" class="bio-nexus-dialog" :class="[[dialogClasses, dialogClass]]" tabindex="-1" @cancel.prevent="blockImplicitClose" @keydown.esc.capture.prevent.stop="blockImplicitClose" @click="blockBackdropClose" @close="handleNativeClose" @scroll="resetNativeDialogScroll">
     <section class="bio-nexus-dialog-shell" :class="shellClass">
       <header class="bio-nexus-dialog-header">
         <div class="bio-nexus-dialog-heading">
@@ -94,6 +94,13 @@ function blockBackdropClose(event) { if (event.target === dialog.value) event.pr
 
 onBeforeUnmount(() => close());
 defineExpose({ open, close, requestClose, element: dialog });
+
+function resetNativeDialogScroll(event) {
+  const nativeDialog = event.currentTarget
+  if (!(nativeDialog instanceof HTMLDialogElement)) return
+  if (nativeDialog.scrollTop !== 0) nativeDialog.scrollTop = 0
+  if (nativeDialog.scrollLeft !== 0) nativeDialog.scrollLeft = 0
+}
 </script>
 <style>
 /* BIO NEXUS DIALOG ENCAPSULATED LAYOUT V1 */
@@ -308,4 +315,8 @@ dialog.bio-nexus-dialog.bio-nexus-dialog-size-standard > .bio-nexus-dialog-shell
 }
 /* BIO NEXUS DIALOG SMALL CENTERING V4 END */
 .bio-nexus-dialog-body-scroll-hidden { overflow: hidden !important; }
+
+/* NATIVE_DIALOG_SCROLL_GUARD_BEGIN */
+.bio-nexus-dialog { overflow: hidden; overscroll-behavior: none; }
+/* NATIVE_DIALOG_SCROLL_GUARD_END */
 </style>
