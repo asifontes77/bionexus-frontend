@@ -9,19 +9,50 @@
         />
         <p class="login-brand-descriptor">{{ BIO_NEXUS_BRAND.descriptor }}</p>
         <h1 id="login-title">
-          {{ licenseRequired ? "Registrar licencia" : "Iniciar sesion" }}
+          {{ !isTenantLogin ? "Acceso al laboratorio" : licenseRequired ? "Registrar licencia" : "Iniciar sesion" }}
         </h1>
         <p>
           {{
-            licenseRequired
+            !isTenantLogin
+              ? "Ingrese el código de acceso de su laboratorio para continuar."
+              : licenseRequired
               ? "Ingrese la licencia del laboratorio para continuar."
               : "Ingrese sus credenciales para continuar."
           }}
         </p>
       </div>
 
+      <div v-if="isTenantLogin" class="login-tenant-context" aria-live="polite">
+        <strong>{{ tenantName || "Laboratorio no disponible" }}</strong>
+        <span v-if="tenantContext.error">No fue posible validar el código del laboratorio. Verifique la URL e inténtelo de nuevo.</span>
+        <button type="button" class="secondary-button" :disabled="loading" @click="changeLaboratory">
+          Cambiar laboratorio
+        </button>
+      </div>
+
+      <form v-if="!isTenantLogin" class="login-form" novalidate @submit.prevent="submitPortal">
+        <BioNexusFormField label="Código del laboratorio" field-id="access-code" :error="errors.accessCode" required>
+          <input
+            id="access-code"
+            v-model.trim="accessCode"
+            class="bio-nexus-field"
+            name="access-code"
+            type="text"
+            autocomplete="organization"
+            maxlength="63"
+            :aria-invalid="Boolean(errors.accessCode)"
+            :aria-describedby="errors.accessCode ? 'access-code-error' : undefined"
+            @input="delete errors.accessCode"
+          />
+        </BioNexusFormField>
+        <p v-if="message" class="login-message" role="alert">{{ message }}</p>
+        <button type="submit" :disabled="loading || !accessCode.trim()">
+          {{ loading ? "Validando..." : "Continuar" }}
+        </button>
+      </form>
+
       <form
-        v-if="!licenseRequired"
+        v-else-if="!licenseRequired"
         class="login-form"
         novalidate
         @submit.prevent="submitLogin"
@@ -116,11 +147,15 @@ import { loginUser } from "@/services/authService";
 import { updateLaboratoryLicense } from "@/services/laboratoryService";
 import { useAuthorizationStore } from "@/stores/authorization";
 import { useSessionStore } from "@/stores/session";
+import { useTenantContextStore } from "@/stores/tenantContext";
+import { buildTenantPath, getRouteAccessSlug, getTenantPortalUrl, normalizeAccessSlug, resolveHostAccessSlug } from "@/logic/tenantAccess";
 
 const route = useRoute();
 const router = useRouter();
 const sessionStore = useSessionStore();
 const authorizationStore = useAuthorizationStore();
+const tenantContext = useTenantContextStore();
+const accessCode = ref("");
 
 const username = ref("");
 const password = ref("");
@@ -132,8 +167,11 @@ const usernameInput = ref(null);
 const licenseRequired = ref(false);
 const licenseRegistered = ref(false);
 
+const accessSlug = computed(() => resolveHostAccessSlug() || getRouteAccessSlug(route.path).slug);
+const isTenantLogin = computed(() => Boolean(accessSlug.value));
+const tenantName = computed(() => tenantContext.accessSlug === accessSlug.value ? tenantContext.laboratoryName : "");
 const canSubmitLogin = computed(
-  () => username.value !== "" && password.value !== ""
+  () => Boolean(accessSlug.value) && tenantContext.accessSlug === accessSlug.value && !tenantContext.error && username.value !== "" && password.value !== ""
 );
 
 const canSubmitLicense = computed(() => license.value !== "");
@@ -145,8 +183,23 @@ function validateLogin() {
   return !errors.username && !errors.password;
 }
 
+async function submitPortal() {
+  const slug = normalizeAccessSlug(accessCode.value);
+  if (!slug) {
+    errors.accessCode = "Ingrese un código de laboratorio válido.";
+    return;
+  }
+  loading.value = true;
+  message.value = "";
+  try {
+    await router.replace(buildTenantPath(slug, "/login"));
+  } finally {
+    loading.value = false;
+  }
+}
+
 async function submitLogin() {
-  if (loading.value || !validateLogin()) return;
+  if (loading.value || !canSubmitLogin.value || !validateLogin()) return;
 
   loading.value = true;
   message.value = "";
@@ -154,6 +207,7 @@ async function submitLogin() {
 
   try {
     const response = await loginUser(
+      accessSlug.value,
       username.value.toLowerCase(),
       password.value
     );
@@ -165,7 +219,7 @@ async function submitLogin() {
       return;
     }
 
-    sessionStore.start(response);
+    sessionStore.start(response, accessSlug.value);
     authorizationStore.clear();
 
     if (sessionStore.isPlatformOwner) {
@@ -175,11 +229,7 @@ async function submitLogin() {
     }
 
     if (!sessionStore.mustChangePassword) await authorizationStore.loadContext({ force: true });
-
-    const requestedRedirect = typeof route.query.redirect === "string" ? route.query.redirect : "/";
-    const redirect = requestedRedirect.startsWith("/") && !requestedRedirect.startsWith("//") ? requestedRedirect : "/";
-
-    await router.replace(redirect);
+    await router.replace(getPostLoginRedirect());
   } catch (error) {
     password.value = "";
     authorizationStore.clear();
@@ -211,6 +261,32 @@ async function submitLogin() {
   }
 }
 
+function getPostLoginRedirect() {
+  const fallback = resolveHostAccessSlug()
+    ? "/dashboard"
+    : buildTenantPath(accessSlug.value, "/dashboard");
+  if (sessionStore.mustChangePassword || typeof route.query.redirect !== "string") return fallback;
+
+  try {
+    const target = new URL(route.query.redirect, window.location.origin);
+    if (target.origin !== window.location.origin || target.pathname.startsWith("/admin") || target.pathname === "/login") return fallback;
+    if (resolveHostAccessSlug()) {
+      if (target.pathname.startsWith("/l/")) return fallback;
+      return `${target.pathname}${target.search}${target.hash}`;
+    }
+
+    const targetTenant = getRouteAccessSlug(target.pathname);
+    if (targetTenant.present) {
+      return targetTenant.slug === accessSlug.value
+        ? `${target.pathname}${target.search}${target.hash}`
+        : fallback;
+    }
+    return `${buildTenantPath(accessSlug.value, target.pathname)}${target.search}${target.hash}`;
+  } catch {
+    return fallback;
+  }
+}
+
 async function submitLicense() {
   if (!canSubmitLicense.value || loading.value) return;
 
@@ -230,6 +306,9 @@ async function submitLicense() {
 }
 
 onMounted(async () => {
+  if (route.query.reason === "invalid-lab") {
+    message.value = "No fue posible validar el código del laboratorio. Verifique la URL e inténtelo de nuevo.";
+  }
   if (route.query.reason === "session-expired") {
     message.value = "La sesión finalizó por inactividad. Ingresa nuevamente para continuar.";
     const query = { ...route.query };
@@ -239,6 +318,18 @@ onMounted(async () => {
   await nextTick();
   usernameInput.value?.focus();
 });
+
+function changeLaboratory() {
+  sessionStore.clear();
+  authorizationStore.clear();
+  tenantContext.clear();
+  const portalUrl = getTenantPortalUrl();
+  if (portalUrl.startsWith("http")) {
+    window.location.assign(portalUrl);
+    return;
+  }
+  router.replace(portalUrl);
+}
 
 function returnToLogin() {
   licenseRequired.value = false;

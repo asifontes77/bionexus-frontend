@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from "vue-router";
 import { useAuthorizationStore } from "@/stores/authorization";
 import { useSessionStore } from "@/stores/session";
 import { useAdminSessionStore } from "@/stores/adminSession";
+import { useTenantContextStore } from "@/stores/tenantContext";
+import { buildTenantPath, getRouteAccessSlug, resolveHostAccessSlug, stripTenantPath } from "@/logic/tenantAccess";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout.vue";
 import AdminLayout from "@/layouts/AdminLayout.vue";
 import ExamOrderingView from "@/views/ExamOrderingView.vue";
@@ -55,6 +57,12 @@ const routes = [
     },
   },
   {
+    path: "/l/:accessSlug/login",
+    name: "tenant-login",
+    component: LoginView,
+    meta: { public: true, title: "Iniciar sesion" },
+  },
+  {
     path: "/admin/login",
     name: "admin-login",
     component: AdminLoginView,
@@ -76,6 +84,7 @@ const routes = [
   },
   {
     path: "/",
+    alias: "/l/:accessSlug",
     component: AuthenticatedLayout,
     meta: {
       requiresAuth: true,
@@ -331,6 +340,28 @@ const routes = [
   },
 ];
 
+function cloneTenantRoute(route) {
+  const tenantRoute = { ...route };
+  if (route.name) tenantRoute.name = `tenant-${route.name}`;
+  if (route.meta) tenantRoute.meta = { ...route.meta };
+  if (Array.isArray(route.children)) tenantRoute.children = route.children.map(cloneTenantRoute);
+  if (route.redirect && typeof route.redirect === "object" && route.redirect.name) {
+    tenantRoute.redirect = { ...route.redirect, name: `tenant-${route.redirect.name}` };
+  }
+  return tenantRoute;
+}
+
+const authenticatedRoute = routes.find((route) => route.path === "/");
+if (authenticatedRoute) {
+  routes.splice(routes.indexOf(authenticatedRoute) + 1, 0, {
+    path: "/l/:accessSlug",
+    name: "tenant",
+    component: AuthenticatedLayout,
+    meta: { ...authenticatedRoute.meta },
+    children: authenticatedRoute.children.map(cloneTenantRoute),
+  });
+}
+
 import AntibioticsView from "@/views/AntibioticsView.vue";
 import GermsView from "@/views/GermsView.vue";
 
@@ -339,11 +370,13 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach(async (to) => {
+router.beforeEach(async (to, from) => {
   const sessionStore = useSessionStore();
   const adminSessionStore = useAdminSessionStore();
   const authorizationStore = useAuthorizationStore();
+  const tenantContextStore = useTenantContextStore();
 
+  tenantContextStore.hydrate();
   adminSessionStore.hydrate();
   if (to.meta.requiresAdminAuth && !adminSessionStore.isAuthenticated) {
     return { name: "admin-login" };
@@ -352,26 +385,104 @@ router.beforeEach(async (to) => {
     return { name: "admin-laboratories" };
   }
   if (to.path.startsWith("/admin") && sessionStore.isAuthenticated) {
+    sessionStore.clear();
+    authorizationStore.clear();
     return { name: "admin-login" };
   }
 
-  if (sessionStore.isAuthenticated && sessionStore.mustChangePassword && to.name !== 'dashboard') {
-    return { name: 'dashboard' };
+  const routeContext = getRouteAccessSlug(to.path);
+  const previousRouteContext = getRouteAccessSlug(from.path);
+  const hostAccessSlug = resolveHostAccessSlug();
+  const portalRequested = to.path === "/login" && to.query.portal === "1" && !hostAccessSlug;
+
+  if (routeContext.present && !routeContext.slug) {
+    sessionStore.clear();
+    authorizationStore.clear();
+    tenantContextStore.clear();
+    return { path: "/login", query: { reason: "invalid-lab" }, replace: true };
+  }
+  if (hostAccessSlug && routeContext.present && routeContext.slug !== hostAccessSlug) {
+    sessionStore.clear();
+    authorizationStore.clear();
+    tenantContextStore.clear();
+    return { path: "/login", query: { reason: "invalid-lab" }, replace: true };
+  }
+  if (hostAccessSlug && routeContext.present) {
+    return { path: stripTenantPath(to.path), query: to.query, hash: to.hash, replace: true };
+  }
+
+  let accessSlug = hostAccessSlug || routeContext.slug;
+  if (!accessSlug && !portalRequested && previousRouteContext.slug) {
+    accessSlug = previousRouteContext.slug;
+  }
+  if (portalRequested) {
+    sessionStore.clear();
+    authorizationStore.clear();
+    tenantContextStore.clear();
+    accessSlug = "";
+  }
+
+  if (accessSlug && sessionStore.isAuthenticated && sessionStore.accessSlug !== accessSlug) {
+    sessionStore.clear();
+    authorizationStore.clear();
+  } else if (!accessSlug && sessionStore.isAuthenticated && sessionStore.accessSlug) {
+    sessionStore.clear();
+    authorizationStore.clear();
+  }
+
+  if (accessSlug) {
+    try {
+      await tenantContextStore.load(accessSlug);
+    } catch {
+      sessionStore.clear();
+      authorizationStore.clear();
+      if (to.name !== "login" && to.name !== "tenant-login") {
+        return {
+          path: hostAccessSlug ? "/login" : buildTenantPath(accessSlug, "/login"),
+          query: { reason: "invalid-lab" },
+          replace: true
+        };
+      }
+    }
+  }
+
+  if (!hostAccessSlug && accessSlug && !routeContext.present) {
+    return {
+      path: buildTenantPath(accessSlug, to.path),
+      query: to.query,
+      hash: to.hash,
+      replace: true
+    };
+  }
+
+  if (!accessSlug && to.path === "/login" && typeof to.query.redirect === "string") {
+    const query = { ...to.query };
+    delete query.redirect;
+    return { path: "/login", query, replace: true };
+  }
+
+  const isDashboardRoute = to.name === "dashboard" || to.name === "tenant-dashboard";
+  if (sessionStore.isAuthenticated && sessionStore.mustChangePassword && !isDashboardRoute) {
+    return {
+      path: hostAccessSlug ? "/dashboard" : buildTenantPath(accessSlug || sessionStore.accessSlug, "/dashboard"),
+      replace: true
+    };
   }
 
   if (to.meta.requiresAuth && !sessionStore.isAuthenticated) {
     authorizationStore.clear();
-
+    if (!accessSlug) return { path: "/login", replace: true };
     return {
-      name: "login",
-      query: {
-        redirect: to.fullPath,
-      },
+      path: hostAccessSlug ? "/login" : buildTenantPath(accessSlug, "/login"),
+      query: { redirect: to.fullPath },
     };
   }
 
-  if (to.name === "login" && sessionStore.isAuthenticated) {
-    return { name: "dashboard" };
+  if ((to.name === "login" || to.name === "tenant-login") && sessionStore.isAuthenticated && sessionStore.accessSlug === accessSlug) {
+    return {
+      path: hostAccessSlug ? "/dashboard" : buildTenantPath(accessSlug, "/dashboard"),
+      replace: true
+    };
   }
 
   const requiredPermissions = Array.isArray(to.meta.permissions)
@@ -388,14 +499,14 @@ router.beforeEach(async (to) => {
     } catch {
       authorizationStore.clear();
 
-      return { name: "dashboard" };
+      return {
+        path: hostAccessSlug ? "/dashboard" : buildTenantPath(accessSlug, "/dashboard"),
+      };
     }
   }
 
   if (!authorizationStore.hasAllPermissions(requiredPermissions)) {
-    return {
-      name: "dashboard",
-    };
+    return { path: hostAccessSlug ? "/dashboard" : buildTenantPath(accessSlug, "/dashboard") };
   }
 
   return true;
@@ -407,5 +518,5 @@ router.afterEach((to) => {
 });
 
 
-router.afterEach((to)=>{if(to.path!=="/login")scheduleAuthorizedRoutePrefetch()});
+router.afterEach((to)=>{if(to.name!=="login"&&to.name!=="tenant-login")scheduleAuthorizedRoutePrefetch()});
 export default router;

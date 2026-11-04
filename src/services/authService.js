@@ -1,7 +1,11 @@
 import { apiRequest } from '@/api/apiClient'
 
-export function loginUser(username, password) {
-  return apiRequest('/api/users/session', { auth: false, method: 'POST', body: { user_name: username, password } })
+export function loginUser(accessSlug, username, password) {
+  return apiRequest('/api/users/session', { auth: false, method: 'POST', body: { access_slug: accessSlug, user_name: username, password } })
+}
+
+export function getTenantContext(accessSlug) {
+  return apiRequest(`/api/users/tenant-context/${encodeURIComponent(accessSlug)}`, { auth: false })
 }
 
 export function renewSession() {
