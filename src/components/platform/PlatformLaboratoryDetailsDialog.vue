@@ -49,7 +49,7 @@
             <input id="platform-lab-plan" v-model.trim="form.plan_code" class="bio-nexus-field" :disabled="!editing" maxlength="80" />
           </BioNexusFormField>
           <BioNexusFormField label="Estado de suscripción" field-id="platform-lab-subscription-status">
-            <select id="platform-lab-subscription-status" v-model="form.subscription_status" class="bio-nexus-field" :disabled="!editing">
+            <select id="platform-lab-subscription-status" v-model="form.subscription_status" class="bio-nexus-field" :disabled="!editing" @change="handleSubscriptionStatusChange">
               <option v-if="!subscriptionStatuses.includes(form.subscription_status)" :value="form.subscription_status">{{ form.subscription_status }}</option>
               <option v-for="status in subscriptionStatuses" :key="status" :value="status">{{ status }}</option>
             </select>
@@ -135,11 +135,15 @@ function normalizeDetail(result) {
     subscription_status: data?.subscription_status || '',
     service_starts_at: dateInput(data?.service_starts_at),
     service_expires_at: dateInput(data?.service_expires_at),
-    grace_until: dateInput(data?.grace_until),
+    grace_until: data?.subscription_status === 'perpetual_free' ? '' : dateInput(data?.grace_until),
     perpetual_free_reason: data?.perpetual_free_reason || '',
     commercial_notes: data?.commercial_notes || '',
     is_active: data?.is_active === true,
   })
+}
+
+function handleSubscriptionStatusChange() {
+  if (form.subscription_status === 'perpetual_free') form.grace_until = ''
 }
 
 async function open(laboratoryId, startEditing = false) {
@@ -164,13 +168,23 @@ async function save() {
     error.value = 'El nombre del laboratorio es obligatorio.'
     return
   }
-  if (['trial', 'active'].includes(form.subscription_status)) {
+  if (['trial', 'active', 'grace'].includes(form.subscription_status)) {
     if (!form.service_starts_at || !form.service_expires_at) {
-      error.value = 'Indique fecha de inicio y expiración para trial o active.'
+      error.value = 'Indique fecha de inicio y expiración para trial, active o grace.'
       return
     }
     if (form.service_expires_at < form.service_starts_at) {
       error.value = 'La expiración no puede ser anterior a la fecha de inicio.'
+      return
+    }
+  }
+  if (form.subscription_status === 'grace') {
+    if (!form.grace_until) {
+      error.value = 'Indique la fecha de fin del periodo de gracia.'
+      return
+    }
+    if (form.grace_until <= form.service_expires_at) {
+      error.value = 'El fin del periodo de gracia debe ser posterior a la fecha de expiración.'
       return
     }
   }
@@ -194,7 +208,7 @@ async function save() {
       subscription_status: form.subscription_status,
       service_starts_at: toUtc(form.service_starts_at),
       service_expires_at: form.subscription_status === 'perpetual_free' ? null : toUtc(form.service_expires_at),
-      grace_until: toUtc(form.grace_until),
+      grace_until: form.subscription_status === 'perpetual_free' ? null : toUtc(form.grace_until),
       perpetual_free_reason: form.subscription_status === 'perpetual_free' ? form.perpetual_free_reason : null,
       commercial_notes: form.commercial_notes,
     })

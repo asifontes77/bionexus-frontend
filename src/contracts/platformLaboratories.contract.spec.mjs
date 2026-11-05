@@ -40,6 +40,15 @@ describe('Administración de laboratorios de plataforma', () => {
     assert.match(detailsDialog, /perpetual_free_granted_at/)
   })
 
+  it('limpia grace al cambiar a perpetual_free y valida el periodo de gracia', () => {
+    assert.match(detailsDialog, /handleSubscriptionStatusChange/)
+    assert.match(detailsDialog, /form\.subscription_status === 'perpetual_free'\) form\.grace_until = ''/)
+    assert.match(detailsDialog, /grace_until: form\.subscription_status === 'perpetual_free' \? null/)
+    assert.match(detailsDialog, /form\.subscription_status === 'grace'/)
+    assert.match(detailsDialog, /if \(!form\.grace_until\)/)
+    assert.match(detailsDialog, /form\.grace_until <= form\.service_expires_at/)
+  })
+
   it('cablea gestión de paquetes y sucursales a las operaciones de plataforma', () => {
     assert.match(packagesDialog, /installPlatformLaboratoryPackage/)
     assert.match(packagesDialog, /removePlatformLaboratoryPackage/)
