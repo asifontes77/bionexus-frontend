@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs'
 import assert from 'node:assert/strict'
 
 const source = readFileSync('src/components/platform/PlatformLaboratoryDialog.vue', 'utf8')
-const groupMatch = source.match(/const seedPackageGroups=(\[[\s\S]*?\])\nconst atomicPackageKeys=/)
+const groupMatch = source.match(/const seedPackageGroups=(\[[\s\S]*\])\r?\nconst atomicPackageKeys=/)
 assert.ok(groupMatch, 'Debe existir el catalogo granular de paquetes')
 
 const groups = JSON.parse(groupMatch[1])

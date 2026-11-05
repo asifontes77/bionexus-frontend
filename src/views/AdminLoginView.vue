@@ -103,7 +103,7 @@ async function submit() {
   try {
     const response = await loginPlatformOwner(username.value.toLowerCase(), password.value)
     session.start(response)
-    await router.replace({ name: 'admin-laboratories' })
+    await router.replace({ name: 'admin-dashboard' })
   } catch {
     password.value = ''
     session.clear()
