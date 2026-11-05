@@ -11,6 +11,31 @@
         </div>
       </BioNexusSectionPanel>
 
+      <BioNexusSectionPanel title="Vigencia del servicio" compact>
+        <div class="prov-grid">
+          <BioNexusFormField label="Plan" field-id="prov-plan-code" required :error="fieldErrors.planCode || ''">
+            <input id="prov-plan-code" v-model.trim="form.planCode" class="bio-nexus-field" maxlength="80" :aria-invalid="Boolean(fieldErrors.planCode)" @input="clearFieldError('planCode')" />
+          </BioNexusFormField>
+          <BioNexusFormField label="Vigencia" field-id="prov-subscription-status" required :error="fieldErrors.subscriptionStatus || ''">
+            <select id="prov-subscription-status" v-model="form.subscriptionStatus" class="bio-nexus-field" @change="clearFieldError('subscriptionStatus')">
+              <option value="trial">Prueba (trial)</option>
+              <option value="active">Activo (active)</option>
+              <option value="perpetual_free">Nunca expira (perpetual_free)</option>
+            </select>
+          </BioNexusFormField>
+          <BioNexusFormField label="Fecha de registro / inicio" field-id="prov-service-starts-at" required :error="fieldErrors.serviceStartsAt || ''">
+            <input id="prov-service-starts-at" v-model="form.serviceStartsAt" class="bio-nexus-field" type="date" :aria-invalid="Boolean(fieldErrors.serviceStartsAt)" @input="clearFieldError('serviceStartsAt')" />
+          </BioNexusFormField>
+          <BioNexusFormField v-if="form.subscriptionStatus !== 'perpetual_free'" label="Fecha de expiración" field-id="prov-service-expires-at" required :help="fieldErrors.serviceExpiresAt ? '' : 'Indica la fecha explícitamente; no se asigna una duración predeterminada.'" :error="fieldErrors.serviceExpiresAt || ''">
+            <input id="prov-service-expires-at" v-model="form.serviceExpiresAt" class="bio-nexus-field" type="date" :aria-invalid="Boolean(fieldErrors.serviceExpiresAt)" @input="clearFieldError('serviceExpiresAt')" />
+          </BioNexusFormField>
+          <BioNexusFormField v-else label="Motivo de vigencia indefinida" field-id="prov-perpetual-free-reason" required :error="fieldErrors.perpetualFreeReason || ''">
+            <textarea id="prov-perpetual-free-reason" v-model.trim="form.perpetualFreeReason" class="bio-nexus-field" rows="3" maxlength="500" :aria-invalid="Boolean(fieldErrors.perpetualFreeReason)" @input="clearFieldError('perpetualFreeReason')" />
+          </BioNexusFormField>
+        </div>
+        <p class="prov-validity-note">La vigencia no bloquea el acceso ni la operación durante la estabilización. El modo disponible es Cloud.</p>
+      </BioNexusSectionPanel>
+
       <BioNexusSectionPanel title="Datos iniciales" compact>
         <div class="prov-package-toolbar">
           <p>Selecciona la información que se copiará al nuevo laboratorio. Puedes continuar sin paquetes.</p>
@@ -75,7 +100,8 @@ const original=ref('')
 const dirty=ref(false)
 const generalError=ref('')
 const fieldErrors=reactive({})
-const blank=()=>({rif:'',name:'',accessSlug:'',businessName:'',address:'',phone:'',email:'',branchName:'Sucursal principal',seedPackages:[],administratorName:'',administratorUsername:'',administratorEmail:'',administratorPassword:'',administratorPasswordConfirmation:''})
+const todayLocal=()=>{const date=new Date();return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`}
+const blank=()=>({rif:'',name:'',accessSlug:'',businessName:'',address:'',phone:'',email:'',branchName:'Sucursal principal',planCode:'',subscriptionStatus:'trial',serviceStartsAt:todayLocal(),serviceExpiresAt:'',perpetualFreeReason:'',seedPackages:[],administratorName:'',administratorUsername:'',administratorEmail:'',administratorPassword:'',administratorPasswordConfirmation:''})
 const form=reactive(blank())
 const signature=computed(()=>JSON.stringify({...form,seedPackages:[...form.seedPackages]}))
 function syncDirty(){dirty.value=signature.value!==original.value}
@@ -117,9 +143,9 @@ function clearFieldError(key){if(fieldErrors[key])delete fieldErrors[key];if(gen
 function isRequiredModule(module){return module.required===true||normalizeModuleKey(module.code)==='security'}
 function requiredModuleIds(){return modules.value.filter(isRequiredModule).map(module=>module.id)}
 function preserveRequiredModules(ids){return [...new Set([...requiredModuleIds(),...ids])]}
-function validate(){clearErrors();for(const field of requiredFields)if(String(form[field.key]??'').trim()==='')fieldErrors[field.key]=field.error;if(form.accessSlug&&!normalizeAccessSlug(form.accessSlug))fieldErrors.accessSlug='Use de 1 a 63 caracteres: letras, números y guiones internos.';if(form.administratorPassword&&!isStrongPassword(form.administratorPassword))fieldErrors.administratorPassword='La contraseña debe tener mínimo 12 caracteres, mayúscula, minúscula, número y símbolo.';if(form.administratorPasswordConfirmation&&form.administratorPassword!==form.administratorPasswordConfirmation)fieldErrors.administratorPasswordConfirmation='Las contraseñas no coinciden.';const firstKey=Object.keys(fieldErrors)[0];if(firstKey){generalError.value='Revise la información requerida antes de registrar el laboratorio.';requestAnimationFrame(()=>document.getElementById(`prov-${firstKey}`)?.focus?.());return false}return true}
+function validate(){clearErrors();for(const field of requiredFields)if(String(form[field.key]??'').trim()==='')fieldErrors[field.key]=field.error;if(!form.planCode.trim())fieldErrors.planCode='Ingrese el código del plan.';if(!form.serviceStartsAt)fieldErrors.serviceStartsAt='Indique la fecha de registro/inicio.';if(form.subscriptionStatus==='perpetual_free'){if(!form.perpetualFreeReason.trim())fieldErrors.perpetualFreeReason='Explique el motivo de la vigencia indefinida.'}else if(!form.serviceExpiresAt)fieldErrors.serviceExpiresAt='Indique una fecha de expiración.';if(form.serviceStartsAt&&form.serviceExpiresAt&&form.serviceExpiresAt<form.serviceStartsAt)fieldErrors.serviceExpiresAt='La fecha de expiración no puede ser anterior a la fecha de inicio.';if(form.accessSlug&&!normalizeAccessSlug(form.accessSlug))fieldErrors.accessSlug='Use de 1 a 63 caracteres: letras, números y guiones internos.';if(form.administratorPassword&&!isStrongPassword(form.administratorPassword))fieldErrors.administratorPassword='La contraseña debe tener mínimo 12 caracteres, mayúscula, minúscula, número y símbolo.';if(form.administratorPasswordConfirmation&&form.administratorPassword!==form.administratorPasswordConfirmation)fieldErrors.administratorPasswordConfirmation='Las contraseñas no coinciden.';const firstKey=Object.keys(fieldErrors)[0];if(firstKey){generalError.value='Revise la información requerida antes de registrar el laboratorio.';requestAnimationFrame(()=>document.getElementById(`prov-${firstKey}`)?.focus?.());return false}return true}
 function isStrongPassword(value){return value.length>=12&&/[A-Z]/.test(value)&&/[a-z]/.test(value)&&/[0-9]/.test(value)&&/[^A-Za-z0-9]/.test(value)}
-async function save(){generalError.value='';if(!validate())return;saving.value=true;try{const selectedPackages=Array.isArray(form.seedPackages)?form.seedPackages.filter(key=>selectableSeedPackageKeys.includes(key)):[];const result=await createPlatformLaboratory({...form,accessSlug:normalizeAccessSlug(form.accessSlug),seedPackages:[...new Set([...selectedPackages,...mandatorySeedPackageKeys])]});const createdSlug=normalizeAccessSlug(result?.laboratory?.access_slug)||normalizeAccessSlug(result?.access_slug)||normalizeAccessSlug(form.accessSlug);original.value=signature.value;dirty.value=false;dialog.value.close();emit('created',{...result,accessUrls:buildTenantAccessUrls(createdSlug,result?.access_urls)})}catch(error){generalError.value=error?.message||'No fue posible registrar el laboratorio.'}finally{saving.value=false}}
+async function save(){generalError.value='';if(!validate())return;saving.value=true;try{const selectedPackages=Array.isArray(form.seedPackages)?form.seedPackages.filter(key=>selectableSeedPackageKeys.includes(key)):[];const serviceStartsAt=new Date(`${form.serviceStartsAt}T00:00:00.000Z`).toISOString();const serviceExpiresAt=form.subscriptionStatus==='perpetual_free'?null:new Date(`${form.serviceExpiresAt}T00:00:00.000Z`).toISOString();const result=await createPlatformLaboratory({...form,accessSlug:normalizeAccessSlug(form.accessSlug),serviceStartsAt,serviceExpiresAt,seedPackages:[...new Set([...selectedPackages,...mandatorySeedPackageKeys])]});const createdSlug=normalizeAccessSlug(result?.laboratory?.access_slug)||normalizeAccessSlug(result?.access_slug)||normalizeAccessSlug(form.accessSlug);original.value=signature.value;dirty.value=false;dialog.value.close();emit('created',{...result,accessUrls:buildTenantAccessUrls(createdSlug,result?.access_urls)})}catch(error){generalError.value=error?.message||'No fue posible registrar el laboratorio.'}finally{saving.value=false}}
 async function requestClose(){if(saving.value)return;if(dirty.value){const confirmed=await discardDialog.value?.ask({kicker:'Confirmación',title:'Descartar cambios',message:'Hay cambios sin guardar. ¿Deseas salir y descartarlos?',icon:'warning',variant:'danger',confirmIcon:'delete',confirmText:'Sí, salir y descartar cambios',cancelText:'Cancelar'});if(!confirmed)return}dialog.value?.close()}
 function close(){requestClose()}
 defineExpose({open,close,requestClose})
@@ -145,7 +171,7 @@ const onDynamicFieldInput = (fieldKey, event) => {
 </script>
 
 <style scoped>
-.prov-sections{display:grid;gap:16px;padding:16px}.prov-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:start}.prov-input-error{border-color:var(--bio-nexus-color-danger)!important}.prov-module-toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:12px;color:var(--bio-nexus-color-text-muted)}.prov-module-actions{display:flex;gap:8px;flex-wrap:wrap}.prov-module-groups{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.prov-module-group{border:1px solid var(--bio-nexus-color-border);border-radius:var(--bio-nexus-radius-md);padding:12px;background:var(--bio-nexus-color-surface)}.prov-module-group-header{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;align-items:center;gap:8px;margin-bottom:10px;color:var(--bio-nexus-color-primary)}.prov-group-icon{font-size:20px;line-height:1}.prov-group-count{color:var(--bio-nexus-color-text-muted);font-size:12px;white-space:nowrap}.prov-module-options{display:grid;gap:8px}
+.prov-sections{display:grid;gap:16px;padding:16px}.prov-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:start}.prov-input-error{border-color:var(--bio-nexus-color-danger)!important}.prov-validity-note{margin:12px 0 0;color:var(--bio-nexus-color-text-muted);font-size:12px}.prov-module-toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:12px;color:var(--bio-nexus-color-text-muted)}.prov-module-actions{display:flex;gap:8px;flex-wrap:wrap}.prov-module-groups{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.prov-module-group{border:1px solid var(--bio-nexus-color-border);border-radius:var(--bio-nexus-radius-md);padding:12px;background:var(--bio-nexus-color-surface)}.prov-module-group-header{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;align-items:center;gap:8px;margin-bottom:10px;color:var(--bio-nexus-color-primary)}.prov-group-icon{font-size:20px;line-height:1}.prov-group-count{color:var(--bio-nexus-color-text-muted);font-size:12px;white-space:nowrap}.prov-module-options{display:grid;gap:8px}
 .prov-module-options :deep(.prov-module-checkbox),
 .prov-module-options :deep(.prov-module-checkbox label),
 .prov-module-options :deep(.prov-module-checkbox span),
