@@ -21,6 +21,7 @@
     </BioNexusDataGrid>
     <PlatformLaboratoryDialog ref="provisioningDialog" @created="handleCreated" />
     <PlatformLaboratoryDetailsDialog ref="detailsDialog" @updated="handleUpdated" />
+    <PlatformLaboratorySubscriptionDialog ref="subscriptionDialog" @updated="handleSubscriptionUpdated" />
     <PlatformLaboratoryPackagesDialog ref="packagesDialog" @changed="handlePackagesChanged" />
     <PlatformLaboratoryBranchesDialog ref="branchesDialog" @changed="handleBranchesChanged" />
     <PlatformLaboratoryDeleteDialog ref="deleteDialog" @deleted="handleDeleted" />
@@ -34,6 +35,7 @@ import BioNexusGridActionsCell from '@/components/grid/BioNexusGridActionsCell.v
 import BioNexusActionButton from '@/components/ui/BioNexusActionButton.vue'
 import PlatformLaboratoryDialog from '@/components/platform/PlatformLaboratoryDialog.vue'
 import PlatformLaboratoryDetailsDialog from '@/components/platform/PlatformLaboratoryDetailsDialog.vue'
+import PlatformLaboratorySubscriptionDialog from '@/components/platform/PlatformLaboratorySubscriptionDialog.vue'
 import PlatformLaboratoryPackagesDialog from '@/components/platform/PlatformLaboratoryPackagesDialog.vue'
 import PlatformLaboratoryBranchesDialog from '@/components/platform/PlatformLaboratoryBranchesDialog.vue'
 import PlatformLaboratoryDeleteDialog from '@/components/platform/PlatformLaboratoryDeleteDialog.vue'
@@ -47,6 +49,7 @@ const error = ref('')
 const search = ref('')
 const provisioningDialog = ref(null)
 const detailsDialog = ref(null)
+const subscriptionDialog = ref(null)
 const packagesDialog = ref(null)
 const branchesDialog = ref(null)
 const deleteDialog = ref(null)
@@ -55,6 +58,7 @@ const gridComponents = Object.freeze({ BioNexusGridActionsCell })
 const actions = [
   { key: 'view', label: 'Ver configuración', icon: 'visibility', onClick: openDetails },
   { key: 'edit', label: 'Editar laboratorio', icon: 'edit', onClick: row => detailsDialog.value?.open(row.id, true) },
+  { key: 'subscription', label: 'Gestionar suscripción', icon: 'credit_card', onClick: row => subscriptionDialog.value?.open(row) },
   { key: 'packages', label: 'Gestionar paquetes instalados', icon: 'inventory_2', onClick: row => packagesDialog.value?.open(row) },
   { key: 'branches', label: 'Gestionar sucursales', icon: 'account_tree', onClick: row => branchesDialog.value?.open(row) },
   { key: 'delete', label: 'Eliminar definitivamente', icon: 'delete_forever', variant: 'danger', onClick: row => deleteDialog.value?.open(row) },
@@ -121,6 +125,11 @@ async function handleCreated(result) {
 async function handleUpdated() {
   await load()
   toast.success('Configuración del laboratorio actualizada.')
+}
+
+async function handleSubscriptionUpdated() {
+  await load()
+  toast.success('Suscripción actualizada correctamente.')
 }
 
 async function handlePackagesChanged() {

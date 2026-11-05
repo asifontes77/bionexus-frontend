@@ -45,26 +45,23 @@
           <BioNexusFormField label="Correo" field-id="platform-lab-email">
             <input id="platform-lab-email" v-model.trim="form.email" class="bio-nexus-field" :disabled="!editing" maxlength="100" />
           </BioNexusFormField>
-          <BioNexusFormField label="Código del plan" field-id="platform-lab-plan">
-            <input id="platform-lab-plan" v-model.trim="form.plan_code" class="bio-nexus-field" :disabled="!editing" maxlength="80" />
+          <BioNexusFormField label="Código de plan comercial" field-id="platform-lab-plan" help="La asignación y el estado de la suscripción se administran por separado.">
+            <input id="platform-lab-plan" class="bio-nexus-field" :value="form.plan_code || '—'" disabled />
           </BioNexusFormField>
           <BioNexusFormField label="Estado de suscripción" field-id="platform-lab-subscription-status">
-            <select id="platform-lab-subscription-status" v-model="form.subscription_status" class="bio-nexus-field" :disabled="!editing" @change="handleSubscriptionStatusChange">
-              <option v-if="!subscriptionStatuses.includes(form.subscription_status)" :value="form.subscription_status">{{ form.subscription_status }}</option>
-              <option v-for="status in subscriptionStatuses" :key="status" :value="status">{{ status }}</option>
-            </select>
+            <input id="platform-lab-subscription-status" class="bio-nexus-field" :value="form.subscription_status || '—'" disabled />
           </BioNexusFormField>
           <BioNexusFormField label="Fecha de registro / inicio" field-id="platform-lab-service-start">
-            <input id="platform-lab-service-start" v-model="form.service_starts_at" class="bio-nexus-field" type="date" :disabled="!editing" />
+            <input id="platform-lab-service-start" class="bio-nexus-field" :value="form.service_starts_at || '—'" disabled />
           </BioNexusFormField>
           <BioNexusFormField v-if="form.subscription_status !== 'perpetual_free'" label="Fecha de expiración" field-id="platform-lab-service-expiry">
-            <input id="platform-lab-service-expiry" v-model="form.service_expires_at" class="bio-nexus-field" type="date" :disabled="!editing" />
+            <input id="platform-lab-service-expiry" class="bio-nexus-field" :value="form.service_expires_at || '—'" disabled />
           </BioNexusFormField>
-          <BioNexusFormField v-if="form.subscription_status !== 'perpetual_free' && (editing || laboratory.grace_until)" label="Fin del periodo de gracia (opcional)" field-id="platform-lab-grace-until">
-            <input id="platform-lab-grace-until" v-model="form.grace_until" class="bio-nexus-field" type="date" :disabled="!editing" />
+          <BioNexusFormField v-if="form.subscription_status !== 'perpetual_free' && laboratory.grace_until" label="Fin del periodo de gracia" field-id="platform-lab-grace-until">
+            <input id="platform-lab-grace-until" class="bio-nexus-field" :value="form.grace_until" disabled />
           </BioNexusFormField>
-          <BioNexusFormField v-if="form.subscription_status === 'perpetual_free'" label="Motivo de vigencia indefinida" field-id="platform-lab-perpetual-reason" :required="editing">
-            <textarea id="platform-lab-perpetual-reason" v-model.trim="form.perpetual_free_reason" class="bio-nexus-field" rows="3" maxlength="500" :disabled="!editing" />
+          <BioNexusFormField v-if="form.subscription_status === 'perpetual_free'" label="Motivo de vigencia indefinida" field-id="platform-lab-perpetual-reason">
+            <textarea id="platform-lab-perpetual-reason" class="bio-nexus-field" :value="form.perpetual_free_reason" rows="3" disabled />
           </BioNexusFormField>
           <BioNexusFormField v-if="!editing && laboratory.perpetual_free_granted_at" label="Concedida por / fecha" field-id="platform-lab-perpetual-audit">
             <input id="platform-lab-perpetual-audit" class="bio-nexus-field" :value="`${laboratory.perpetual_free_granted_by || '—'} / ${formatDate(laboratory.perpetual_free_granted_at)}`" disabled />
@@ -104,7 +101,6 @@ const editing = ref(false)
 const error = ref('')
 const laboratory = ref(null)
 const form = reactive({})
-const subscriptionStatuses = ['trial', 'active', 'grace', 'suspended', 'cancelled', 'perpetual_free']
 const accessUrls = computed(() => buildTenantAccessUrls(
   laboratory.value?.access?.slug || laboratory.value?.laboratory?.access_slug || laboratory.value?.access_slug,
 ))
@@ -142,10 +138,6 @@ function normalizeDetail(result) {
   })
 }
 
-function handleSubscriptionStatusChange() {
-  if (form.subscription_status === 'perpetual_free') form.grace_until = ''
-}
-
 async function open(laboratoryId, startEditing = false) {
   error.value = ''
   editing.value = startEditing
@@ -168,32 +160,7 @@ async function save() {
     error.value = 'El nombre del laboratorio es obligatorio.'
     return
   }
-  if (['trial', 'active', 'grace'].includes(form.subscription_status)) {
-    if (!form.service_starts_at || !form.service_expires_at) {
-      error.value = 'Indique fecha de inicio y expiración para trial, active o grace.'
-      return
-    }
-    if (form.service_expires_at < form.service_starts_at) {
-      error.value = 'La expiración no puede ser anterior a la fecha de inicio.'
-      return
-    }
-  }
-  if (form.subscription_status === 'grace') {
-    if (!form.grace_until) {
-      error.value = 'Indique la fecha de fin del periodo de gracia.'
-      return
-    }
-    if (form.grace_until <= form.service_expires_at) {
-      error.value = 'El fin del periodo de gracia debe ser posterior a la fecha de expiración.'
-      return
-    }
-  }
-  if (form.subscription_status === 'perpetual_free' && !form.perpetual_free_reason.trim()) {
-    error.value = 'El motivo es obligatorio para la vigencia indefinida.'
-    return
-  }
 
-  const toUtc = value => value ? new Date(`${value}T00:00:00.000Z`).toISOString() : null
   saving.value = true
   try {
     const updated = await updatePlatformLaboratory(laboratory.value.id, {
@@ -204,12 +171,6 @@ async function save() {
       phone_1: form.phone_1,
       email: form.email,
       is_active: form.is_active,
-      plan_code: form.plan_code,
-      subscription_status: form.subscription_status,
-      service_starts_at: toUtc(form.service_starts_at),
-      service_expires_at: form.subscription_status === 'perpetual_free' ? null : toUtc(form.service_expires_at),
-      grace_until: form.subscription_status === 'perpetual_free' ? null : toUtc(form.grace_until),
-      perpetual_free_reason: form.subscription_status === 'perpetual_free' ? form.perpetual_free_reason : null,
       commercial_notes: form.commercial_notes,
     })
     normalizeDetail({ ...updated, access: laboratory.value.access })

@@ -5,6 +5,7 @@ import { describe, it } from 'node:test'
 const view = readFileSync('src/views/PlatformLaboratoriesView.vue', 'utf8')
 const createDialog = readFileSync('src/components/platform/PlatformLaboratoryDialog.vue', 'utf8')
 const detailsDialog = readFileSync('src/components/platform/PlatformLaboratoryDetailsDialog.vue', 'utf8')
+const subscriptionDialog = readFileSync('src/components/platform/PlatformLaboratorySubscriptionDialog.vue', 'utf8')
 const packagesDialog = readFileSync('src/components/platform/PlatformLaboratoryPackagesDialog.vue', 'utf8')
 const branchesDialog = readFileSync('src/components/platform/PlatformLaboratoryBranchesDialog.vue', 'utf8')
 const deleteDialog = readFileSync('src/components/platform/PlatformLaboratoryDeleteDialog.vue', 'utf8')
@@ -40,13 +41,17 @@ describe('Administración de laboratorios de plataforma', () => {
     assert.match(detailsDialog, /perpetual_free_granted_at/)
   })
 
-  it('limpia grace al cambiar a perpetual_free y valida el periodo de gracia', () => {
-    assert.match(detailsDialog, /handleSubscriptionStatusChange/)
-    assert.match(detailsDialog, /form\.subscription_status === 'perpetual_free'\) form\.grace_until = ''/)
-    assert.match(detailsDialog, /grace_until: form\.subscription_status === 'perpetual_free' \? null/)
-    assert.match(detailsDialog, /form\.subscription_status === 'grace'/)
-    assert.match(detailsDialog, /if \(!form\.grace_until\)/)
-    assert.match(detailsDialog, /form\.grace_until <= form\.service_expires_at/)
+  it('administra plan, período y estados por las rutas de suscripción sin escribirlos en el PATCH del laboratorio', () => {
+    assert.match(subscriptionDialog, /getPlatformLaboratorySubscription/)
+    assert.match(subscriptionDialog, /createPlatformLaboratorySubscription/)
+    assert.match(subscriptionDialog, /updatePlatformLaboratorySubscriptionStatus/)
+    assert.match(subscriptionDialog, /graceUntil/)
+    assert.match(subscriptionDialog, /gracePeriodDays/)
+    assert.match(subscriptionDialog, /status:\s*form\.status/)
+    assert.match(subscriptionDialog, /statusForm\.reason\.trim\(\)/)
+    assert.doesNotMatch(detailsDialog, /plan_code:\s*form\.plan_code/)
+    assert.doesNotMatch(detailsDialog, /subscription_status:\s*form\.subscription_status/)
+    assert.doesNotMatch(detailsDialog, /grace_until:\s*form/)
   })
 
   it('cablea gestión de paquetes y sucursales a las operaciones de plataforma', () => {

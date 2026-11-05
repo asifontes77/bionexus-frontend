@@ -65,7 +65,7 @@ export const createPlatformLaboratory = payload => {
     body: {
       ...fields,
       access_slug: accessSlug,
-      plan_code: planCode,
+      ...(planCode ? { plan_code: planCode } : {}),
       subscription_status: subscriptionStatus,
       service_starts_at: serviceStartsAt,
       service_expires_at: serviceExpiresAt,

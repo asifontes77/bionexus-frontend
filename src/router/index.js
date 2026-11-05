@@ -9,6 +9,9 @@ import AdminLayout from "@/layouts/AdminLayout.vue";
 import ExamOrderingView from "@/views/ExamOrderingView.vue";
 const LoginView=()=>import("@/views/LoginView.vue");
 const AdminLoginView=()=>import("@/views/AdminLoginView.vue");
+const AdminDashboardView=()=>import("@/views/AdminDashboardView.vue");
+const AdminPlansView=()=>import("@/views/AdminPlansView.vue");
+const AdminPaymentsView=()=>import("@/views/AdminPaymentsView.vue");
 const PlatformLaboratoriesView=()=>import("@/views/PlatformLaboratoriesView.vue");
 const MigrationHomeView=()=>import("@/views/MigrationHomeView.vue");
 const PatientResultsEmailView=()=>import("@/views/PatientResultsEmailView.vue");
@@ -73,7 +76,25 @@ const routes = [
     component: AdminLayout,
     meta: { requiresAdminAuth: true },
     children: [
-      { path: "", redirect: { name: "admin-laboratories" } },
+      { path: "", redirect: { name: "admin-dashboard" } },
+      {
+        path: "dashboard",
+        name: "admin-dashboard",
+        component: AdminDashboardView,
+        meta: { requiresAdminAuth: true, title: "Dashboard" },
+      },
+      {
+        path: "plans",
+        name: "admin-plans",
+        component: AdminPlansView,
+        meta: { requiresAdminAuth: true, title: "Planes comerciales" },
+      },
+      {
+        path: "payments",
+        name: "admin-payments",
+        component: AdminPaymentsView,
+        meta: { requiresAdminAuth: true, title: "Pagos manuales" },
+      },
       {
         path: "laboratories",
         name: "admin-laboratories",
@@ -382,7 +403,7 @@ router.beforeEach(async (to, from) => {
     return { name: "admin-login" };
   }
   if (to.name === "admin-login" && adminSessionStore.isAuthenticated) {
-    return { name: "admin-laboratories" };
+    return { name: "admin-dashboard" };
   }
   if (to.path.startsWith("/admin") && sessionStore.isAuthenticated) {
     sessionStore.clear();
