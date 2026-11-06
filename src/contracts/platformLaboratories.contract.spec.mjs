@@ -63,11 +63,15 @@ describe('Administración de laboratorios de plataforma', () => {
   })
 
   it('solicita contraseña y comunica conflictos seguros de eliminación', () => {
-    assert.match(deleteDialog, /autocomplete="current-password"/)
+    assert.match(deleteDialog, /type="password"/)
+    assert.match(deleteDialog, /deletePlatformLaboratory/)
     assert.match(deleteDialog, /PLATFORM_LABORATORY_DELETION_BLOCKED/)
     assert.match(deleteDialog, /PLATFORM_LABORATORY_DELETION_SCHEMA_UNSAFE/)
-    assert.match(deleteDialog, /No se borró ningún dato/)
-    assert.match(service, /body:\s*\{\s*password\s*\}/)
+    assert.ok(deleteDialog.includes('No se borrará ningún dato'))
+    assert.ok(deleteDialog.includes('dependencies.value=Array.isArray(rows)?rows:[]'))
+    assert.match(deleteDialog, /BioNexusFormErrors/)
+    assert.match(deleteDialog, /BioNexusConfirmDialog/)
+    assert.match(deleteDialog, /@before-close="requestClose"/)
   })
 
   it('define las rutas de detalle, edición, paquetes, sucursales y borrado del owner', () => {

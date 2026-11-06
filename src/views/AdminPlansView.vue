@@ -1,282 +1,79 @@
 <template>
-  <section class="admin-billing-page" aria-labelledby="admin-plans-title">
-    <header class="admin-billing-heading">
-      <div>
-        <p class="admin-billing-eyebrow">ADMINISTRACIÓN DE PLATAFORMA</p>
-        <h1 id="admin-plans-title">Planes comerciales</h1>
-      </div>
-      <BioNexusActionButton label="Nuevo plan" icon="add" variant="primary" :disabled="saving" @click="startCreate" />
-    </header>
-
-    <p v-if="error" class="admin-billing-error" role="alert">{{ error }}</p>
-    <p v-if="notice" class="admin-billing-notice" role="status">{{ notice }}</p>
-    <p v-if="loading" class="admin-billing-status" role="status">Cargando planes…</p>
-
-    <div class="admin-plans-layout">
-      <form class="admin-billing-card admin-plan-form" @submit.prevent="savePlan">
-        <div class="admin-billing-card-heading">
-          <div>
-            <h2>{{ editingPlanId ? 'Editar plan' : 'Crear plan' }}</h2>
-            <p>Configura precio, periodicidad, días de gracia y beneficios del plan.</p>
-          </div>
-        </div>
-
-        <div class="admin-billing-fields">
-          <label class="admin-billing-field">
-            <span>Código</span>
-            <input v-model.trim="form.code" class="bio-nexus-field" maxlength="80" required :disabled="saving" />
-          </label>
-          <label class="admin-billing-field">
-            <span>Nombre</span>
-            <input v-model.trim="form.name" class="bio-nexus-field" maxlength="120" required :disabled="saving" />
-          </label>
-          <label class="admin-billing-field admin-billing-field-wide">
-            <span>Descripción (opcional)</span>
-            <textarea v-model.trim="form.description" class="bio-nexus-field" rows="2" maxlength="1000" :disabled="saving" />
-          </label>
-          <label class="admin-billing-field">
-            <span>Precio</span>
-            <input v-model.number="form.price" class="bio-nexus-field" type="number" min="0" step="0.01" required :disabled="saving" />
-          </label>
-          <label class="admin-billing-field">
-            <span>Moneda (3 letras)</span>
-            <input v-model.trim="form.currency" class="bio-nexus-field" maxlength="3" placeholder="USD" required :disabled="saving" @input="normalizeCurrency" />
-          </label>
-          <label class="admin-billing-field">
-            <span>Periodicidad</span>
-            <select v-model="form.billingInterval" class="bio-nexus-field" :disabled="saving">
-              <option value="monthly">Mensual</option>
-              <option value="yearly">Anual</option>
-            </select>
-          </label>
-          <label class="admin-billing-field">
-            <span>Días de gracia</span>
-            <input v-model.number="form.gracePeriodDays" class="bio-nexus-field" type="number" min="0" step="1" required :disabled="saving" />
-          </label>
-          <label class="admin-billing-field admin-billing-field-wide">
-            <span>Límites y beneficios (objeto JSON)</span>
-            <textarea v-model="limitsBenefitsText" class="bio-nexus-field admin-json-field" rows="5" spellcheck="false" :disabled="saving" />
-          </label>
-          <label class="admin-billing-checkbox">
-            <input v-model="form.isActive" type="checkbox" :disabled="saving" />
-            <span>Plan activo y disponible para suscripciones</span>
-          </label>
-        </div>
-
-        <div class="admin-billing-form-actions">
-          <BioNexusActionButton v-if="editingPlanId" label="Cancelar edición" variant="secondary" :disabled="saving" @click="startCreate" />
-          <BioNexusActionButton type="submit" :label="editingPlanId ? 'Guardar cambios' : 'Crear plan'" icon="save" variant="primary" :loading="saving" />
-        </div>
-      </form>
-
-      <section class="admin-billing-card admin-plan-list" aria-labelledby="admin-plan-list-title">
-        <div class="admin-billing-card-heading">
-          <div>
-            <h2 id="admin-plan-list-title">Planes registrados</h2>
-            <p>{{ plans.length }} {{ plans.length === 1 ? 'plan' : 'planes' }}</p>
-          </div>
-          <BioNexusActionButton label="Actualizar" icon="refresh" variant="secondary" size="sm" :disabled="loading || saving" @click="loadPlans" />
-        </div>
-        <p v-if="!loading && plans.length === 0" class="admin-billing-empty">Todavía no hay planes comerciales.</p>
-        <div v-else class="admin-plan-cards">
-          <article v-for="plan in plans" :key="plan.planId" class="admin-plan-row">
-            <div class="admin-plan-main">
-              <div class="admin-plan-title">
-                <h3>{{ plan.name }}</h3>
-                <span :class="['admin-plan-status', { 'admin-plan-status-inactive': plan.isActive === false }]">
-                  {{ plan.isActive === false ? 'Inactivo' : 'Activo' }}
-                </span>
-              </div>
-              <p class="admin-plan-code">{{ plan.code }}</p>
-              <p v-if="plan.description" class="admin-plan-description">{{ plan.description }}</p>
-              <p class="admin-plan-meta">
-                {{ formatPrice(plan.price, plan.currency) }} · {{ intervalLabel(plan.billingInterval) }}
-                · {{ plan.gracePeriodDays }} días de gracia
-              </p>
-            </div>
-            <BioNexusActionButton label="Editar" icon="edit" variant="secondary" size="sm" :disabled="saving" @click="editPlan(plan)" />
-          </article>
-        </div>
-      </section>
-    </div>
+  <section class="admin-plans-page" aria-labelledby="admin-plans-title">
+    <BioNexusAdminPageHeader title-id="admin-plans-title" eyebrow="Administración de plataforma" title="Planes comerciales" description="Configura precios, periodicidad, días de gracia y beneficios disponibles." icon="workspace_premium" />
+    <div v-if="loadError" class="bio-nexus-message bio-nexus-message-error" role="alert">{{ loadError }}</div>
+    <section class="bio-nexus-administrative-directory admin-plans-directory" aria-label="Planes registrados">
+      <BioNexusDataGrid
+        class="admin-plans-grid"
+        :row-data="rows"
+        :column-defs="columnDefs"
+        :default-col-def="defaultColDef"
+        :components="gridComponents"
+        :get-row-id="getRowId"
+        :search-enabled="true"
+        v-model:search-model-value="search"
+        search-placeholder="Buscar plan"
+        :refresh-enabled="true"
+        :refreshing="loading"
+        :refresh-disabled="saving"
+        :page-size="10"
+        :page-size-selector="[10, 20, 50, 100]"
+        :min-grid-height="320"
+        :max-grid-height="600"
+        empty-text="No existen planes comerciales que coincidan con los filtros."
+        @refresh="loadPlans"
+      >
+        <template #actions>
+          <BioNexusActionButton icon="add" icon-only shape="rounded" size="md" variant="primary" label="Nuevo plan" :disabled="loading || saving" @click="formDialog?.openCreate()" />
+        </template>
+      </BioNexusDataGrid>
+    </section>
+    <PlatformPlanFormDialog ref="formDialog" :saving="saving" @submit="saveForm" />
+    <PlatformPlanDetailDialog ref="detailDialog" />
+    <BioNexusStateDialog ref="stateDialog" :saving="saving" @confirm="confirmStatus" />
   </section>
 </template>
-
 <script setup>
-import { onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
+import BioNexusAdminPageHeader from '@/components/ui/BioNexusAdminPageHeader.vue'
 import BioNexusActionButton from '@/components/ui/BioNexusActionButton.vue'
+import BioNexusStateDialog from '@/components/ui/BioNexusStateDialog.vue'
+import BioNexusDataGrid from '@/components/grid/BioNexusDataGrid.vue'
+import BioNexusGridActionsCell from '@/components/grid/BioNexusGridActionsCell.vue'
+import BioNexusGridToggleCell from '@/components/grid/BioNexusGridToggleCell.vue'
+import BioNexusOptionFilter from '@/components/grid/BioNexusOptionFilter.vue'
+import PlatformPlanFormDialog from '@/components/platform/PlatformPlanFormDialog.vue'
+import PlatformPlanDetailDialog from '@/components/platform/PlatformPlanDetailDialog.vue'
+import { useBioNexusToast } from '@/composables/useBioNexusToast'
 import { createPlatformPlan, getPlatformPlans, updatePlatformPlan } from '@/services/platformBillingService'
-
-const blankForm = () => ({
-  code: '',
-  name: '',
-  description: '',
-  price: 0,
-  currency: '',
-  billingInterval: 'monthly',
-  gracePeriodDays: 0,
-  isActive: true,
-})
-
-const plans = ref([])
-const loading = ref(false)
-const saving = ref(false)
-const error = ref('')
-const notice = ref('')
-const editingPlanId = ref('')
-const form = reactive(blankForm())
-const limitsBenefitsText = ref('{}')
-
-function startCreate() {
-  editingPlanId.value = ''
-  Object.assign(form, blankForm())
-  limitsBenefitsText.value = '{}'
-  error.value = ''
-  notice.value = ''
-}
-
-function normalizeCurrency() {
-  form.currency = form.currency.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 3)
-}
-
-function editPlan(plan) {
-  editingPlanId.value = String(plan.planId)
-  Object.assign(form, {
-    code: plan.code,
-    name: plan.name,
-    description: plan.description || '',
-    price: Number(plan.price),
-    currency: plan.currency,
-    billingInterval: plan.billingInterval,
-    gracePeriodDays: Number(plan.gracePeriodDays),
-    isActive: plan.isActive !== false,
-  })
-  limitsBenefitsText.value = JSON.stringify(plan.limitsBenefits ?? {}, null, 2)
-  error.value = ''
-  notice.value = ''
-}
-
-function parseLimitsBenefits() {
-  let value
-  try {
-    value = JSON.parse(limitsBenefitsText.value)
-  } catch {
-    throw new Error('Límites y beneficios debe ser un objeto JSON válido.')
-  }
-  if (value === null || Array.isArray(value) || typeof value !== 'object') {
-    throw new Error('Límites y beneficios debe ser un objeto JSON.')
-  }
-  return value
-}
-
-function validateForm() {
-  if (!form.code || !form.name) throw new Error('Indica el código y el nombre del plan.')
-  if (!Number.isFinite(form.price) || form.price < 0) throw new Error('El precio debe ser un número igual o mayor que cero.')
-  if (!/^[A-Z]{3}$/.test(form.currency)) throw new Error('La moneda debe tener exactamente tres letras mayúsculas.')
-  if (!['monthly', 'yearly'].includes(form.billingInterval)) throw new Error('Selecciona una periodicidad válida.')
-  if (!Number.isInteger(form.gracePeriodDays) || form.gracePeriodDays < 0) throw new Error('Los días de gracia deben ser un entero igual o mayor que cero.')
-  return parseLimitsBenefits()
-}
-
-async function loadPlans() {
-  if (loading.value) return
-  loading.value = true
-  error.value = ''
-  try {
-    plans.value = await getPlatformPlans()
-  } catch (cause) {
-    plans.value = []
-    error.value = cause?.message || 'No fue posible consultar los planes.'
-  } finally {
-    loading.value = false
-  }
-}
-
-async function savePlan() {
-  if (saving.value) return
-  error.value = ''
-  let limitsBenefits
-  try {
-    limitsBenefits = validateForm()
-  } catch (cause) {
-    error.value = cause.message
-    return
-  }
-
-  const payload = {
-    code: form.code,
-    name: form.name,
-    description: form.description,
-    price: form.price,
-    currency: form.currency,
-    billingInterval: form.billingInterval,
-    gracePeriodDays: form.gracePeriodDays,
-    limitsBenefits,
-    isActive: form.isActive,
-  }
-  const successMessage = editingPlanId.value ? 'Plan actualizado correctamente.' : 'Plan creado correctamente.'
-  saving.value = true
-  try {
-    if (editingPlanId.value) await updatePlatformPlan(editingPlanId.value, payload)
-    else await createPlatformPlan(payload)
-    startCreate()
-    notice.value = successMessage
-    await loadPlans()
-  } catch (cause) {
-    error.value = cause?.message || 'No fue posible guardar el plan.'
-  } finally {
-    saving.value = false
-  }
-}
-
-function formatPrice(price, currency) {
-  const value = Number(price)
-  return Number.isFinite(value) ? `${value.toLocaleString('es')} ${currency || ''}`.trim() : 'Precio no disponible'
-}
-
-function intervalLabel(value) {
-  return value === 'yearly' ? 'Anual' : 'Mensual'
-}
-
+const toast=useBioNexusToast(),rows=ref([]),loading=ref(false),saving=ref(false),loadError=ref(''),search=ref(''),formDialog=ref(null),detailDialog=ref(null),stateDialog=ref(null)
+const defaultColDef=Object.freeze({sortable:true,filter:true,resizable:true,suppressHeaderMenuButton:true})
+const gridComponents=Object.freeze({BioNexusGridActionsCell,BioNexusGridToggleCell})
+const columnDefs=computed(()=>[
+  {field:'code',headerName:'Código',minWidth:150,width:170,pinned:'left',lockPinned:true,suppressMovable:true},
+  {field:'name',headerName:'Nombre',minWidth:220,flex:1},
+  {field:'description',headerName:'Descripción',minWidth:260,flex:1.3,valueFormatter:({value})=>value||'—'},
+  {field:'price',headerName:'Precio',width:145,type:'numericColumn',valueFormatter:({data})=>formatPrice(data?.price,data?.currency)},
+  {field:'billingInterval',headerName:'Periodicidad',width:145,valueFormatter:({value})=>value==='yearly'?'Anual':'Mensual'},
+  {field:'gracePeriodDays',headerName:'Gracia',width:115,type:'numericColumn',valueFormatter:({value})=>`${Number(value)||0} días`},
+  {field:'isActive',headerName:'Estado',width:170,headerClass:'admin-plans-center-header',cellClass:'admin-plans-center-cell',filter:BioNexusOptionFilter,filterParams:{options:[{value:true,label:'Activo'},{value:false,label:'Desactivado'}]},cellRenderer:'BioNexusGridToggleCell',cellRendererParams:{onLabel:'Activo',offLabel:'Desactivado',ariaLabel:'Estado',disabled:()=>saving.value,onToggle:requestStatus}},
+  {colId:'actions',headerName:'Acciones',width:110,minWidth:110,maxWidth:110,pinned:'right',lockPinned:true,suppressMovable:true,sortable:false,filter:false,resizable:false,suppressHeaderMenuButton:true,headerClass:'bio-nexus-grid-actions-header',cellClass:'bio-nexus-grid-actions-cell',cellRenderer:'BioNexusGridActionsCell',cellRendererParams:{actions:[{key:'view',label:'Ver',icon:'visibility',onClick:row=>detailDialog.value?.open(row)},{key:'edit',label:'Editar',icon:'edit',disabled:()=>saving.value,onClick:row=>formDialog.value?.openEdit(row)}]}}
+])
+function getRowId({data}){return String(data.planId)}
+function comparePlans(a,b){return String(a.name||'').localeCompare(String(b.name||''),'es',{sensitivity:'base'})||String(a.code||'').localeCompare(String(b.code||''),'es')}
+function replaceRow(saved){const next=rows.value.filter(row=>String(row.planId)!==String(saved.planId));next.push(saved);rows.value=next.sort(comparePlans)}
+function formatPrice(price,currency){const value=Number(price);return Number.isFinite(value)?`${value.toLocaleString('es')} ${currency||''}`.trim():'—'}
+async function loadPlans(){if(loading.value||saving.value)return;loading.value=true;loadError.value='';try{rows.value=(await getPlatformPlans()).sort(comparePlans)}catch(error){rows.value=[];loadError.value=error?.message||'No fue posible consultar los planes.';toast.error(loadError.value)}finally{loading.value=false}}
+async function saveForm(payload){if(saving.value)return;saving.value=true;formDialog.value?.clearError();try{const saved=payload.mode==='create'?await createPlatformPlan(payload.values):await updatePlatformPlan(payload.record.planId,payload.values);replaceRow(saved);formDialog.value?.markSavedAndClose();toast.success(payload.mode==='create'?'Plan creado correctamente.':'Plan actualizado correctamente.')}catch(error){formDialog.value?.setError(error?.message||'No fue posible guardar el plan.')}finally{saving.value=false}}
+function requestStatus(row){if(!row||saving.value)return;stateDialog.value?.open(row,{kicker:'Estado del plan',label:item=>item.name,isInactive:item=>item.isActive===false,activateTitle:'Activar plan',deactivateTitle:'Desactivar plan',activateMessage:'El plan volverá a estar disponible para nuevas suscripciones.',deactivateMessage:'El plan permanecerá visible, pero no estará disponible para nuevas suscripciones.',dangerOnDeactivate:true})}
+async function confirmStatus(row){if(!row||saving.value)return;saving.value=true;stateDialog.value?.clearError();try{const saved=await updatePlatformPlan(row.planId,{code:row.code,name:row.name,description:row.description||'',price:Number(row.price),currency:row.currency,billingInterval:row.billingInterval,gracePeriodDays:Number(row.gracePeriodDays),limitsBenefits:row.limitsBenefits||{},isActive:row.isActive===false});replaceRow(saved);stateDialog.value?.close();toast.success(row.isActive===false?'Plan activado correctamente.':'Plan desactivado correctamente.')}catch(error){stateDialog.value?.setError(error?.message||'No fue posible cambiar el estado del plan.')}finally{saving.value=false}}
 onMounted(loadPlans)
 </script>
-
 <style scoped>
-.admin-billing-page { display: grid; gap: 20px; }
-.admin-billing-heading, .admin-billing-card-heading, .admin-plan-row, .admin-plan-title, .admin-billing-form-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.admin-billing-heading h1 { margin: 4px 0 0; color: var(--bio-nexus-color-text-primary); font-size: clamp(26px, 4vw, 34px); }
-.admin-billing-eyebrow { margin: 0; color: var(--bio-nexus-color-primary-strong); font-size: 11px; font-weight: 800; letter-spacing: .1em; }
-.admin-billing-card { min-width: 0; padding: 20px; border: 1px solid var(--bio-nexus-color-border); border-radius: var(--bio-nexus-radius-lg); background: var(--bio-nexus-color-surface); box-shadow: 0 8px 24px rgb(21 55 87 / 5%); }
-.admin-billing-card-heading h2 { margin: 0; color: var(--bio-nexus-color-text-primary); font-size: 18px; }
-.admin-billing-card-heading p { margin: 5px 0 0; color: var(--bio-nexus-color-text-muted); font-size: 13px; }
-.admin-plans-layout { display: grid; grid-template-columns: minmax(320px, .9fr) minmax(0, 1.1fr); align-items: start; gap: 16px; }
-.admin-plan-form { display: grid; gap: 16px; }
-.admin-billing-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 13px; }
-.admin-billing-field { display: grid; gap: 6px; min-width: 0; color: var(--bio-nexus-color-text-primary); font-size: 13px; font-weight: 650; }
-.admin-billing-field-wide { grid-column: 1 / -1; }
-.admin-json-field { font-family: ui-monospace, Consolas, monospace; font-size: 12px; }
-.admin-billing-checkbox { display: flex; align-items: center; gap: 8px; grid-column: 1 / -1; color: var(--bio-nexus-color-text-primary); font-size: 13px; }
-.admin-billing-checkbox input { accent-color: var(--bio-nexus-color-primary); }
-.admin-billing-form-actions { justify-content: flex-end; flex-wrap: wrap; }
-.admin-plan-list { display: grid; gap: 14px; }
-.admin-plan-cards { display: grid; gap: 10px; }
-.admin-plan-row { align-items: flex-start; padding: 13px; border: 1px solid var(--bio-nexus-color-border); border-radius: var(--bio-nexus-radius-md); }
-.admin-plan-main { display: grid; min-width: 0; gap: 5px; }
-.admin-plan-title { justify-content: flex-start; flex-wrap: wrap; }
-.admin-plan-title h3 { margin: 0; color: var(--bio-nexus-color-text-primary); font-size: 15px; }
-.admin-plan-code, .admin-plan-description, .admin-plan-meta { margin: 0; overflow-wrap: anywhere; }
-.admin-plan-code { color: var(--bio-nexus-color-text-muted); font-size: 12px; }
-.admin-plan-description, .admin-plan-meta { color: var(--bio-nexus-color-text-muted-strong); font-size: 12px; }
-.admin-plan-status, .admin-billing-status { color: var(--bio-nexus-color-success, #16794b); font-size: 11px; font-weight: 700; }
-.admin-plan-status { padding: 4px 8px; border-radius: 999px; background: var(--bio-nexus-color-success-soft, #e8f5ee); }
-.admin-plan-status-inactive { color: var(--bio-nexus-color-text-muted); background: var(--bio-nexus-color-surface-muted); }
-.admin-billing-error { margin: 0; padding: 12px 14px; border-radius: var(--bio-nexus-radius-md); color: var(--bio-nexus-color-danger); background: var(--bio-nexus-color-danger-soft); overflow-wrap: anywhere; }
-.admin-billing-notice { margin: 0; padding: 12px 14px; border-radius: var(--bio-nexus-radius-md); color: var(--bio-nexus-color-primary-strong); background: var(--bio-nexus-color-primary-soft); }
-.admin-billing-empty { margin: 0; padding: 18px; border-radius: var(--bio-nexus-radius-md); color: var(--bio-nexus-color-text-muted); background: var(--bio-nexus-color-surface-muted); text-align: center; }
-@media (max-width: 900px) { .admin-plans-layout { grid-template-columns: 1fr; } }
-@media (max-width: 560px) {
-  .admin-billing-heading, .admin-plan-row { align-items: flex-start; flex-direction: column; }
-  .admin-billing-fields { grid-template-columns: 1fr; }
-  .admin-billing-field-wide, .admin-billing-checkbox { grid-column: auto; }
-}
+.admin-plans-page{display:grid;gap:var(--bio-nexus-space-5);min-width:0;font-family:var(--bio-nexus-font-family);color:var(--bio-nexus-color-text)}
+.admin-plans-grid{min-width:0;width:100%}
+.admin-plans-page :deep(.admin-plans-center-cell),.admin-plans-page :deep(.admin-plans-center-header .ag-header-cell-label){justify-content:center}
+.admin-plans-page :deep(.ag-pinned-right-header),.admin-plans-page :deep(.ag-pinned-right-cols-container){border-left:1px solid var(--bio-nexus-color-border-strong)}
+
+.admin-plans-directory { min-width: 0; }
 </style>

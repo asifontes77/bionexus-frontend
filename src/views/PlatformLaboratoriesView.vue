@@ -1,7 +1,9 @@
 <template>
-  <section class="platform-laboratories-view">
-    <p v-if="error" class="platform-error" role="alert">{{ error }}</p>
-    <BioNexusDataGrid
+  <section class="platform-laboratories-view" aria-labelledby="admin-laboratories-title">
+    <BioNexusAdminPageHeader title-id="admin-laboratories-title" eyebrow="Administración de plataforma" title="Laboratorios" description="Consulta y administra los laboratorios provisionados, sus suscripciones, paquetes y sucursales." icon="domain" />
+    <div class="admin-laboratories-surface">
+      <p v-if="error" class="platform-error" role="alert">{{ error }}</p>
+      <BioNexusDataGrid
       v-model:search-model-value="search"
       :row-data="laboratories"
       :column-defs="columnDefs"
@@ -18,7 +20,8 @@
       <template #actions>
         <BioNexusActionButton label="Registrar laboratorio" icon="add" variant="primary" :disabled="loading" @click="provisioningDialog?.open()" />
       </template>
-    </BioNexusDataGrid>
+      </BioNexusDataGrid>
+    </div>
     <PlatformLaboratoryDialog ref="provisioningDialog" @created="handleCreated" />
     <PlatformLaboratoryDetailsDialog ref="detailsDialog" @updated="handleUpdated" />
     <PlatformLaboratorySubscriptionDialog ref="subscriptionDialog" @updated="handleSubscriptionUpdated" />
@@ -33,6 +36,7 @@ import { computed, onMounted, ref } from 'vue'
 import BioNexusDataGrid from '@/components/grid/BioNexusDataGrid.vue'
 import BioNexusGridActionsCell from '@/components/grid/BioNexusGridActionsCell.vue'
 import BioNexusActionButton from '@/components/ui/BioNexusActionButton.vue'
+import BioNexusAdminPageHeader from '@/components/ui/BioNexusAdminPageHeader.vue'
 import PlatformLaboratoryDialog from '@/components/platform/PlatformLaboratoryDialog.vue'
 import PlatformLaboratoryDetailsDialog from '@/components/platform/PlatformLaboratoryDetailsDialog.vue'
 import PlatformLaboratorySubscriptionDialog from '@/components/platform/PlatformLaboratorySubscriptionDialog.vue'
@@ -152,5 +156,51 @@ onMounted(load)
 </script>
 
 <style scoped>
-.platform-laboratories-view{display:grid;gap:var(--bio-nexus-space-3);min-width:0}.platform-error{margin:0;padding:12px;border-radius:var(--bio-nexus-radius-md);background:var(--bio-nexus-color-danger-soft);color:var(--bio-nexus-color-danger)}.platform-laboratories-view :deep(.bio-nexus-grid-actions-cell),.platform-laboratories-view :deep(.bio-nexus-grid-actions-header .ag-header-cell-label){justify-content:center}
+.platform-laboratories-view {
+  display: grid;
+  gap: var(--bio-nexus-space-5);
+  min-width: 0;
+  font-family: var(--bio-nexus-font-family);
+  color: var(--bio-nexus-color-text);
+}
+
+.admin-laboratories-surface {
+  min-width: 0;
+  padding: var(--bio-nexus-space-5);
+  border: 1px solid var(--bio-nexus-color-border);
+  border-radius: var(--bio-nexus-radius-lg);
+  background: var(--bio-nexus-color-surface);
+  box-shadow: var(--bio-nexus-shadow-sm);
+}
+
+.platform-error {
+  margin: 0 0 var(--bio-nexus-space-4);
+  padding: var(--bio-nexus-space-3);
+  border: 1px solid var(--bio-nexus-color-danger-border);
+  border-radius: var(--bio-nexus-radius-md);
+  color: var(--bio-nexus-color-danger);
+  background: var(--bio-nexus-color-danger-soft);
+  font-size: var(--bio-nexus-font-size-md);
+}
+
+.platform-laboratories-view :deep(.bio-nexus-grid-actions-cell),
+.platform-laboratories-view :deep(.bio-nexus-grid-actions-header .ag-header-cell-label) {
+  justify-content: center;
+}
+
+.platform-laboratories-view :deep(.bio-nexus-data-grid) {
+  min-width: 0;
+  border-radius: var(--bio-nexus-radius-lg);
+}
+
+.platform-laboratories-view :deep(.bio-nexus-action-button),
+.platform-laboratories-view :deep(.bio-nexus-action-icon) {
+  font-family: var(--bio-nexus-font-family);
+}
+
+@media (max-width: 760px) {
+  .admin-laboratories-surface {
+    padding: var(--bio-nexus-space-3);
+  }
+}
 </style>
