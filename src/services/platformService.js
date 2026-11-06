@@ -63,10 +63,11 @@ export const createPlatformLaboratory = payload => {
   return adminApiRequest('/api/platform/laboratories', {
     method: 'POST',
     body: {
-      ...fields,
+      ...Object.fromEntries(Object.entries(fields).filter(([key]) => key !== 'operationalCurrencyCode')),
       access_slug: accessSlug,
       ...(planCode ? { plan_code: planCode } : {}),
       subscription_status: subscriptionStatus,
+      operational_currency_code: fields.operationalCurrencyCode,
       service_starts_at: serviceStartsAt,
       service_expires_at: serviceExpiresAt,
       ...(perpetualFreeReason ? { perpetual_free_reason: perpetualFreeReason } : {})
