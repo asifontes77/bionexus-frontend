@@ -18,17 +18,29 @@ function unwrapObject(result, key, label) {
   return result[key]
 }
 
+const normalizePlanPayload = payload => ({
+  code: payload.code,
+  name: payload.name,
+  description: payload.description,
+  price: payload.price,
+  currency: payload.currency,
+  planType: payload.planType,
+  intervalUnit: payload.intervalUnit,
+  intervalCount: payload.intervalCount,
+  gracePeriodDays: payload.gracePeriodDays,
+  isActive: payload.isActive,
+})
 export const getPlatformPlans = async () =>
   unwrapList(await adminApiRequest(`${platformPath}/plans`), 'plans', 'planes')
 
 export const createPlatformPlan = async payload =>
-  unwrapObject(await adminApiRequest(`${platformPath}/plans`, { method: 'POST', body: payload }), 'plan', 'plan')
+  unwrapObject(await adminApiRequest(`${platformPath}/plans`, { method: 'POST', body: normalizePlanPayload(payload) }), 'plan', 'plan')
 
 export const updatePlatformPlan = async (planId, payload) =>
   unwrapObject(
     await adminApiRequest(`${platformPath}/plans/${encodeURIComponent(planId)}`, {
       method: 'PATCH',
-      body: payload,
+      body: normalizePlanPayload(payload),
     }),
     'plan',
     'plan',

@@ -38,25 +38,32 @@ describe('Contratos de planes, suscripciones y pagos de plataforma', () => {
     assert.match(planFormDialog, /BioNexusConfirmDialog/)
     assert.match(planDetailDialog, /BioNexusSectionPanel/)
   })
-  it('envía planes con periodicidad, días de gracia y límites/beneficios como objeto', () => {
+  it('envía planes con tipo y duración estructurada sin editor JSON libre', () => {
     for (const field of [
       'code:draft.code.trim()',
       'name:draft.name.trim()',
       'price:Number(draft.price)',
       'currency:draft.currency.trim()',
-      'billingInterval:draft.billingInterval',
+      'planType:draft.planType',
+      'intervalUnit:draft.intervalUnit',
+      'intervalCount:Number(draft.intervalCount)',
       'gracePeriodDays:Number(draft.gracePeriodDays)',
-      'limitsBenefits:parseBenefits(false)',
       'isActive:Boolean(draft.isActive)',
-    ]) {
-      assert.ok(planFormDialog.includes(field), field)
-    }
-    assert.match(planFormDialog, /JSON\.parse\(limitsBenefitsText\.value\)/)
-    assert.match(planFormDialog, /Array\.isArray\(value\)/)
-    assert.match(plansView, /createPlatformPlan\(payload\.values\)/)
-    assert.match(plansView, /updatePlatformPlan\(payload\.record\.planId,payload\.values\)/)
+    ]) assert.ok(planFormDialog.includes(field), field)
+    assert.doesNotMatch(planFormDialog, /billingInterval:draft[.]billingInterval/)
+    assert.doesNotMatch(planFormDialog, /limitsBenefitsText|JSON[.]parse/)
+    assert.match(planFormDialog, /value="trial"/)
+    assert.match(planFormDialog, /value="paid"/)
+    for (const unit of ['day', 'month', 'year']) assert.match(planFormDialog, new RegExp(`value="${unit}"`))
+    assert.match(plansView, /field:'planType'/)
+    assert.match(plansView, /formatDuration/)
+    assert.match(planDetailDialog, /plan[.]planType==='trial'/)
+    assert.match(planDetailDialog, /formatDuration/)
+    assert.match(service, /normalizePlanPayload/)
+    for (const field of ['planType', 'intervalUnit', 'intervalCount']) assert.ok(service.includes(`${field}: payload.${field}`), field)
+    assert.ok(plansView.includes('createPlatformPlan(payload.values)'))
+    assert.ok(plansView.includes('updatePlatformPlan(payload.record.planId,payload.values)'))
   })
-
   it('mantiene el lifecycle comercial fuera del PATCH del laboratorio y cubre alta y reasignación', () => {
     assert.doesNotMatch(laboratoriesView, /planCode\s*:/)
     assert.doesNotMatch(laboratoriesView, /subscriptionStatus\s*:/)
