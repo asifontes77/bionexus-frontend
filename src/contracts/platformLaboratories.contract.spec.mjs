@@ -20,22 +20,18 @@ describe('Administración de laboratorios de plataforma', () => {
     assert.match(view, /BioNexusGridActionsCell/)
   })
 
-  it('requiere datos de vigencia explícitos y permite nunca expira', () => {
-    assert.match(createDialog, /value="trial"/)
-    assert.match(createDialog, /value="active"/)
-    assert.match(createDialog, /value="perpetual_free"/)
-    assert.match(createDialog, /serviceExpiresAt/)
-    assert.match(createDialog, /perpetualFreeReason/)
-    assert.match(createDialog, /serviceExpiresAt=form\.subscriptionStatus==='perpetual_free'\?null:/)
-    assert.match(service, /service_expires_at:\s*serviceExpiresAt/)
-    assert.match(createDialog, /v-model="form\.operationalCurrencyCode"/)
-    assert.match(createDialog, /operationalCurrencyCode:'USD'/)
+  it('deriva estado y expiración desde el plan en el alta normal', () => {
+    assert.match(createDialog, /v-model="form[.]planCode"/)
+    assert.match(createDialog, /v-model="form[.]serviceStartsAt"/)
+    assert.doesNotMatch(createDialog, /v-model="form[.]subscriptionStatus"/)
+    assert.doesNotMatch(createDialog, /v-model="form[.]serviceExpiresAt"/)
+    assert.doesNotMatch(service, /subscription_status:/)
+    assert.doesNotMatch(service, /service_expires_at:/)
+    assert.match(createDialog, /Backend calculará automáticamente el estado, la expiración y la gracia/)
+    assert.match(createDialog, /v-model="form[.]operationalCurrencyCode"/)
     for (const code of ['VES', 'USD', 'EUR']) assert.match(createDialog, new RegExp(`value="${code}"`))
-    assert.match(service, /operational_currency_code:\s*fields\.operationalCurrencyCode/)
-    assert.match(service, /perpetual_free_reason/)
-    assert.doesNotMatch(createDialog, /trialDays|trial_days/)
+    assert.match(service, /operational_currency_code:[\s]*fields[.]operationalCurrencyCode/)
   })
-
   it('muestra modo y estado devueltos por API y deriva los enlaces de acceso', () => {
     assert.match(detailsDialog, /laboratory\.service_mode/)
     assert.match(detailsDialog, /data\?\.subscription_status/)
