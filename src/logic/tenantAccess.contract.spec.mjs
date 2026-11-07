@@ -56,7 +56,9 @@ assert.doesNotMatch(platformDialog, /branchCode|Código de sucursal/)
 assert.match(platformService, /access_slug:\s*accessSlug/)
 assert.match(platformService, /delete fields\.branchCode/)
 assert.match(platformDialog, /branchName:'Sucursal principal'/)
-assert.match(platformDetails, /Acceso canónico:/)
+assert.ok(platformDetails.includes('<strong>Canónico</strong>'))
+
+assert.ok(platformDetails.includes(':href="accessUrls.canonical"'))
 assert.match(platformView, /headerName:\s*'Paquetes de catálogo',\s*field:\s*'catalogPackageCount'/)
 assert.match(platformView, /headerName:\s*'Módulos',\s*field:\s*'moduleCount'/)
 
