@@ -3,7 +3,7 @@
     <div class="prov-sections">
       <BioNexusFormErrors v-if="generalError" :errors="[generalError]" />
 
-      <BioNexusSectionPanel title="🏢 Laboratorio y sucursal" compact>
+      <BioNexusSectionPanel title="Laboratorio y sucursal" icon="domain" description="Información general, acceso y datos de la sucursal principal." variant="accent" compact>
         <div class="prov-grid">
           <BioNexusFormField v-for="field in identityFields" :key="field.key" :label="field.label" :field-id="`prov-${field.key}`" :required="field.required" :error="fieldErrors[field.key] || ''" :help="!fieldErrors[field.key] && field.key === 'accessSlug' ? 'Solo minúsculas, números y guiones; no se podrá cambiar al ingresar.' : !fieldErrors[field.key] && field.max ? `${form[field.key].length} de ${field.max} caracteres` : ''">
             <input :id="`prov-${field.key}`" v-model.trim="form[field.key]" class="bio-nexus-field" :class="{ 'prov-input-error': Boolean(fieldErrors[field.key]) }" :maxlength="field.max" :aria-invalid="Boolean(fieldErrors[field.key])" :placeholder="field.key === laboratoryPhoneFieldKey ? '(+58) 424 123-4567' : ''" @input="onDynamicFieldInput(field.key, $event)" />
@@ -11,8 +11,7 @@
         </div>
       </BioNexusSectionPanel>
 
-      <BioNexusSectionPanel title="Plan y vigencia de la suscripción" compact>
-        <p class="prov-validity-note">Selecciona un plan activo y la fecha de inicio. El Backend calculará automáticamente el estado, la expiración y la gracia.</p>
+      <BioNexusSectionPanel title="Plan y vigencia de la suscripción" icon="workspace_premium" description="Selecciona un plan activo y la fecha de inicio. El Backend calculará automáticamente el estado, la expiración y la gracia." variant="accent" compact>
         <div class="prov-grid">
           <BioNexusFormField label="Plan comercial" field-id="prov-plan-code" required :error="fieldErrors.planCode || ''" help="El tipo y la duración del plan determinan la vigencia.">
             <select id="prov-plan-code" v-model="form.planCode" class="bio-nexus-field" :disabled="plansLoading || activePlans.length === 0" :aria-invalid="Boolean(fieldErrors.planCode)" @change="clearFieldError('planCode')">
@@ -30,10 +29,8 @@
           </BioNexusFormField>
         </div>
       </BioNexusSectionPanel>
-      <BioNexusSectionPanel title="Paquetes de datos iniciales (catálogos)" compact>
-        <p class="prov-validity-note">Estos paquetes copian catálogos al nuevo laboratorio; no son planes comerciales ni definen la vigencia del servicio.</p>
+      <BioNexusSectionPanel title="Paquetes de datos iniciales (catálogos)" icon="inventory_2" description="Selecciona los catálogos que se copiarán al nuevo laboratorio. No son planes comerciales ni definen la vigencia del servicio; puedes continuar sin paquetes." variant="accent" compact>
         <div class="prov-package-toolbar">
-          <p>Selecciona la información que se copiará al nuevo laboratorio. Puedes continuar sin paquetes.</p>
           <div class="prov-package-actions">
             <BioNexusActionButton label="Seleccionar todos" icon="done_all" variant="secondary" size="sm" :disabled="allPackagesSelected" @click="selectAllPackages" />
             <BioNexusActionButton label="Limpiar" icon="clear_all" variant="secondary" size="sm" :disabled="form.seedPackages.length === 0" @click="clearPackages" />
@@ -57,7 +54,7 @@
         </div>
         <p class="prov-package-summary">{{ packageSummary }}</p>
       </BioNexusSectionPanel>
-      <BioNexusSectionPanel title="🛡️ Administrador inicial" compact>
+      <BioNexusSectionPanel title="Administrador inicial" icon="manage_accounts" description="Configura el usuario que administrará inicialmente el laboratorio." variant="accent" compact>
         <div class="prov-grid">
           <BioNexusFormField v-for="field in adminFields" :key="field.key" :label="field.label" :field-id="`prov-${field.key}`" :required="field.required" :error="fieldErrors[field.key] || ''" :help="!fieldErrors[field.key] && field.max ? `${form[field.key].length} de ${field.max} caracteres` : ''">
             <input :id="`prov-${field.key}`" v-model="form[field.key]" class="bio-nexus-field" :class="{ 'prov-input-error': Boolean(fieldErrors[field.key]) }" :type="field.type || 'text'" :maxlength="field.max" :aria-invalid="Boolean(fieldErrors[field.key])" :placeholder="field.key === laboratoryPhoneFieldKey ? '(+58) 424 123-4567' : ''" @input="onDynamicFieldInput(field.key, $event)" />
@@ -170,7 +167,7 @@ const onDynamicFieldInput = (fieldKey, event) => {
 </script>
 
 <style scoped>
-.prov-sections{display:grid;gap:16px;padding:16px}.prov-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:start}.prov-input-error{border-color:var(--bio-nexus-color-danger)!important}.prov-validity-note{margin:12px 0 0;color:var(--bio-nexus-color-text-muted);font-size:12px}.prov-module-toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:12px;color:var(--bio-nexus-color-text-muted)}.prov-module-actions{display:flex;gap:8px;flex-wrap:wrap}.prov-module-groups{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.prov-module-group{border:1px solid var(--bio-nexus-color-border);border-radius:var(--bio-nexus-radius-md);padding:12px;background:var(--bio-nexus-color-surface)}.prov-module-group-header{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;align-items:center;gap:8px;margin-bottom:10px;color:var(--bio-nexus-color-primary)}.prov-group-icon{font-size:20px;line-height:1}.prov-group-count{color:var(--bio-nexus-color-text-muted);font-size:12px;white-space:nowrap}.prov-module-options{display:grid;gap:8px}
+.prov-sections{display:grid;gap:16px;padding:16px}.prov-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:start}.prov-input-error{border-color:var(--bio-nexus-color-danger)!important}.prov-module-toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:12px;color:var(--bio-nexus-color-text-muted)}.prov-module-actions{display:flex;gap:8px;flex-wrap:wrap}.prov-module-groups{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.prov-module-group{border:1px solid var(--bio-nexus-color-border);border-radius:var(--bio-nexus-radius-md);padding:12px;background:var(--bio-nexus-color-surface)}.prov-module-group-header{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;align-items:center;gap:8px;margin-bottom:10px;color:var(--bio-nexus-color-primary)}.prov-group-icon{font-size:20px;line-height:1}.prov-group-count{color:var(--bio-nexus-color-text-muted);font-size:12px;white-space:nowrap}.prov-module-options{display:grid;gap:8px}
 .prov-module-options :deep(.prov-module-checkbox),
 .prov-module-options :deep(.prov-module-checkbox label),
 .prov-module-options :deep(.prov-module-checkbox span),
