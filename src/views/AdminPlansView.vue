@@ -28,7 +28,7 @@
         </template>
       </BioNexusDataGrid>
     </section>
-    <PlatformPlanFormDialog ref="formDialog" :saving="saving" @submit="saveForm" />
+    <PlatformPlanFormDialog ref="formDialog" :saving="saving" :currency-options="currencyOptions" @submit="saveForm" />
     <PlatformPlanDetailDialog ref="detailDialog" />
     <BioNexusStateDialog ref="stateDialog" :saving="saving" @confirm="confirmStatus" />
   </section>
@@ -45,10 +45,11 @@ import BioNexusOptionFilter from '@/components/grid/BioNexusOptionFilter.vue'
 import PlatformPlanFormDialog from '@/components/platform/PlatformPlanFormDialog.vue'
 import PlatformPlanDetailDialog from '@/components/platform/PlatformPlanDetailDialog.vue'
 import { useBioNexusToast } from '@/composables/useBioNexusToast'
-import { createPlatformPlan, getPlatformPlans, updatePlatformPlan } from '@/services/platformBillingService'
-const toast=useBioNexusToast(),rows=ref([]),loading=ref(false),saving=ref(false),loadError=ref(''),search=ref(''),formDialog=ref(null),detailDialog=ref(null),stateDialog=ref(null)
+import { createPlatformPlan, getPlatformActiveCurrencies, getPlatformPlans, updatePlatformPlan } from '@/services/platformBillingService'
+const toast=useBioNexusToast(),rows=ref([]),currencyCatalog=ref([]),loading=ref(false),saving=ref(false),loadError=ref(''),search=ref(''),formDialog=ref(null),detailDialog=ref(null),stateDialog=ref(null)
 const defaultColDef=Object.freeze({sortable:true,filter:true,resizable:true,suppressHeaderMenuButton:true})
 const gridComponents=Object.freeze({BioNexusGridActionsCell,BioNexusGridToggleCell})
+const currencyOptions=computed(()=>currencyCatalog.value.map(item=>({...item,value:item.code,label:`${item.code} · ${item.name}`})))
 const columnDefs=computed(()=>[
   {field:'code',headerName:'Código',minWidth:150,width:170,pinned:'left',lockPinned:true,suppressMovable:true},
   {field:'name',headerName:'Nombre',minWidth:220,flex:1},
@@ -56,7 +57,7 @@ const columnDefs=computed(()=>[
   {field:'price',headerName:'Precio',width:145,type:'numericColumn',valueFormatter:({data})=>formatPrice(data?.price,data?.currency)},
   {field:'planType',headerName:'Tipo',width:120,valueFormatter:({value})=>value==='trial'?'Trial':'Pago'},
   {colId:'duration',headerName:'Duración',width:145,valueGetter:({data})=>formatDuration(data)},
-  {field:'gracePeriodDays',headerName:'Gracia',width:115,type:'numericColumn',valueFormatter:({value})=>`${Number(value)||0} días`},
+  {field:'gracePeriodDays',headerName:'DÍAS DE GRACIA',width:115,type:'numericColumn',valueFormatter:({value})=>`${Number(value)||0} días`},
   {field:'isActive',headerName:'Estado',width:170,headerClass:'admin-plans-center-header',cellClass:'admin-plans-center-cell',filter:BioNexusOptionFilter,filterParams:{options:[{value:true,label:'Activo'},{value:false,label:'Desactivado'}]},cellRenderer:'BioNexusGridToggleCell',cellRendererParams:{onLabel:'Activo',offLabel:'Desactivado',ariaLabel:'Estado',disabled:()=>saving.value,onToggle:requestStatus}},
   {colId:'actions',headerName:'Acciones',width:110,minWidth:110,maxWidth:110,pinned:'right',lockPinned:true,suppressMovable:true,sortable:false,filter:false,resizable:false,suppressHeaderMenuButton:true,headerClass:'bio-nexus-grid-actions-header',cellClass:'bio-nexus-grid-actions-cell',cellRenderer:'BioNexusGridActionsCell',cellRendererParams:{actions:[{key:'view',label:'Ver',icon:'visibility',onClick:row=>detailDialog.value?.open(row)},{key:'edit',label:'Editar',icon:'edit',disabled:()=>saving.value,onClick:row=>formDialog.value?.openEdit(row)}]}}
 ])
@@ -65,7 +66,7 @@ function comparePlans(a,b){return String(a.name||'').localeCompare(String(b.name
 function replaceRow(saved){const next=rows.value.filter(row=>String(row.planId)!==String(saved.planId));next.push(saved);rows.value=next.sort(comparePlans)}
 function formatPrice(price,currency){const value=Number(price);return Number.isFinite(value)?`${value.toLocaleString('es')} ${currency||''}`.trim():'—'}
 function formatDuration(plan){const count=Number(plan?.intervalCount)||0;const units={day:'día',month:'mes',year:'año'};const unit=units[plan?.intervalUnit]||'unidad';return `${count} ${unit}${count===1?'':'s'}`}
-async function loadPlans(){if(loading.value||saving.value)return;loading.value=true;loadError.value='';try{rows.value=(await getPlatformPlans()).sort(comparePlans)}catch(error){rows.value=[];loadError.value=error?.message||'No fue posible consultar los planes.';toast.error(loadError.value)}finally{loading.value=false}}
+async function loadPlans(){if(loading.value||saving.value)return;loading.value=true;loadError.value='';try{[rows.value,currencyCatalog.value]=await Promise.all([getPlatformPlans(),getPlatformActiveCurrencies()]);rows.value=rows.value.sort(comparePlans)}catch(error){rows.value=[];loadError.value=error?.message||'No fue posible consultar los planes.';toast.error(loadError.value)}finally{loading.value=false}}
 async function saveForm(payload){if(saving.value)return;saving.value=true;formDialog.value?.clearError();try{const saved=payload.mode==='create'?await createPlatformPlan(payload.values):await updatePlatformPlan(payload.record.planId,payload.values);replaceRow(saved);formDialog.value?.markSavedAndClose();toast.success(payload.mode==='create'?'Plan creado correctamente.':'Plan actualizado correctamente.')}catch(error){formDialog.value?.setError(error?.message||'No fue posible guardar el plan.')}finally{saving.value=false}}
 function requestStatus(row){if(!row||saving.value)return;stateDialog.value?.open(row,{kicker:'Estado del plan',label:item=>item.name,isInactive:item=>item.isActive===false,activateTitle:'Activar plan',deactivateTitle:'Desactivar plan',activateMessage:'El plan volverá a estar disponible para nuevas suscripciones.',deactivateMessage:'El plan permanecerá visible, pero no estará disponible para nuevas suscripciones.',dangerOnDeactivate:true})}
 async function confirmStatus(row){if(!row||saving.value)return;saving.value=true;stateDialog.value?.clearError();try{const saved=await updatePlatformPlan(row.planId,{code:row.code,name:row.name,description:row.description||'',price:Number(row.price),currency:row.currency,planType:row.planType,intervalUnit:row.intervalUnit,intervalCount:Number(row.intervalCount),gracePeriodDays:Number(row.gracePeriodDays),isActive:row.isActive===false});replaceRow(saved);stateDialog.value?.close();toast.success(row.isActive===false?'Plan activado correctamente.':'Plan desactivado correctamente.')}catch(error){stateDialog.value?.setError(error?.message||'No fue posible cambiar el estado del plan.')}finally{saving.value=false}}

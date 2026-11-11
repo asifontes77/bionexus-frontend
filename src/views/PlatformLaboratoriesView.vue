@@ -79,10 +79,11 @@ const columnDefs = computed(() => [
   {
     colId: 'actions',
     headerName: 'Acciones',
-    width: 226,
-    minWidth: 226,
-    maxWidth: 226,
+    width: 270,
+    minWidth: 270,
+    maxWidth: 270,
     flex: 0,
+    suppressSizeToFit: true,
     pinned: 'right',
     lockPinned: true,
     suppressMovable: true,
@@ -186,6 +187,14 @@ onMounted(load)
 .platform-laboratories-view :deep(.bio-nexus-grid-actions-cell),
 .platform-laboratories-view :deep(.bio-nexus-grid-actions-header .ag-header-cell-label) {
   justify-content: center;
+}
+.platform-laboratories-view :deep(.bio-nexus-grid-action-list) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 246px;
+  white-space: nowrap;
 }
 
 .platform-laboratories-view :deep(.bio-nexus-data-grid) {

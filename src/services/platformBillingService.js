@@ -30,6 +30,9 @@ const normalizePlanPayload = payload => ({
   gracePeriodDays: payload.gracePeriodDays,
   isActive: payload.isActive,
 })
+export const getPlatformActiveCurrencies = async () =>
+  unwrapList(await adminApiRequest(`${platformPath}/currencies/active`), 'currencies', 'monedas')
+
 export const getPlatformPlans = async () =>
   unwrapList(await adminApiRequest(`${platformPath}/plans`), 'plans', 'planes')
 
