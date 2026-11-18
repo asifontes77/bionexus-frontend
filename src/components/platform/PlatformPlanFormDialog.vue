@@ -1,20 +1,30 @@
 <template>
-  <BioNexusDialog ref="dialog" size="wide" :prevent-close="saving || dirty" :kicker="mode==='create'?'Nuevo registro':'Editar registro'" :title="mode==='create'?'Crear plan comercial':'Editar plan comercial'" @before-close="requestClose" @close="reset">
+  <BioNexusDialog ref="dialog" size="wide" dialog-class="plan-form-dialog" :prevent-close="saving || dirty" :kicker="mode==='create'?'Nuevo registro':'Editar registro'" :title="mode==='create'?'Crear plan comercial':'Editar plan comercial'" @before-close="requestClose" @close="reset">
     <section class="plan-dialog-body">
       <BioNexusFormErrors :errors="errorMessage" />
       <BioNexusSectionPanel title="Información comercial" icon="workspace_premium" description="Define el tipo, la duración, el precio y la gracia del plan." variant="accent">
         <div class="plan-fields">
-          <BioNexusFormField label="Código" field-id="plan-code" required :error="fieldErrors.code" :help="`${draft.code.length} de 80 caracteres`"><input id="plan-code" ref="firstInput" v-model.trim="draft.code" class="bio-nexus-field" maxlength="80" :disabled="saving" @input="syncDirty" /></BioNexusFormField>
-          <BioNexusFormField label="Nombre" field-id="plan-name" required :error="fieldErrors.name" :help="`${draft.name.length} de 120 caracteres`"><input id="plan-name" v-model.trim="draft.name" class="bio-nexus-field" maxlength="120" :disabled="saving" @input="syncDirty" /></BioNexusFormField>
-          <BioNexusFormField class="wide" label="Descripción" field-id="plan-description" :help="`${draft.description.length} de 1000 caracteres`"><textarea id="plan-description" v-model.trim="draft.description" class="bio-nexus-field" rows="3" maxlength="1000" :disabled="saving" @input="syncDirty" /></BioNexusFormField>
-          <BioNexusFormField label="Tipo de plan" field-id="plan-type" required :error="fieldErrors.planType"><select id="plan-type" v-model="draft.planType" class="bio-nexus-field" :disabled="saving" @change="syncDirty"><option value="trial">Trial</option><option value="paid">Pago</option></select></BioNexusFormField>
-          <BioNexusFormField label="Cantidad" field-id="plan-interval-count" required :error="fieldErrors.intervalCount" help="Entero mayor que cero."><BioNexusNumericInput id="plan-interval-count" v-model="draft.intervalCount" :decimals="0" :min="1" :disabled="saving" @input="syncDirty" /></BioNexusFormField>
-          <BioNexusFormField label="Unidad de duración" field-id="plan-interval-unit" required :error="fieldErrors.intervalUnit"><select id="plan-interval-unit" v-model="draft.intervalUnit" class="bio-nexus-field" :disabled="saving" @change="syncDirty"><option value="day">Día(s)</option><option value="month">Mes(es)</option><option value="year">Año(s)</option></select></BioNexusFormField>
-          <BioNexusFormField label="Precio" field-id="plan-price" required :error="fieldErrors.price"><BioNexusNumericInput id="plan-price" v-model="draft.price" :decimals="2" :min="0" :disabled="saving" @input="syncDirty" /></BioNexusFormField>
-          <BioNexusFormField label="Moneda" field-id="plan-currency" required :error="fieldErrors.currency"><BioNexusSearchableSelect id="plan-currency" v-model="draft.currency" :options="currencyOptions" value-key="value" label-key="label" placeholder="Selecciona una moneda" search-placeholder="Buscar moneda..." empty-text="Sin monedas globales activas" :disabled="saving" @change="syncDirty" /></BioNexusFormField>
-          <BioNexusFormField label="Días de gracia" field-id="plan-grace" required :error="fieldErrors.grace"><BioNexusNumericInput id="plan-grace" v-model="draft.gracePeriodDays" :decimals="0" :min="0" :disabled="saving" @input="syncDirty" /></BioNexusFormField>
-        </div>
-        <p class="plan-contract-note">La vigencia se calcula automáticamente en el Backend según la cantidad y la unidad seleccionadas.</p>
+            <BioNexusFormField class="plan-code" label="Código" field-id="plan-code" required :error="fieldErrors.code" :help="`${draft.code.length} de 80 caracteres`"><input id="plan-code" ref="firstInput" v-model.trim="draft.code" class="bio-nexus-field" maxlength="80" :disabled="saving" @input="syncDirty" /></BioNexusFormField>
+            <BioNexusFormField class="plan-name" label="Nombre" field-id="plan-name" required :error="fieldErrors.name" :help="`${draft.name.length} de 120 caracteres`"><input id="plan-name" v-model.trim="draft.name" class="bio-nexus-field" maxlength="120" :disabled="saving" @input="syncDirty" /></BioNexusFormField>
+            <BioNexusFormField class="wide plan-description" label="Descripción" field-id="plan-description" :help="`${draft.description.length} de 1000 caracteres`"><textarea id="plan-description" v-model.trim="draft.description" class="bio-nexus-field" rows="2" maxlength="1000" :disabled="saving" @input="syncDirty" /></BioNexusFormField>
+            <BioNexusFormField class="plan-type" label="Tipo de plan" field-id="plan-type" required :error="fieldErrors.planType"><select id="plan-type" v-model="draft.planType" class="bio-nexus-field" :disabled="saving" @change="syncDirty"><option value="trial">Trial</option><option value="paid">Pago</option></select></BioNexusFormField>
+            <div class="plan-field-group plan-duration-group">
+              <span class="plan-field-group-title">Duración del plan</span>
+              <div class="plan-field-group-grid plan-duration-grid">
+                <BioNexusFormField label="Cantidad" field-id="plan-interval-count" required :error="fieldErrors.intervalCount" help="Entero mayor que cero."><BioNexusNumericInput id="plan-interval-count" v-model="draft.intervalCount" :decimals="0" :min="1" :disabled="saving" @input="syncDirty" /></BioNexusFormField>
+                <BioNexusFormField label="Unidad" field-id="plan-interval-unit" required :error="fieldErrors.intervalUnit"><select id="plan-interval-unit" v-model="draft.intervalUnit" class="bio-nexus-field" :disabled="saving" @change="syncDirty"><option value="day">Día(s)</option><option value="month">Mes(es)</option><option value="year">Año(s)</option></select></BioNexusFormField>
+              </div>
+            </div>
+            <BioNexusFormField class="plan-grace" label="Días de gracia" field-id="plan-grace" required :error="fieldErrors.grace"><BioNexusNumericInput id="plan-grace" v-model="draft.gracePeriodDays" :decimals="0" :min="0" :disabled="saving" @input="syncDirty" /></BioNexusFormField>
+            <div class="plan-field-group plan-price-group">
+              <span class="plan-field-group-title">Precio del plan</span>
+              <div class="plan-field-group-grid plan-price-grid">
+                <BioNexusFormField label="Precio" field-id="plan-price" required :error="fieldErrors.price"><BioNexusNumericInput id="plan-price" v-model="draft.price" :decimals="2" :min="0" :disabled="saving" @input="syncDirty" /></BioNexusFormField>
+                <BioNexusFormField label="Moneda" field-id="plan-currency" required :error="fieldErrors.currency"><BioNexusSearchableSelect id="plan-currency" v-model="draft.currency" :options="currencyOptions" value-key="value" label-key="label" placeholder="Selecciona una moneda" search-placeholder="Buscar moneda..." empty-text="Sin monedas globales activas" :disabled="saving" @change="syncDirty" /></BioNexusFormField>
+              </div>
+            </div>
+          </div>
+          <p class="plan-contract-note">La vigencia se calcula automáticamente en el Backend según la cantidad y la unidad seleccionadas.</p>
       </BioNexusSectionPanel>
       <BioNexusSectionPanel title="Disponibilidad" icon="toggle_on" description="Controla si el plan puede asignarse a nuevas suscripciones." variant="soft" compact><BioNexusCheckbox v-model="draft.isActive" label="Plan activo y disponible para suscripciones" :disabled="saving" @change="syncDirty" /></BioNexusSectionPanel>
     </section>
@@ -52,5 +62,15 @@ function reset(){attempted.value=false;dirty.value=false;original.value='';clear
 defineExpose({openCreate,openEdit,markSavedAndClose,setError:value=>errorMessage.value=String(value||''),clearError:()=>errorMessage.value=''})
 </script>
 <style scoped>
-.plan-dialog-body{display:grid;gap:var(--bio-nexus-space-4);font-family:var(--bio-nexus-font-family)}.plan-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--bio-nexus-space-3)}.wide{grid-column:1/-1}.plan-contract-note{grid-column:1/-1;margin:var(--bio-nexus-space-2) 0 0;color:var(--bio-nexus-color-text-muted);font-size:var(--bio-nexus-font-size-sm)}@media(max-width:700px){.plan-fields{grid-template-columns:1fr}.wide{grid-column:auto}}
+:global(dialog.bio-nexus-dialog.plan-form-dialog){width:min(880px,calc(100vw - 32px))}
+.plan-dialog-body{display:grid;gap:var(--bio-nexus-space-3);max-width:880px;margin:0 auto;font-family:var(--bio-nexus-font-family)}
+.plan-fields{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:var(--bio-nexus-space-3);align-items:start}
+.plan-code{grid-column:span 4}.plan-name{grid-column:span 8}.wide{grid-column:1/-1}.plan-type,.plan-grace{grid-column:span 4}
+.plan-duration-group,.plan-price-group{grid-column:span 8}
+.plan-field-group{display:grid;gap:var(--bio-nexus-space-1);min-width:0;padding:8px 10px 10px;border:1px solid var(--bio-nexus-color-border);border-radius:var(--bio-nexus-radius-md);background:var(--bio-nexus-color-surface-soft)}
+.plan-field-group-title{color:var(--bio-nexus-color-text-muted);font-size:var(--bio-nexus-font-size-xs);font-weight:var(--bio-nexus-font-weight-bold);line-height:1.2}
+.plan-field-group-grid{display:grid;gap:var(--bio-nexus-space-2);align-items:start}.plan-duration-grid{grid-template-columns:minmax(110px,.38fr) minmax(180px,.62fr)}.plan-price-grid{grid-template-columns:minmax(150px,.42fr) minmax(220px,.58fr)}
+.plan-description :deep(textarea.bio-nexus-field){min-height:74px;max-height:110px}
+.plan-contract-note{grid-column:1/-1;margin:0;color:var(--bio-nexus-color-text-muted);font-size:var(--bio-nexus-font-size-xs)}
+@media(max-width:700px){.plan-fields{grid-template-columns:1fr}.plan-code,.plan-name,.wide,.plan-type,.plan-grace,.plan-duration-group,.plan-price-group{grid-column:auto}.plan-field-group-grid{grid-template-columns:1fr}}
 </style>
