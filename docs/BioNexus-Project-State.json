@@ -37970,26 +37970,5 @@
     "databaseModified": false,
     "serversManaged": false,
     "commitCreated": false
-  },
-  "checkpoints": [
-    {
-      "id": "platform-administrator-temporary-close-20261118-103101",
-      "area": "Administrador de plataforma",
-      "status": "approved_temporarily_closed",
-      "closedAt": "2026-11-18T10:31:01-04:00",
-      "decision": "Administrador aprobado y cerrado por ahora.",
-      "evidence": {
-        "paymentIdOnlyVisibleColumn": true,
-        "headerIdRemoved": true,
-        "paymentNumberHeader": "# Pago",
-        "paymentNumberFormat": "000000",
-        "horizontalCentering": "flex + justify-content:center",
-        "verticalCentering": "flex + align-items:center",
-        "frontendBuild": "approved - Vite 8.2.1 - 487 modules - 2.72s",
-        "sourceReport": "3-paycenter-20261118-102736.txt"
-      },
-      "scope": "Cierre temporal del Administrador; License Manager permanece como ultimo bloque absoluto."
-    }
-  ],
-  "lastUpdated": "2026-11-18T10:31:01-04:00"
+  }
 }
